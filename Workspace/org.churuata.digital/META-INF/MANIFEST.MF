@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Churuata Digital RAP Application
+Bundle-SymbolicName: org.churuata.digital;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: condast
+Automatic-Module-Name: org.churuata.digital
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Require-Bundle: org.eclipse.rap.rwt;bundle-version="[3.0.0,4.0.0)"
+Service-Component: OSGI-INF/contribution.xml
+Bundle-ActivationPolicy: lazy
+Import-Package: org.churuata.digital.ui.map,
+ org.condast.commons.ui.xml,
+ org.condast.commons.xml

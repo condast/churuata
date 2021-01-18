@@ -1,0 +1,19 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Churuata Digital Widgets
+Bundle-SymbolicName: org.churuata.digital.ui
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: Condast
+Automatic-Module-Name: org.churuata.digital.ui
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Import-Package: org.condast.commons,
+ org.condast.commons.authentication.user,
+ org.condast.commons.data.latlng,
+ org.condast.commons.data.plane,
+ org.condast.commons.strings,
+ org.condast.js.commons.controller,
+ org.condast.js.commons.eval,
+ org.eclipse.swt.browser,
+ org.eclipse.swt.widgets,
+ org.openlayer.map.controller
+Export-Package: org.churuata.digital.ui.map
