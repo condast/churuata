@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+          id="org.churuata.dashboard.login"
+          name="churuata Login Module"
+          point="org.eclipse.equinox.security.loginModule">
+      <loginModule
+            class="org.churuata.dashboard.authentication.churuataLoginModule"
+            description="Login module voor churuata">
+      </loginModule>
+    </extension>
+  <extension
+         point="org.eclipse.equinox.http.registry.resources">
+      <resource
+            alias="/churuata/web"
+            base-name="/WEB-INF">
+      </resource>
+   </extension>
+ </plugin>

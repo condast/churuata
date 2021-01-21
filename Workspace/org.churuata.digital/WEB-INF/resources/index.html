@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+<title>CovAID Home Page</title>
+
+<!-- Bootstrap -->
+<link href="/covaid/web/bootstrap/css/bootstrap.min.css"
+	rel="stylesheet">
+<link href="/covaid/web/bootstrap/css/bootstrap-reboot.min.css"
+	rel="stylesheet">
+
+<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+<!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="/covaid/web/jquery/jquery-3.4.1.min.js"
+	crossorigin="anonymous"></script>
+<script src="/covaid/web/jquery/popper.min.js" crossorigin="anonymous"></script>
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="/bootstrap/js/bootstrap.min.js" crossorigin="anonymous"></script>
+<style>
+.fakeimg {
+	height: 200px;
+	background: #aaa;
+}
+
+.map-container {
+	height: 100%;
+}
+</style>
+</head>
+
+<body>
+	<nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+		<a class="navbar-brand" href="#">CovAID</a>
+		<button class="navbar-toggler" type="button" data-toggle="collapse"
+			data-target="#collapsibleNavbar">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+		<div class="collapse navbar-collapse" id="collapsibleNavbar">
+			<ul class="navbar-nav">
+				<li class="nav-item"><a class="nav-link"
+					href="/covaid/web/health.html">Health</a></li>
+				<li class="nav-item"><a class="nav-link"
+					href="/covaid/web/doctor.html">Doctor</a></li>
+				<li class="nav-item"><a class="nav-link"
+					href="/covaid/web/settings.html">Settings</a></li>
+			</ul>
+		</div>
+	</nav>
+
+	<main role="main">
+
+		<!-- Main jumbotron for a primary marketing message or call to action -->
+		<div class="jumbotron">
+			<div class="container">
+				<img src="/covaid/web/resources/Covaid.png" class="img-fluid"
+					alt="Responsive image">
+
+				<h1 class="display-3">CovAID Introduction!</h1>
+				<p>
+					CovAID is intended to become an app that can assist in a personal
+					lock down of COVID-19, or any other contagious disease for that
+					matter.<br> Highlights of the app are:<br>
+				<ul>
+					<li>Privacy: The app does not need any personal information in
+						order for it to work</li>
+					<li>Simple: The app can work with a minimum of information,
+						that is just stored locally on your mobile phone</li>
+					<li>Generic: In principle the approach can be applied to a
+						wide variety of platforms</li>
+				</ul>
+				<br> Obviously this also comes at a price. The best way of
+				describing this, is to point out what CovAID is not:
+				<ul>
+					<li>CovAID is <i>not</i> A diagnostics tool. It cannot assess
+						whether you have COVID-19 or not:
+					</li>
+					<li>CovAID cannot prevent you from catching COVID-19. It
+						merely makes a risk assessment of your chances of catching it</li>
+					<li>CovAID is <i>not</i> an alert for COVID-19 victims. We do
+						not believe in witch hunts!
+					</li>
+				</ul>
+				<br> The app is based on the theory of <a
+					href="https://www.researchgate.net/publication/200086443_Symbiotic_Networks">Symbiotic
+					Networks</a>. According to this theory, agents (e.g. people) can fight
+				a threat in collaboration if two conditions are met:
+				<ul>
+					<li>The threat allows itself to be quantified, and turned into
+						a <i>stress signal</i>.
+					</li>
+					<li>The agents <i>change their behaviour</i> owing to the
+						stress signals, in such a way that the stress becomes less
+					</li>
+				</ul>
+				<br> It can be proven if these two conditions are met, that the
+				entire network will try to converge to a situation where the stress
+				signals are as low as possible.<br> If we translate this to
+				COVID-19, this means that every person gets a personalised risk
+				assessment about the chances of getting COVID-19, and a means to
+				determine an appropriate action to prevent this, that all the people
+				who join this effort will make it increasingly difficult for
+				COVID-19 to spread.
+				</p>
+
+			</div>
+		</div>
+
+		<div class="container">
+			<!-- Example row of columns -->
+			<div class="row">
+				<div class="col-md-4">
+					<h2>Simulator</h2>
+					<p>
+						A simulator for the symbiotic network can be found <a
+							href="http://www.condast.com:8080/covaid/home">here</a>.<br>
+						Pressing the 'start' button will activate two screens, of which
+						the middle one uses CovAID. On the left screen you<br> can
+						see the spread of infections.
+					</p>
+				</div>
+				<div class="col-md-4">
+					<h2>Mobile APP</h2>
+					<p>
+						The sketch for the mobile app can be found <a
+							href="http://www.condast.com:8080/covaid/mobile">here</a>.<br>
+						The mobile phone stores most of the date locally, and calculates a
+						'safety' and 'risk' bubble, which it<br> communicates with
+						others.
+
+					</p>
+				</div>
+				<div class="col-md-4">
+					<h2>Work in Progress</h2>
+					<p>Obviously this is work in progress. A lot of things need to
+						be worked out. we only started on this journey halfway April 2020.</p>
+				</div>
+			</div>
+
+			<hr>
+
+		</div>
+		<!-- /container -->
+
+	</main>
+
+	<footer class="container">
+		<p>&copy; MAAK! 2017-2018</p>
+	</footer>
+
+	<!-- Bootstrap core JavaScript
+    ================================================== -->
+	<!-- Placed at the end of the document so the pages load faster -->
+	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+		integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+		crossorigin="anonymous"></script>
+	<script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery-slim.min.js"><\/script>')</script>
+	<script src="../../assets/js/vendor/popper.min.js"></script>
+	<script src="../../dist/js/bootstrap.min.js"></script>
+</body>
+</html>
