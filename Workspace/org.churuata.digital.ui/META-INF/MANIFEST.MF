@@ -13,7 +13,9 @@ Import-Package: org.condast.commons,
  org.condast.commons.strings,
  org.condast.js.commons.controller,
  org.condast.js.commons.eval,
+ org.condast.js.commons.images,
  org.eclipse.swt.browser,
  org.eclipse.swt.widgets,
+ org.openlayer.map.control,
  org.openlayer.map.controller
 Export-Package: org.churuata.digital.ui.map

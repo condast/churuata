@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 import org.condast.commons.Utils;
 import org.condast.commons.authentication.user.ILoginUser;
 import org.condast.commons.data.latlng.LatLng;
+import org.condast.commons.data.plane.Field;
 import org.condast.commons.data.plane.FieldData;
 import org.condast.commons.data.plane.IPolygon;
 import org.condast.commons.strings.StringStyler;
@@ -14,10 +15,14 @@ import org.condast.commons.strings.StringUtils;
 import org.condast.js.commons.controller.JavascriptSynchronizer;
 import org.condast.js.commons.eval.EvaluationEvent;
 import org.condast.js.commons.eval.IEvaluationListener;
+import org.condast.js.commons.images.IDefaultMarkers.Markers;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.browser.ProgressEvent;
 import org.eclipse.swt.browser.ProgressListener;
 import org.eclipse.swt.widgets.Composite;
+import org.openlayer.map.control.GeoView;
+import org.openlayer.map.control.IconsView;
+import org.openlayer.map.control.MapField;
 import org.openlayer.map.controller.OpenLayerController;
 
 public class MapBrowser extends Browser {
@@ -25,13 +30,13 @@ public class MapBrowser extends Browser {
 
 	public static String S_ERR_NO_FIELD_DATA = "The vessel does not have any field data: ";
 	public static String S_ERR_NO_GPS_SIGNAL = "NO GPS SIGNAL";
-	
+
 	public static final int DEFAULT_SCAN_DELAY = 20;//20 update pulses
-	
+
 	private enum CallBacks{
 		POINT,
 		POLYGON;
-		
+
 		@Override
 		public String toString() {
 			return StringStyler.xmlStyleString(name());
@@ -40,14 +45,14 @@ public class MapBrowser extends Browser {
 
 	private OpenLayerController mapController;
 	private JavascriptSynchronizer<String> synchronizer;
-	
+
 
 	private boolean drawing;
-	
+
 	private LatLng clickedLocation;
-	
+
 	private ILoginUser user;
-	
+
 	private ProgressListener plistener = new ProgressListener() {
 		private static final long serialVersionUID = 1L;
 		@Override
@@ -70,8 +75,9 @@ public class MapBrowser extends Browser {
 		@Override
 		public void notifyEvaluation(EvaluationEvent<Object> event) {
 			try {
-				if(!OpenLayerController.S_CALLBACK_ID.equals(event.getId()))
+				if(!OpenLayerController.S_CALLBACK_ID.equals(event.getId())) {
 					return;
+				}
 				if( Utils.assertNull( event.getData()))
 					return;
 				Collection<Object> eventData = Arrays.asList(event.getData());
@@ -81,19 +87,17 @@ public class MapBrowser extends Browser {
 					if( obj != null )
 						builder.append(obj.toString());
 					builder.append(", ");
-					}
+				}
 				logger.fine(builder.toString());
 				String str = (String) event.getData()[1];
 				if( !StringUtils.isEmpty(str) && str.startsWith( IPolygon.Types.POINT.name())) {
 					Object[] loc = ( Object[])event.getData()[2];
 					clickedLocation = new LatLng((String) event.getData()[1], (double)loc[1], (double)loc[0] );
-					/*
-					if(( geo.getFieldData() != null ) && !( geo.getFieldData().isPersisted())) {
-						geo.getFieldData().setCoordinates(clickedLocation);
-						geo.zoomin();
-						geo.jump();
-					}
-					*/
+					IconsView icons = new IconsView( mapController );
+					icons.clearIcons();
+					Markers marker = Markers.RED;
+					char type = 'C';
+					icons.addMarker(clickedLocation, marker, type);
 				}
 				if( IEvaluationListener.EventTypes.SELECTED.equals( event.getEventType())) {
 					logger.info(event.getData()[2].toString());
@@ -121,30 +125,34 @@ public class MapBrowser extends Browser {
 			}
 		}
 	};
-		
+
 	private Logger logger = Logger.getLogger( this.getClass().getName() );
 
 	public MapBrowser(Composite parent, int style) {
 		super(parent, style);
 		this.drawing = false;
-		this.mapController = new OpenLayerController( this );
+		LatLng location = new LatLng( "Cucuta", 7.89391, -72.50782);
+		this.mapController = new OpenLayerController( this, location, 11 );
 		this.mapController.addEvaluationListener(mapListener);
 		this.synchronizer = new JavascriptSynchronizer<>(mapController);
 	}
 
-	public void setClickedLocation( FieldData fieldData) {
+	public void setLocation( LatLng location) {
+		this.clickedLocation =  location;
 		if( clickedLocation == null )
 			return;
-		LatLng location = clickedLocation;
-		location.setId( fieldData.getName());
-		fieldData.setCoordinates(location);
+		GeoView geo = new GeoView( mapController);
+		//FieldData fieldData = new FieldData( new Field( clickedLocation, 10000, 10000));
+		//geo.setFieldData( fieldData);
+		MapField mapField = new MapField( mapController);
+		mapField.setField(new Field( clickedLocation, 10000, 10000), 100);
 	}
 
 
 	public void setInput( String context, ILoginUser user ){
 		this.user = user;
 	}
-		
+
 	public void dispose() {
 		this.mapController.removeEvaluationListener( mapListener);
 		this.mapController.dispose();

@@ -9,11 +9,13 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Require-Bundle: org.eclipse.rap.rwt;bundle-version="[3.0.0,4.0.0)"
 Service-Component: OSGI-INF/contribution.xml
 Bundle-ActivationPolicy: lazy
-Import-Package: org.churuata.digital.ui.map,
+Import-Package: org.churuata.digital.core.location,
+ org.churuata.digital.ui.map,
  org.condast.commons.authentication.callback,
  org.condast.commons.authentication.core,
  org.condast.commons.authentication.module,
  org.condast.commons.authentication.user,
+ org.condast.commons.data.latlng,
  org.condast.commons.ui.xml,
  org.condast.commons.xml,
  org.eclipse.equinox.security.auth;version="1.0.0"
