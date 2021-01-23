@@ -3,55 +3,78 @@ package org.churuata.digital.core.location;
 import java.util.Collection;
 import java.util.TreeSet;
 
+import org.condast.commons.authentication.user.ILoginUser;
 import org.condast.commons.data.latlng.LatLng;
-import org.condast.commons.strings.StringStyler;
 
-public class Churuata {
-
-	public enum Type{
-		FOOD,
-		SHELTER,
-		MEDICINE,
-		COMMUNITY,
-		FAMILY;
-
-		@Override
-		public String toString() {
-			return StringStyler.prettyString( name());
-		}
-	}
+public class Churuata implements Comparable<Churuata>{
 	
-	private String name;
+	private ILoginUser owner;
+	
+	private String name, description;
 	
 	private LatLng location;
 	
-	private Collection<Type> types;
+	private Collection<ChuruataTypes> types;
 
-	public Churuata(String name, LatLng location, Type type) {
+	public Churuata( LatLng location) {
+		this( null, location.getId(), location );
+	}
+	
+	public Churuata( ILoginUser owner, String name, LatLng location) {
 		super();
 		this.name = name;
+		this.owner = owner;
 		this.location = location;
 		this.types = new TreeSet<>();
-		this.types.add(type);
+	}
+
+	public ILoginUser getOwner() {
+		return owner;
 	}
 
 	public String getName() {
 		return name;
 	}
 
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public void setTypes(Collection<ChuruataTypes> types) {
+		this.types = types;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
 	public LatLng getLocation() {
 		return location;
 	}
-	
-	public boolean addType( Type type ) {
+
+	public boolean setType( ChuruataTypes type ) {
+		this.types.clear();
 		return this.types.add(type);
 	}
+
+	public boolean addType( ILoginUser user, ChuruataTypes.Types type ) {
+		return this.types.add( new ChuruataTypes(this, type, user));
+	}
 	
-	public boolean removeType( Type type ) {
+	public boolean removeType( ChuruataTypes type ) {
 		return this.types.remove(type);
 	}
 
-	public Type[] getTypes() {
-		return types.toArray( new Type[ types.size()]);
+	public ChuruataTypes[] getTypes() {
+		return types.toArray( new ChuruataTypes[ types.size()]);
+	}
+
+	@Override
+	public int compareTo(Churuata o) {
+		return this.name.compareTo(o.getName());
 	}
 }

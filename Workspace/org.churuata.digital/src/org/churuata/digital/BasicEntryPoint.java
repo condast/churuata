@@ -1,7 +1,7 @@
 package org.churuata.digital;
 
+import org.churuata.digital.core.Dispatcher;
 import org.churuata.digital.ui.map.MapBrowser;
-import org.condast.commons.data.latlng.LatLng;
 import org.condast.commons.ui.xml.XMLFactoryBuilder;
 import org.condast.commons.xml.AbstractXMLBuilder.Selection;
 import org.condast.commons.xml.BuildEvent;
@@ -17,6 +17,8 @@ public class BasicEntryPoint extends AbstractEntryPoint {
 
 	public static final String S_CHURUATA = "Churuata-Digital";
 
+	private Dispatcher dispatcher = Dispatcher.getInstance();
+	
 	@Override
     protected void createContents(Composite parent) {
         parent.setLayout(new FillLayout());
@@ -36,7 +38,7 @@ public class BasicEntryPoint extends AbstractEntryPoint {
 			switch( Selection.valueOf( event.getName())) {
 			case COMPOSITE:
 				MapBrowser browser = (MapBrowser) event.getData();
-				browser.setLocation( new LatLng( "Cucutha", 78891, 724967));
+				browser.setInput(dispatcher);
 				break;
 			default:
 				break;
