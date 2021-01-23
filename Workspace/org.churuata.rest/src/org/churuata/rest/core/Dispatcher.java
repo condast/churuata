@@ -12,6 +12,9 @@ public class Dispatcher extends AbstractPersistencyService {
 	private static final String S_COVAID_SERVICE_ID = "org.covaid.rest.service"; 
 	private static final String S_COVAID_SERVICE = "CovAID REST Service"; 
 
+	
+	private EntityManager manager;
+	
 	private static Dispatcher dispatcher = new Dispatcher();
 	
 	private Dispatcher() {
@@ -34,8 +37,7 @@ public class Dispatcher extends AbstractPersistencyService {
 
 	@Override
 	protected void onManagerCreated(EntityManager manager) {
-		// TODO Auto-generated method stub
-		
+		this.manager = manager;
 	}
 
 	public void subscribe(long id, int i) {

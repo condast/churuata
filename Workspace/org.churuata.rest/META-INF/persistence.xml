@@ -1,22 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<persistence version="2.0"
-    xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
-    <persistence-unit name="org.covaid.mobile">
-        <provider>com.orientechnologies.orient.object.jpa.OJPAPersistenceProvider</provider>
-
-        <!-- JPA entities must be registered here -->
-        <class>org.covaid.mobile.model.FirstPojo</class>
-
-        <properties>
-			<property name="bundle-name" value="org.covaid.mobile" />
-			<property name="unit-name" value="CovAID REST Service" />
-            <property name="javax.persistence.jdbc.url" value="remote:localhost/test.odb" />
-            <property name="javax.persistence.jdbc.user" value="covaid-admin" />
-            <property name="javax.persistence.jdbc.password" value="Symb10t1cNetw0rksRule@2020" />
-            <!-- Register whole package.
-                             See com.orientechnologies.orient.core.entity.OEntityManager.registerEntityClasses(String) for more details -->
-            <property name="com.orientdb.entityClasses" value="com.example.domains" />
-        </properties>
-    </persistence-unit>
+<persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
+	<persistence-unit name="org.churuata.management"
+		transaction-type="RESOURCE_LOCAL">
+		<description>SATR ARNAC Vessel Maintenance</description>
+		<class>org.churuata.management.model.Location</class>
+		<class>org.churuata.management.model.UserData</class>
+		<class>org.churuata.management.model.Vessel</class>
+		<class>org.churuata.management.model.Polygon</class>
+		<exclude-unlisted-classes>true</exclude-unlisted-classes>
+		<properties>
+			<property name="bundle-name"
+				value="org.churuata.management" />
+			<property name="unit-name" value="Aquabots Client" />
+      		<property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>
+			<!-- Add the following entry in the hosts file in C:\Windows\System32\drivers\etc: 
+					# CONDAST DATABASE SERVER 
+					127.0.0.1	databaseserver 
+					otherwise only localhost will work
+			-->			
+			<property name="javax.persistence.jdbc.url" value="jdbc:mysql://databaseserver:3306/churuata?useSSL=false"/>
+			<property name="javax.persistence.jdbc.user" value="churuata"/>
+ 			<property name="javax.persistence.jdbc.password" value="ChuruataRules@2021"/>
+			<property name="eclipselink.jdbc.read-connections.min" value="1"/>
+			<property name="eclipselink.jdbc.write-connections.min" value="1"/>			
+			<!-- Auto create tables -->
+			<property
+				name="javax.persistence.schema-generation.database.action"
+				value="create" />
+			<!-- Logging -->
+			<!-- <property name="eclipselink.logging.level" value="FINE"/> -->
+			<property name="eclipselink.logging.timestamp" value="false" />
+			<property name="eclipselink.logging.thread" value="false" />
+			<property name="eclipselink.logging.session" value="false" />
+		</properties>
+	</persistence-unit>
 </persistence>

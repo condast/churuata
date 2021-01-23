@@ -15,7 +15,7 @@ import org.osgi.service.component.annotations.ReferencePolicy;
  * @author Kees
  *
  */
-@Component( name="org.covaid.rest.entity.service",
+@Component( name="org.churuata.rest.entity.service",
 immediate=true)
 public class EntityManagerService extends AbstractFactoryService<EntityManagerFactory>{
 
