@@ -1,6 +1,7 @@
 package org.churuata.digital.ui.views;
 
 import org.churuata.digital.core.location.Churuata;
+import org.churuata.digital.core.location.IChuruata;
 import org.churuata.digital.ui.image.ImageUtils;
 import org.condast.commons.ui.controller.AbstractEntityComposite;
 import org.condast.commons.ui.table.TableEvent;
@@ -16,7 +17,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Group;
 
-public class EditChuruataComposite extends AbstractEntityComposite<Churuata>
+public class EditChuruataComposite extends AbstractEntityComposite<IChuruata>
 {
 	private static final long serialVersionUID = 7782765745284140623L;
 
@@ -201,23 +202,23 @@ public class EditChuruataComposite extends AbstractEntityComposite<Churuata>
 
 	@Override
 	public void update(){
-		Churuata result = super.getInput();
+		IChuruata result = super.getInput();
 	}
 
 	@Override
-	protected Churuata onGetInput(Churuata input) {
+	protected IChuruata onGetInput(IChuruata input) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 
 	@Override
-	protected void onSetInput(Churuata input, boolean overwrite) {
+	protected void onSetInput(IChuruata input, boolean overwrite) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	public void setInput( Churuata input ){
+	public void setInput( IChuruata input ){
 		super.setInput( input, false );
 		this.churuataTypesTable.setInput(input.getTypes());
 	}
@@ -225,7 +226,7 @@ public class EditChuruataComposite extends AbstractEntityComposite<Churuata>
 	protected void onNotifyTableEvent( TableEvent<Churuata> event ) {
 		switch( event.getTableEvent()) {
 		case DELETE:
-			Churuata model = getInput();
+			IChuruata model = getInput();
 			//Collection<Churuata> remove = (Collection<Churuata>) event.getData();
 			//database.removeOnDescriptorId(remove.getID(), model.getData().getID());
 			break;

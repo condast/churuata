@@ -2,7 +2,7 @@ package org.churuata.digital.ui.views;
 
 import java.util.logging.Logger;
 
-import org.churuata.digital.core.location.ChuruataTypes;
+import org.churuata.digital.core.location.IChuruataType;
 import org.churuata.digital.ui.image.IInformationImages.Information;
 import org.churuata.digital.ui.image.InformationImages;
 import org.condast.commons.strings.StringStyler;
@@ -22,7 +22,7 @@ import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 
-public class ChuruataTableComposite extends AbstractTableComposite<ChuruataTypes>{
+public class ChuruataTableComposite extends AbstractTableComposite<IChuruataType>{
 	private static final long serialVersionUID = 976428552549736382L;
 
 	public static final String S_TABLECOLUMN_ID = "ChuruataTableColumn";
@@ -72,7 +72,7 @@ public class ChuruataTableComposite extends AbstractTableComposite<ChuruataTypes
 				@Override
 				public String getText(Object element) {
 					String result = null;
-					ChuruataTypes p = (ChuruataTypes) element;
+					IChuruataType p = (IChuruataType) element;
 					try {
 						switch( column ) {
 						case NAME:
@@ -94,7 +94,6 @@ public class ChuruataTableComposite extends AbstractTableComposite<ChuruataTypes
 					return result;
 				}
 
-				@SuppressWarnings("unchecked")
 				public Image getImage(Object element) {				
 					Image image = super.getImage(element);
 					try {
@@ -144,14 +143,14 @@ public class ChuruataTableComposite extends AbstractTableComposite<ChuruataTypes
 			case DESCRIPTION:
 				column.getColumn().setText(col.toString());
 				column.getColumn().addListener(SWT.Selection, e->{				
-					notifyTableEvent( new TableEvent<ChuruataTypes>( e.widget, TableEvents.VIEW_TABLE, getInput() ));
+					notifyTableEvent( new TableEvent<IChuruataType>( e.widget, TableEvents.VIEW_TABLE, getInput() ));
 				});
 				break;
 			case TYPE:
 				Image image = images.getImage( Information.EDIT, true );
 				column.getColumn().setImage( image);
 				column.getColumn().addListener(SWT.Selection, e->{				
-					notifyTableEvent( new TableEvent<ChuruataTypes>( e.widget, TableEvents.SELECT, getInput() ));
+					notifyTableEvent( new TableEvent<IChuruataType>( e.widget, TableEvents.SELECT, getInput() ));
 				});
 				break;
 			case DELETE:
@@ -176,11 +175,11 @@ public class ChuruataTableComposite extends AbstractTableComposite<ChuruataTypes
 	 * @see org.condast.eclipse.swt.composite.AbstractTableComposite#prepareInput(org.aieonf.concept.model.IModelLeaf)
 	 */
 	@Override
-	protected void onSetInput(ChuruataTypes[] input){
+	protected void onSetInput(IChuruataType[] input){
 	}
 
 	@Override
-	protected int compareTables(int columnIndex, ChuruataTypes o1, ChuruataTypes o2) {
+	protected int compareTables(int columnIndex, IChuruataType o1, IChuruataType o2) {
 		Columns column = Columns.values()[columnIndex];
 		int result = 0;
 		switch( column) {

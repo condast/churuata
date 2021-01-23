@@ -6,12 +6,12 @@ public interface IChuruataCollection {
 
 	boolean addChuruata(Churuata churuata);
 
-	boolean removeChuruata(Churuata churuata);
+	boolean removeChuruata(IChuruata churuata);
 
 	Churuata[] getChuruatas();
 
-	Churuata[] getChuruatas( LatLng latlng, int distance );
+	IChuruata[] getChuruatas( LatLng latlng, int distance );
 
-	boolean contains(Churuata churuata);
+	boolean contains(IChuruata churuata);
 
 }

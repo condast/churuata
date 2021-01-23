@@ -4,6 +4,8 @@ import java.util.logging.Logger;
 
 import org.churuata.digital.core.location.Churuata;
 import org.churuata.digital.core.location.ChuruataTypes;
+import org.churuata.digital.core.location.IChuruata;
+import org.churuata.digital.core.location.IChuruataType;
 import org.churuata.digital.ui.image.ImageUtils;
 import org.condast.commons.Utils;
 import org.condast.commons.data.latlng.LatLng;
@@ -27,7 +29,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Group;
 
-public class ShowChuruatasComposite extends AbstractEntityComposite<Churuata>
+public class ShowChuruatasComposite extends AbstractEntityComposite<IChuruata>
 {
 	private static final long serialVersionUID = 7782765745284140623L;
 
@@ -158,11 +160,11 @@ public class ShowChuruatasComposite extends AbstractEntityComposite<Churuata>
 					if(!addType)
 						return;
 					Combo combo = (Combo) e.widget;
-					Churuata churuata = getInput();
-					churuata.addType( null, ChuruataTypes.Types.values()[ combo.getSelectionIndex()] );
+					IChuruata churuata = getInput();
+					churuata.addType( null, IChuruataType.Types.values()[ combo.getSelectionIndex()] );
 					addType = false;
 					if( isFilled() )
-						notifyInputEdited( new EditEvent<Churuata>( this, EditEvent.EditTypes.COMPLETE, churuata ));
+						notifyInputEdited( new EditEvent<IChuruata>( this, EditEvent.EditTypes.COMPLETE, churuata ));
 				} catch (Exception exception) {
 					exception.printStackTrace();
 				}
@@ -201,7 +203,7 @@ public class ShowChuruatasComposite extends AbstractEntityComposite<Churuata>
 		
 		Image image = ImageUtils.getImage( parent.getDisplay(), this.getClass().getResourceAsStream( S_INFORMATION_IMAGE ));
 		nameField.setImage( image );
-		this.comboTypes.setItems(ChuruataTypes.Types.getItems());
+		this.comboTypes.setItems(IChuruataType.Types.getItems());
 		this.comboTypes.select(0);
 		this.locationField.setText(this.location.toLocation());
 		//descriptionField.setImage(image);
@@ -212,7 +214,7 @@ public class ShowChuruatasComposite extends AbstractEntityComposite<Churuata>
 	
 	@Override
 	public void update(){
-		Churuata input = super.getInput();
+		IChuruata input = super.getInput();
 		if( input == null )
 			return;
 		String text = this.nameField.getText();
@@ -225,18 +227,18 @@ public class ShowChuruatasComposite extends AbstractEntityComposite<Churuata>
 	}
 
 	@Override
-	protected Churuata onGetInput(Churuata input) {
+	protected IChuruata onGetInput(IChuruata input) {
 		return input;
 	}
 
 
 	@Override
-	protected void onSetInput(Churuata input, boolean overwrite) {
+	protected void onSetInput(IChuruata input, boolean overwrite) {
 		if(!overwrite)
 			return;
 		this.nameField.setText(input.getName());
 		this.descriptionField.setText(input.getDescription());
-		ChuruataTypes.Types type = Utils.assertNull(input.getTypes())? ChuruataTypes.Types.COMMUNITY: input.getTypes()[0].getType();
+		ChuruataTypes.Types type = Utils.assertNull(input.getTypes())? IChuruataType.Types.COMMUNITY: input.getTypes()[0].getType();
 		this.comboTypes.select( type .ordinal());	
 	}
 
@@ -244,7 +246,7 @@ public class ShowChuruatasComposite extends AbstractEntityComposite<Churuata>
 		this.churuataTypesTable.setInput(input);
 	}
 
-	protected void onNotifyTableEvent( TableEvent<Churuata> event ) {
+	protected void onNotifyTableEvent( TableEvent<IChuruata> event ) {
 		switch( event.getTableEvent()) {
 		case SELECT:
 			setInput(event.getData(), true);
@@ -252,10 +254,10 @@ public class ShowChuruatasComposite extends AbstractEntityComposite<Churuata>
 			this.addType = true;
 			break;
 		case DELETE:
-			Churuata churuata = getInput();
+			IChuruata churuata = getInput();
 			churuata.setName( this.nameField.getText());
 			churuata.setDescription(this.descriptionField.getText());
-			churuata.setType( new ChuruataTypes( churuata, ChuruataTypes.Types.values()[ this.comboTypes.getSelectionIndex()], null ));
+			churuata.setType( new ChuruataTypes( IChuruataType.Types.values()[ this.comboTypes.getSelectionIndex()], null ));
 			//Collection<Churuata> remove = (Collection<Churuata>) event.getData();
 			//database.removeOnDescriptorId(remove.getID(), model.getData().getID());
 			break;
@@ -277,7 +279,7 @@ public class ShowChuruatasComposite extends AbstractEntityComposite<Churuata>
 			}
 				
 			if( this.isFilled() )
-				this.notifyInputEdited( new EditEvent<Churuata>( this, EditEvent.EditTypes.COMPLETE, getInput() ));
+				this.notifyInputEdited( new EditEvent<IChuruata>( this, EditEvent.EditTypes.COMPLETE, getInput() ));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

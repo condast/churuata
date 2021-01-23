@@ -5,8 +5,9 @@ import java.util.Collection;
 import java.util.logging.Logger;
 
 import org.churuata.digital.core.location.Churuata;
-import org.churuata.digital.core.location.ChuruataTypes;
+import org.churuata.digital.core.location.IChuruata;
 import org.churuata.digital.core.location.IChuruataCollection;
+import org.churuata.digital.core.location.IChuruataType;
 import org.churuata.digital.ui.views.ShowChuruatasComposite;
 import org.condast.commons.Utils;
 import org.condast.commons.data.latlng.LatLng;
@@ -102,7 +103,7 @@ public class MapBrowser extends Browser {
 					Object[] loc = ( Object[])event.getData()[2];
 					LatLng clicked = new LatLng((String) event.getData()[1], (double)loc[1], (double)loc[0] );
 
-					Churuata[] nearest = churuatas.getChuruatas(clicked, 1000); 
+					IChuruata[] nearest = churuatas.getChuruatas(clicked, 1000); 
 					ChuruataDialog dialog = null;
 					if( Utils.assertNull(nearest))	
 						dialog = new ChuruataDialog( getShell(), clicked  );
@@ -112,7 +113,7 @@ public class MapBrowser extends Browser {
 					int buttonID = dialog.open();
 					switch(buttonID) {
 					case Window.OK:
-						Churuata churuata = dialog.onOkButtonPressed();
+						IChuruata churuata = dialog.onOkButtonPressed();
 						updateMarkers(icons);
 						createMarker(icons, churuata, true);
 						break;
@@ -179,16 +180,16 @@ public class MapBrowser extends Browser {
 
 	public void updateMarkers( IconsView icons) {
 		icons.clearIcons();
-		for( Churuata churuata: churuatas.getChuruatas()) {
+		for( IChuruata churuata: churuatas.getChuruatas()) {
 			createMarker(icons, churuata, false);
 		}		
 	}
 
-	public static String createMarker( IconsView icons, Churuata churuata, boolean newEntry ) {
+	public static String createMarker( IconsView icons, IChuruata churuata, boolean newEntry ) {
 		Markers marker = Markers.BROWN;
 		char chr = 'N';
 		String result = null;
-		ChuruataTypes[] types = churuata.getTypes();
+		IChuruataType[] types = churuata.getTypes();
 		if( Utils.assertNull(types)){
 			result = icons.addMarker(churuata.getLocation(), marker, chr);
 		}else if( types.length > 1) {
@@ -196,7 +197,7 @@ public class MapBrowser extends Browser {
 			chr = 'M';
 			result = icons.addMarker(churuata.getLocation(), marker, chr);				
 		}else {
-			marker = newEntry? Markers.PURPLE: ChuruataTypes.Types.getMarker(types[0].getType());
+			marker = newEntry? Markers.PURPLE: IChuruataType.Types.getMarker(types[0].getType());
 			chr = types[0].getType().name().charAt(0);
 			result = icons.addMarker(churuata.getLocation(), marker, chr);				
 		}
@@ -214,7 +215,7 @@ public class MapBrowser extends Browser {
 		
 		private LatLng clicked;
 		
-		private Churuata joined;
+		private IChuruata joined;
 					
 		/**
 		 * Create the dialog.
@@ -231,7 +232,7 @@ public class MapBrowser extends Browser {
 		 * Create the dialog.
 		 * @param parentShell
 		 */
-		public ChuruataDialog( Shell shell, Churuata joined )
+		public ChuruataDialog( Shell shell, IChuruata joined )
 		{
 			super(shell );
 			this.joined = joined;
@@ -264,7 +265,7 @@ public class MapBrowser extends Browser {
 			return container;
 		}
 
-		protected void onCompositeEdited( EditEvent<Churuata> event ) {
+		protected void onCompositeEdited( EditEvent<IChuruata> event ) {
 			Button button = getButton( IDialogConstants.OK_ID );
 			if( button != null )
 				button.setEnabled(EditEvent.EditTypes.COMPLETE.equals(event.getType()));
@@ -296,13 +297,13 @@ public class MapBrowser extends Browser {
 		/**
 		 * Response to pressing the OK-button
 		 */
-		public Churuata  onOkButtonPressed(){
+		public IChuruata  onOkButtonPressed(){
 			Logger logger = Logger.getLogger( this.getClass().getName() );
 			logger.info("OK Selected");
-			Churuata churuata = active.getInput();
+			IChuruata churuata = active.getInput();
 			try {
 				if( !churuatas.contains(churuata))
-					churuatas.addChuruata(churuata);
+					churuatas.addChuruata((Churuata) churuata);
 				//database.update(model);
 			}
 			catch (Exception e) {

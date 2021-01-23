@@ -2,7 +2,7 @@ package org.churuata.digital.ui.views;
 
 import java.util.logging.Logger;
 
-import org.churuata.digital.core.location.Churuata;
+import org.churuata.digital.core.location.IChuruata;
 import org.churuata.digital.ui.image.InformationImages;
 import org.condast.commons.strings.StringStyler;
 import org.condast.commons.ui.image.ImageController;
@@ -22,7 +22,7 @@ import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 
-public class ShowChuruatasTableComposite extends AbstractTableComposite<Churuata>{
+public class ShowChuruatasTableComposite extends AbstractTableComposite<IChuruata>{
 	private static final long serialVersionUID = 976428552549736382L;
 
 	public static final String S_TABLECOLUMN_ID = "ChuruataTableColumn";
@@ -71,7 +71,7 @@ public class ShowChuruatasTableComposite extends AbstractTableComposite<Churuata
 				@Override
 				public String getText(Object element) {
 					String result = null;
-					Churuata p = (Churuata) element;
+					IChuruata p = (IChuruata) element;
 					try {
 						switch( column ) {
 						case NAME:
@@ -139,7 +139,7 @@ public class ShowChuruatasTableComposite extends AbstractTableComposite<Churuata
 			case DESCRIPTION:
 				column.getColumn().setText(col.toString());
 				column.getColumn().addListener(SWT.Selection, e->{				
-					notifyTableEvent( new TableEvent<Churuata>( e.widget, TableEvents.VIEW_TABLE, getInput() ));
+					notifyTableEvent( new TableEvent<IChuruata>( e.widget, TableEvents.VIEW_TABLE, getInput() ));
 				});
 				break;
 			case DELETE:
@@ -164,11 +164,11 @@ public class ShowChuruatasTableComposite extends AbstractTableComposite<Churuata
 	 * @see org.condast.eclipse.swt.composite.AbstractTableComposite#prepareInput(org.aieonf.concept.model.IModelLeaf)
 	 */
 	@Override
-	protected void onSetInput(Churuata[] leaf){
+	protected void onSetInput(IChuruata[] leaf){
 	}
 
 	@Override
-	protected int compareTables(int columnIndex, Churuata o1, Churuata o2) {
+	protected int compareTables(int columnIndex, IChuruata o1, IChuruata o2) {
 		Columns column = Columns.values()[columnIndex];
 		int result = 0;
 		switch( column) {

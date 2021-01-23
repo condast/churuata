@@ -3,6 +3,7 @@ package org.churuata.digital.core;
 import java.util.ArrayList;
 import java.util.Collection;
 import org.churuata.digital.core.location.Churuata;
+import org.churuata.digital.core.location.IChuruata;
 import org.churuata.digital.core.location.IChuruataCollection;
 import org.condast.commons.data.latlng.LatLng;
 import org.condast.commons.data.latlng.LatLngUtils;
@@ -23,7 +24,7 @@ public class Dispatcher implements IChuruataCollection {
 	}
 	
 	@Override
-	public boolean contains( Churuata churuata ) {
+	public boolean contains( IChuruata churuata ) {
 		return this.churuatas.contains(churuata);
 	}
 	
@@ -33,7 +34,7 @@ public class Dispatcher implements IChuruataCollection {
 	}
 
 	@Override
-	public boolean removeChuruata(  Churuata churuata ) {
+	public boolean removeChuruata(  IChuruata churuata ) {
 		return this.churuatas.remove(churuata);
 	}
 	
@@ -43,7 +44,7 @@ public class Dispatcher implements IChuruataCollection {
 	}
 
 	@Override
-	public Churuata[] getChuruatas(LatLng latlng, int distance) {
+	public IChuruata[] getChuruatas(LatLng latlng, int distance) {
 		Collection<Churuata> results = new ArrayList<>();
 		for( Churuata churuata: this.churuatas) {
 			if( LatLngUtils.distance( churuata.getLocation(), latlng) < distance )
