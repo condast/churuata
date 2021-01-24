@@ -35,8 +35,6 @@ public class Location implements IUpdateable {
 	private double latitude;
 	private double longitude;
 	
-	private int zoom;
-	
 	@Basic(optional = true)
 	@Column( nullable=true)
 	private String wkt;
@@ -55,14 +53,13 @@ public class Location implements IUpdateable {
 		super();
 	}
 
-	public Location( ILoginUser user, LatLng latlng, int zoom ) {
+	public Location( ILoginUser user, LatLng latlng ) {
 		this();
-		this.userid = user.getId();
+		this.userid = ( user == null )? -1: user.getId();
 		this.name = latlng.getId();
 		this.description = latlng.getDescription();
 		this.latitude = latlng.getLatitude();
 		this.longitude = latlng.getLongitude();
-		this.zoom = zoom;
 	}
 
 	public long getId() {
@@ -82,14 +79,6 @@ public class Location implements IUpdateable {
 		this.description = location.getDescription();
 		this.latitude = location.getLatitude();
 		this.longitude = location.getLongitude();	
-	}
-
-	public int getZoom() {
-		return zoom;
-	}
-
-	public void setZoom(int zoom) {
-		this.zoom = zoom;
 	}
 
 	public String getWkt() {

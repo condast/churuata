@@ -5,12 +5,13 @@ import java.util.Map;
 import javax.persistence.EntityManager;
 
 import org.condast.commons.persistence.service.AbstractPersistencyService;
+import org.condast.commons.strings.StringUtils;
 
 public class Dispatcher extends AbstractPersistencyService {
 
 	//Needs to be the same as in the persistence.xml file
-	private static final String S_COVAID_SERVICE_ID = "org.covaid.rest.service"; 
-	private static final String S_COVAID_SERVICE = "CovAID REST Service"; 
+	private static final String S_CHURUATA_SERVICE_ID = "org.churuata.rest.service"; 
+	private static final String S_CHURUATA_SERVICE = "Churuata REST Service"; 
 
 	
 	private EntityManager manager;
@@ -18,15 +19,15 @@ public class Dispatcher extends AbstractPersistencyService {
 	private static Dispatcher dispatcher = new Dispatcher();
 	
 	private Dispatcher() {
-		super( S_COVAID_SERVICE_ID, S_COVAID_SERVICE );
+		super( S_CHURUATA_SERVICE_ID, S_CHURUATA_SERVICE );
 	}
 
 	public static Dispatcher getInstance() {
 		return dispatcher;
 	}
 		
-	public boolean isRegistered( String identifier, String token ) {
-		return false;
+	public boolean isRegistered( long userId, String token ) {
+		return !( userId < 0) && !StringUtils.isEmpty(token);
 	}
 
 	@Override

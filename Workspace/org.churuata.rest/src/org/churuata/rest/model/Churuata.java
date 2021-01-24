@@ -2,6 +2,7 @@ package org.churuata.rest.model;
 
 import java.util.Collection;
 import java.util.Date;
+import java.util.Set;
 import java.util.TreeSet;
 
 import javax.persistence.Basic;
@@ -17,6 +18,7 @@ import javax.persistence.TemporalType;
 
 import org.churuata.digital.core.location.IChuruata;
 import org.churuata.digital.core.location.IChuruataType;
+import org.churuata.digital.core.location.IMurmering;
 import org.condast.commons.authentication.user.ILoginUser;
 import org.condast.commons.data.latlng.LatLng;
 
@@ -41,8 +43,11 @@ public class Churuata implements Comparable<Churuata>, IChuruata{
 	
 	private Location location;
 	
-	@OneToMany( mappedBy="batch", cascade = CascadeType.ALL, orphanRemoval = true)
-	private TreeSet<ChuruataType> types;
+	@OneToMany( mappedBy="owner", cascade = CascadeType.ALL, orphanRemoval = true)
+	private Set<ChuruataType> types;
+
+	@OneToMany( mappedBy="churuata", cascade = CascadeType.ALL, orphanRemoval = true)
+	private Collection<Murmering> murmerings;
 
 	@Basic(optional = false)
 	@Column( nullable=false)
@@ -54,17 +59,40 @@ public class Churuata implements Comparable<Churuata>, IChuruata{
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date updateDate;
 
+	
+	public Churuata() {
+		super();
+	}
+
 	public Churuata( LatLng location) {
 		this( null, location.getId(), location );
+	}
+
+	public Churuata( String name, LatLng location) {
+		this( null, name, location );
 	}
 	
 	public Churuata( ILoginUser owner, String name, LatLng location) {
 		super();
 		this.name = name;
 		this.owner = owner;
-		this.ownerId = owner.getId();
-		this.location = new Location( owner, location, 12 );
+		this.ownerId = ( owner == null )?-1: owner.getId();
+		this.location = new Location( owner, location );
 		this.types = new TreeSet<>();
+	}
+
+	public Churuata( ILoginUser owner, String name, Location location) {
+		super();
+		this.name = name;
+		this.owner = owner;
+		this.ownerId = ( owner == null )?-1: owner.getId();
+		this.location = location;
+		this.types = new TreeSet<>();
+	}
+
+	@Override
+	public long getId() {
+		return id;
 	}
 
 	public long getOwnerId() {
@@ -87,13 +115,6 @@ public class Churuata implements Comparable<Churuata>, IChuruata{
 	}
 
 	@Override
-	public void setTypes(Collection<IChuruataType> types) {
-		this.types.clear();
-		for( IChuruataType ct: types )
-			this.types.add( (ChuruataType) ct );
-	}
-
-	@Override
 	public String getDescription() {
 		return description;
 	}
@@ -109,24 +130,61 @@ public class Churuata implements Comparable<Churuata>, IChuruata{
 	}
 
 	@Override
+	public void setTypes(Collection<IChuruataType> types) {
+		this.types.clear();
+		for( IChuruataType ct: types )
+			this.types.add( (ChuruataType) ct );
+	}
+
+	@Override
 	public boolean setType( IChuruataType type ) {
 		this.types.clear();
 		return this.types.add((ChuruataType) type);
 	}
 
+	public boolean addType( ILoginUser user, ChuruataType type ) {
+		return this.types.add( type );
+	}
+
 	@Override
 	public boolean addType( ILoginUser user, IChuruataType.Types type ) {
-		return this.types.add( new ChuruataType(type, user));
+		return this.types.add( new ChuruataType(user, type));
 	}
-	
+
+	@Override
+	public boolean addType( ILoginUser user, IChuruataType.Types type, IChuruataType.Contribution contribution ) {
+		return this.types.add( new ChuruataType(user, type, contribution));
+	}
+
 	@Override
 	public boolean removeType( IChuruataType type ) {
 		return this.types.remove(type);
 	}
 
 	@Override
+	public IChuruataType removeType( long typeId ) {
+		for( ChuruataType type: this.types ) {
+			if( type.getId() == typeId) {
+				this.types.remove(type);
+				return type;
+			}
+		}
+		return null;
+	}
+
+	@Override
 	public IChuruataType[] getTypes() {
 		return types.toArray( new ChuruataType[ types.size()]);
+	}
+
+	@Override
+	public boolean addMurmering( ILoginUser user, String text ) {
+		return this.murmerings.add( new Murmering( this, user, text ));
+	}
+
+	@Override
+	public boolean removeMurmering( IMurmering murmering ) {
+		return this.murmerings.add( (Murmering) murmering );
 	}
 
 	public Date getCreateDate() {

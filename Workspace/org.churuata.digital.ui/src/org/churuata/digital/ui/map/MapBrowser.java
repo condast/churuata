@@ -290,7 +290,7 @@ public class MapBrowser extends Browser {
 		 */
 		@Override
 		protected Point getInitialSize(){
-			size = new Point( 800, 800 );
+			size = new Point( 800, 600 );
 			return size;
 		}
 				
@@ -304,20 +304,11 @@ public class MapBrowser extends Browser {
 			try {
 				if( !churuatas.contains(churuata))
 					churuatas.addChuruata((Churuata) churuata);
-				//database.update(model);
 			}
 			catch (Exception e) {
 				e.printStackTrace();
 			}
 			return churuata;
 		}
-		
-		@Override
-		public boolean close() {
-			//this.controller.removeListener(listener);
-			return super.close();
-		}
-	
 	}
-
 }

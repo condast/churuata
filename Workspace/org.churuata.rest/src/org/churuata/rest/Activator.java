@@ -5,7 +5,7 @@ import org.osgi.framework.BundleContext;
 
 public class Activator implements BundleActivator {
 
-	  public static String BUNDLE_ID = "org.covaid.mobile";
+	  public static String BUNDLE_ID = "org.churuata.rest";
 
 	private static BundleContext context;
 

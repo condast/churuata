@@ -28,6 +28,8 @@ public class ChuruataType implements Comparable<ChuruataType>, IChuruataType{
 
 	private int type;
 	
+	private int contribution;
+	
 	@Basic(optional = false)
 	@Column( nullable=false)
 	private String description;
@@ -47,20 +49,43 @@ public class ChuruataType implements Comparable<ChuruataType>, IChuruataType{
 
 	private transient ILoginUser user;
 	
-	public ChuruataType( Types type, ILoginUser user) {
-		this( type, null, user );
+	
+	public ChuruataType() {
+		super();
 	}
 
-	public ChuruataType(Types type, String description, ILoginUser user) {
+	public ChuruataType( ILoginUser user, Types type) {
+		this( user, type, Contribution.LOG );
+	}
+
+	public ChuruataType(ILoginUser user, Types type, String description) {
+		this( user, type, description, Contribution.LOG);
+	}
+
+	public ChuruataType(ILoginUser user, Types type, Contribution contribution) {
+		this( user, type, null, contribution);
+	}
+
+	public ChuruataType(ILoginUser user, Types type, String description, Contribution contribution) {
 		super();
 		this.type = type.ordinal();
+		this.contribution = contribution.ordinal();
 		this.description = description;
 		this.user = user;
-		this.userid = user.getId();
+		this.userid = ( user == null )?-1:user.getId();
+	}
+
+	public long getId() {
+		return id;
 	}
 
 	public long getUserid() {
 		return userid;
+	}
+
+	@Override
+	public ILoginUser getUser() {
+		return user;
 	}
 
 	@Override
@@ -79,8 +104,8 @@ public class ChuruataType implements Comparable<ChuruataType>, IChuruataType{
 	}
 
 	@Override
-	public ILoginUser getUser() {
-		return user;
+	public Contribution getContribution() {
+		return Contribution.values()[contribution];
 	}
 
 	public Date getCreateDate() {

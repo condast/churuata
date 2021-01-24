@@ -55,6 +55,18 @@ public interface IChuruataType {
 		}
 	}
 
+	public enum Contribution{
+		LOG,
+		LEAF;
+		
+		@Override
+		public String toString() {
+			return StringStyler.prettyString( name());
+		}		
+	}
+
+	long getId();
+
 	String getDescription();
 
 	void setDescription(String description);
@@ -62,5 +74,8 @@ public interface IChuruataType {
 	Types getType();
 
 	ILoginUser getUser();
+	
+	Contribution getContribution();
+	
 
 }

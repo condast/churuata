@@ -1,18 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
-	<persistence-unit name="org.churuata.management"
+	<persistence-unit name="org.churuata.rest"
 		transaction-type="RESOURCE_LOCAL">
-		<description>SATR ARNAC Vessel Maintenance</description>
-		<class>org.churuata.management.model.Location</class>
-		<class>org.churuata.management.model.UserData</class>
-		<class>org.churuata.management.model.Vessel</class>
-		<class>org.churuata.management.model.Polygon</class>
+		<description>Churuata REST API</description>
+		<class>org.churuata.rest.model.Location</class>
+		<class>org.churuata.rest.model.Churuata</class>
+		<class>org.churuata.rest.model.ChuruataType</class>
+		<class>org.churuata.rest.model.Murmering</class>
+		<class>org.churuata.rest.model.UserData</class>
 		<exclude-unlisted-classes>true</exclude-unlisted-classes>
 		<properties>
 			<property name="bundle-name"
-				value="org.churuata.management" />
-			<property name="unit-name" value="Aquabots Client" />
+				value="org.churuata.rest" />
+			<property name="unit-name" value="Churuata" />
       		<property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>
 			<!-- Add the following entry in the hosts file in C:\Windows\System32\drivers\etc: 
 					# CONDAST DATABASE SERVER 

@@ -6,8 +6,8 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.aieonf</groupId>
-	<artifactId>org.aieonf.parent</artifactId>
+	<groupId>org.churuata</groupId>
+	<artifactId>org.churuata.parent</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
@@ -16,12 +16,14 @@
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<tycho.version>2.1.0</tycho.version>
 		<generics>P:/GitHub/</generics>
-		<project-root>P:/GitHub/org.aieonf</project-root>
-		<workspace-root>P:/Windows/Condast/Workspace/org.aieonf</workspace-root>
+		<project-root>P:/GitHub/org.churuata</project-root>
+		<workspace-root>P:/Windows/Condast/Workspace/org.churuata</workspace-root>
 		<virgo-root>file:${generics}/Root/Workspace/Virgo</virgo-root>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<neon-update-repo.url>http://download.eclipse.org/eclipse/updates/4.6</neon-update-repo.url>
-		<rap-repo.url>http://download.eclipse.org/rt/rap/3.1/</rap-repo.url>
+		<rap-repo.url>http://download.eclipse.org/rt/rap/3.4/</rap-repo.url>
+		<condast-commons>file:${generics}/org.condast.commons/Workspace</condast-commons>
+		<condast-js>file:${generics}/org.condast.js/Workspace</condast-js>
 		<condast-repo.url>${virgo-root}/alpha.condast.root.update/</condast-repo.url>
 	</properties>
 
@@ -41,6 +43,16 @@
 			<url>${condast-repo.url}</url>
 			<layout>p2</layout>
 		</repository>
+		<repository>
+			<id>org-condast-commons</id>
+			<url>${condast-commons}/org.condast.commons.update/target/site</url>
+			<layout>p2</layout>
+		</repository>
+		<repository>
+			<id>org-condast-commons-js</id>
+			<url>${condast-js}/org.condast.js.update/target/site</url>
+			<layout>p2</layout>
+		</repository>
 	</repositories>
 
 	<dependencies>
@@ -53,20 +65,12 @@
 	</dependencies>
 
 	<modules>
-		<module>../org.aieonf.target</module>
-		<module>../org.aieonf.commons</module>
-		<module>../org.aieonf.commons.ui</module>
-		<module>../org.aieonf.collections</module>
-		<module>../org.aieonf.commons.base64</module>
-		<module>../org.aieonf.concept</module>
-		<module>../org.aieonf.model</module>
-		<module>../org.aieonf.template</module>
-		<module>../org.aieonf.osgi</module>
-		<module>../org.aieonf.browsersupport</module>
-		<module>../org.aieonf.tinkerpop</module>
-		<module>../org.aieonf.sketch</module>
-		<module>../org.aieonf.feature</module>
-		<module>../org.aieonf.update</module>
+		<module>../org.churuata.digital</module>
+		<module>../org.churuata.digital.core</module>
+		<module>../org.churuata.digital.ui</module>
+		<module>../org.churuata.rest</module>
+		<module>../org.churuata.feature</module>
+		<module>../org.churuata.update</module>
 	</modules>
 
 	<build>
@@ -109,13 +113,15 @@
 				<version>${tycho.version}</version>
 				<configuration>
 					<pomDependencies>consider</pomDependencies>
+					<!--
 					<target>
 						<artifact>
-							<groupId>org.aieonf</groupId>
-							<artifactId>aieonf.target</artifactId>
+							<groupId>org.churuata</groupId>
+							<artifactId>churuata.target</artifactId>
 							<version>${project.version}</version>
 						</artifact>
 					</target>
+					-->
 					<environments>
 						<environment>
 							<os>linux</os>

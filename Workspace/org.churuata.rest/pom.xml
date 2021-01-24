@@ -5,12 +5,12 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
 
   <!-- Link to the parent pom -->
     <parent>
-        <groupId>org.covaid</groupId>
-        <artifactId>org.covaid.parent</artifactId>
+        <groupId>org.churuata</groupId>
+        <artifactId>org.churuata.parent</artifactId>
         <version>1.0.0-SNAPSHOT</version>
-        <relativePath>../org.covaid.project</relativePath>
+        <relativePath>../org.churuata.project</relativePath>
     </parent>
 
   <packaging>eclipse-plugin</packaging>
-  <artifactId>org.covaid.rest</artifactId>
+  <artifactId>org.churuata.rest</artifactId>
 </project>

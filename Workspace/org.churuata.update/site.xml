@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <feature url="features/org.covaid.feature_1.0.0.qualifier.jar" id="org.covaid.feature" version="1.0.0.qualifier"/>
+   <feature url="features/org.churuata.feature_1.0.0.qualifier.jar" id="org.churuata.feature" version="1.0.0.qualifier"/>
 </site>

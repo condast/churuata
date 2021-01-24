@@ -1,11 +1,11 @@
 package org.churuata.digital.ui.views;
 
-import java.util.logging.Logger;
-
 import org.churuata.digital.core.location.Churuata;
-import org.churuata.digital.core.location.ChuruataTypes;
+import org.churuata.digital.core.location.ChuruataType;
 import org.churuata.digital.core.location.IChuruata;
 import org.churuata.digital.core.location.IChuruataType;
+import org.churuata.digital.ui.image.ChuruataImages;
+import org.churuata.digital.ui.image.ChuruataImages.Images;
 import org.churuata.digital.ui.image.ImageUtils;
 import org.condast.commons.Utils;
 import org.condast.commons.data.latlng.LatLng;
@@ -38,8 +38,6 @@ public class ShowChuruatasComposite extends AbstractEntityComposite<IChuruata>
 	public static final String S_CHURUATA_DIALOG_SHELL = "ChuruatasDialogShell";
 	private static final String S_INFORMATION_IMAGE = "/icons/information-icon.png";
 
-	private static final String S_ADD_IMAGE = "/icons/add-32.png";
-	
 	private static final String S_NAME = "Name";
 	private static final String S_DESCRIPTION = "Description";
 	private static final String S_LOCATION = "Location";
@@ -62,8 +60,6 @@ public class ShowChuruatasComposite extends AbstractEntityComposite<IChuruata>
 	private LatLng location;
 	
 	private boolean addType;
-	
-	private Logger logger = Logger.getLogger(this.getClass().getName());
 	
 	/**
 	 * Create the dialog.
@@ -170,12 +166,17 @@ public class ShowChuruatasComposite extends AbstractEntityComposite<IChuruata>
 				}
 			}
 		});		
-		
-		Image image = ImageUtils.getImage(getDisplay(), this.getClass().getResourceAsStream( S_ADD_IMAGE ));
-		
+				
 		Button addButton = new Button( grpFillIn, SWT.None );
 		addButton.setLayoutData(new GridData( SWT.RIGHT, SWT.FILL, false, false));
-		addButton.setImage(image);
+		try {
+			ChuruataImages ci = ChuruataImages.getInstance();
+			Image image = ci.getImage( Images.ADD);
+			addButton.setImage(image);
+		} catch (Exception e1) {
+			addButton.setText("Add");
+			e1.printStackTrace();
+		}
 		addButton.addSelectionListener( new SelectionAdapter() {
 			private static final long serialVersionUID = 1L;
 
@@ -201,15 +202,19 @@ public class ShowChuruatasComposite extends AbstractEntityComposite<IChuruata>
 	 */
 	protected void initComponent( Composite parent ){
 		
-		Image image = ImageUtils.getImage( parent.getDisplay(), this.getClass().getResourceAsStream( S_INFORMATION_IMAGE ));
-		nameField.setImage( image );
-		this.comboTypes.setItems(IChuruataType.Types.getItems());
-		this.comboTypes.select(0);
-		this.locationField.setText(this.location.toLocation());
-		//descriptionField.setImage(image);
-		//scopeField.setImage(image);
-		
-		parent.requestLayout();
+		try {
+			this.comboTypes.setItems(IChuruataType.Types.getItems());
+			this.comboTypes.select(0);
+			this.locationField.setText(this.location.toLocation());
+			//descriptionField.setImage(image);
+			//scopeField.setImage(image);
+			Image image = ImageUtils.getImage( parent.getDisplay(), this.getClass().getResourceAsStream( S_INFORMATION_IMAGE ));
+			nameField.setImage( image );
+			
+			parent.requestLayout();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	@Override
@@ -223,7 +228,7 @@ public class ShowChuruatasComposite extends AbstractEntityComposite<IChuruata>
 		text = this.descriptionField.getText();
 		if( !StringUtils.isEmpty(text ))
 			input.setDescription( this.descriptionField.getText());
-		//input.setType( new ChuruataTypes( input, ChuruataTypes.Types.values()[ this.comboTypes.getSelectionIndex()], null ));
+		input.setType( new ChuruataType( null, ChuruataType.Types.values()[ this.comboTypes.getSelectionIndex()] ));
 	}
 
 	@Override
@@ -238,7 +243,7 @@ public class ShowChuruatasComposite extends AbstractEntityComposite<IChuruata>
 			return;
 		this.nameField.setText(input.getName());
 		this.descriptionField.setText(input.getDescription());
-		ChuruataTypes.Types type = Utils.assertNull(input.getTypes())? IChuruataType.Types.COMMUNITY: input.getTypes()[0].getType();
+		ChuruataType.Types type = Utils.assertNull(input.getTypes())? IChuruataType.Types.COMMUNITY: input.getTypes()[0].getType();
 		this.comboTypes.select( type .ordinal());	
 	}
 
@@ -257,9 +262,7 @@ public class ShowChuruatasComposite extends AbstractEntityComposite<IChuruata>
 			IChuruata churuata = getInput();
 			churuata.setName( this.nameField.getText());
 			churuata.setDescription(this.descriptionField.getText());
-			churuata.setType( new ChuruataTypes( IChuruataType.Types.values()[ this.comboTypes.getSelectionIndex()], null ));
-			//Collection<Churuata> remove = (Collection<Churuata>) event.getData();
-			//database.removeOnDescriptorId(remove.getID(), model.getData().getID());
+			churuata.setType( new ChuruataType( null, IChuruataType.Types.values()[ this.comboTypes.getSelectionIndex()] ));
 			break;
 		default:
 			break;

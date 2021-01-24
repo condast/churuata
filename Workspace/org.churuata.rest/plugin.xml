@@ -4,11 +4,11 @@
    <extension
          point="org.eclipse.equinox.http.registry.servlets">
       <servlet
-            alias="/covaid/rest"
+            alias="/churuata/rest"
             class="org.churuata.rest.RestServlet"
             load-on-startup="true">
         <init-param name="javax.ws.rs.Application"
-    			    value="org.covaid.rest.RestApplication">
+    			    value="org.churuata.rest.RestApplication">
 		</init-param>
       </servlet>
    </extension>

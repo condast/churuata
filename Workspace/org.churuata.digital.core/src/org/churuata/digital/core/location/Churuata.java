@@ -3,6 +3,7 @@ package org.churuata.digital.core.location;
 import java.util.Collection;
 import java.util.TreeSet;
 
+import org.churuata.digital.core.location.IChuruataType.Contribution;
 import org.condast.commons.authentication.user.ILoginUser;
 import org.condast.commons.data.latlng.LatLng;
 
@@ -26,6 +27,19 @@ public class Churuata implements Comparable<Churuata>, IChuruata{
 		this.owner = owner;
 		this.location = location;
 		this.types = new TreeSet<>();
+	}
+
+	
+	@Override
+	public long getId() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public IChuruataType removeType(long typeId) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
@@ -70,10 +84,15 @@ public class Churuata implements Comparable<Churuata>, IChuruata{
 	}
 
 	@Override
-	public boolean addType( ILoginUser user, ChuruataTypes.Types type ) {
-		return this.types.add( new ChuruataTypes(type, user));
+	public boolean addType( ILoginUser user, ChuruataType.Types type ) {
+		return this.types.add( new ChuruataType(user, type ));
 	}
-	
+
+	@Override
+	public boolean addType( ILoginUser user, ChuruataType.Types type, Contribution contribution ) {
+		return this.types.add( new ChuruataType(user, type, contribution ));
+	}
+
 	@Override
 	public boolean removeType( IChuruataType type ) {
 		return this.types.remove(type);
@@ -81,11 +100,23 @@ public class Churuata implements Comparable<Churuata>, IChuruata{
 
 	@Override
 	public IChuruataType[] getTypes() {
-		return types.toArray( new ChuruataTypes[ types.size()]);
+		return types.toArray( new ChuruataType[ types.size()]);
 	}
 
 	@Override
 	public int compareTo(Churuata o) {
 		return this.name.compareTo(o.getName());
+	}
+
+	@Override
+	public boolean addMurmering(ILoginUser user, String text) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean removeMurmering(IMurmering murmering) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }

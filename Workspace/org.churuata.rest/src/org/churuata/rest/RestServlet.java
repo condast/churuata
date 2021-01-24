@@ -3,7 +3,7 @@ package org.churuata.rest;
 import javax.servlet.Servlet;
 import javax.ws.rs.ApplicationPath;
 
-import org.churuata.rest.resources.FroggerResource;
+import org.churuata.rest.resources.ChuruataResource;
 import org.churuata.rest.resources.PushResource;
 import org.condast.commons.messaging.http.AbstractServletWrapper;
 import org.condast.commons.messaging.rest.CorsFilter;
@@ -13,7 +13,7 @@ import org.glassfish.jersey.servlet.ServletContainer;
 public class RestServlet extends AbstractServletWrapper {
 
 	//Same as alias in plugin.xml
-	public static final String S_CONTEXT_PATH = "covaid";
+	public static final String S_CONTEXT_PATH = "churuata";
 
 	public RestServlet() {
 		super( S_CONTEXT_PATH );
@@ -32,7 +32,7 @@ public class RestServlet extends AbstractServletWrapper {
 		//in equinox the scanning of packages may not work
 		private RestApplication() {
 			register( CorsFilter.class );
-			register( FroggerResource.class );
+			register( ChuruataResource.class );
 			register( PushResource.class );
 		}
 	}
