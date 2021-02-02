@@ -45,6 +45,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   buildingID: 0
+  posX: 0
+  posY: 0
   sManager: {fileID: 0}
   Pillar: {fileID: 8176674330919627575, guid: 77db6d417cde715448b264e824a33f5b, type: 3}
   Leaf: {fileID: 1985685199441122406, guid: 3b05fafe44286fc4f97f96122de0aaf2, type: 3}
@@ -55,7 +57,7 @@ MonoBehaviour:
   TestBuilding: 0
   TestService: 0
   prefab: {fileID: 6441007578676543345, guid: 243c23cfc0b7b1c48abf257de0919162, type: 3}
-  numberOfObjects: 50
+  numberOfObjects: 20
   radius: 4.5
   serviceRadius: 3
   roofHeight: 3.2
