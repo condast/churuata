@@ -17,9 +17,6 @@ public class BuildingMaster : MonoBehaviour
     public int currentLeafs;
     public int currentService;
 
-    [Header("Test Buildings")]
-    public bool TestBuilding;
-    public bool TestService;
     [Header(" ")]
     public GameObject prefab;
     public int numberOfObjects = 20;
@@ -28,20 +25,6 @@ public class BuildingMaster : MonoBehaviour
     public float roofHeight = 1.6f;
 
     public GameObject ServiceHolder;
-
-    void Update()
-    {
-        if (TestBuilding)
-        {
-            TestBuilding = false;
-            AddPart();
-        }
-        if (TestService)
-        {
-            TestService = false;
-            AddService();
-        }
-    }
 
     public void AddPart()
     {
@@ -56,6 +39,7 @@ public class BuildingMaster : MonoBehaviour
             createLeaf();
         }
         int buildingProgress = currentLeafs + currentPillars;
+        if(!sManager.useLocalSave)
         sManager.Save(currentService, buildingProgress, buildingID, posX, posY);
     }
 
@@ -76,7 +60,8 @@ public class BuildingMaster : MonoBehaviour
             serviceHolder.transform.parent = ServiceHolder.transform;
         }
         int buildingProgress = currentLeafs + currentPillars;
-        sManager.Save(currentService, buildingProgress, buildingID, posX, posY);
+        if (!sManager.useLocalSave)
+            sManager.Save(currentService, buildingProgress, buildingID, posX, posY);
     }
 
     public void loadBuildingProgress(int buildingProgress, int serviceCount)

@@ -49,13 +49,11 @@ MonoBehaviour:
   posY: 0
   sManager: {fileID: 0}
   Pillar: {fileID: 8176674330919627575, guid: 77db6d417cde715448b264e824a33f5b, type: 3}
-  Leaf: {fileID: 1985685199441122406, guid: 3b05fafe44286fc4f97f96122de0aaf2, type: 3}
+  Leaf: {fileID: 4215403082459637271, guid: ee5d6d049fa610f43be0620dbcbb5a17, type: 3}
   Box: {fileID: 6377814258799350666, guid: 21e3562128d59644f9976472f6d86ba0, type: 3}
   currentPillars: 0
   currentLeafs: 0
   currentService: 0
-  TestBuilding: 0
-  TestService: 0
   prefab: {fileID: 6441007578676543345, guid: 243c23cfc0b7b1c48abf257de0919162, type: 3}
   numberOfObjects: 20
   radius: 4.5

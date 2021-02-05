@@ -20,18 +20,20 @@ public class SaveManager : MonoBehaviour
     public bool createBuilding;
 
     int lastCreatedBuilding = 0;
+    public bool useLocalSave;
 
     public void OnEnable()
     {
         path = Application.persistentDataPath + "/Saves/";
         if (!Directory.Exists(path))
             Directory.CreateDirectory(path);
-        Load();
+        if (useLocalSave)
+            Load();
     }
 
     public void Update()
     {
-        if (load)
+        if (load && useLocalSave)
         {
             load = false;
             Load();
@@ -52,6 +54,7 @@ public class SaveManager : MonoBehaviour
         bMaster = Building.GetComponent<BuildingMaster>();
         bMaster.sManager = this;
         bMaster.buildingID = lastCreatedBuilding;
+        if(useLocalSave)
         Save(serviceCount, buildingProgress, lastCreatedBuilding, 0, 0);
     }
 
