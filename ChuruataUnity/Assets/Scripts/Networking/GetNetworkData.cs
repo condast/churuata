@@ -4,6 +4,7 @@ using UnityEngine;
 using System.Net;
 using System;
 using System.IO;
+using UnityEngine.Networking;
 
 public class GetNetworkData : MonoBehaviour
 {
@@ -27,11 +28,8 @@ public class GetNetworkData : MonoBehaviour
         Debug.Log("Trying to register to the database");
         try
         {
-            request = (HttpWebRequest)WebRequest.Create(string.Format("{0}find?userid={1}&token={2}&name={3}&type={4}", adress, clientID, clientToken, clientname, clientType));
-            response = (HttpWebResponse)request.GetResponse();
-            StreamReader reader = new StreamReader(response.GetResponseStream());
-            jsonResponse = reader.ReadToEnd();
-
+            string url = string.Format("{0}find?userid={1}&token={2}&name={3}&type={4}", adress, clientID, clientToken, clientname, clientType);
+            StartCoroutine(GetData(url));
             Debug.Log("Getting data was succesfull!");
         }
         catch
@@ -45,34 +43,43 @@ public class GetNetworkData : MonoBehaviour
         Debug.Log("Trying to get churuata from the database");
         try
         {
-            request = (HttpWebRequest)WebRequest.Create(string.Format("{0}find?userid={1}&token={2}&id={3}", adress, clientID, clientToken, churuataID));
-            response = (HttpWebResponse)request.GetResponse();
-            StreamReader reader = new StreamReader(response.GetResponseStream());
-            jsonResponse = reader.ReadToEnd();
+            string url = string.Format("{0}find?userid={1}&token={2}&id={3}", adress, clientID, clientToken, churuataID);
+            StartCoroutine(GetData(url));
             Debug.Log("Getting data was succesfull!");
         }
         catch
         {
-            Debug.LogError("Getting data was unsuccesfull!");
             throw;
+        }
+    }
+
+    IEnumerator GetData(string url)
+    {
+        UnityWebRequest www = UnityWebRequest.Get(url);
+        yield return www.SendWebRequest();
+        if (www.isNetworkError || www.isHttpError)
+        {
+            jsonResponse = www.error;
+            Debug.Log(www.error);
+        }
+        else
+        {
+            jsonResponse = www.downloadHandler.text;
+            Debug.Log(www.downloadHandler.text);
         }
     }
 
     public void Contribute(int clientID, int token, string type, string description)
     {
-        Debug.Log("Trying to contribute to Churuata " + clientID);
+        Debug.Log("Trying to get churuata from the database");
         try
         {
-            request = (HttpWebRequest)WebRequest.Create(string.Format("{0}add-contribution?userid={1}&token={2}&type={3}&description={4}&contribution=log", adress, clientID, token, type, description));
-            response = (HttpWebResponse)request.GetResponse();
-            StreamReader reader = new StreamReader(response.GetResponseStream());
-            jsonResponse = reader.ReadToEnd();
-
-            Debug.Log("contribution was succesfull!");
+            string url = string.Format("{0}add-contribution?userid={1}&token={2}&type={3}&description={4}&contribution=log", adress, clientID, token, type, description);
+            StartCoroutine(GetData(url));
+            Debug.Log("Getting data was succesfull!");
         }
         catch
         {
-            Debug.LogError("contribution was unsuccesfull!");
             throw;
         }
     }
