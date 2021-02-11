@@ -44,24 +44,22 @@ public class NetworkingUI : MonoBehaviour
         clientName = clientNameInput.text;
         //clientType = clientTypeInput.text;
         description = descriptionInput.text;
+        returnText.text = networkData.jsonResponse;
     }
 
     public void Register()
     {
         networkData.Register(clientID, clientToken, clientName, clientType);
-        returnText.text = networkData.jsonResponse;
     }
 
     public void GetChuruata()
     {
         networkData.GetChuruata(clientID, clientToken, churuataID);
-        returnText.text = networkData.jsonResponse;
     }
 
     public void Contribute()
     {
         networkData.Contribute(clientID, clientToken, clientType, description);
-        returnText.text = networkData.jsonResponse;
     }
 
     public void TestBuilding()
