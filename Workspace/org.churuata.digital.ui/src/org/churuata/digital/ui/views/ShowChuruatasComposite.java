@@ -1,5 +1,7 @@
 package org.churuata.digital.ui.views;
 
+import java.io.IOException;
+
 import org.churuata.digital.core.location.Churuata;
 import org.churuata.digital.core.location.ChuruataType;
 import org.churuata.digital.core.location.IChuruata;
@@ -7,6 +9,7 @@ import org.churuata.digital.core.location.IChuruataType;
 import org.churuata.digital.ui.image.ChuruataImages;
 import org.churuata.digital.ui.image.ChuruataImages.Images;
 import org.churuata.digital.ui.image.ImageUtils;
+import org.churuata.digital.utils.RWTUtils;
 import org.condast.commons.Utils;
 import org.condast.commons.data.latlng.LatLng;
 import org.condast.commons.strings.StringUtils;
@@ -89,8 +92,8 @@ public class ShowChuruatasComposite extends AbstractEntityComposite<IChuruata>
 				
 		grpFillIn = new Group(container, SWT.NONE);
 		grpFillIn.setText("Details:");
-		grpFillIn.setLayout(new GridLayout(2, false));
-		grpFillIn.setLayoutData( new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1 ));	
+		grpFillIn.setLayout(new GridLayout(3, false));
+		grpFillIn.setLayoutData( new GridData(SWT.FILL, SWT.FILL, true, false, 3, 1 ));	
 		nameField = new InputField( grpFillIn, SWT.NONE );
 		nameField.setBackgroundControl(1);
 		nameField.setLabel( S_NAME + ": ");
@@ -107,14 +110,14 @@ public class ShowChuruatasComposite extends AbstractEntityComposite<IChuruata>
 				onVerifyText(event, null);
 			}
 		});
-		nameField.setLayoutData( new GridData( SWT.FILL, SWT.FILL, true, false, 2, 1 ));	
+		nameField.setLayoutData( new GridData( SWT.FILL, SWT.FILL, true, false, 3, 1 ));	
 		
 		descriptionField = new InputField(grpFillIn, SWT.NONE);
 		descriptionField.setLabel( S_DESCRIPTION + ": ");
 		descriptionField.setBackgroundControl(0);
 		descriptionField.setLabelWidth(85);
 		descriptionField.setInformationMessage(S_DESCRIPTOR_INFORMATION_TIP);
-		descriptionField.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1 ));
+		descriptionField.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 3, 1 ));
 		descriptionField.setEnabled(false);
 		this.descriptionField.addVerifyListener( new VerifyListener()
 		{	
@@ -131,7 +134,7 @@ public class ShowChuruatasComposite extends AbstractEntityComposite<IChuruata>
 		locationField.setBackgroundControl(0);
 		locationField.setLabelWidth(85);
 		locationField.setInformationMessage(S_DESCRIPTOR_INFORMATION_TIP);
-		locationField.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1 ));
+		locationField.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 3, 1 ));
 		locationField.setEnabled(false);
 		
 		this.typeField = new AttributeFieldComposite( grpFillIn, SWT.NONE );
@@ -143,7 +146,7 @@ public class ShowChuruatasComposite extends AbstractEntityComposite<IChuruata>
 		this.typeField.setEnabled(false);
 		
 		comboTypes = new Combo(this.typeField, SWT.BORDER);
-		GridData gd_comboScope = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
+		GridData gd_comboScope = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		gd_comboScope.widthHint = 149;
 		comboTypes.setLayoutData(gd_comboScope);
 		comboTypes.setEnabled(false);
@@ -166,7 +169,20 @@ public class ShowChuruatasComposite extends AbstractEntityComposite<IChuruata>
 				}
 			}
 		});		
-				
+
+		Button joinButton = new Button( grpFillIn, SWT.None );
+		joinButton.setLayoutData(new GridData( SWT.RIGHT, SWT.FILL, false, false));
+		joinButton.setText("Join");
+		joinButton.addSelectionListener( new SelectionAdapter() {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				RWTUtils.redirect("web/unity/index.html");
+				super.widgetSelected(e);
+			}
+		});
+
 		Button addButton = new Button( grpFillIn, SWT.None );
 		addButton.setLayoutData(new GridData( SWT.RIGHT, SWT.FILL, false, false));
 		try {

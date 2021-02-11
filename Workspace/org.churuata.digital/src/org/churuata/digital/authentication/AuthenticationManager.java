@@ -27,7 +27,7 @@ public class AuthenticationManager extends AbstractAuthenticationManager<Object>
 	
 	@Override
 	protected LoginModule getLoginModule(Subject arg0, LoginException arg1) {
-		CovaidLoginModule module = new CovaidLoginModule();
+		ChuruataLoginModule module = new ChuruataLoginModule();
 		module.initialise();
 		return module;
 	}
