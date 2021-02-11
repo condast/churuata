@@ -27,6 +27,7 @@ public class BasicEntryPoint extends AbstractEntryPoint {
         builder.build();
         Composite root = builder.getRoot();
  		root.setData( RWT.CUSTOM_VARIANT, S_CHURUATA );
+ 		dispatcher.initSessionStore(RWT.getUISession());
     }
 
 	private void onBuilderEvent( BuildEvent<Widget> event) {

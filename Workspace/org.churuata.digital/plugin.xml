@@ -6,10 +6,19 @@
           name="churuata Login Module"
           point="org.eclipse.equinox.security.loginModule">
       <loginModule
-            class="org.churuata.dashboard.authentication.churuataLoginModule"
+            class="org.churuata.digital.authentication.ChuruataLoginModule"
             description="Login module voor churuata">
       </loginModule>
     </extension>
+   <extension
+         id="mapFilter"
+         point="org.eclipse.equinox.http.registry.filters">
+      <filter
+            alias="/"
+            class="org.churuata.digital.http.MapFilter"
+            load-on-startup="true">
+      </filter>
+   </extension>
   <extension
          point="org.eclipse.equinox.http.registry.resources">
       <resource

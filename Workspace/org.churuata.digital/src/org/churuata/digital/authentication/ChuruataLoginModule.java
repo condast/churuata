@@ -71,7 +71,7 @@ import org.eclipse.swt.SWT;
 * debug messages will be output to the output stream, System.out.
 *
 */
-public class CovaidLoginModule extends AbstractLoginModule {
+public class ChuruataLoginModule extends AbstractLoginModule {
 
 	//Same as in plugin.xml
 	private static final String S_ARNAC_MODULE = "ArnacLoginModule";
@@ -86,7 +86,7 @@ public class CovaidLoginModule extends AbstractLoginModule {
 	
 	private Logger logger = Logger.getLogger( this.getClass().getName());
 	
- 	public CovaidLoginModule() {
+ 	public ChuruataLoginModule() {
 		super(S_ARNAC_MODULE);
 	}
 
