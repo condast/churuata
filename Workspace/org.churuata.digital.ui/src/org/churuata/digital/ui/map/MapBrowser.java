@@ -9,6 +9,7 @@ import org.churuata.digital.core.location.IChuruata;
 import org.churuata.digital.core.location.IChuruataCollection;
 import org.churuata.digital.core.location.IChuruataType;
 import org.churuata.digital.ui.views.ShowChuruatasComposite;
+import org.churuata.digital.utils.RWTUtils;
 import org.condast.commons.Utils;
 import org.condast.commons.data.latlng.LatLng;
 import org.condast.commons.data.plane.Field;
@@ -22,7 +23,6 @@ import org.condast.js.commons.eval.IEvaluationListener;
 import org.condast.js.commons.images.IDefaultMarkers.Markers;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.window.Window;
 import org.eclipse.rap.rwt.RWT;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
@@ -46,6 +46,8 @@ public class MapBrowser extends Browser {
 	public static String S_ERR_NO_GPS_SIGNAL = "NO GPS SIGNAL";
 
 	public static final int DEFAULT_SCAN_DELAY = 20;//20 update pulses
+
+	protected static final String S_UNITY_START_PAGE = "web/unity/index.html";
 
 	private enum CallBacks{
 		POINT,
@@ -85,6 +87,8 @@ public class MapBrowser extends Browser {
 		public void notifyEvaluation(EvaluationEvent<Object> event) {
 			try {
 				if(!OpenLayerController.S_CALLBACK_ID.equals(event.getId())) {
+					IconsView icons = new IconsView( mapController );
+					updateMarkers(icons);
 					return;
 				}
 				if( Utils.assertNull( event.getData()))
@@ -105,22 +109,26 @@ public class MapBrowser extends Browser {
 
 					IChuruata[] nearest = churuatas.getChuruatas(clicked, 1000); 
 					ChuruataDialog dialog = null;
-					if( Utils.assertNull(nearest))	
-						dialog = new ChuruataDialog( getShell(), clicked  );
-					else
-						dialog = new ChuruataDialog( getShell(), nearest[0]  );						
+					//if( Utils.assertNull(nearest))	
+					//	dialog = new ChuruataDialog( getShell(), clicked  );
+					//else
+					//	dialog = new ChuruataDialog( getShell(), nearest[0]  );						
 					IconsView icons = new IconsView( mapController );
-					int buttonID = dialog.open();
-					switch(buttonID) {
-					case Window.OK:
-						IChuruata churuata = dialog.onOkButtonPressed();
-						updateMarkers(icons);
-						createMarker(icons, churuata, true);
-						break;
-					case Window.CANCEL:
-						updateMarkers(icons);
-						break;
-					}	
+					//int buttonID = dialog.open();
+					//switch(buttonID) {
+					//case Window.OK:
+					//	IChuruata churuata = dialog.onOkButtonPressed();
+					IChuruata churuata = new Churuata(clicked);
+					churuatas.addChuruata(churuata);
+					createMarker(icons, churuata, true);
+					updateMarkers(icons);
+					RWTUtils.redirect( S_UNITY_START_PAGE );
+
+					//	break;
+					//case Window.CANCEL:
+					//	updateMarkers(icons);
+					//	break;
+					//}	
 				}
 				if( IEvaluationListener.EventTypes.SELECTED.equals( event.getEventType())) {
 					logger.info(event.getData()[2].toString());
@@ -160,7 +168,7 @@ public class MapBrowser extends Browser {
 	public void setLocation( LatLng location) {
 		if( location == null )
 			return;
-		GeoView geo = new GeoView( mapController);
+		//GeoView geo = new GeoView( mapController);
 		//FieldData fieldData = new FieldData( new Field( clickedLocation, 10000, 10000));
 		//geo.setFieldData( fieldData);
 		MapField mapField = new MapField( mapController);

@@ -4,7 +4,7 @@ import org.condast.commons.data.latlng.LatLng;
 
 public interface IChuruataCollection {
 
-	boolean addChuruata(Churuata churuata);
+	boolean addChuruata(IChuruata churuata);
 
 	boolean removeChuruata(IChuruata churuata);
 

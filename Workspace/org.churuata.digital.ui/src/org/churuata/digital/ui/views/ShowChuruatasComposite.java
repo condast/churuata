@@ -1,7 +1,5 @@
 package org.churuata.digital.ui.views;
 
-import java.io.IOException;
-
 import org.churuata.digital.core.location.Churuata;
 import org.churuata.digital.core.location.ChuruataType;
 import org.churuata.digital.core.location.IChuruata;

@@ -10,14 +10,15 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.ServiceScope;
-import org.osgi.service.http.whiteboard.HttpWhiteboardConstants;
 
-@Component( immediate=true,
-	    property = HttpWhiteboardConstants.HTTP_WHITEBOARD_FILTER_PATTERN + "=/*",
-	    scope=ServiceScope.SINGLETON)
+//@Component( immediate=true,
+//	    property = "osgi.http.whiteboard.filter.pattern=*churuata*",
+//	    scope=ServiceScope.SINGLETON)
 public class MapFilter implements Filter {
 
 	private Logger logger = Logger.getLogger(this.getClass().getName());
@@ -25,7 +26,10 @@ public class MapFilter implements Filter {
 	@Override
 	public void doFilter(ServletRequest arg0, ServletResponse arg1, FilterChain arg2)
 			throws IOException, ServletException {
-		logger.info("filtering");
+		HttpServletRequest req = (HttpServletRequest) arg0;
+		HttpServletResponse res = (HttpServletResponse) arg1;
+		logger.info("filtering: " + req.getPathInfo());
+		arg2.doFilter(arg0, arg1);
 	}
 
 	@Override

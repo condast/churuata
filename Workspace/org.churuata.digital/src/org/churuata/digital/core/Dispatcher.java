@@ -18,7 +18,7 @@ public class Dispatcher implements IChuruataCollection, ISessionStoreFactory<Htt
 
 	private static Dispatcher dispatcher = new Dispatcher();
 	
-	private Collection<Churuata> churuatas;
+	private Collection<IChuruata> churuatas;
 	
 	private SessionPersistence persistence;
 
@@ -42,7 +42,7 @@ public class Dispatcher implements IChuruataCollection, ISessionStoreFactory<Htt
 	}
 	
 	@Override
-	public boolean addChuruata(  Churuata churuata ) {
+	public boolean addChuruata(  IChuruata churuata ) {
 		return this.churuatas.add(churuata);
 	}
 
@@ -58,8 +58,8 @@ public class Dispatcher implements IChuruataCollection, ISessionStoreFactory<Htt
 
 	@Override
 	public IChuruata[] getChuruatas(LatLng latlng, int distance) {
-		Collection<Churuata> results = new ArrayList<>();
-		for( Churuata churuata: this.churuatas) {
+		Collection<IChuruata> results = new ArrayList<>();
+		for( IChuruata churuata: this.churuatas) {
 			if( LatLngUtils.distance( churuata.getLocation(), latlng) < distance )
 				results.add(churuata);
 		}
