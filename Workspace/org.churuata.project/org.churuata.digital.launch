@@ -69,7 +69,7 @@
         <setEntry value="org.eclipse.equinox.http.jetty@default:default"/>
         <setEntry value="org.eclipse.equinox.http.registry@default:default"/>
         <setEntry value="org.eclipse.equinox.http.servlet@default:default"/>
-        <setEntry value="org.eclipse.equinox.preferences*3.7.300.v20190218-2100@default:default"/>
+        <setEntry value="org.eclipse.equinox.preferences@default:default"/>
         <setEntry value="org.eclipse.equinox.registry@default:default"/>
         <setEntry value="org.eclipse.equinox.security@default:default"/>
         <setEntry value="org.eclipse.equinox.util@default:default"/>
@@ -84,10 +84,9 @@
         <setEntry value="org.eclipse.jetty.server@default:default"/>
         <setEntry value="org.eclipse.jetty.servlet@default:default"/>
         <setEntry value="org.eclipse.jetty.util@default:default"/>
-        <setEntry value="org.eclipse.osgi*3.13.300.v20190218-1622@-1:true"/>
-        <setEntry value="org.eclipse.osgi.services*3.3.100.v20130513-1956@default:default"/>
-        <setEntry value="org.eclipse.osgi.services*3.8.0.v20190206-2147@default:default"/>
-        <setEntry value="org.eclipse.osgi.util*3.5.300.v20190708-1141@default:default"/>
+        <setEntry value="org.eclipse.osgi.services@default:default"/>
+        <setEntry value="org.eclipse.osgi.util@default:default"/>
+        <setEntry value="org.eclipse.osgi@-1:true"/>
         <setEntry value="org.eclipse.persistence.antlr@default:default"/>
         <setEntry value="org.eclipse.persistence.asm@default:default"/>
         <setEntry value="org.eclipse.persistence.core@default:default"/>
@@ -97,8 +96,8 @@
         <setEntry value="org.eclipse.persistence.nosql@default:false"/>
         <setEntry value="org.eclipse.persistence.oracle.nosql@default:false"/>
         <setEntry value="org.eclipse.persistence.oracle@default:false"/>
-        <setEntry value="org.eclipse.rap.filedialog"/>
-        <setEntry value="org.eclipse.rap.fileupload"/>
+        <setEntry value="org.eclipse.rap.filedialog@default:default"/>
+        <setEntry value="org.eclipse.rap.fileupload@default:default"/>
         <setEntry value="org.eclipse.rap.jface@default:default"/>
         <setEntry value="org.eclipse.rap.nebula.widgets.richtext@default:default"/>
         <setEntry value="org.eclipse.rap.rwt.osgi@default:default"/>

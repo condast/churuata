@@ -34,9 +34,9 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
-import org.openlayer.map.control.GeoView;
 import org.openlayer.map.control.IconsView;
 import org.openlayer.map.control.MapField;
+import org.openlayer.map.control.NavigationView;
 import org.openlayer.map.controller.OpenLayerController;
 
 public class MapBrowser extends Browser {
@@ -89,6 +89,8 @@ public class MapBrowser extends Browser {
 				if(!OpenLayerController.S_CALLBACK_ID.equals(event.getId())) {
 					IconsView icons = new IconsView( mapController );
 					updateMarkers(icons);
+					NavigationView view = new NavigationView(mapController);
+					view.getLocation();
 					return;
 				}
 				if( Utils.assertNull( event.getData()))
@@ -103,6 +105,8 @@ public class MapBrowser extends Browser {
 				}
 				logger.fine(builder.toString());
 				String str = (String) event.getData()[1];
+				
+
 				if( !StringUtils.isEmpty(str) && str.startsWith( IPolygon.Types.POINT.name())) {
 					Object[] loc = ( Object[])event.getData()[2];
 					LatLng clicked = new LatLng((String) event.getData()[1], (double)loc[1], (double)loc[0] );
@@ -177,6 +181,8 @@ public class MapBrowser extends Browser {
 
 	public void setInput( IChuruataCollection input ){
 		this.churuatas = input;
+		NavigationView view = new NavigationView(mapController);
+		view.getLocation();
 	}
 
 	public void dispose() {

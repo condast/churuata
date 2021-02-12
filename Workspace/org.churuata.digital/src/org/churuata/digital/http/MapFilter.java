@@ -11,10 +11,8 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.ServiceScope;
+//import javax.servlet.http.HttpServletResponse;
+import org.condast.commons.strings.StringUtils;
 
 //@Component( immediate=true,
 //	    property = "osgi.http.whiteboard.filter.pattern=*churuata*",
@@ -27,8 +25,9 @@ public class MapFilter implements Filter {
 	public void doFilter(ServletRequest arg0, ServletResponse arg1, FilterChain arg2)
 			throws IOException, ServletException {
 		HttpServletRequest req = (HttpServletRequest) arg0;
-		HttpServletResponse res = (HttpServletResponse) arg1;
-		logger.info("filtering: " + req.getPathInfo());
+		//HttpServletResponse res = (HttpServletResponse) arg1;
+		if( !StringUtils.isEmpty(req.getPathInfo()))
+			logger.info("filtering: " + req.getPathInfo());
 		arg2.doFilter(arg0, arg1);
 	}
 

@@ -13,12 +13,12 @@
 		<unit id="org.eclipse.rap.feature.feature.group" version="3.15.0.20201021-1259"/>
 	</location>
 	<location path="P:\Virgo\virgo-jetty-server-3.7.4.RELEASE\repository\nebula-2.4.1" type="Directory"/>
-	<location path="P:\Virgo\virgo-jetty-server-3.7.4.RELEASE\repository\http" type="Directory"/>
 	<location path="P:\Virgo\virgo-jetty-server-3.7.4.RELEASE\repository\core" type="Directory"/>
 	<location path="P:\Virgo\virgo-jetty-server-3.7.4.RELEASE\repository\apache" type="Directory"/>
 	<location path="P:\Virgo\virgo-jetty-server-3.7.4.RELEASE\repository\EclipseLink" type="Directory"/>
 	<location path="P:\Virgo\virgo-jetty-server-3.7.4.RELEASE\repository\ext" type="Directory"/>
 	<location path="P:\Virgo\virgo-jetty-server-3.7.4.RELEASE\repository\security" type="Directory"/>
+	<location path="P:\Virgo\virgo-jetty-server-3.7.2.RELEASE\repository\http" type="Directory"/>
 </locations>
 <includeBundles>
 <plugin id="cdi.api"/>
@@ -28,22 +28,21 @@
 <plugin id="com.sun.el"/>
 <plugin id="commonj.sdo"/>
 <plugin id="javax.activation"/>
-<plugin id="javax.annotation"/>
 <plugin id="javax.ejb"/>
 <plugin id="javax.el"/>
-<plugin id="javax.jms" version="1.1.0.v201205091237"/>
 <plugin id="javax.jms" version="1.1.0.v200906010428"/>
+<plugin id="javax.jms" version="1.1.0.v201205091237"/>
 <plugin id="javax.mail.glassfish" version="1.4.1.v201005082020"/>
 <plugin id="javax.persistence" version="2.2.0.v201708071007"/>
-<plugin id="javax.persistence" version="2.1.1.v201509150925"/>
 <plugin id="javax.persistence" version="2.0.6.v201308211412"/>
+<plugin id="javax.persistence" version="2.1.1.v201509150925"/>
 <plugin id="javax.resource"/>
 <plugin id="javax.servlet" version="3.1.0.v201410161800"/>
 <plugin id="javax.servlet" version="3.1.0.20200621"/>
 <plugin id="javax.servlet.jsp"/>
 <plugin id="javax.servlet.jsp.jstl-api"/>
-<plugin id="javax.transaction" version="1.1.0.v201002051055"/>
 <plugin id="javax.transaction" version="1.1.1.v201105210645"/>
+<plugin id="javax.transaction" version="1.1.0.v201002051055"/>
 <plugin id="javax.validation"/>
 <plugin id="javax.validation.api"/>
 <plugin id="javax.ws.rs" version="2.0.1.v201504171603"/>
@@ -117,7 +116,7 @@
 <plugin id="org.eclipse.virgo.medic.core"/>
 <plugin id="org.eclipse.virgo.web.dm"/>
 <plugin id="org.eclipse.virgo.web.servlet.adapter"/>
-<plugin id="org.freemarker.freemarker" version="2.3.26.stable-incubating"/>
+<plugin id="org.freemarker.freemarker"/>
 <plugin id="org.glassfish.hk2.api"/>
 <plugin id="org.glassfish.hk2.external.aopalliance-repackaged"/>
 <plugin id="org.glassfish.hk2.external.javax.inject"/>
@@ -181,33 +180,32 @@
 	<plugin id="org.eclipse.core.commands" version="3.9.800.v20201021-1339"/>
 	<plugin id="org.eclipse.core.commands.source"/>
 	<plugin id="org.eclipse.core.contenttype" version="3.7.800.v20200724-0804"/>
-	<plugin id="org.eclipse.core.contenttype.source"/>
+	<plugin id="org.eclipse.core.contenttype.source" version="3.7.800.v20200724-0804"/>
 	<plugin id="org.eclipse.core.databinding" version="1.10.100.v20200926-1123"/>
 	<plugin id="org.eclipse.core.databinding.observable" version="1.10.0.v20200730-0848"/>
-	<plugin id="org.eclipse.core.databinding.observable.source"/>
+	<plugin id="org.eclipse.core.databinding.observable.source" version="1.10.0.v20200730-0848"/>
 	<plugin id="org.eclipse.core.databinding.property" version="1.8.100.v20200619-0651"/>
-	<plugin id="org.eclipse.core.databinding.property.source"/>
-	<plugin id="org.eclipse.core.databinding.source"/>
+	<plugin id="org.eclipse.core.databinding.property.source" version="1.8.100.v20200619-0651"/>
+	<plugin id="org.eclipse.core.databinding.source" version="1.10.100.v20200926-1123"/>
 	<plugin id="org.eclipse.core.expressions"/>
 	<plugin id="org.eclipse.core.expressions.source"/>
 	<plugin id="org.eclipse.core.jobs" version="3.10.1000.v20200909-1312"/>
-	<plugin id="org.eclipse.core.jobs.source"/>
+	<plugin id="org.eclipse.core.jobs.source" version="3.10.1000.v20200909-1312"/>
 	<plugin id="org.eclipse.core.runtime" version="3.20.0.v20201027-1526"/>
-	<plugin id="org.eclipse.core.runtime.source"/>
+	<plugin id="org.eclipse.core.runtime.source" version="3.20.0.v20201027-1526"/>
 	<plugin id="org.eclipse.equinox.app" version="1.5.0.v20200717-0620"/>
-	<plugin id="org.eclipse.equinox.app.source"/>
+	<plugin id="org.eclipse.equinox.app.source" version="1.5.0.v20200717-0620"/>
 	<plugin id="org.eclipse.equinox.common" version="3.14.0.v20201102-2053"/>
 	<plugin id="org.eclipse.equinox.common.source"/>
 	<plugin id="org.eclipse.equinox.http.registry" version="1.2.0.v20200614-1851"/>
-	<plugin id="org.eclipse.equinox.http.registry.source"/>
+	<plugin id="org.eclipse.equinox.http.registry.source" version="1.2.0.v20200614-1851"/>
 	<plugin id="org.eclipse.equinox.preferences" version="3.8.100.v20201102-2042"/>
 	<plugin id="org.eclipse.equinox.preferences.source"/>
 	<plugin id="org.eclipse.equinox.registry" version="3.10.0.v20201107-1818"/>
-	<plugin id="org.eclipse.equinox.registry.source"/>
+	<plugin id="org.eclipse.equinox.registry.source" version="3.10.0.v20201107-1818"/>
 	<plugin id="org.eclipse.help"/>
 	<plugin id="org.eclipse.help.source"/>
 	<plugin id="org.eclipse.osgi" version="3.16.100.v20201030-1916"/>
-	<plugin id="org.eclipse.osgi.services.source"/>
 	<plugin id="org.eclipse.osgi.source"/>
 	<plugin id="org.eclipse.osgi.util" version="3.5.300.v20190708-1141"/>
 	<plugin id="org.eclipse.osgi.util.source"/>
@@ -342,14 +340,10 @@
 	<plugin id="org.eclipse.nebula.widgets.xviewer.core"/>
 	<plugin id="org.eclipse.nebula.widgets.xviewer.example"/>
 	<plugin id="org.apache.commons.codec" version="1.10.0.v20151023-1447"/>
-	<plugin id="javax.annotation-api" version="1.2"/>
 	<plugin id="org.eclipse.equinox.ds"/>
-	<plugin id="javassist"/>
+	<plugin id="javassist" version="3.22.0.GA"/>
 	<plugin id="org.eclipse.equinox.http.servlet"/>
-	<plugin id="org.eclipse.equinox.http.servlet.source"/>
-	<plugin id="org.osgi.service.http"/>
-	<plugin id="org.osgi.service.component"/>
 	<plugin id="org.eclipse.osgi.services" version="3.3.100.v20130513-1956"/>
-	<plugin id="org.eclipse.osgi.services" version="3.9.0.v20200511-1725"/>
+	<plugin id="javax.annotation-api"/>
 </includeBundles>
 </target>
