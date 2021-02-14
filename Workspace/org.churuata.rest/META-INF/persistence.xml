@@ -21,7 +21,7 @@
 					otherwise only localhost will work
 			-->			
 			<property name="javax.persistence.jdbc.url" value="jdbc:mysql://databaseserver:3306/churuata?useSSL=false"/>
-			<property name="javax.persistence.jdbc.user" value="churuata"/>
+			<property name="javax.persistence.jdbc.user" value="Churuata"/>
  			<property name="javax.persistence.jdbc.password" value="ChuruataRules@2021"/>
 			<property name="eclipselink.jdbc.read-connections.min" value="1"/>
 			<property name="eclipselink.jdbc.write-connections.min" value="1"/>			

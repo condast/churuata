@@ -16,81 +16,44 @@
 	<location path="P:\Virgo\virgo-jetty-server-3.7.4.RELEASE\repository\core" type="Directory"/>
 	<location path="P:\Virgo\virgo-jetty-server-3.7.4.RELEASE\repository\apache" type="Directory"/>
 	<location path="P:\Virgo\virgo-jetty-server-3.7.4.RELEASE\repository\EclipseLink" type="Directory"/>
-	<location path="P:\Virgo\virgo-jetty-server-3.7.4.RELEASE\repository\ext" type="Directory"/>
 	<location path="P:\Virgo\virgo-jetty-server-3.7.4.RELEASE\repository\security" type="Directory"/>
 	<location path="P:\Virgo\virgo-jetty-server-3.7.2.RELEASE\repository\http" type="Directory"/>
+	<location path="P:\Virgo\virgo-jetty-server-3.7.2.RELEASE\repository\jpa" type="Directory"/>
+	<location path="P:\Virgo\virgo-jetty-server-3.7.2.RELEASE\repository\ext" type="Directory"/>
 </locations>
 <includeBundles>
 <plugin id="cdi.api"/>
-<plugin id="com.springsource.org.apache.commons.httpclient"/>
-<plugin id="com.squareup.okhttp3"/>
-<plugin id="com.squareup.okio"/>
-<plugin id="com.sun.el"/>
 <plugin id="commonj.sdo"/>
-<plugin id="javax.activation"/>
 <plugin id="javax.ejb"/>
-<plugin id="javax.el"/>
-<plugin id="javax.jms" version="1.1.0.v200906010428"/>
 <plugin id="javax.jms" version="1.1.0.v201205091237"/>
 <plugin id="javax.mail.glassfish" version="1.4.1.v201005082020"/>
+<plugin id="javax.persistence" version="2.1.1.v201509150925"/>
 <plugin id="javax.persistence" version="2.2.0.v201708071007"/>
 <plugin id="javax.persistence" version="2.0.6.v201308211412"/>
-<plugin id="javax.persistence" version="2.1.1.v201509150925"/>
 <plugin id="javax.resource"/>
-<plugin id="javax.servlet" version="3.1.0.v201410161800"/>
-<plugin id="javax.servlet" version="3.1.0.20200621"/>
-<plugin id="javax.servlet.jsp"/>
-<plugin id="javax.servlet.jsp.jstl-api"/>
 <plugin id="javax.transaction" version="1.1.1.v201105210645"/>
-<plugin id="javax.transaction" version="1.1.0.v201002051055"/>
 <plugin id="javax.validation"/>
 <plugin id="javax.validation.api"/>
 <plugin id="javax.ws.rs" version="2.0.1.v201504171603"/>
-<plugin id="javax.ws.rs-api"/>
-<plugin id="javax.wsdl"/>
 <plugin id="javax.xml"/>
 <plugin id="javax.xml.bind"/>
 <plugin id="javax.xml.soap"/>
 <plugin id="javax.xml.ws" version="2.0.0.v200902170419"/>
 <plugin id="jaxb-core"/>
 <plugin id="jaxb-xjc"/>
-<plugin id="oevm.javax.portlet"/>
-<plugin id="oevm.org.aopalliance"/>
 <plugin id="org.apache.commons.lang3"/>
 <plugin id="org.apache.commons.logging"/>
 <plugin id="org.apache.felix.gogo.command"/>
 <plugin id="org.apache.felix.gogo.runtime"/>
 <plugin id="org.apache.felix.gogo.shell"/>
-<plugin id="org.apache.jasper.glassfish"/>
 <plugin id="org.apache.logging.log4j.api"/>
 <plugin id="org.apache.logging.log4j.core"/>
 <plugin id="org.apache.logging.log4j.slf4j-impl"/>
 <plugin id="org.apache.logging.log4j.to-slf4j"/>
-<plugin id="org.apache.taglibs.standard.glassfish"/>
-<plugin id="org.aspectj.weaver"/>
 <plugin id="org.eclipse.equinox.console"/>
 <plugin id="org.eclipse.equinox.console.ssh"/>
 <plugin id="org.eclipse.equinox.http.jetty"/>
-<plugin id="org.eclipse.equinox.region"/>
 <plugin id="org.eclipse.equinox.security"/>
-<plugin id="org.eclipse.equinox.util"/>
-<plugin id="org.eclipse.gemini.blueprint.core"/>
-<plugin id="org.eclipse.gemini.blueprint.extender"/>
-<plugin id="org.eclipse.gemini.blueprint.extensions"/>
-<plugin id="org.eclipse.gemini.blueprint.io"/>
-<plugin id="org.eclipse.gemini.management"/>
-<plugin id="org.eclipse.jdt.core.compiler.batch"/>
-<plugin id="org.eclipse.jetty.continuation"/>
-<plugin id="org.eclipse.jetty.deploy"/>
-<plugin id="org.eclipse.jetty.http"/>
-<plugin id="org.eclipse.jetty.io"/>
-<plugin id="org.eclipse.jetty.osgi.boot"/>
-<plugin id="org.eclipse.jetty.security"/>
-<plugin id="org.eclipse.jetty.server"/>
-<plugin id="org.eclipse.jetty.servlet"/>
-<plugin id="org.eclipse.jetty.util"/>
-<plugin id="org.eclipse.jetty.webapp"/>
-<plugin id="org.eclipse.jetty.xml"/>
 <plugin id="org.eclipse.orbit.mongodb"/>
 <plugin id="org.eclipse.persistence.antlr"/>
 <plugin id="org.eclipse.persistence.asm"/>
@@ -108,14 +71,6 @@
 <plugin id="org.eclipse.persistence.oracle.nosql"/>
 <plugin id="org.eclipse.persistence.oracleddlparser"/>
 <plugin id="org.eclipse.persistence.sdo"/>
-<plugin id="org.eclipse.virgo.kernel.agent.dm"/>
-<plugin id="org.eclipse.virgo.kernel.deployer.dm"/>
-<plugin id="org.eclipse.virgo.kernel.dmfragment"/>
-<plugin id="org.eclipse.virgo.management.fragment"/>
-<plugin id="org.eclipse.virgo.medic"/>
-<plugin id="org.eclipse.virgo.medic.core"/>
-<plugin id="org.eclipse.virgo.web.dm"/>
-<plugin id="org.eclipse.virgo.web.servlet.adapter"/>
 <plugin id="org.freemarker.freemarker"/>
 <plugin id="org.glassfish.hk2.api"/>
 <plugin id="org.glassfish.hk2.external.aopalliance-repackaged"/>
@@ -131,30 +86,10 @@
 <plugin id="org.glassfish.jersey.core.jersey-common"/>
 <plugin id="org.glassfish.jersey.core.jersey-server"/>
 <plugin id="org.glassfish.jersey.media.jersey-media-jaxb"/>
-<plugin id="org.glassfish.web.javax.servlet.jsp.jstl"/>
-<plugin id="org.jolokia.osgi"/>
 <plugin id="org.mongodb.mongo-java-driver"/>
-<plugin id="org.objectweb.asm"/>
 <plugin id="org.slf4j.api" version="1.7.2.v20121108-1250"/>
 <plugin id="org.slf4j.jcl"/>
 <plugin id="org.slf4j.jul"/>
-<plugin id="org.springframework.aop"/>
-<plugin id="org.springframework.aspects"/>
-<plugin id="org.springframework.beans"/>
-<plugin id="org.springframework.context"/>
-<plugin id="org.springframework.context.support"/>
-<plugin id="org.springframework.core"/>
-<plugin id="org.springframework.expression"/>
-<plugin id="org.springframework.jdbc"/>
-<plugin id="org.springframework.jms"/>
-<plugin id="org.springframework.messaging"/>
-<plugin id="org.springframework.orm"/>
-<plugin id="org.springframework.oxm"/>
-<plugin id="org.springframework.transaction"/>
-<plugin id="org.springframework.web"/>
-<plugin id="org.springframework.webmvc"/>
-<plugin id="org.springframework.webmvc.portlet"/>
-<plugin id="org.springframework.websocket"/>
 	<plugin id="com.orientechnologies.orientdb-server"/>
 	<plugin id="com.orientechnologies.orientdb-client"/>
 	<plugin id="com.orientechnologies.orientdb-core"/>
@@ -171,7 +106,6 @@
 	<plugin id="org.codehaus.jettison.jettison"/>
 	<plugin id="com.fasterxml.jackson.core.jackson-annotations"/>
 	<plugin id="com.google.gson"/>
-	<plugin id="osgi.enterprise"/>
 	<plugin id="com.ibm.icu" version="67.1.0.v20200706-1749"/>
 	<plugin id="com.ibm.icu.source"/>
 	<plugin id="javax.servlet.source"/>
@@ -185,14 +119,14 @@
 	<plugin id="org.eclipse.core.databinding.observable" version="1.10.0.v20200730-0848"/>
 	<plugin id="org.eclipse.core.databinding.observable.source" version="1.10.0.v20200730-0848"/>
 	<plugin id="org.eclipse.core.databinding.property" version="1.8.100.v20200619-0651"/>
-	<plugin id="org.eclipse.core.databinding.property.source" version="1.8.100.v20200619-0651"/>
+	<plugin id="org.eclipse.core.databinding.property.source" version="1.6.400.v20190215-1957"/>
 	<plugin id="org.eclipse.core.databinding.source" version="1.10.100.v20200926-1123"/>
 	<plugin id="org.eclipse.core.expressions"/>
 	<plugin id="org.eclipse.core.expressions.source"/>
 	<plugin id="org.eclipse.core.jobs" version="3.10.1000.v20200909-1312"/>
 	<plugin id="org.eclipse.core.jobs.source" version="3.10.1000.v20200909-1312"/>
 	<plugin id="org.eclipse.core.runtime" version="3.20.0.v20201027-1526"/>
-	<plugin id="org.eclipse.core.runtime.source" version="3.20.0.v20201027-1526"/>
+	<plugin id="org.eclipse.core.runtime.source" version="3.15.200.v20190219-1009"/>
 	<plugin id="org.eclipse.equinox.app" version="1.5.0.v20200717-0620"/>
 	<plugin id="org.eclipse.equinox.app.source" version="1.5.0.v20200717-0620"/>
 	<plugin id="org.eclipse.equinox.common" version="3.14.0.v20201102-2053"/>
@@ -205,7 +139,7 @@
 	<plugin id="org.eclipse.equinox.registry.source" version="3.10.0.v20201107-1818"/>
 	<plugin id="org.eclipse.help"/>
 	<plugin id="org.eclipse.help.source"/>
-	<plugin id="org.eclipse.osgi" version="3.16.100.v20201030-1916"/>
+	<plugin id="org.eclipse.osgi" version="3.13.300.v20190218-1622"/>
 	<plugin id="org.eclipse.osgi.source"/>
 	<plugin id="org.eclipse.osgi.util" version="3.5.300.v20190708-1141"/>
 	<plugin id="org.eclipse.osgi.util.source"/>
@@ -339,11 +273,41 @@
 	<plugin id="org.eclipse.nebula.widgets.xviewer"/>
 	<plugin id="org.eclipse.nebula.widgets.xviewer.core"/>
 	<plugin id="org.eclipse.nebula.widgets.xviewer.example"/>
-	<plugin id="org.apache.commons.codec" version="1.10.0.v20151023-1447"/>
-	<plugin id="org.eclipse.equinox.ds"/>
 	<plugin id="javassist" version="3.22.0.GA"/>
 	<plugin id="org.eclipse.equinox.http.servlet"/>
-	<plugin id="org.eclipse.osgi.services" version="3.3.100.v20130513-1956"/>
 	<plugin id="javax.annotation-api"/>
+	<plugin id="com.mysql.jdbc"/>
+	<plugin id="org.eclipse.gemini.dbaccess.mysql"/>
+	<plugin id="org.eclipse.gemini.dbaccess.util"/>
+	<plugin id="org.eclipse.gemini.jpa"/>
+	<plugin id="org.apache.felix.scr"/>
+	<plugin id="org.eclipse.equinox.ds" version="1.6.0.v20190122-0806"/>
+	<plugin id="org.eclipse.jetty.xml"/>
+	<plugin id="org.eclipse.jetty.webapp"/>
+	<plugin id="org.eclipse.jetty.util"/>
+	<plugin id="org.eclipse.jetty.servlet"/>
+	<plugin id="org.eclipse.jetty.server"/>
+	<plugin id="org.eclipse.jetty.security"/>
+	<plugin id="org.eclipse.jetty.osgi.boot"/>
+	<plugin id="org.eclipse.jetty.io"/>
+	<plugin id="org.eclipse.jetty.http"/>
+	<plugin id="org.eclipse.jetty.deploy"/>
+	<plugin id="org.eclipse.jetty.continuation"/>
+	<plugin id="org.eclipse.core.contenttype.source" version="3.7.300.v20190215-2048"/>
+	<plugin id="org.eclipse.core.databinding.observable.source" version="1.6.400.v20190218-2049"/>
+	<plugin id="org.eclipse.core.databinding.property.source" version="1.8.100.v20200619-0651"/>
+	<plugin id="org.eclipse.core.databinding.source" version="1.7.200.v20190216-1545"/>
+	<plugin id="org.eclipse.core.jobs.source" version="3.10.300.v20190215-2048"/>
+	<plugin id="org.eclipse.core.runtime.source" version="3.20.0.v20201027-1526"/>
+	<plugin id="org.eclipse.equinox.app.source" version="1.4.100.v20190215-2139"/>
+	<plugin id="org.eclipse.equinox.http.registry.source" version="1.1.700.v20190214-1948"/>
+	<plugin id="org.eclipse.equinox.http.servlet.source"/>
+	<plugin id="org.eclipse.equinox.registry.source" version="3.8.300.v20190218-2100"/>
+	<plugin id="org.apache.commons.codec" version="1.6.0"/>
+	<plugin id="org.eclipse.osgi.services" version="3.8.0.v20190206-2147"/>
+	<plugin id="javax.servlet" version="3.1.0.20170128"/>
+	<plugin id="org.osgi.service.jdbc"/>
+	<plugin id="org.osgi.service.jndi"/>
+	<plugin id="javax.activation"/>
 </includeBundles>
 </target>
