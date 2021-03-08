@@ -5,7 +5,7 @@ Bundle-SymbolicName: org.churuata.digital;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: condast
 Automatic-Module-Name: org.churuata.digital
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: org.eclipse.rap.rwt;bundle-version="[3.0.0,4.0.0)"
 Service-Component: OSGI-INF/contribution.xml,
  OSGI-INF/org.churuata.digital.session.store.provider.xml

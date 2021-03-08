@@ -30,20 +30,13 @@ public class EntityManagerService extends AbstractFactoryService<EntityManagerFa
 	policy=ReferencePolicy.DYNAMIC)
 	@Override
 	public synchronized void bindEMF( EntityManagerFactory emf) {
+		service.setEMF(emf);
 		super.bindEMF(emf);
 	}
 
 	@Override
 	public synchronized void unbindEMF( EntityManagerFactory emf) {
-		super.unbindEMF(emf);
-	}
-
-	protected void onBindFactory( EntityManagerFactory factory) {
-		service.setEMF(factory);
-	}
-
-	@Override
-	protected void onUnbindFactory( EntityManagerFactory factory) {
 		service.disconnect();
+		super.unbindEMF(emf);
 	}
 }

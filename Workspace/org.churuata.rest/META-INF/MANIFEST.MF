@@ -7,8 +7,8 @@ Bundle-Activator: org.churuata.rest.Activator
 Bundle-Vendor: Condast
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Automatic-Module-Name: org.churuata.rest
-Import-Package: com.google.gson;version="2.7.0",
- com.google.gson.stream;version="2.7.0",
+Import-Package: com.google.gson;version="2.6.2",
+ com.google.gson.stream;version="2.6.2",
  javax.persistence;version="2.2.0",
  javax.servlet;version="3.0.0",
  javax.ws.rs;version="2.0.1",
