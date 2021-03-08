@@ -29,7 +29,6 @@
 <plugin id="org.apache.felix.gogo.runtime"/>
 <plugin id="org.eclipse.equinox.console"/>
 <plugin id="org.eclipse.equinox.console.ssh"/>
-<plugin id="org.eclipse.equinox.http.jetty" version="3.0.200.v20131021-1843"/>
 <plugin id="org.eclipse.equinox.security"/>
 <plugin id="org.eclipse.persistence.antlr"/>
 <plugin id="org.eclipse.persistence.asm"/>
@@ -43,7 +42,6 @@
 <plugin id="org.glassfish.hk2.external.aopalliance-repackaged"/>
 <plugin id="org.glassfish.hk2.external.javax.inject"/>
 <plugin id="org.glassfish.hk2.locator"/>
-<plugin id="org.glassfish.hk2.osgi-resource-locator"/>
 <plugin id="org.glassfish.hk2.utils"/>
 <plugin id="org.glassfish.jersey.containers.jersey-container-servlet-core"/>
 <plugin id="org.glassfish.jersey.core.jersey-client"/>
@@ -224,7 +222,7 @@
 	<plugin id="org.eclipse.nebula.widgets.xviewer.core"/>
 	<plugin id="org.eclipse.nebula.widgets.xviewer.example"/>
 	<plugin id="javassist" version="3.22.0.GA"/>
-	<plugin id="org.eclipse.equinox.http.servlet" version="1.6.700.v20201109-1600"/>
+	<plugin id="org.eclipse.equinox.http.servlet"/>
 	<plugin id="javax.annotation-api"/>
 	<plugin id="com.mysql.jdbc"/>
 	<plugin id="org.eclipse.gemini.dbaccess.mysql"/>
@@ -260,5 +258,7 @@
 	<plugin id="javax.ws.rs-api"/>
 	<plugin id="org.glassfish.jersey.bundles.repackaged.jersey-guava"/>
 	<plugin id="javax.servlet.source"/>
+	<plugin id="org.glassfish.hk2.osgi-resource-locator"/>
+	<plugin id="org.eclipse.equinox.http.jetty"/>
 </includeBundles>
 </target>
