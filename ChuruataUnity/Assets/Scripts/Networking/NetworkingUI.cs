@@ -25,7 +25,7 @@ public class NetworkingUI : MonoBehaviour
 
     public GameObject UICanvas;
     public GameObject BuildCanvas;
-    bool canvasEnabled = true;
+    public bool canvasEnabled = false;
 
     public Text returnText;
 
@@ -67,5 +67,10 @@ public class NetworkingUI : MonoBehaviour
         canvasEnabled = !canvasEnabled;
         UICanvas.SetActive(canvasEnabled);
         BuildCanvas.SetActive(!canvasEnabled);
+    }
+
+    public void Login()
+    {
+        
     }
 }

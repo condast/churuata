@@ -63,7 +63,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 364693c8126b1464a81c7cc364a1224f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  networkData: {fileID: 0}
+  networkData: {fileID: 5410515915903351200}
   clientID: 1
   churuataID: 1
   clientToken: 1

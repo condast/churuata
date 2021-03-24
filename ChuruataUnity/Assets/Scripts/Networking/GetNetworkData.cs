@@ -17,7 +17,6 @@ public class GetNetworkData : MonoBehaviour
 
     public void Register(int clientID, int clientToken, string clientname, string clientType)
     {
-        Debug.Log("Trying to register to the database");
         try
         {
             string url = string.Format("{0}find?userid={1}&token={2}&name={3}&type={4}", adress, clientID, clientToken, clientname, clientType);
@@ -41,20 +40,14 @@ public class GetNetworkData : MonoBehaviour
         }
     }
 
-    IEnumerator GetData(string url)
+    public IEnumerator GetData(string url)
     {
         UnityWebRequest www = UnityWebRequest.Get(url);
         yield return www.SendWebRequest();
         if (www.isNetworkError || www.isHttpError)
-        {
             jsonResponse = www.error;
-            Debug.Log(www.error);
-        }
         else
-        {
             jsonResponse = www.downloadHandler.text;
-            Debug.Log(www.downloadHandler.text);
-        }
     }
 
     public void Contribute(int clientID, int token, string type, string description)
@@ -63,6 +56,67 @@ public class GetNetworkData : MonoBehaviour
         {
             string url = string.Format("{0}add-contribution?userid={1}&token={2}&type={3}&description={4}&contribution=log", adress, clientID, token, type, description);
             StartCoroutine(GetData(url));
+        }
+        catch
+        {
+            throw;
+        }
+    }
+
+    public void RegisterAccount(string username, string emailAdress, string password)
+    {
+        try
+        {
+            //Make register web link, should return an "Okay" signal if the creation was succesfull, and should be able to login afterwards
+            //string url = string.Format("{0}add-contribution?userid={1}&token={2}&type={3}&description={4}&contribution=log", adress, clientID, token, type, description);
+            
+            
+            //StartCoroutine(GetData(url));
+        }
+        catch
+        {
+            throw;
+        }
+    }
+
+    public void LoginAccount(string username, int clientID, string message)
+    {
+        try
+        {
+            //string url = string.Format("{0}add-contribution?userid={1}&token={2}&type={3}&description={4}&contribution=log", adress, clientID, token, type, description);
+
+
+            //StartCoroutine(GetData(url));
+        }
+        catch
+        {
+            throw;
+        }
+    }
+
+    public void SendMessage(string username, int clientID, string message)
+    {
+        try
+        {
+            //string url = string.Format("{0}add-contribution?userid={1}&token={2}&type={3}&description={4}&contribution=log", adress, clientID, token, type, description);
+
+
+            //StartCoroutine(GetData(url));
+        }
+        catch
+        {
+            throw;
+        }
+    }
+
+    public void ReceiveMessage(string emailAdress, string password)
+    {
+        try
+        {
+            //string url = string.Format("{0}add-contribution?userid={1}&token={2}&type={3}&description={4}&contribution=log", adress, clientID, token, type, description);
+
+
+            //StartCoroutine(GetData(url));
         }
         catch
         {
