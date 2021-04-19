@@ -19,8 +19,7 @@ public class GetNetworkData : MonoBehaviour
     {
         try
         {
-            string url = string.Format("{0}find?userid={1}&token={2}&name={3}&type={4}", adress, clientID, clientToken, clientname, clientType);
-            StartCoroutine(GetData(url));
+            StartCoroutine(GetData(string.Format("{0}find?userid={1}&token={2}&name={3}&type={4}", adress, clientID, clientToken, clientname, clientType)));
         }
         catch
         {
@@ -31,8 +30,7 @@ public class GetNetworkData : MonoBehaviour
     {
         try
         {
-            string url = string.Format("{0}find?userid={1}&token={2}&id={3}", adress, clientID, clientToken, churuataID);
-            StartCoroutine(GetData(url));
+            StartCoroutine(GetData(string.Format("{0}find?userid={1}&token={2}&id={3}", adress, clientID, clientToken, churuataID)));
         }
         catch
         {
@@ -54,8 +52,7 @@ public class GetNetworkData : MonoBehaviour
     {
         try
         {
-            string url = string.Format("{0}add-contribution?userid={1}&token={2}&type={3}&description={4}&contribution=log", adress, clientID, token, type, description);
-            StartCoroutine(GetData(url));
+            StartCoroutine(GetData(string.Format("{0}add-contribution?userid={1}&token={2}&type={3}&description={4}&contribution=log", adress, clientID, token, type, description)));
         }
         catch
         {
