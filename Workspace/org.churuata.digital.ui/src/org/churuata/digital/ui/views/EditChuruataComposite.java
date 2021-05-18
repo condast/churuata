@@ -1,26 +1,44 @@
 package org.churuata.digital.ui.views;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.churuata.digital.core.location.Churuata;
+import org.churuata.digital.core.location.ChuruataType;
 import org.churuata.digital.core.location.IChuruata;
+import org.churuata.digital.core.location.IChuruata.Requests;
+import org.churuata.digital.core.rest.IRestPages;
+import org.churuata.digital.core.location.IChuruataType;
 import org.churuata.digital.ui.image.ImageUtils;
+import org.condast.commons.authentication.user.ILoginUser;
+import org.condast.commons.data.latlng.LatLng;
+import org.condast.commons.messaging.http.AbstractHttpRequest;
+import org.condast.commons.messaging.http.ResponseEvent;
+import org.condast.commons.strings.StringStyler;
 import org.condast.commons.ui.controller.AbstractEntityComposite;
+import org.condast.commons.ui.swt.AttributeFieldComposite;
+import org.condast.commons.ui.swt.InputField;
 import org.condast.commons.ui.table.TableEvent;
 import org.eclipse.rap.rwt.RWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.VerifyEvent;
+import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Group;
 
-public class EditChuruataComposite extends AbstractEntityComposite<IChuruata>
+public class EditChuruataComposite extends AbstractEntityComposite<LatLng>
 {
 	private static final long serialVersionUID = 7782765745284140623L;
 
+	public static final String S_NAME = "Churuata";
 	public static final String S_SHOW_LINK = "Show Link";
 	public static final String S_URL = "url";
 	public static final String S_SHOWLINK_DIALOG_ID = "showlink.dialog";
@@ -29,28 +47,49 @@ public class EditChuruataComposite extends AbstractEntityComposite<IChuruata>
 	private static final String S_INFORMATION_IMAGE = "/icons/information-icon.png";
 
 	private static final String S_ADD_IMAGE = "/icons/add-32.png";
-	
 
-/*
+	private static final String S_NAME_INFORMATION_TIP = "The Churuata name";
+	private static final String S_DESCRIPTION = "Description";
+	private static final String S_DESCRIPTOR_INFORMATION_TIP = "Describe the Churuata";
+	private static final String S_CHURUATA_TYPE = "Churuata Type";
+	private static final String S_CHURUATA_INFORMATION_TIP = "The type of churuata";
+	private static final String S_WEBSITE = "Website";
+	
+	public enum Parameters{
+		ID,
+		TOKEN,
+		NAME,
+		DESCRIPTION,
+		LAT,
+		LON,
+		TYPE;
+
+		@Override
+		public String toString() {
+			return StringStyler.xmlStyleString( name());
+		}
+	}
+
 	private InputField nameField;
 	private InputField descriptionField;
 	private InputField txtURL;
 	private AttributeFieldComposite scopeField;
-	private Combo comboScope;
-	private ComboScopeController csc;
-*/		
+	private Combo comboTypes;
+		
 	private ChuruataTableComposite churuataTypesTable;
 
-	
+	private ILoginUser user;
+	private WebController controller;
+
 	/**
 	 * Create the dialog.
 	 * @param parentShell
 	 */
 	public EditChuruataComposite( Composite parent, int style ){
 		super(parent, style );
-		initComponent(parent);
-		//this.csc = new ComboScopeController(this.comboScope);
-		//this.categoryTable.addTableEventListener(e-> onNotifyTableEvent(e ));
+		this.comboTypes.setItems(IChuruataType.Types.getItems());
+		this.comboTypes.select(0);
+		controller = new WebController();
 	}
 	
 
@@ -67,10 +106,10 @@ public class EditChuruataComposite extends AbstractEntityComposite<IChuruata>
 		setData( RWT.CUSTOM_ITEM_HEIGHT, Integer.valueOf( 10 ));
 				
 		Group grpFillIn = new Group(container, SWT.NONE);
-		grpFillIn.setText("Details:");
+		grpFillIn.setText("Churuata:");
 		grpFillIn.setLayout(new GridLayout(2, false));
 		grpFillIn.setLayoutData( new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1 ));	
-	/*	
+		
 		nameField = new InputField( grpFillIn, SWT.NONE );
 		nameField.setBackgroundControl(1);
 		nameField.setLabel( S_NAME + ": ");
@@ -86,7 +125,7 @@ public class EditChuruataComposite extends AbstractEntityComposite<IChuruata>
 				onVerifyText(event, null);
 			}
 		});
-		gridData_2 = new GridData();
+		GridData gridData_2 = new GridData();
 		gridData_2.horizontalSpan = 2;
 		gridData_2.heightHint = 33;
 		gridData_2.widthHint = 182;
@@ -99,7 +138,7 @@ public class EditChuruataComposite extends AbstractEntityComposite<IChuruata>
 		descriptionField.setBackgroundControl(0);
 		descriptionField.setLabelWidth(85);
 		descriptionField.setInformationMessage(S_DESCRIPTOR_INFORMATION_TIP);
-		gridData_3 = new GridData();
+		GridData gridData_3 = new GridData();
 		gridData_3.horizontalSpan = 2;
 		gridData_3.heightHint = 33;
 		gridData_3.widthHint = 182;
@@ -117,21 +156,21 @@ public class EditChuruataComposite extends AbstractEntityComposite<IChuruata>
 		});
 		
 		this.scopeField = new AttributeFieldComposite( grpFillIn, SWT.NONE );
-		this.scopeField.setLabel( S_SCOPE + ": ");
+		this.scopeField.setLabel( S_CHURUATA_TYPE + ": ");
 		this.scopeField.setLabelWidth(115);
 		this.scopeField.setIconSize(17);
-		this.scopeField.setInformationMessage( S_SCOPE_INFORMATION_TIP);
+		this.scopeField.setInformationMessage( S_CHURUATA_INFORMATION_TIP);
 		
 		GridData gd_scope = new GridData(SWT.LEFT, SWT.CENTER, false, false, 2, 1);
 		gd_scope.widthHint = 295;
 		gd_scope.heightHint = 40;
 		this.scopeField.setLayoutData(gd_scope);
 
-		comboScope = new Combo(this.scopeField, SWT.BORDER);
+		comboTypes = new Combo(this.scopeField, SWT.BORDER);
 		GridData gd_comboScope = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
 		gd_comboScope.widthHint = 149;
-		comboScope.setLayoutData(gd_comboScope);
-		comboScope.addVerifyListener(new VerifyListener() {
+		comboTypes.setLayoutData(gd_comboScope);
+		comboTypes.addVerifyListener(new VerifyListener() {
 			private static final long serialVersionUID = 1L;
 
 			@Override
@@ -161,13 +200,7 @@ public class EditChuruataComposite extends AbstractEntityComposite<IChuruata>
 		gd_txtURL.heightHint = 33;
 		gd_txtURL.widthHint = 260;
 		txtURL.setLayoutData(gd_txtURL);
-		txtURL.setEditable(false);
-
-		Group grpCategory = new Group(container, SWT.BORDER);
-		grpCategory.setText("Category:");
-		grpCategory.setLayout(new GridLayout(2, false));
-		grpCategory.setLayoutData( new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1 ));	
-*/		
+		
 		Image image = ImageUtils.getImage(getDisplay(), this.getClass().getResourceAsStream( S_ADD_IMAGE ));
 		
 		Button addButton = new Button( container, SWT.None );
@@ -178,7 +211,20 @@ public class EditChuruataComposite extends AbstractEntityComposite<IChuruata>
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				super.widgetSelected(e);
+				try {
+					IChuruata churuata = new Churuata( getInput());
+					churuata.setName(nameField.getText());
+					churuata.setDescription( descriptionField.getText());
+					churuata.setName(nameField.getText());
+					churuata.setHomepage(txtURL.getText());
+					
+					IChuruataType ct = new ChuruataType(user, IChuruataType.Types.values()[ comboTypes.getSelectionIndex()]);
+					churuata.setType(ct);
+					controller.register(churuata);
+					super.widgetSelected(e);
+				} catch (Exception e1) {
+					e1.printStackTrace();
+				}
 			}
 		});
 
@@ -186,47 +232,34 @@ public class EditChuruataComposite extends AbstractEntityComposite<IChuruata>
 		//this.categoryTable.setLayoutData( new GridData(SWT.FILL, SWT.FILL, true, true ));	
 	}
 
-	/**
-	 * Initialise the composite
-	 * @param parent
-	 */
-	protected void initComponent( Composite parent ){
-		
-		Image image = ImageUtils.getImage( parent.getDisplay(), this.getClass().getResourceAsStream( S_INFORMATION_IMAGE ));
-		//nameField.setImage( image );
-		//descriptionField.setImage(image);
-		//scopeField.setImage(image);
-		
-		parent.requestLayout();
+	public void setInput( String context, ILoginUser user ){
+		controller.setInput(context, IRestPages.Pages.REST.toPath());
+		this.user = user;
 	}
 
 	@Override
 	public void update(){
-		IChuruata result = super.getInput();
+		LatLng result = super.getInput();
 	}
 
 	@Override
-	protected IChuruata onGetInput(IChuruata input) {
-		// TODO Auto-generated method stub
-		return null;
+	protected LatLng onGetInput(LatLng input) {
+		return input;
 	}
-
 
 	@Override
-	protected void onSetInput(IChuruata input, boolean overwrite) {
-		// TODO Auto-generated method stub
-		
+	protected void onSetInput(LatLng input, boolean overwrite) {
+		//this.churuataTypesTable.setInput(input.getTypes());
 	}
 
-	public void setInput( IChuruata input ){
+	public void setInput( LatLng input ){
 		super.setInput( input, false );
-		this.churuataTypesTable.setInput(input.getTypes());
 	}
 
 	protected void onNotifyTableEvent( TableEvent<Churuata> event ) {
 		switch( event.getTableEvent()) {
 		case DELETE:
-			IChuruata model = getInput();
+			LatLng model = getInput();
 			//Collection<Churuata> remove = (Collection<Churuata>) event.getData();
 			//database.removeOnDescriptorId(remove.getID(), model.getData().getID());
 			break;
@@ -275,10 +308,52 @@ public class EditChuruataComposite extends AbstractEntityComposite<IChuruata>
 		return enable;
 	}
 
-
 	@Override
 	public boolean checkRequiredFields() {
 		// TODO Auto-generated method stub
 		return false;
+	}
+	
+	private class WebController extends AbstractHttpRequest<IChuruata.Requests, IChuruata>{
+		
+		public WebController() {
+			super();
+		}
+
+		public void setInput(String context, String path) {
+			super.setContextPath(context + path);
+		}
+
+		public void register( IChuruata churuata ) {
+			Map<String, String> params = getUserParams(user);
+			try {
+				params.put(Parameters.NAME.toString(), churuata.getName() );
+				params.put(Parameters.DESCRIPTION.toString(), churuata.getDescription());
+				
+				IChuruataType ct = churuata.getTypes()[0];
+				params.put(Parameters.TYPE.toString(), String.valueOf( ct.getType().name()));
+				params.put(Parameters.LAT.toString(), String.valueOf( churuata.getLocation().getLatitude()));
+				params.put(Parameters.LON.toString(), String.valueOf( churuata.getLocation().getLongitude()));
+				sendGet(IChuruata.Requests.REGISTER, params);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		public Map<String, String> getUserParams( ILoginUser user) {
+			Map<String, String> params = new HashMap<>();
+			if( user != null ) {
+				params.put(Parameters.ID.toString(), String.valueOf( user.getId() ));
+				params.put(Parameters.TOKEN.toString(), String.valueOf( user.getToken() ));
+			}
+			return params;
+		}
+
+		@Override
+		protected String onHandleResponse(ResponseEvent<Requests, IChuruata> event, IChuruata data) throws IOException {
+			// TODO Auto-generated method stub
+			return null;
+		}
+		
 	}
 }

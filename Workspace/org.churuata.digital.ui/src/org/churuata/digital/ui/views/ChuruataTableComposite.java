@@ -3,8 +3,8 @@ package org.churuata.digital.ui.views;
 import java.util.logging.Logger;
 
 import org.churuata.digital.core.location.IChuruataType;
-import org.churuata.digital.ui.image.IInformationImages.Information;
 import org.churuata.digital.ui.image.InformationImages;
+import org.churuata.digital.ui.image.IInformationImages.Information;
 import org.condast.commons.strings.StringStyler;
 import org.condast.commons.ui.image.ImageController;
 import org.condast.commons.ui.table.AbstractTableComposite;

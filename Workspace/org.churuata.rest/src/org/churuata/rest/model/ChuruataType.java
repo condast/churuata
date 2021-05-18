@@ -1,5 +1,6 @@
 package org.churuata.rest.model;
 
+import java.util.Calendar;
 import java.util.Date;
 
 import javax.persistence.Basic;
@@ -30,8 +31,6 @@ public class ChuruataType implements Comparable<ChuruataType>, IChuruataType{
 	
 	private int contribution;
 	
-	@Basic(optional = false)
-	@Column( nullable=false)
 	private String description;
 	
 	@ManyToOne(cascade=CascadeType.PERSIST, fetch=FetchType.LAZY)
@@ -52,6 +51,8 @@ public class ChuruataType implements Comparable<ChuruataType>, IChuruataType{
 	
 	public ChuruataType() {
 		super();
+		this.createDate = Calendar.getInstance().getTime();
+		this.updateDate = Calendar.getInstance().getTime();
 	}
 
 	public ChuruataType( ILoginUser user, Types type) {
@@ -73,6 +74,8 @@ public class ChuruataType implements Comparable<ChuruataType>, IChuruataType{
 		this.description = description;
 		this.user = user;
 		this.userid = ( user == null )?-1:user.getId();
+		this.createDate = Calendar.getInstance().getTime();
+		this.updateDate = Calendar.getInstance().getTime();
 	}
 
 	public long getId() {

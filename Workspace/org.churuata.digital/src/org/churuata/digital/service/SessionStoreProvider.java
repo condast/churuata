@@ -15,8 +15,14 @@ public class SessionStoreProvider implements ISessionStoreFactory<HttpSession, S
 	public SessionStoreProvider() {
 		super();
 	}
+	
 	@Override
 	public SessionStore createSessionStore(HttpSession session) {
 		return dispatcher.createSessionStore(session);
+	}
+	
+	@Override
+	public SessionStore getSessionStore(HttpSession session) {
+		return dispatcher.getSessionStore(session);
 	}
 }

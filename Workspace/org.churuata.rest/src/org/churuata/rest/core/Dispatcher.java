@@ -5,7 +5,6 @@ import java.util.Map;
 import javax.persistence.EntityManager;
 
 import org.condast.commons.persistence.service.AbstractPersistencyService;
-import org.condast.commons.strings.StringUtils;
 
 public class Dispatcher extends AbstractPersistencyService {
 
@@ -13,11 +12,9 @@ public class Dispatcher extends AbstractPersistencyService {
 	private static final String S_CHURUATA_SERVICE_ID = "org.churuata.rest.service"; 
 	private static final String S_CHURUATA_SERVICE = "Churuata REST Service"; 
 
-	
 	private EntityManager manager;
 	
 	private static Dispatcher dispatcher = new Dispatcher();
-	
 	private Dispatcher() {
 		super( S_CHURUATA_SERVICE_ID, S_CHURUATA_SERVICE );
 	}
@@ -26,10 +23,6 @@ public class Dispatcher extends AbstractPersistencyService {
 		return dispatcher;
 	}
 		
-	public boolean isRegistered( long userId, String token ) {
-		return !( userId < 0) && !StringUtils.isEmpty(token);
-	}
-
 	@Override
 	protected Map<String, String> onPrepareManager() {
 		// TODO Auto-generated method stub

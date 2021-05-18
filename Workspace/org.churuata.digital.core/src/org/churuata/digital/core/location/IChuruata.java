@@ -9,6 +9,14 @@ import org.condast.commons.data.latlng.LatLng;
 
 public interface IChuruata {
 
+	public enum Requests{
+		REGISTER,
+		FIND,
+		ADD,
+		REMOVE,
+		UPDATE;
+	}
+	
 	long getId();
 
 	ILoginUser getOwner();
@@ -41,4 +49,28 @@ public interface IChuruata {
 	boolean addMurmering(ILoginUser user, String text);
 
 	boolean removeMurmering( IMurmering murmering);
+
+	int getLogs();
+
+	void setLogs(int logs);
+
+	int getMaxlogs();
+
+	void setMaxlogs(int maxlogs);
+
+	int getLeaves();
+
+	void setLeaves(int leaves);
+
+	int getMaxLeaves();
+
+	void setMaxLeaves(int maxLeaves);
+
+	int getHammocks();
+
+	void setHammocks(int hammocks);
+
+	String getHomepage();
+
+	void setHomepage(String url);
 }

@@ -1,5 +1,6 @@
 package org.churuata.digital;
 
+import org.churuata.digital.Activator;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 

@@ -1,5 +1,6 @@
 package org.churuata.digital.ui.map;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.logging.Logger;
@@ -8,16 +9,16 @@ import org.churuata.digital.core.location.Churuata;
 import org.churuata.digital.core.location.IChuruata;
 import org.churuata.digital.core.location.IChuruataCollection;
 import org.churuata.digital.core.location.IChuruataType;
+import org.churuata.digital.ui.utils.RWTUtils;
 import org.churuata.digital.ui.views.ShowChuruatasComposite;
-import org.churuata.digital.utils.RWTUtils;
 import org.condast.commons.Utils;
 import org.condast.commons.data.latlng.LatLng;
-import org.condast.commons.data.plane.Field;
 import org.condast.commons.data.plane.IPolygon;
 import org.condast.commons.strings.StringStyler;
 import org.condast.commons.strings.StringUtils;
 import org.condast.commons.ui.controller.EditEvent;
-import org.condast.js.commons.controller.JavascriptSynchronizer;
+import org.condast.commons.ui.controller.IEditListener;
+import org.condast.commons.ui.controller.EditEvent.EditTypes;
 import org.condast.js.commons.eval.EvaluationEvent;
 import org.condast.js.commons.eval.IEvaluationListener;
 import org.condast.js.commons.images.IDefaultMarkers.Markers;
@@ -35,7 +36,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.openlayer.map.control.IconsView;
-import org.openlayer.map.control.MapField;
 import org.openlayer.map.control.NavigationView;
 import org.openlayer.map.controller.OpenLayerController;
 
@@ -60,9 +60,10 @@ public class MapBrowser extends Browser {
 	}
 
 	private OpenLayerController mapController;
-	private JavascriptSynchronizer<String> synchronizer;
 	
 	private IChuruataCollection churuatas;
+
+	private Collection<IEditListener<LatLng>> listeners;
 
 	private ProgressListener plistener = new ProgressListener() {
 		private static final long serialVersionUID = 1L;
@@ -81,102 +82,108 @@ public class MapBrowser extends Browser {
 		}
 	};
 
-	private IEvaluationListener<Object> mapListener = new IEvaluationListener<Object>(){
-
-		@Override
-		public void notifyEvaluation(EvaluationEvent<Object> event) {
-			try {
-				if(!OpenLayerController.S_CALLBACK_ID.equals(event.getId())) {
-					IconsView icons = new IconsView( mapController );
-					updateMarkers(icons);
-					NavigationView view = new NavigationView(mapController);
-					view.getLocation();
-					return;
-				}
-				if( Utils.assertNull( event.getData()))
-					return;
-				Collection<Object> eventData = Arrays.asList(event.getData());
-				StringBuilder builder = new StringBuilder();
-				builder.append("Map data: ");
-				for( Object obj: eventData ) {
-					if( obj != null )
-						builder.append(obj.toString());
-					builder.append(", ");
-				}
-				logger.fine(builder.toString());
-				String str = (String) event.getData()[1];
-				
-
-				if( !StringUtils.isEmpty(str) && str.startsWith( IPolygon.Types.POINT.name())) {
-					Object[] loc = ( Object[])event.getData()[2];
-					LatLng clicked = new LatLng((String) event.getData()[1], (double)loc[1], (double)loc[0] );
-
-					IChuruata[] nearest = churuatas.getChuruatas(clicked, 1000); 
-					ChuruataDialog dialog = null;
-					//if( Utils.assertNull(nearest))	
-					//	dialog = new ChuruataDialog( getShell(), clicked  );
-					//else
-					//	dialog = new ChuruataDialog( getShell(), nearest[0]  );						
-					IconsView icons = new IconsView( mapController );
-					//int buttonID = dialog.open();
-					//switch(buttonID) {
-					//case Window.OK:
-					//	IChuruata churuata = dialog.onOkButtonPressed();
-					IChuruata churuata = new Churuata(clicked);
-					churuatas.addChuruata(churuata);
-					createMarker(icons, churuata, true);
-					updateMarkers(icons);
-					RWTUtils.redirect( S_UNITY_START_PAGE );
-
-					//	break;
-					//case Window.CANCEL:
-					//	updateMarkers(icons);
-					//	break;
-					//}	
-				}
-				if( IEvaluationListener.EventTypes.SELECTED.equals( event.getEventType())) {
-					logger.info(event.getData()[2].toString());
-				}else {
-					String data = (String) event.getData()[1];
-					if( !StringUtils.isEmpty(data) && data.startsWith( CallBacks.POLYGON.name() )) {
-						String wkt = (String )event.getData()[1];
-						if( StringUtils.isEmpty( wkt ))
-							return;
-						String tp = (String) event.getData()[0];
-						StringBuffer buffer = new StringBuffer();
-						buffer.append(tp);
-						buffer.append(": ");
-						logger.fine( buffer.toString());
-					}else {
-						Object[] coords = (Object[]) event.getData()[2];
-						LatLng latlng = new LatLng(( Double) coords[1], (Double)coords[0]);				
-					}
-				}
-			}
-			catch( Exception ex ) {
-				ex.printStackTrace();
-			}
-		}
-	};
-
 	private Logger logger = Logger.getLogger( this.getClass().getName() );
 
 	public MapBrowser(Composite parent, int style) {
 		super(parent, style);
 		LatLng location = new LatLng( "Cucuta", 7.89391, -72.50782);
 		this.mapController = new OpenLayerController( this, location, 11 );
-		this.mapController.addEvaluationListener(mapListener);
-		this.synchronizer = new JavascriptSynchronizer<>(mapController);
+		this.mapController.addEvaluationListener( e->onNotifyEvaluation(e));
+		this.listeners = new ArrayList<>();
 	}
 
-	public void setLocation( LatLng location) {
-		if( location == null )
-			return;
-		//GeoView geo = new GeoView( mapController);
-		//FieldData fieldData = new FieldData( new Field( clickedLocation, 10000, 10000));
-		//geo.setFieldData( fieldData);
-		MapField mapField = new MapField( mapController);
-		mapField.setField(new Field( location, 10000, 10000), 100);
+	public void addEditListener( IEditListener<LatLng> listener ) {
+		this.listeners.add(listener);
+	}
+
+	public void removeEditListener( IEditListener<LatLng> listener ) {
+		this.listeners.remove(listener);
+	}
+
+	protected void notifyEditListeners( EditEvent<LatLng> event ) {
+		for( IEditListener<LatLng> listener: listeners)
+			listener.notifyInputEdited( event );
+	}
+
+	private void onNotifyEvaluation(EvaluationEvent<Object> event) {
+		try {
+			if(!OpenLayerController.S_CALLBACK_ID.equals(event.getId())) {
+				IconsView icons = new IconsView( mapController );
+				updateMarkers(icons);
+				NavigationView view = new NavigationView(mapController);
+				view.getLocation();
+				return;
+			}
+			if( Utils.assertNull( event.getData()))
+				return;
+			Collection<Object> eventData = Arrays.asList(event.getData());
+			StringBuilder builder = new StringBuilder();
+			builder.append("Map data: ");
+			for( Object obj: eventData ) {
+				if( obj != null )
+					builder.append(obj.toString());
+				builder.append(", ");
+			}
+			logger.fine(builder.toString());
+			String str = (String) event.getData()[1];
+			
+			if( !StringUtils.isEmpty(str) && str.startsWith( IPolygon.Types.POINT.name())) {
+				Object[] loc = ( Object[])event.getData()[2];
+				LatLng clicked = new LatLng((String) event.getData()[1], (double)loc[1], (double)loc[0] );
+				notifyEditListeners( new EditEvent<LatLng>( this, EditTypes.CHANGED, clicked ));
+
+				if( churuatas == null )
+					return;
+				IChuruata[] nearest = churuatas.getChuruatas(clicked, 1000); 
+				ChuruataDialog dialog = null;
+				//if( Utils.assertNull(nearest))	
+				//	dialog = new ChuruataDialog( getShell(), clicked  );
+				//else
+				//	dialog = new ChuruataDialog( getShell(), nearest[0]  );						
+				IconsView icons = new IconsView( mapController );
+				//int buttonID = dialog.open();
+				//switch(buttonID) {
+				//case Window.OK:
+				//	IChuruata churuata = dialog.onOkButtonPressed();
+				IChuruata churuata = new Churuata(clicked);
+				churuatas.addChuruata(churuata);
+				createMarker(icons, churuata, true);
+				updateMarkers(icons);
+				RWTUtils.redirect( S_UNITY_START_PAGE );
+
+				//	break;
+				//case Window.CANCEL:
+				//	updateMarkers(icons);
+				//	break;
+				//}	
+			}
+			if( IEvaluationListener.EventTypes.SELECTED.equals( event.getEventType())) {
+				logger.info(event.getData()[2].toString());
+			}else {
+				String data = (String) event.getData()[1];
+				if( !StringUtils.isEmpty(data) && data.startsWith( CallBacks.POLYGON.name() )) {
+					String wkt = (String )event.getData()[1];
+					if( StringUtils.isEmpty( wkt ))
+						return;
+					String tp = (String) event.getData()[0];
+					StringBuffer buffer = new StringBuffer();
+					buffer.append(tp);
+					buffer.append(": ");
+					logger.fine( buffer.toString());
+				}else {
+					Object[] coords = (Object[]) event.getData()[2];
+					LatLng latlng = new LatLng(( Double) coords[1], (Double)coords[0]);				
+				}
+			}
+		}
+		catch( Exception ex ) {
+			ex.printStackTrace();
+		}
+	}
+
+	public void locate() {
+		NavigationView view = new NavigationView(mapController);
+		view.getLocation();
 	}
 
 	public void setInput( IChuruataCollection input ){
@@ -186,7 +193,7 @@ public class MapBrowser extends Browser {
 	}
 
 	public void dispose() {
-		this.mapController.removeEvaluationListener( mapListener);
+		this.mapController.removeEvaluationListener( e->onNotifyEvaluation(e));
 		this.mapController.dispose();
 		this.removeProgressListener(plistener);
 		super.dispose();
@@ -194,6 +201,8 @@ public class MapBrowser extends Browser {
 
 	public void updateMarkers( IconsView icons) {
 		icons.clearIcons();
+		if( this.churuatas == null )
+			return;
 		for( IChuruata churuata: churuatas.getChuruatas()) {
 			createMarker(icons, churuata, false);
 		}		

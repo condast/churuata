@@ -1,17 +1,23 @@
 package org.churuata.rest.model;
 
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -42,26 +48,44 @@ public class Churuata implements Comparable<Churuata>, IChuruata{
 	private String description;
 	
 	private Location location;
+	private String url;
 	
+	private int logs;	
+	private int maxlogs;
+	
+	private int leaves;
+	private int maxLeaves;
+	
+	private int hammocks;
+		
 	@OneToMany( mappedBy="owner", cascade = CascadeType.ALL, orphanRemoval = true)
 	private Set<ChuruataType> types;
 
 	@OneToMany( mappedBy="churuata", cascade = CascadeType.ALL, orphanRemoval = true)
 	private Collection<Murmering> murmerings;
 
+	@ElementCollection
+	@CollectionTable(name = "presentations",
+	joinColumns = { @JoinColumn(name = "id") })
+	@MapKeyColumn(name = "key")
+	@Column(name = "value")	
+	private Map<String, String> presentations;
+
 	@Basic(optional = false)
-	@Column( nullable=false)
+	@Column( nullable=true)
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createDate;
 	
 	@Basic(optional = false)
-	@Column( nullable=false)
+	@Column( nullable=true)
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date updateDate;
 
 	
 	public Churuata() {
 		super();
+		this.createDate = Calendar.getInstance().getTime();
+		this.updateDate = Calendar.getInstance().getTime();
 	}
 
 	public Churuata( LatLng location) {
@@ -79,6 +103,8 @@ public class Churuata implements Comparable<Churuata>, IChuruata{
 		this.ownerId = ( owner == null )?-1: owner.getId();
 		this.location = new Location( owner, location );
 		this.types = new TreeSet<>();
+		this.createDate = Calendar.getInstance().getTime();
+		this.updateDate = Calendar.getInstance().getTime();
 	}
 
 	public Churuata( ILoginUser owner, String name, Location location) {
@@ -88,6 +114,8 @@ public class Churuata implements Comparable<Churuata>, IChuruata{
 		this.ownerId = ( owner == null )?-1: owner.getId();
 		this.location = location;
 		this.types = new TreeSet<>();
+		this.createDate = Calendar.getInstance().getTime();
+		this.updateDate = Calendar.getInstance().getTime();
 	}
 
 	@Override
@@ -130,6 +158,16 @@ public class Churuata implements Comparable<Churuata>, IChuruata{
 	}
 
 	@Override
+	public String getHomepage() {
+		return url;
+	}
+
+	@Override
+	public void setHomepage(String url) {
+		this.url = url;
+	}
+
+	@Override
 	public void setTypes(Collection<IChuruataType> types) {
 		this.types.clear();
 		for( IChuruataType ct: types )
@@ -140,6 +178,56 @@ public class Churuata implements Comparable<Churuata>, IChuruata{
 	public boolean setType( IChuruataType type ) {
 		this.types.clear();
 		return this.types.add((ChuruataType) type);
+	}
+
+	@Override
+	public int getLogs() {
+		return logs;
+	}
+
+	@Override
+	public void setLogs(int logs) {
+		this.logs = logs;
+	}
+
+	@Override
+	public int getMaxlogs() {
+		return maxlogs;
+	}
+
+	@Override
+	public void setMaxlogs(int maxlogs) {
+		this.maxlogs = maxlogs;
+	}
+
+	@Override
+	public int getLeaves() {
+		return leaves;
+	}
+
+	@Override
+	public void setLeaves(int leaves) {
+		this.leaves = leaves;
+	}
+
+	@Override
+	public int getMaxLeaves() {
+		return maxLeaves;
+	}
+
+	@Override
+	public void setMaxLeaves(int maxLeaves) {
+		this.maxLeaves = maxLeaves;
+	}
+
+	@Override
+	public int getHammocks() {
+		return hammocks;
+	}
+
+	@Override
+	public void setHammocks(int hammocks) {
+		this.hammocks = hammocks;
 	}
 
 	public boolean addType( ILoginUser user, ChuruataType type ) {

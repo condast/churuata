@@ -12,10 +12,20 @@ public class Churuata implements Comparable<Churuata>, IChuruata{
 	private ILoginUser owner;
 	
 	private String name, description;
-	
+	private String url;
 	private LatLng location;
+
+	private int logs;	
+	private int maxlogs;
 	
+	private int leaves;
+	private int maxLeaves;
+	
+	private int hammocks;
+
 	private Collection<IChuruataType> types;
+	
+	private Collection<String> presentation;
 
 	public Churuata( LatLng location) {
 		this( null, location.getId(), location );
@@ -29,7 +39,6 @@ public class Churuata implements Comparable<Churuata>, IChuruata{
 		this.types = new TreeSet<>();
 	}
 
-	
 	@Override
 	public long getId() {
 		// TODO Auto-generated method stub
@@ -78,6 +87,16 @@ public class Churuata implements Comparable<Churuata>, IChuruata{
 	}
 
 	@Override
+	public String getHomepage() {
+		return url;
+	}
+
+	@Override
+	public void setHomepage(String url) {
+		this.url = url;
+	}
+
+	@Override
 	public boolean setType( IChuruataType type ) {
 		this.types.clear();
 		return this.types.add(type);
@@ -116,7 +135,56 @@ public class Churuata implements Comparable<Churuata>, IChuruata{
 
 	@Override
 	public boolean removeMurmering(IMurmering murmering) {
-		// TODO Auto-generated method stub
 		return false;
+	}
+
+	@Override
+	public int getLogs() {
+		return logs;
+	}
+
+	@Override
+	public void setLogs(int logs) {
+		this.logs = logs;
+	}
+
+	@Override
+	public int getMaxlogs() {
+		return this.maxlogs;
+	}
+
+	@Override
+	public void setMaxlogs(int maxlogs) {
+		this.maxlogs = maxlogs;
+	}
+
+	@Override
+	public int getLeaves() {
+		return this.leaves;
+	}
+
+	@Override
+	public void setLeaves(int leaves) {
+		this.leaves = leaves;
+	}
+
+	@Override
+	public int getMaxLeaves() {
+		return this.maxLeaves;
+	}
+
+	@Override
+	public void setMaxLeaves(int maxLeaves) {
+		this.maxLeaves = maxLeaves;
+	}
+
+	@Override
+	public int getHammocks() {
+		return hammocks;
+	}
+
+	@Override
+	public void setHammocks(int hammocks) {
+		this.hammocks = hammocks;
 	}
 }

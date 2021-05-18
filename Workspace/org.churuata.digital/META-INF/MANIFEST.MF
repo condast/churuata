@@ -8,22 +8,34 @@ Automatic-Module-Name: org.churuata.digital
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: org.eclipse.rap.rwt;bundle-version="[3.0.0,4.0.0)"
 Service-Component: OSGI-INF/contribution.xml,
- OSGI-INF/org.churuata.digital.session.store.provider.xml
+ OSGI-INF/org.churuata.digital.session.store.provider.xml,
+ OSGI-INF/org.churuata.digital.dashboard.service.login.xml,
+ OSGI-INF/org.churuata.digital.dashboard.service.entry.point.xml
 Bundle-ActivationPolicy: lazy
 Import-Package: javax.servlet;version="3.1.0",
  javax.servlet.http;version="3.0.0",
  org.churuata.digital.core.location,
  org.churuata.digital.core.store,
+ org.churuata.digital.ui.banner,
+ org.churuata.digital.ui.image,
  org.churuata.digital.ui.map,
+ org.churuata.digital.ui.views,
  org.condast.commons.authentication.callback,
  org.condast.commons.authentication.core,
  org.condast.commons.authentication.module,
+ org.condast.commons.authentication.ui.views,
  org.condast.commons.authentication.user,
+ org.condast.commons.config,
  org.condast.commons.data.latlng,
  org.condast.commons.persistence.core,
  org.condast.commons.strings,
+ org.condast.commons.ui.controller,
+ org.condast.commons.ui.entry,
+ org.condast.commons.ui.provider,
+ org.condast.commons.ui.session,
+ org.condast.commons.ui.utils,
  org.condast.commons.ui.xml,
  org.condast.commons.xml,
- org.eclipse.equinox.security.auth;version="1.0.0",
+ org.condast.js.commons.parser,
  org.osgi.framework;version="1.3.0",
  org.osgi.service.component.annotations;version="1.1.0"

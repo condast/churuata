@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         id="org.satr.arnac.authentication.login.callback"
+         name="CallBack Handler for Login"
+         point="org.eclipse.equinox.security.callbackHandler">
+      <callbackHandler
+            class="org.satr.arnac.authentication.core.ArnacCallbackHandler">
+      </callbackHandler>
+   </extension>
+   <extension
+         point="org.eclipse.equinox.security.callbackHandlerMapping">
+      <callbackHandlerMapping
+            callbackHandlerId="org.satr.arnac.authentication.login.callback"
+            configName="ARNAC">
+      </callbackHandlerMapping>
+   </extension>
+   <extension
+         point="org.eclipse.equinox.http.registry.servlets">
+      <servlet
+            alias="/arnac/auth"
+            class="org.satr.arnac.authentication.RestServlet"
+            load-on-startup="false">
+        <init-param name="javax.ws.rs.Application"
+    			    value="org.satr.arnac.authentication.RestApplication">
+		</init-param>
+      </servlet>
+   </extension>
+   <extension
+         point="org.eclipse.equinox.http.registry.resources">
+      <resource
+            alias="/coe-rdm/legal"
+            base-name="/legal">
+      </resource>
+   </extension>
+ </plugin>

@@ -6,15 +6,19 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Condast
 Automatic-Module-Name: org.churuata.digital.ui
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Import-Package: javax.servlet.http;version="3.1.0",
+Import-Package: javax.servlet;version="3.1.0",
+ javax.servlet.http;version="3.1.0",
  org.churuata.digital.core.location,
+ org.churuata.digital.core.rest,
  org.churuata.digital.core.store,
  org.condast.commons,
  org.condast.commons.authentication.user,
  org.condast.commons.data.latlng,
  org.condast.commons.data.plane,
+ org.condast.commons.messaging.http,
  org.condast.commons.persistence.core,
  org.condast.commons.strings,
+ org.condast.commons.ui.banner,
  org.condast.commons.ui.controller,
  org.condast.commons.ui.image,
  org.condast.commons.ui.swt,
@@ -22,6 +26,7 @@ Import-Package: javax.servlet.http;version="3.1.0",
  org.condast.js.commons.controller,
  org.condast.js.commons.eval,
  org.condast.js.commons.images,
+ org.condast.js.commons.parser,
  org.eclipse.jface.dialogs,
  org.eclipse.jface.layout,
  org.eclipse.jface.viewers,
@@ -41,6 +46,8 @@ Import-Package: javax.servlet.http;version="3.1.0",
  org.openlayer.map.controller,
  org.osgi.framework;version="1.3.0",
  org.osgi.service.component.annotations;version="1.1.0"
-Export-Package: org.churuata.digital.ui.map
+Export-Package: org.churuata.digital.ui.banner,
+ org.churuata.digital.ui.image,
+ org.churuata.digital.ui.map,
+ org.churuata.digital.ui.views
 Bundle-ActivationPolicy: lazy
-Service-Component: OSGI-INF/org.churuata.digital.services.SessionStoreClient.xml

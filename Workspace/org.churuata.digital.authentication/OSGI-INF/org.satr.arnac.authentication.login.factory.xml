@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" immediate="true" name="org.satr.arnac.authentication.login.factory">
+   <service>
+      <provide interface="org.condast.commons.authentication.core.ILoginProvider"/>
+   </service>
+   <implementation class="org.churuata.digital.authentication.ds.LoginUserProvider"/>
+</scr:component>

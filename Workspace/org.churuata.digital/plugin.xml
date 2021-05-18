@@ -19,6 +19,22 @@
             load-on-startup="true">
       </filter>
    </extension>
+   <extension
+         point="org.eclipse.equinox.http.registry.servlets">
+      <servlet
+            alias="/churuata"
+            class="org.churuata.digital.http.ChuruataServlet"
+            load-on-startup="true">
+      </servlet>
+   </extension>
+   <extension
+         point="org.eclipse.equinox.http.registry.servlets">
+      <servlet
+            alias="/churuata/active"
+            class="org.churuata.digital.http.ActiveServlet"
+            load-on-startup="true">
+      </servlet>
+   </extension>
   <extension
          point="org.eclipse.equinox.http.registry.resources">
       <resource

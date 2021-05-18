@@ -1,5 +1,6 @@
 package org.churuata.rest.service;
 
+import java.util.Calendar;
 import java.util.Collection;
 
 import javax.persistence.TypedQuery;
@@ -14,11 +15,11 @@ import org.condast.commons.persistence.service.IPersistenceService;
 
 public class ChuruataService extends AbstractEntityService<Churuata>{
 
-	public static final String S_QUERY_FIND_ALL = "Churuata o ";
-	public static final String S_QUERY_FIND_CHURUATA = S_QUERY_FIND_ALL + " WHERE o.latitude = :latitude AND o.longitude = :longitude ";
+	public static final String S_QUERY_FIND_ALL = "SELECT c FROM Churuata c ";
+	public static final String S_QUERY_FIND_CHURUATA = S_QUERY_FIND_ALL + " WHERE c.location.latitude = :latitude AND c.location.longitude = :longitude ";
 	public static final String S_QUERY_FIND_CHURUATA_IN_RANGE = 
-			"SELECT l FROM Churuata l WHERE l.latitude >= :latmin AND l.latitude <= :latmax AND "
-			+ "l.longitude >= :lonmin AND l.longitude <= :lonmax ";
+			"SELECT c FROM Churuata c WHERE c.latitude >= :latmin AND c.latitude <= :latmax AND "
+			+ "c.longitude >= :lonmin AND c.longitude <= :lonmax ";
 
 	public ChuruataService( IPersistenceService service ) {
 		super( Churuata.class, service );
@@ -30,6 +31,8 @@ public class ChuruataService extends AbstractEntityService<Churuata>{
 		Churuata churuata = new Churuata( user, name, location );
 		churuata.addType(user,  type );
 		churuata.setDescription(description);
+		churuata.setCreateDate(Calendar.getInstance().getTime());
+		churuata.setUpdateDate(Calendar.getInstance().getTime());
 		super.create(churuata);
 		return churuata;
 	}

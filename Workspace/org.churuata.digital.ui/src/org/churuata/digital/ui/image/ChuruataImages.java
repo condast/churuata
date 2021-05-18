@@ -5,7 +5,7 @@ import java.io.InputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.churuata.digital.Activator;
+import org.churuata.digital.ui.Activator;
 import org.condast.commons.ui.image.AbstractImages;
 import org.eclipse.rap.rwt.RWT;
 import org.eclipse.rap.rwt.service.ResourceManager;
@@ -36,9 +36,10 @@ public class ChuruataImages extends AbstractImages{
 	public static final String S_PNG = ".png";
 
 	public enum Images{
-		AQUABOT,
+		CHURUATA,
 		ADD,
 		BACKGROUND,
+		BUILDER,
 		CHECK,
 		LOCATED,
 		CONNECTED,
@@ -65,10 +66,6 @@ public class ChuruataImages extends AbstractImages{
 			StringBuffer buffer = new StringBuffer();
 			String prep;
 			switch( image ){		
-			case AQUABOT:
-				buffer.append( image.name().toLowerCase());
-				buffer.append( S_PNG);
-				break;
 			case BACKGROUND:
 				buffer.append( image.name().toLowerCase());
 				buffer.append( S_PNG);

@@ -2,17 +2,22 @@ package org.churuata.digital.core;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.servlet.http.HttpSession;
 import org.churuata.digital.core.location.Churuata;
 import org.churuata.digital.core.location.IChuruata;
 import org.churuata.digital.core.location.IChuruataCollection;
 import org.churuata.digital.core.store.SessionStore;
+import org.condast.commons.authentication.user.ILoginUser;
 import org.condast.commons.data.latlng.LatLng;
 import org.condast.commons.data.latlng.LatLngUtils;
 import org.condast.commons.persistence.core.AbstractSessionPersistence;
 import org.condast.commons.persistence.core.ISessionStoreFactory;
-import org.eclipse.rap.rwt.RWT;
-import org.eclipse.rap.rwt.service.UISession;
+import org.condast.commons.strings.StringUtils;
+import org.condast.commons.ui.provider.ICompositeProvider;
+import org.eclipse.swt.widgets.Composite;
 
 public class Dispatcher implements IChuruataCollection, ISessionStoreFactory<HttpSession, SessionStore>  {
 
@@ -22,8 +27,11 @@ public class Dispatcher implements IChuruataCollection, ISessionStoreFactory<Htt
 	
 	private SessionPersistence persistence;
 
+	private Map<String,ICompositeProvider<Composite>> composites;
+	
 	public Dispatcher() {
 		super();
+		composites = new HashMap<>();
 		churuatas = new ArrayList<>();
 		persistence = new SessionPersistence();
 	}
@@ -34,6 +42,32 @@ public class Dispatcher implements IChuruataCollection, ISessionStoreFactory<Htt
 	
 	public SessionPersistence getPersistence() {
 		return persistence;
+	}
+
+	public boolean hasLoginUser( long token ) {
+		return persistence.hasLoginUser(token);
+	}
+
+	public void addEntryPoint(ICompositeProvider<Composite> provider) {
+		this.composites.put(provider.getName(), provider);
+	}
+
+	public void removeEntryPoint(ICompositeProvider<Composite> provider) {
+		this.composites.remove(provider.getName());
+	}
+
+	public ICompositeProvider<Composite> getComposite( String name ) {
+		if( StringUtils.isEmpty(name))
+			return null;
+		for( ICompositeProvider<Composite> provider: this.composites.values()) {
+			if( name.equals(provider.getName()))
+				return provider;
+		}
+		return null;
+	}
+
+	public boolean logoff( ILoginUser user ) {
+		return persistence.logoff( user);
 	}
 
 	@Override
@@ -71,9 +105,11 @@ public class Dispatcher implements IChuruataCollection, ISessionStoreFactory<Htt
 		return persistence.createSessionStore(session);
 	}
 
-	public SessionStore initSessionStore( UISession uiSession ) {
-		return persistence.initStore(uiSession);
+	@Override
+	public SessionStore getSessionStore(HttpSession session) {
+		return persistence.getSessionStore(session);
 	}
+
 	
 	private class SessionPersistence extends AbstractSessionPersistence<SessionStore>{
 
@@ -83,10 +119,16 @@ public class Dispatcher implements IChuruataCollection, ISessionStoreFactory<Htt
 			return store;
 		}
 
-		public SessionStore initStore( UISession uiSession ) {
-			HttpSession session = uiSession.getHttpSession();
-			uiSession.addUISessionListener(e->updateSession(session));
-			return super.createSessionStore(session);			
-		}	
+		public boolean hasLoginUser( long token ) {
+			for( SessionStore store: getSessions().values() ) {
+				if(( store.getLoginUser() != null ) && ( store.getLoginUser().getToken() == token ))
+					return true;
+			}
+			return false;
+		}
+
+		public boolean logoff( ILoginUser loginUser ) {
+			return false;
+		}
 	}			
 }

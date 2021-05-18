@@ -3,7 +3,7 @@ package org.churuata.digital.ui.image;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.churuata.digital.Activator;
+import org.churuata.digital.ui.Activator;
 import org.condast.commons.ui.image.AbstractImages;
 import org.eclipse.rap.rwt.application.Application;
 import org.eclipse.rap.rwt.service.ResourceLoader;
