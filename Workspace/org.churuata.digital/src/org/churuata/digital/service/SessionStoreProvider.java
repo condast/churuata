@@ -11,11 +11,20 @@ import org.osgi.service.component.annotations.Component;
 			immediate=true)
 public class SessionStoreProvider implements ISessionStoreFactory<HttpSession, SessionStore>{
 
+	private static final String S_CHURUATA_ID = "org.churuata.digital"; 
+
 	private Dispatcher dispatcher=  Dispatcher.getInstance();
+	
 	public SessionStoreProvider() {
 		super();
 	}
 	
+	@Override
+	public String getId() {
+		return S_CHURUATA_ID;
+	}
+
+
 	@Override
 	public SessionStore createSessionStore(HttpSession session) {
 		return dispatcher.createSessionStore(session);
