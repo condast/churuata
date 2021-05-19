@@ -1,6 +1,9 @@
 package org.churuata.rest.model;
 
+import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -16,6 +19,7 @@ import javax.persistence.TemporalType;
 import org.churuata.digital.core.location.IChuruata;
 import org.churuata.digital.core.location.IMurmering;
 import org.condast.commons.authentication.user.ILoginUser;
+import org.condast.commons.strings.StringUtils;
 
 @Entity
 public class Murmering implements IMurmering {
@@ -32,9 +36,7 @@ public class Murmering implements IMurmering {
 	@OneToOne
 	private Churuata churuata;
 	
-	private long userId;
-	
-	private transient ILoginUser user;
+	private String contributor;
 	
 	@Basic(optional = false)
 	@Column( nullable=false)
@@ -50,12 +52,17 @@ public class Murmering implements IMurmering {
 		super();
 	}
 
-	public Murmering(Churuata churuata, ILoginUser user, String text) {
+	public Murmering(IChuruata churuata, ILoginUser user, String text) {
+		this( churuata, user.getUserName(), text );
+	}
+	
+	public Murmering(IChuruata churuata, String contributor, String text) {
 		super();
 		this.text = text;
-		this.churuata = churuata;
-		this.user = user;
-		this.userId = this.user.getId();
+		this.churuata = (Churuata) churuata;
+		this.contributor= StringUtils.isEmpty(contributor)?S_ANONYMOUS: contributor;
+		this.createDate = Calendar.getInstance().getTime();
+		this.updateDate = Calendar.getInstance().getTime();
 	}
 
 	@Override
@@ -79,8 +86,8 @@ public class Murmering implements IMurmering {
 	}
 
 	@Override
-	public long getUserId() {
-		return userId;
+	public String getContributor() {
+		return contributor;
 	}
 
 	@Override
@@ -91,5 +98,14 @@ public class Murmering implements IMurmering {
 	@Override
 	public Date getUpdateDate() {
 		return updateDate;
+	}	
+	
+	@Override
+	public Map<String, String> toAttributes(){
+		Map<String, String> results = new HashMap<>();
+		results.put(IMurmering.Attributes.TEXT.name(), text);
+		results.put(IMurmering.Attributes.CONTRIBUTOR.name(), contributor);
+		return results;
 	}
+
 }

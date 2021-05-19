@@ -8,7 +8,7 @@
 		<class>org.churuata.rest.model.Churuata</class>
 		<class>org.churuata.rest.model.ChuruataType</class>
 		<class>org.churuata.rest.model.Murmering</class>
-		<class>org.churuata.rest.model.UserData</class>
+		<class>org.churuata.rest.model.Presentation</class>
 		<exclude-unlisted-classes>true</exclude-unlisted-classes>
 		<properties>
 			<property name="bundle-name"

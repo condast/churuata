@@ -1,6 +1,5 @@
 package org.churuata.digital.core.location;
 
-import org.condast.commons.authentication.user.ILoginUser;
 import org.condast.commons.strings.StringStyler;
 import org.condast.js.commons.images.IDefaultMarkers.Markers;
 
@@ -53,6 +52,14 @@ public interface IChuruataType {
 			return marker;
 			
 		}
+
+		public static boolean isValid(String typeStr) {
+			for( Types type: values() ) {
+				if( type.name().equals(typeStr))
+					return true;
+			}
+			return false;
+		}
 	}
 
 	public enum Contribution{
@@ -62,9 +69,19 @@ public interface IChuruataType {
 		@Override
 		public String toString() {
 			return StringStyler.prettyString( name());
-		}		
+		}
+
+		public static boolean isValid(String contributionStr) {
+			for( Contribution type: values() ) {
+				if( type.name().equals(contributionStr))
+					return true;
+			}
+			return false;
+		}
 	}
 
+	public static final String S_ANONYMOUS = "anonymous";
+	
 	long getId();
 
 	String getDescription();
@@ -73,7 +90,7 @@ public interface IChuruataType {
 
 	Types getType();
 
-	ILoginUser getUser();
+	String getContributor();
 	
 	Contribution getContribution();
 	

@@ -25,7 +25,7 @@ public class ChuruataType implements Comparable<ChuruataType>, IChuruataType{
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
 
-	private long userid;
+	private String contributor;
 
 	private int type;
 	
@@ -34,7 +34,7 @@ public class ChuruataType implements Comparable<ChuruataType>, IChuruataType{
 	private String description;
 	
 	@ManyToOne(cascade=CascadeType.PERSIST, fetch=FetchType.LAZY)
-	private Churuata owner;
+	private Churuata churuata;
 
 	@Basic(optional = false)
 	@Column( nullable=false)
@@ -45,9 +45,6 @@ public class ChuruataType implements Comparable<ChuruataType>, IChuruataType{
 	@Column( nullable=false)
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date updateDate;
-
-	private transient ILoginUser user;
-	
 	
 	public ChuruataType() {
 		super();
@@ -55,25 +52,28 @@ public class ChuruataType implements Comparable<ChuruataType>, IChuruataType{
 		this.updateDate = Calendar.getInstance().getTime();
 	}
 
-	public ChuruataType( ILoginUser user, Types type) {
-		this( user, type, Contribution.LOG );
+	public ChuruataType( String contributor, Types type) {
+		this( contributor, type, Contribution.LOG );
 	}
 
-	public ChuruataType(ILoginUser user, Types type, String description) {
-		this( user, type, description, Contribution.LOG);
+	public ChuruataType( String contributor, Types type, String description) {
+		this( contributor, type, description, Contribution.LOG);
 	}
 
-	public ChuruataType(ILoginUser user, Types type, Contribution contribution) {
-		this( user, type, null, contribution);
+	public ChuruataType( String contributor, Types type, Contribution contribution) {
+		this( contributor, type, null, contribution);
 	}
 
 	public ChuruataType(ILoginUser user, Types type, String description, Contribution contribution) {
+		this( user.getUserName(), type, description, contribution ); 
+	}
+	
+	public ChuruataType(String contributor, Types type, String description, Contribution contribution) {
 		super();
 		this.type = type.ordinal();
 		this.contribution = contribution.ordinal();
 		this.description = description;
-		this.user = user;
-		this.userid = ( user == null )?-1:user.getId();
+		this.contributor = ( contributor == null )? S_ANONYMOUS:contributor;
 		this.createDate = Calendar.getInstance().getTime();
 		this.updateDate = Calendar.getInstance().getTime();
 	}
@@ -82,13 +82,9 @@ public class ChuruataType implements Comparable<ChuruataType>, IChuruataType{
 		return id;
 	}
 
-	public long getUserid() {
-		return userid;
-	}
-
 	@Override
-	public ILoginUser getUser() {
-		return user;
+	public String getContributor() {
+		return contributor;
 	}
 
 	@Override

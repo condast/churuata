@@ -3,7 +3,9 @@ package org.churuata.digital.core.location;
 import java.util.Collection;
 import java.util.TreeSet;
 
+import org.churuata.digital.core.IPresentation;
 import org.churuata.digital.core.location.IChuruataType.Contribution;
+import org.churuata.digital.core.location.IChuruataType.Types;
 import org.condast.commons.authentication.user.ILoginUser;
 import org.condast.commons.data.latlng.LatLng;
 
@@ -21,10 +23,10 @@ public class Churuata implements Comparable<Churuata>, IChuruata{
 	private int leaves;
 	private int maxLeaves;
 	
-	private int hammocks;
-
 	private Collection<IChuruataType> types;
-	
+
+	private Collection<IMurmering> murmerings;
+
 	private Collection<String> presentation;
 
 	public Churuata( LatLng location) {
@@ -103,16 +105,6 @@ public class Churuata implements Comparable<Churuata>, IChuruata{
 	}
 
 	@Override
-	public boolean addType( ILoginUser user, ChuruataType.Types type ) {
-		return this.types.add( new ChuruataType(user, type ));
-	}
-
-	@Override
-	public boolean addType( ILoginUser user, ChuruataType.Types type, Contribution contribution ) {
-		return this.types.add( new ChuruataType(user, type, contribution ));
-	}
-
-	@Override
 	public boolean removeType( IChuruataType type ) {
 		return this.types.remove(type);
 	}
@@ -127,11 +119,6 @@ public class Churuata implements Comparable<Churuata>, IChuruata{
 		return this.name.compareTo(o.getName());
 	}
 
-	@Override
-	public boolean addMurmering(ILoginUser user, String text) {
-		// TODO Auto-generated method stub
-		return false;
-	}
 
 	@Override
 	public boolean removeMurmering(IMurmering murmering) {
@@ -144,28 +131,18 @@ public class Churuata implements Comparable<Churuata>, IChuruata{
 	}
 
 	@Override
-	public void setLogs(int logs) {
-		this.logs = logs;
-	}
-
-	@Override
-	public int getMaxlogs() {
+	public int getMaxLogs() {
 		return this.maxlogs;
 	}
 
 	@Override
-	public void setMaxlogs(int maxlogs) {
+	public void setMaxLogs(int maxlogs) {
 		this.maxlogs = maxlogs;
 	}
 
 	@Override
 	public int getLeaves() {
 		return this.leaves;
-	}
-
-	@Override
-	public void setLeaves(int leaves) {
-		this.leaves = leaves;
 	}
 
 	@Override
@@ -179,12 +156,74 @@ public class Churuata implements Comparable<Churuata>, IChuruata{
 	}
 
 	@Override
-	public int getHammocks() {
-		return hammocks;
+	public boolean addType(String contributor, Types type) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 	@Override
-	public void setHammocks(int hammocks) {
-		this.hammocks = hammocks;
+	public boolean addType(String contributor, Types type, Contribution contribution) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public IChuruataType removeType(String contributor, Types type) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean addMurmering(IMurmering murmering) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean removeMurmering(String filter) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public IMurmering[] getMurmerings() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean addPresentation(IPresentation presentation) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean removePresentation(String title) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public IPresentation[] getVideos() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public IPresentation[] getHammocks() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public int getNrOfVideos() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int getNrOfHammocks() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 }

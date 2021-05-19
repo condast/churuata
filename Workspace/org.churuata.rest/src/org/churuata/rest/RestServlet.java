@@ -3,6 +3,7 @@ package org.churuata.rest;
 import javax.servlet.Servlet;
 import javax.ws.rs.ApplicationPath;
 
+import org.churuata.rest.resources.CaminantesResource;
 import org.churuata.rest.resources.ChuruataResource;
 import org.churuata.rest.resources.PushResource;
 import org.condast.commons.messaging.http.AbstractServletWrapper;
@@ -33,6 +34,7 @@ public class RestServlet extends AbstractServletWrapper {
 		private RestApplication() {
 			register( CorsFilter.class );
 			register( ChuruataResource.class );
+			register( CaminantesResource.class );
 			register( PushResource.class );
 		}
 	}

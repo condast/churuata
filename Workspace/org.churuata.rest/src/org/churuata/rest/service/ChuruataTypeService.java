@@ -6,7 +6,6 @@ import javax.persistence.TypedQuery;
 
 import org.churuata.digital.core.location.IChuruataType;
 import org.churuata.rest.model.ChuruataType;
-import org.condast.commons.authentication.user.ILoginUser;
 import org.condast.commons.data.latlng.LatLng;
 import org.condast.commons.persistence.service.AbstractEntityService;
 import org.condast.commons.persistence.service.IPersistenceService;
@@ -23,8 +22,8 @@ public class ChuruataTypeService extends AbstractEntityService<ChuruataType>{
 		super( ChuruataType.class, service );
 	}
 
-	public ChuruataType create( ILoginUser user, IChuruataType.Types type, String description, IChuruataType.Contribution contribution ) {
-		ChuruataType churuata = new ChuruataType( user, type, description, contribution );
+	public ChuruataType create( String contributor, IChuruataType.Types type, String description, IChuruataType.Contribution contribution ) {
+		ChuruataType churuata = new ChuruataType( contributor, type, description, contribution );
 		super.create(churuata);
 		return churuata;
 	}

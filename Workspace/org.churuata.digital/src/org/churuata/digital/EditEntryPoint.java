@@ -2,22 +2,20 @@ package org.churuata.digital;
 
 import java.util.concurrent.TimeUnit;
 
+import org.churuata.digital.BasicApplication.Pages;
 import org.churuata.digital.core.Dispatcher;
 import org.churuata.digital.core.store.SessionStore;
-import org.churuata.digital.ui.image.ChuruataImages;
 import org.churuata.digital.ui.views.EditChuruataComposite;
 import org.condast.commons.authentication.user.ILoginUser;
 import org.condast.commons.config.Config;
 import org.condast.commons.data.latlng.LatLng;
 import org.condast.commons.ui.controller.EditEvent;
 import org.condast.commons.ui.entry.AbstractRestEntryPoint;
+import org.condast.commons.ui.utils.RWTUtils;
 import org.eclipse.rap.rwt.RWT;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Group;
 
 public class EditEntryPoint extends AbstractRestEntryPoint{
 	private static final long serialVersionUID = 1L;
@@ -59,6 +57,7 @@ public class EditEntryPoint extends AbstractRestEntryPoint{
 		parent.setLayout( new FillLayout());
 		editComposite = new EditChuruataComposite(parent, SWT.NONE );
 		editComposite.setData( RWT.CUSTOM_VARIANT, S_ARNAC );
+		editComposite.addEditListener( e->onRegistrationCompleted(e));
 		return editComposite;
 	}
 
@@ -74,10 +73,11 @@ public class EditEntryPoint extends AbstractRestEntryPoint{
 		return true;
 	}
 	
-	protected void onLocationChanged( EditEvent<LatLng> event ) {
+	protected void onRegistrationCompleted( EditEvent<LatLng> event ) {
 		LatLng data = event.getData();
 		switch( event.getType()) {
-		case INITIALISED:
+		case COMPLETE:
+			RWTUtils.redirect(Pages.READY.toPath());
 			break;
 		case CHANGED:
 			store.setSelected( data);
@@ -110,6 +110,7 @@ public class EditEntryPoint extends AbstractRestEntryPoint{
 
 	@Override
 	public void close() {
+		this.editComposite.removeEditListener(e->onRegistrationCompleted(e));
 		this.store = null;
 		super.close();
 	}

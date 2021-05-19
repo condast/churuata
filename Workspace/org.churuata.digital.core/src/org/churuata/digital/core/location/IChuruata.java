@@ -2,6 +2,7 @@ package org.churuata.digital.core.location;
 
 import java.util.Collection;
 
+import org.churuata.digital.core.IPresentation;
 import org.churuata.digital.core.location.IChuruataType.Contribution;
 import org.churuata.digital.core.location.IChuruataType.Types;
 import org.condast.commons.authentication.user.ILoginUser;
@@ -35,42 +36,52 @@ public interface IChuruata {
 
 	boolean setType(IChuruataType type);
 
-	boolean addType(ILoginUser user, IChuruataType.Types type);
+	boolean addType( String contributor, IChuruataType.Types type);
 
 
-	boolean addType(ILoginUser user, Types type, Contribution contribution);
+	boolean addType(String contributor, Types type, Contribution contribution);
 
 	boolean removeType(IChuruataType type);	
 
 	IChuruataType removeType(long typeId);
 
+	IChuruataType removeType(String contributor, Types type);
+
 	IChuruataType[] getTypes();
 
-	boolean addMurmering(ILoginUser user, String text);
+	boolean addMurmering( IMurmering murmering);
 
 	boolean removeMurmering( IMurmering murmering);
 
+	boolean removeMurmering(String filter);
+	
+	IMurmering[] getMurmerings();
+
 	int getLogs();
 
-	void setLogs(int logs);
+	int getMaxLogs();
 
-	int getMaxlogs();
-
-	void setMaxlogs(int maxlogs);
+	void setMaxLogs(int maxlogs);
 
 	int getLeaves();
-
-	void setLeaves(int leaves);
 
 	int getMaxLeaves();
 
 	void setMaxLeaves(int maxLeaves);
 
-	int getHammocks();
-
-	void setHammocks(int hammocks);
-
 	String getHomepage();
 
 	void setHomepage(String url);
+
+	boolean addPresentation( IPresentation presentation);
+
+	boolean removePresentation( String title);
+
+	IPresentation[] getVideos();
+
+	IPresentation[] getHammocks();
+
+	int getNrOfVideos();
+
+	int getNrOfHammocks();
 }

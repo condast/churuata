@@ -18,8 +18,8 @@ public class ChuruataService extends AbstractEntityService<Churuata>{
 	public static final String S_QUERY_FIND_ALL = "SELECT c FROM Churuata c ";
 	public static final String S_QUERY_FIND_CHURUATA = S_QUERY_FIND_ALL + " WHERE c.location.latitude = :latitude AND c.location.longitude = :longitude ";
 	public static final String S_QUERY_FIND_CHURUATA_IN_RANGE = 
-			"SELECT c FROM Churuata c WHERE c.latitude >= :latmin AND c.latitude <= :latmax AND "
-			+ "c.longitude >= :lonmin AND c.longitude <= :lonmax ";
+			"SELECT c FROM Churuata c WHERE c.location.latitude >= :latmin AND c.location.latitude <= :latmax AND "
+			+ "c.location.longitude >= :lonmin AND c.location.longitude <= :lonmax ";
 
 	public ChuruataService( IPersistenceService service ) {
 		super( Churuata.class, service );
@@ -29,7 +29,7 @@ public class ChuruataService extends AbstractEntityService<Churuata>{
 		LocationService ls = new LocationService(super.getService());
 		Location location= ls.create(user, name, latlng);
 		Churuata churuata = new Churuata( user, name, location );
-		churuata.addType(user,  type );
+		churuata.addType( user.getUserName(), type );
 		churuata.setDescription(description);
 		churuata.setCreateDate(Calendar.getInstance().getTime());
 		churuata.setUpdateDate(Calendar.getInstance().getTime());

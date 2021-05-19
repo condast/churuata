@@ -11,12 +11,15 @@ import org.churuata.digital.core.location.IChuruata.Requests;
 import org.churuata.digital.core.rest.IRestPages;
 import org.churuata.digital.core.location.IChuruataType;
 import org.churuata.digital.ui.image.ImageUtils;
+import org.churuata.digital.ui.utils.RWTUtils;
 import org.condast.commons.authentication.user.ILoginUser;
 import org.condast.commons.data.latlng.LatLng;
 import org.condast.commons.messaging.http.AbstractHttpRequest;
 import org.condast.commons.messaging.http.ResponseEvent;
 import org.condast.commons.strings.StringStyler;
 import org.condast.commons.ui.controller.AbstractEntityComposite;
+import org.condast.commons.ui.controller.EditEvent;
+import org.condast.commons.ui.controller.EditEvent.EditTypes;
 import org.condast.commons.ui.swt.AttributeFieldComposite;
 import org.condast.commons.ui.swt.InputField;
 import org.condast.commons.ui.table.TableEvent;
@@ -233,7 +236,7 @@ public class EditChuruataComposite extends AbstractEntityComposite<LatLng>
 	}
 
 	public void setInput( String context, ILoginUser user ){
-		controller.setInput(context, IRestPages.Pages.REST.toPath());
+		controller.setInput(context, IRestPages.Pages.SUPPORT.toPath());
 		this.user = user;
 	}
 
@@ -351,7 +354,13 @@ public class EditChuruataComposite extends AbstractEntityComposite<LatLng>
 
 		@Override
 		protected String onHandleResponse(ResponseEvent<Requests, IChuruata> event, IChuruata data) throws IOException {
-			// TODO Auto-generated method stub
+			switch( event.getRequest()){
+			case REGISTER:
+				notifyInputEdited( new EditEvent<LatLng>( this, EditTypes.CHANGED, null));
+				break;
+			default:
+				break;
+			}
 			return null;
 		}
 		

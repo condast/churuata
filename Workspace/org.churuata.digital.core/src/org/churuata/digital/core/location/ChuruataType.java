@@ -10,7 +10,7 @@ public class ChuruataType implements Comparable<IChuruataType>, IChuruataType{
 	
 	private Contribution contribution;
 	
-	private ILoginUser user;
+	private String contributor;
 	
 	public ChuruataType( ILoginUser user, Types type) {
 		this( user, type, Contribution.LOG );
@@ -28,7 +28,7 @@ public class ChuruataType implements Comparable<IChuruataType>, IChuruataType{
 		super();
 		this.type = type;
 		this.description = description;
-		this.user = user;
+		this.contributor = user.getUserName();
 		this.contribution = contribution;
 	}
 
@@ -52,7 +52,6 @@ public class ChuruataType implements Comparable<IChuruataType>, IChuruataType{
 	public Types getType() {
 		return type;
 	}
-
 	
 	@Override
 	public Contribution getContribution() {
@@ -60,12 +59,12 @@ public class ChuruataType implements Comparable<IChuruataType>, IChuruataType{
 	}
 
 	@Override
-	public ILoginUser getUser() {
-		return user;
+	public int compareTo(IChuruataType o) {
+		return type.toString().compareTo(o.getType().toString());
 	}
 
 	@Override
-	public int compareTo(IChuruataType o) {
-		return type.toString().compareTo(o.getType().toString());
+	public String getContributor() {
+		return contributor;
 	}
 }

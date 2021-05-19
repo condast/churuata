@@ -2,7 +2,6 @@ package org.churuata.rest.resources;
 
 import com.google.gson.Gson;
 
-import java.util.Collection;
 import java.util.logging.Logger;
 
 import javax.ws.rs.Consumes;
@@ -29,7 +28,7 @@ import org.condast.commons.data.latlng.LatLng;
 import org.condast.commons.strings.StringStyler;
 import org.condast.commons.strings.StringUtils;
 
-@Path("/")
+@Path("/support")
 public class ChuruataResource {
 
 	private Logger logger = Logger.getLogger(this.getClass().getName());
@@ -38,8 +37,7 @@ public class ChuruataResource {
 	}
 
 	/**
-	 * First report of an illness. Add the history so that the system can inform the network.
-	 * The system should return by giving the advice to contact a doctor
+	 * Register a churuata
 	 * @param id
 	 * @param token
 	 * @param identifier
@@ -72,13 +70,58 @@ public class ChuruataResource {
 				String typeStr = StringStyler.styleToEnum(type);
 				LatLng latlng = new LatLng( name, latitude, longitude);
 				churuata = service.create(user, name, description, latlng, Types.valueOf(typeStr));
-				Collection<Churuata> churuatas = service.findChuruata(latlng);
 			}
 			finally {
 				service.close();
 			}
 			String str = gson.toJson( churuata.getId(), long.class);
 			result = Response.ok( str ).build();
+		}
+		catch( Exception ex ){
+			ex.printStackTrace();
+			return Response.serverError().build();
+		}
+		return result;
+	}
+
+	/**
+	 * Create the dimensions of the churuata
+	 * @param id
+	 * @param token
+	 * @param identifier
+	 * @param history
+	 * @return
+	 */
+	@GET
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/plan")
+	public Response plan( @QueryParam("id") long userId, @QueryParam("token") long token, 
+			@QueryParam("churuata-id") long churuataId, @QueryParam("max-logs") int logs,
+			@QueryParam("max-leaves") int leaves ) {
+		Dispatcher dispatcher = Dispatcher.getInstance();
+		Response result = null;
+		try{
+			AuthenticationDispatcher ad = AuthenticationDispatcher.getInstance();
+			ILoginUser user = ad.getLoginUser(userId, token);
+			if(user == null)
+				return Response.status( Status.UNAUTHORIZED).build();
+
+			if(( logs < 0 ) || ( leaves < 0 ))
+				return Response.status( Status.BAD_REQUEST).build();
+	
+			ChuruataService service = new ChuruataService( dispatcher );
+			Churuata churuata = service.find(churuataId);		
+			if( churuata == null )
+				return Response.noContent().build();
+			
+			logger.info( "Create " + churuata.getName() );
+			if( logs > 0 )
+				churuata.setMaxLogs(logs);
+			if( leaves > 0 )
+				churuata.setMaxLeaves(logs);
+			
+			result = Response.ok().build();
 		}
 		catch( Exception ex ){
 			ex.printStackTrace();
@@ -149,7 +192,7 @@ public class ChuruataResource {
 			String typeStr = StringStyler.styleToEnum(type);
 			String contrStr = StringStyler.styleToEnum(contribution);
 			ChuruataType ctype = typeService.create(null, Types.valueOf(typeStr), description, Contribution.valueOf( contrStr ));
-			boolean success = churuata.addType(null, ctype);
+			boolean success = churuata.addType( ctype);
 			result = Response.ok( success ).build();
 		}
 		catch( Exception ex ){

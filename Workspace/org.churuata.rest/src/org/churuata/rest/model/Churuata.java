@@ -1,30 +1,29 @@
 package org.churuata.rest.model;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
-import javax.persistence.CollectionTable;
 import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.churuata.digital.core.IPresentation;
 import org.churuata.digital.core.location.IChuruata;
 import org.churuata.digital.core.location.IChuruataType;
+import org.churuata.digital.core.location.IChuruataType.Contribution;
 import org.churuata.digital.core.location.IMurmering;
+import org.condast.commons.Utils;
 import org.condast.commons.authentication.user.ILoginUser;
 import org.condast.commons.data.latlng.LatLng;
 
@@ -50,26 +49,18 @@ public class Churuata implements Comparable<Churuata>, IChuruata{
 	private Location location;
 	private String url;
 	
-	private int logs;	
 	private int maxlogs;
 	
-	private int leaves;
 	private int maxLeaves;
 	
-	private int hammocks;
-		
-	@OneToMany( mappedBy="owner", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany( mappedBy="churuata", cascade = CascadeType.ALL, orphanRemoval = true)
 	private Set<ChuruataType> types;
 
 	@OneToMany( mappedBy="churuata", cascade = CascadeType.ALL, orphanRemoval = true)
 	private Collection<Murmering> murmerings;
 
-	@ElementCollection
-	@CollectionTable(name = "presentations",
-	joinColumns = { @JoinColumn(name = "id") })
-	@MapKeyColumn(name = "key")
-	@Column(name = "value")	
-	private Map<String, String> presentations;
+	@OneToMany( mappedBy="churuata", cascade = CascadeType.ALL, orphanRemoval = true)
+	private ArrayList<Presentation> presentations;
 
 	@Basic(optional = false)
 	@Column( nullable=true)
@@ -103,6 +94,7 @@ public class Churuata implements Comparable<Churuata>, IChuruata{
 		this.ownerId = ( owner == null )?-1: owner.getId();
 		this.location = new Location( owner, location );
 		this.types = new TreeSet<>();
+		this.presentations = new ArrayList<>();
 		this.createDate = Calendar.getInstance().getTime();
 		this.updateDate = Calendar.getInstance().getTime();
 	}
@@ -123,6 +115,7 @@ public class Churuata implements Comparable<Churuata>, IChuruata{
 		return id;
 	}
 
+	
 	public long getOwnerId() {
 		return ownerId;
 	}
@@ -182,32 +175,34 @@ public class Churuata implements Comparable<Churuata>, IChuruata{
 
 	@Override
 	public int getLogs() {
+		int logs = 0;
+		for( ChuruataType type: this.types ) {
+			if( Contribution.LOG.equals( type.getContribution())) {
+				logs++;
+			}
+		}
 		return logs;
 	}
 
 	@Override
-	public void setLogs(int logs) {
-		this.logs = logs;
-	}
-
-	@Override
-	public int getMaxlogs() {
+	public int getMaxLogs() {
 		return maxlogs;
 	}
 
 	@Override
-	public void setMaxlogs(int maxlogs) {
+	public void setMaxLogs(int maxlogs) {
 		this.maxlogs = maxlogs;
 	}
 
 	@Override
 	public int getLeaves() {
+		int leaves = 0;
+		for( ChuruataType type: this.types ) {
+			if( Contribution.LEAF.equals( type.getContribution())) {
+				leaves++;
+			}
+		}
 		return leaves;
-	}
-
-	@Override
-	public void setLeaves(int leaves) {
-		this.leaves = leaves;
 	}
 
 	@Override
@@ -220,28 +215,18 @@ public class Churuata implements Comparable<Churuata>, IChuruata{
 		this.maxLeaves = maxLeaves;
 	}
 
-	@Override
-	public int getHammocks() {
-		return hammocks;
-	}
-
-	@Override
-	public void setHammocks(int hammocks) {
-		this.hammocks = hammocks;
-	}
-
-	public boolean addType( ILoginUser user, ChuruataType type ) {
+	public boolean addType( ChuruataType type ) {
 		return this.types.add( type );
 	}
 
 	@Override
-	public boolean addType( ILoginUser user, IChuruataType.Types type ) {
-		return this.types.add( new ChuruataType(user, type));
+	public boolean addType( String contributor, IChuruataType.Types type ) {
+		return this.types.add( new ChuruataType( contributor, type ));
 	}
 
 	@Override
-	public boolean addType( ILoginUser user, IChuruataType.Types type, IChuruataType.Contribution contribution ) {
-		return this.types.add( new ChuruataType(user, type, contribution));
+	public boolean addType( String contributor, IChuruataType.Types type, IChuruataType.Contribution contribution ) {
+		return this.types.add( new ChuruataType(contributor, type, contribution));
 	}
 
 	@Override
@@ -261,18 +246,82 @@ public class Churuata implements Comparable<Churuata>, IChuruata{
 	}
 
 	@Override
+	public IChuruataType removeType( String contributor, IChuruataType.Types type ) {
+		Collection<ChuruataType> temp = new ArrayList<>( this.types);
+		for( ChuruataType ct: temp ) {
+			if( ct.getContributor().equals(contributor) && ct.getType().equals(type)) {
+				this.types.remove(ct);
+				return ct;
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public boolean addPresentation( IPresentation presentation ) {
+		return this.presentations.add( (Presentation) presentation );
+	}
+
+	@Override
+	public boolean removePresentation( String title ) {
+		return this.presentations.removeIf( p -> p.getTitle().equals(title));
+	}
+	
+	@Override
+	public IPresentation[] getVideos() {
+		Collection<IPresentation> results = new ArrayList<>();
+		if( Utils.assertNull(presentations))
+			return results.toArray( new IPresentation[ results.size()]);
+		for( Presentation presentation: presentations){
+			if( IPresentation.PresentationTypes.VIDEO.equals(presentation.getType()))
+				results.add(presentation);
+		}
+		return results.toArray( new IPresentation[ results.size()]);
+	}
+
+	@Override
+	public IPresentation[] getHammocks() {
+		Collection<IPresentation> results = new ArrayList<>();
+		for( Presentation presentation: presentations){
+			if( IPresentation.PresentationTypes.HAMMOCK.equals(presentation.getType()))
+				results.add(presentation);
+		}
+		return results.toArray( new IPresentation[ results.size()]);
+	}
+
+	@Override
+	public int getNrOfVideos() {
+		return (int) this.presentations.stream().filter( p-> IPresentation.PresentationTypes.VIDEO.equals(p.getType())).count();
+	}
+
+	@Override
+	public int getNrOfHammocks() {
+		return (int) this.presentations.stream().filter( p-> IPresentation.PresentationTypes.HAMMOCK.equals(p.getType())).count();
+	}
+
+	@Override
 	public IChuruataType[] getTypes() {
 		return types.toArray( new ChuruataType[ types.size()]);
 	}
 
 	@Override
-	public boolean addMurmering( ILoginUser user, String text ) {
-		return this.murmerings.add( new Murmering( this, user, text ));
+	public boolean addMurmering( IMurmering murmering ) {
+		return this.murmerings.add(  (Murmering) murmering );
 	}
 
 	@Override
 	public boolean removeMurmering( IMurmering murmering ) {
 		return this.murmerings.add( (Murmering) murmering );
+	}
+
+	@Override
+	public boolean removeMurmering( String filter ) {
+		return this.murmerings.removeIf( m->m.getText().contains(filter));
+	}
+
+	@Override
+	public IMurmering[] getMurmerings() {
+		return this.murmerings.toArray( new IMurmering[ types.size()]);
 	}
 
 	public Date getCreateDate() {
