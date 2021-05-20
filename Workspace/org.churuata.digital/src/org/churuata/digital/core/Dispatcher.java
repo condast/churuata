@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpSession;
+
+import org.churuata.digital.Activator;
 import org.churuata.digital.core.location.Churuata;
 import org.churuata.digital.core.location.IChuruata;
 import org.churuata.digital.core.location.IChuruataCollection;
@@ -14,12 +16,11 @@ import org.condast.commons.authentication.user.ILoginUser;
 import org.condast.commons.data.latlng.LatLng;
 import org.condast.commons.data.latlng.LatLngUtils;
 import org.condast.commons.persistence.core.AbstractSessionPersistence;
-import org.condast.commons.persistence.core.ISessionStoreFactory;
 import org.condast.commons.strings.StringUtils;
 import org.condast.commons.ui.provider.ICompositeProvider;
 import org.eclipse.swt.widgets.Composite;
 
-public class Dispatcher implements IChuruataCollection, ISessionStoreFactory<HttpSession, SessionStore>  {
+public class Dispatcher implements IChuruataCollection{
 
 	private static Dispatcher dispatcher = new Dispatcher();
 	
@@ -100,18 +101,19 @@ public class Dispatcher implements IChuruataCollection, ISessionStoreFactory<Htt
 		return results.toArray( new Churuata[ results.size() ]);
 	}
 
-	@Override
 	public SessionStore createSessionStore(HttpSession session) {
 		return persistence.createSessionStore(session);
 	}
 
-	@Override
 	public SessionStore getSessionStore(HttpSession session) {
 		return persistence.getSessionStore(session);
 	}
-
 	
 	private class SessionPersistence extends AbstractSessionPersistence<SessionStore>{
+
+		protected SessionPersistence() {
+			super(Activator.BUNDLE_ID);
+		}
 
 		@Override
 		protected SessionStore createPersistence(HttpSession session) {

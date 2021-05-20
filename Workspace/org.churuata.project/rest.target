@@ -256,5 +256,6 @@
 	<plugin id="org.glassfish.hk2.osgi-resource-locator"/>
 	<plugin id="org.eclipse.equinox.http.jetty"/>
 	<plugin id="org.apache.commons.commons-codec"/>
+	<plugin id="javax.xml.bind"/>
 </includeBundles>
 </target>

@@ -411,7 +411,7 @@ public class CaminantesResource {
 	}
 
 	/**
-	 * Add a presentation
+	 * Remove a murmering
 	 * @param id
 	 * @param token
 	 * @param identifier

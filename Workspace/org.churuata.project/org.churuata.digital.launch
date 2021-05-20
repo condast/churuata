@@ -105,7 +105,6 @@
     </setAttribute>
     <setAttribute key="selected_workspace_bundles">
         <setEntry value="nl.martijndwars.webpush@default:default"/>
-        <setEntry value="org.churuata.digital.authentication@default:default"/>
         <setEntry value="org.churuata.digital.core@default:default"/>
         <setEntry value="org.churuata.digital.ui@default:default"/>
         <setEntry value="org.churuata.digital@default:default"/>
@@ -113,9 +112,7 @@
         <setEntry value="org.condast.commons.authentication.ui@default:default"/>
         <setEntry value="org.condast.commons.authentication@default:default"/>
         <setEntry value="org.condast.commons.data@default:default"/>
-        <setEntry value="org.condast.commons.legal@default:default"/>
         <setEntry value="org.condast.commons.messaging@default:default"/>
-        <setEntry value="org.condast.commons.na@default:default"/>
         <setEntry value="org.condast.commons.persistence@default:default"/>
         <setEntry value="org.condast.commons.ui@default:default"/>
         <setEntry value="org.condast.commons@default:default"/>
