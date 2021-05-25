@@ -2,6 +2,8 @@ package org.churuata.rest.resources;
 
 import com.google.gson.Gson;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.logging.Logger;
 
 import javax.ws.rs.Consumes;
@@ -33,9 +35,6 @@ public class ChuruataResource {
 
 	private Logger logger = Logger.getLogger(this.getClass().getName());
 	
-	public ChuruataResource() {
-	}
-
 	/**
 	 * Register a churuata
 	 * @param id
@@ -75,6 +74,43 @@ public class ChuruataResource {
 				service.close();
 			}
 			String str = gson.toJson( churuata.getId(), long.class);
+			result = Response.ok( str ).build();
+		}
+		catch( Exception ex ){
+			ex.printStackTrace();
+			return Response.serverError().build();
+		}
+		return result;
+	}
+
+	/**
+	 * Register a churuata
+	 * @param id
+	 * @param token
+	 * @param identifier
+	 * @param history
+	 * @return
+	 */
+	@GET
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/show")
+	public Response showAll( @QueryParam("lat") double latitude, @QueryParam("lon") double longitude ) {
+		Dispatcher dispatcher = Dispatcher.getInstance();
+		Response result = null;
+		try{
+			ChuruataService service = new ChuruataService( dispatcher );
+			service.open();
+			Collection<LatLng> results = new ArrayList<>();
+			try {
+				Collection<Churuata> churuatas = service.findAll();
+				churuatas.forEach(c-> results.add(c.getLocation()));
+			}
+			finally {
+				service.close();
+			}
+			Gson gson = new Gson();
+			String str = gson.toJson( results.toArray( new LatLng[ results.size()]), LatLng[].class);
 			result = Response.ok( str ).build();
 		}
 		catch( Exception ex ){

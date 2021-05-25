@@ -3,7 +3,6 @@ package org.churuata.digital;
 import java.util.concurrent.TimeUnit;
 
 import org.churuata.digital.BasicApplication.Pages;
-import org.churuata.digital.core.Dispatcher;
 import org.churuata.digital.core.store.SessionStore;
 import org.churuata.digital.ui.views.EditChuruataComposite;
 import org.condast.commons.authentication.user.ILoginUser;
@@ -17,7 +16,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 
-public class EditEntryPoint extends AbstractRestEntryPoint{
+public class EditEntryPoint extends AbstractRestEntryPoint<SessionStore>{
 	private static final long serialVersionUID = 1L;
 
 	public static final String S_PAGE = "page";
@@ -26,11 +25,7 @@ public class EditEntryPoint extends AbstractRestEntryPoint{
 
 	public static final String S_ERR_NO_VESSEL = "No Vessel has been found.";	
 
-	private Dispatcher dispatcher = Dispatcher.getInstance(); 
-
 	private EditChuruataComposite editComposite;
-	
-	private SessionStore store;
 	
 	/**
 	 * Slow down start time a bit in order to let the browser find the location
@@ -43,7 +38,7 @@ public class EditEntryPoint extends AbstractRestEntryPoint{
 
 	@Override
 	protected boolean prepare(Composite parent) {
-		store = dispatcher.getSessionStore(RWT.getUISession().getHttpSession());
+		SessionStore store = getData();
 		if( store == null )
 			return false;
 		ILoginUser user = store.getLoginUser();
@@ -65,6 +60,7 @@ public class EditEntryPoint extends AbstractRestEntryPoint{
 	protected boolean postProcess(Composite parent) {
 		Config config = new Config();
 		String context = config.getServerContext();
+		SessionStore store = getData();
 
 		ILoginUser user = store.getLoginUser();
 		editComposite.setInput(context, user );
@@ -75,6 +71,7 @@ public class EditEntryPoint extends AbstractRestEntryPoint{
 	
 	protected void onRegistrationCompleted( EditEvent<LatLng> event ) {
 		LatLng data = event.getData();
+		SessionStore store = getData();
 		switch( event.getType()) {
 		case COMPLETE:
 			RWTUtils.redirect(Pages.READY.toPath());
@@ -96,7 +93,8 @@ public class EditEntryPoint extends AbstractRestEntryPoint{
 	protected void handleTimer() {
 		try {
 			super.handleTimer();
-			if(( this.store == null ) || ( store.getLoginUser() == null ))
+			SessionStore store = getData();
+			if(( store == null ) || ( store.getLoginUser() == null ))
 				return;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -105,13 +103,14 @@ public class EditEntryPoint extends AbstractRestEntryPoint{
 
 	@Override
 	protected void handleSessionTimeout(boolean reload) {
-		this.store = null;
+		SessionStore store = super.getData();
+		store.setLoginUser(null);
+		super.handleSessionTimeout(reload);
 	}
 
 	@Override
 	public void close() {
 		this.editComposite.removeEditListener(e->onRegistrationCompleted(e));
-		this.store = null;
 		super.close();
 	}
 }

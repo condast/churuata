@@ -34,7 +34,7 @@ public class Presentation implements IPresentation{
 	@Basic(optional = true)
 	private String description;
 
-	private PresentationTypes type;
+	private int type;
 	
 	private String link;
 
@@ -55,7 +55,7 @@ public class Presentation implements IPresentation{
 		this.churuata = (Churuata) churuata;
 		this.title = presentation;
 		this.description = description;
-		this.type = type;
+		this.type = type.ordinal();
 		this.link = link;
 		this.createDate = Calendar.getInstance().getTime();
 	}
@@ -91,11 +91,11 @@ public class Presentation implements IPresentation{
 
 	@Override
 	public PresentationTypes getType() {
-		return type;
+		return PresentationTypes.values()[type];
 	}
 
 	public void setType(PresentationTypes type) {
-		this.type = type;
+		this.type = type.ordinal();
 	}
 	
 	@Override
@@ -118,7 +118,7 @@ public class Presentation implements IPresentation{
 		results.put(IPresentation.Attributes.TITLE.name(), title);
 		results.put(IPresentation.Attributes.DESCRIPTION.name(), description);
 		results.put(IPresentation.Attributes.LINK.name(), link);
-		results.put(IPresentation.Attributes.TYPE.name(), type.name());
+		results.put(IPresentation.Attributes.TYPE.name(), getType().name());
 		return results;
 	}
 }

@@ -18,6 +18,7 @@ import org.condast.commons.authentication.user.ILoginUser;
 import org.condast.commons.persistence.core.ISessionStoreFactory;
 import org.condast.commons.persistence.service.AbstractPersistencyService;
 import org.condast.commons.persistence.service.IPersistenceService;
+import org.condast.commons.strings.StringUtils;
 
 public class Dispatcher extends AbstractPersistencyService implements IPersistenceService{
 
@@ -42,13 +43,20 @@ public class Dispatcher extends AbstractPersistencyService implements IPersisten
 	public static Dispatcher getInstance(){
 		return service;
 	}
-		
+
+	public void addAuthenticationListener( IAuthenticationListener listener ) {
+		this.listeners.add(listener);
+	}
+
+	public void removeAuthenticationListener( IAuthenticationListener listener ) {
+		this.listeners.remove(listener);		
+	}
+
 	protected void notifyListeners( AuthenticationEvent event ) {
 		for( IAuthenticationListener listener: this.listeners )
 			listener.notifyLoginChanged( event );
 	}
 
-	
 	@Override
 	protected Map<String, String> onPrepareManager() {
 		return null;
@@ -108,6 +116,16 @@ public class Dispatcher extends AbstractPersistencyService implements IPersisten
 				return user;
 		}
 		return null;
+	}
+
+	public boolean hasLoginUser( String userName, long token ) {
+		if( StringUtils.isEmpty(userName))
+			return false;
+		for( ILoginUser user: this.users) {
+			if( userName.equals( user.getId()) && ( user.getToken() - token ) == 0) 
+				return true;
+		}
+		return false;
 	}
 
 	public Map<Long, String> getUserNames( Collection<Long> userIds) {

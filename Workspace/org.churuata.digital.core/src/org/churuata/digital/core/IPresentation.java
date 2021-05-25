@@ -1,5 +1,6 @@
 package org.churuata.digital.core;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.Map;
 
@@ -12,7 +13,7 @@ public interface IPresentation {
 		LINK;
 	}
 	
-	public enum PresentationTypes{
+	public enum PresentationTypes implements Serializable{
 		VIDEO,
 		HAMMOCK;
 

@@ -3,6 +3,8 @@ package org.churuata.digital.http;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import javax.servlet.Filter;
@@ -13,7 +15,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-
+import org.churuata.digital.core.rest.IRestPages;
 import org.condast.commons.strings.StringUtils;
 
 public class MapFilter implements Filter {
@@ -26,6 +28,13 @@ public class MapFilter implements Filter {
 
 	private Logger logger = Logger.getLogger(this.getClass().getName());
 	
+	private Map<String, HttpSession> addresses;
+
+	public MapFilter() {
+		super();
+		addresses = new HashMap<>();
+	}
+
 	@Override
 	public void doFilter(ServletRequest arg0, ServletResponse arg1, FilterChain arg2)
 			throws IOException, ServletException {
@@ -39,22 +48,40 @@ public class MapFilter implements Filter {
 			arg2.doFilter(arg0, arg1);
 			return;			
 		}
-		
+
+		//Pass the REST services
+		if(path.contains( IRestPages.S_CHURUATA_CONTEXT_PATH)) {
+			arg2.doFilter(arg0, arg1);
+			return;			
+		}
+
 		//Filter local calls or a call to index
+		String remote = req.getRemoteAddr();
+		HttpSession session = null;
 		if( S_LOCAL_HOST.equals(req.getRemoteAddr()) || path.endsWith(S_CHURUATA) || path.contains(S_REST_SERVICE)) {
+			if(!addresses.containsKey(remote)) {
+				session = req.getSession(true);
+				addresses.put(remote, session);
+			}
+			arg2.doFilter(arg0, arg1);
+			return;
+		}
+
+		if( path.startsWith(S_CHURUATA) && addresses.containsKey(remote)) {
 			arg2.doFilter(arg0, arg1);
 			return;
 		}
 		
+
 		//The request fails on the conditions described above. See if these are follow up calls,
 		//and allow them if so
-		HttpSession session = req.getSession(false);
+		session = req.getSession(false);
 		if( session != null ) {
 			arg2.doFilter(arg0, arg1);
 			return;			
 		}
 		Writer writer = arg1.getWriter();
-		writer.write(S_ERR_ILLEGAL_ACCESS);
+		writer.write(S_ERR_ILLEGAL_ACCESS + "=> " + remote + ": " + path);
 		logger.info(path);
 		arg2.doFilter(arg0, arg1);
 	}

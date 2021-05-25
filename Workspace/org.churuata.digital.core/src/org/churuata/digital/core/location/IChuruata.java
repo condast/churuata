@@ -12,6 +12,7 @@ public interface IChuruata {
 
 	public enum Requests{
 		REGISTER,
+		SHOW,
 		FIND,
 		ADD,
 		REMOVE,

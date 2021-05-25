@@ -3,12 +3,15 @@ package org.churuata.digital;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.churuata.digital.core.store.SessionStore;
 import org.condast.commons.strings.StringStyler;
 import org.condast.commons.strings.StringUtils;
-import org.eclipse.rap.rwt.application.AbstractEntryPoint;
+import org.condast.commons.ui.entry.IDataEntryPoint;
 import org.eclipse.rap.rwt.application.Application;
 import org.eclipse.rap.rwt.application.Application.OperationMode;
 import org.eclipse.rap.rwt.application.ApplicationConfiguration;
+import org.eclipse.rap.rwt.application.EntryPoint;
+import org.eclipse.rap.rwt.application.EntryPointFactory;
 import org.eclipse.rap.rwt.client.WebClient;
 
 public class BasicApplication implements ApplicationConfiguration {
@@ -67,29 +70,29 @@ public class BasicApplication implements ApplicationConfiguration {
 			return result;
 		}
 
-		public Class<? extends AbstractEntryPoint> getEntryPoint() {
-			Class<? extends AbstractEntryPoint> result = null;
+		public EntryPoint getEntryPoint() {
+			EntryPoint result = null;
 			switch( this ) {
 			case READY:
-				result = ActiveEntryPoint.class;
+				result = new ActiveEntryPoint();
 				break;
 			case BANNER:
-				result = BannerEntryPoint.class;
+				result = new BannerEntryPoint();
 				break;
 			case CREATE:
-				result = CreateEntryPoint.class;
+				result = new CreateEntryPoint();
 				break;
 			case EDIT:
-				result = EditEntryPoint.class;
+				result = new EditEntryPoint();
 				break;
 			case LOGIN:
-				result = LoginEntryPoint.class;
+				result = new LoginEntryPoint();
 				break;
 			case LOGOFF:
-				result = LogoffEntryPoint.class;
+				result = new LogoffEntryPoint();
 				break;
 			case MAP:
-				result = BasicEntryPoint.class;
+				result = new BasicEntryPoint();
 				break;
 			default:
 				break;
@@ -111,13 +114,39 @@ public class BasicApplication implements ApplicationConfiguration {
 	public void configure(Application application) {
 		application.addStyleSheet( S_CHURUATA_THEME, S_THEME_CSS );
 		application.setOperationMode( OperationMode.SWT_COMPATIBILITY );
+		SessionStore store = new SessionStore();
 		for( Pages page: Pages.values()) {
 			if( page.getEntryPoint() == null )
 				continue;
 			Map<String, String> properties = new HashMap<String, String>();
 			properties.put(WebClient.PAGE_TITLE, "Churuata Digital");
 			properties.put( WebClient.THEME_ID, S_CHURUATA_THEME );
-			application.addEntryPoint( page.toString(), page.getEntryPoint(), properties);
+			ChuruataEntryPointFactory factory = new ChuruataEntryPointFactory(store, page);
+			application.addEntryPoint( page.toString(), factory, properties);
 		}
 	}
+	
+	private class ChuruataEntryPointFactory  implements EntryPointFactory{
+
+		private SessionStore store;
+		Pages page;
+		
+		public ChuruataEntryPointFactory( SessionStore store, Pages page) {
+			super();
+			this.store = store;
+			this.page = page;
+		}
+
+		@SuppressWarnings({ "unchecked" })
+		@Override
+		public EntryPoint create() {
+			EntryPoint entryPoint = page.getEntryPoint();
+			if( entryPoint instanceof IDataEntryPoint ) {
+				IDataEntryPoint<SessionStore> ae = (IDataEntryPoint<SessionStore>) entryPoint;
+				ae.setData(store);
+			}
+			return entryPoint;
+		}	
+	}
+
 }

@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="org.satr.arnac.authentication.ds.SessionStoreClient">
-   <reference bind="setProvider" cardinality="1..n" interface="org.condast.commons.persistence.core.ISessionStoreFactory" name="Provider" policy="dynamic" unbind="unsetProvider"/>
-   <implementation class="org.satr.arnac.authentication.ds.SessionStoreClient"/>
-</scr:component>

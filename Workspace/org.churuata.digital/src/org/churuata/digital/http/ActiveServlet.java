@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.churuata.digital.core.Dispatcher;
+import org.churuata.digital.core.AuthenticationDispatcher;
 import org.condast.commons.authentication.user.ILoginUser;
 import org.condast.commons.strings.StringStyler;
 import org.condast.commons.strings.StringUtils;
@@ -60,7 +60,7 @@ public class ActiveServlet extends HttpServlet {
 
 	private class FileParser extends AbstractResourceParser{
 
-		Dispatcher dispatcher = Dispatcher.getInstance();
+		AuthenticationDispatcher dispatcher = AuthenticationDispatcher.getInstance();
 
 		@Override
 		protected String onHandleLabel(String id, Attributes attr) {

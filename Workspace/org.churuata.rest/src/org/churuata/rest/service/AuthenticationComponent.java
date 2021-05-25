@@ -16,7 +16,7 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 )
 public class AuthenticationComponent{
 
-	public static final String COMPONENT_NAME = "org.churuata.digital.dashboard.service.login";
+	public static final String COMPONENT_NAME = "org.churuata.digital.rest.service.login";
 
 	private AuthenticationDispatcher dispatcher = AuthenticationDispatcher.getInstance();
 	
@@ -34,11 +34,11 @@ public class AuthenticationComponent{
 
 	@Reference( cardinality = ReferenceCardinality.AT_LEAST_ONE,
 			policy=ReferencePolicy.DYNAMIC)
-	public void setFactory( ILoginProvider factory ){
-		dispatcher.setFactory(factory);
+	public void setFactory( ILoginProvider provider ){
+		dispatcher.setLoginProvider(provider);
 	}
 
-	public void unsetFactory( ILoginProvider factory ){
-		dispatcher.unsetFactory(factory);
+	public void unsetFactory( ILoginProvider provider ){
+		dispatcher.unsetLoginProvider(provider);
 	}
 }

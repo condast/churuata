@@ -1,40 +1,44 @@
 package org.churuata.digital.ui.map;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import org.churuata.digital.core.location.Churuata;
 import org.churuata.digital.core.location.IChuruata;
 import org.churuata.digital.core.location.IChuruataCollection;
 import org.churuata.digital.core.location.IChuruataType;
+import org.churuata.digital.core.location.IChuruata.Requests;
+import org.churuata.digital.core.rest.IRestPages;
 import org.churuata.digital.ui.utils.RWTUtils;
-import org.churuata.digital.ui.views.ShowChuruatasComposite;
+import org.churuata.digital.ui.views.EditChuruataComposite.Parameters;
 import org.condast.commons.Utils;
 import org.condast.commons.data.latlng.LatLng;
 import org.condast.commons.data.plane.IPolygon;
+import org.condast.commons.messaging.http.AbstractHttpRequest;
+import org.condast.commons.messaging.http.ResponseEvent;
 import org.condast.commons.strings.StringStyler;
 import org.condast.commons.strings.StringUtils;
 import org.condast.commons.ui.controller.EditEvent;
 import org.condast.commons.ui.controller.IEditListener;
 import org.condast.commons.ui.controller.EditEvent.EditTypes;
+import org.condast.commons.ui.session.AbstractSessionHandler;
+import org.condast.commons.ui.session.SessionEvent;
 import org.condast.js.commons.eval.EvaluationEvent;
 import org.condast.js.commons.eval.IEvaluationListener;
 import org.condast.js.commons.images.IDefaultMarkers.Markers;
-import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.rap.rwt.RWT;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.browser.ProgressEvent;
 import org.eclipse.swt.browser.ProgressListener;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Display;
 import org.openlayer.map.control.IconsView;
 import org.openlayer.map.control.NavigationView;
 import org.openlayer.map.controller.OpenLayerController;
@@ -82,6 +86,11 @@ public class MapBrowser extends Browser {
 		}
 	};
 
+	private SessionHandler handler;
+	private WebController controller;
+	
+	private LatLng home;
+
 	private Logger logger = Logger.getLogger( this.getClass().getName() );
 
 	public MapBrowser(Composite parent, int style) {
@@ -90,6 +99,8 @@ public class MapBrowser extends Browser {
 		this.mapController = new OpenLayerController( this, location, 11 );
 		this.mapController.addEvaluationListener( e->onNotifyEvaluation(e));
 		this.listeners = new ArrayList<>();
+		controller = new WebController();
+		this.handler = new SessionHandler(getDisplay());
 	}
 
 	public void addEditListener( IEditListener<LatLng> listener ) {
@@ -125,37 +136,31 @@ public class MapBrowser extends Browser {
 				builder.append(", ");
 			}
 			logger.fine(builder.toString());
-			String str = (String) event.getData()[1];
-			
+			String str = (String) event.getData()[0];
+
+			if( NavigationView.Commands.isValue(str)) {
+				NavigationView.Commands cmd = NavigationView.Commands.valueOf(StringStyler.styleToEnum(str));
+				switch( cmd ) {
+				case GET_GEO_LOCATION:
+					Object[] arr = (Object[]) event.getData()[2];
+					home = new LatLng( "home", (double)arr[0], (double)arr[1]);
+				}
+			}
+
 			if( !StringUtils.isEmpty(str) && str.startsWith( IPolygon.Types.POINT.name())) {
 				Object[] loc = ( Object[])event.getData()[2];
-				LatLng clicked = new LatLng((String) event.getData()[1], (double)loc[1], (double)loc[0] );
-				notifyEditListeners( new EditEvent<LatLng>( this, EditTypes.CHANGED, clicked ));
+				home = new LatLng((String) event.getData()[1], (double)loc[1], (double)loc[0] );
+				notifyEditListeners( new EditEvent<LatLng>( this, EditTypes.CHANGED, home ));
 
 				if( churuatas == null )
 					return;
-				IChuruata[] nearest = churuatas.getChuruatas(clicked, 1000); 
-				ChuruataDialog dialog = null;
-				//if( Utils.assertNull(nearest))	
-				//	dialog = new ChuruataDialog( getShell(), clicked  );
-				//else
-				//	dialog = new ChuruataDialog( getShell(), nearest[0]  );						
+				IChuruata[] nearest = churuatas.getChuruatas(home, 1000); 
 				IconsView icons = new IconsView( mapController );
-				//int buttonID = dialog.open();
-				//switch(buttonID) {
-				//case Window.OK:
-				//	IChuruata churuata = dialog.onOkButtonPressed();
-				IChuruata churuata = new Churuata(clicked);
+				IChuruata churuata = new Churuata(home);
 				churuatas.addChuruata(churuata);
 				createMarker(icons, churuata, true);
 				updateMarkers(icons);
 				RWTUtils.redirect( S_UNITY_START_PAGE );
-
-				//	break;
-				//case Window.CANCEL:
-				//	updateMarkers(icons);
-				//	break;
-				//}	
 			}
 			if( IEvaluationListener.EventTypes.SELECTED.equals( event.getEventType())) {
 				logger.info(event.getData()[2].toString());
@@ -186,12 +191,40 @@ public class MapBrowser extends Browser {
 		view.getLocation();
 	}
 
+	public void setInput( String context ){
+		controller.setInput(context, IRestPages.Pages.SUPPORT.toPath());
+	}
+
 	public void setInput( IChuruataCollection input ){
 		this.churuatas = input;
 		NavigationView view = new NavigationView(mapController);
 		view.getLocation();
+		handler.addData("update");
 	}
 
+	protected void updateMap() {
+		if( mapController.isExecuting())
+			return;
+		IconsView icons = new IconsView( mapController );
+		icons.clearIcons();
+		LatLng[] churuatas = controller.churuatas;
+		if( Utils.assertNull(churuatas))
+			return;
+		
+		for( LatLng mt: churuatas ) {
+			Markers marker = Markers.GREEN;
+			icons.addMarker(mt, marker, mt.getId().charAt(0));
+		}
+	}
+
+	public void refresh() {
+		this.controller.show();
+		
+		//NavigationView view = new NavigationView(mapController);
+		//view.getLocation();
+		//handler.addData("update");		
+	}
+	
 	public void dispose() {
 		this.mapController.removeEvaluationListener( e->onNotifyEvaluation(e));
 		this.mapController.dispose();
@@ -227,111 +260,63 @@ public class MapBrowser extends Browser {
 		return result;
 	}
 
-	public class ChuruataDialog extends Dialog{
-		private static final long serialVersionUID = 7782765745284140623L;
+
+	private class WebController extends AbstractHttpRequest<IChuruata.Requests, LatLng[]>{
 		
-		public static final String S_EDIT = "Edit Links";
+		private LatLng[] churuatas;
 		
-		private Point size;
-		
-		private ShowChuruatasComposite active;
-		
-		private LatLng clicked;
-		
-		private IChuruata joined;
-					
-		/**
-		 * Create the dialog.
-		 * @param parentShell
-		 */
-		public ChuruataDialog( Shell shell, LatLng clicked )
-		{
-			super(shell );
-			this.clicked = clicked;
-			setShellStyle(SWT.CLOSE | SWT.TITLE | SWT.MAX | SWT.RESIZE);
+		public WebController() {
+			super();
 		}
 
-		/**
-		 * Create the dialog.
-		 * @param parentShell
-		 */
-		public ChuruataDialog( Shell shell, IChuruata joined )
-		{
-			super(shell );
-			this.joined = joined;
-			this.clicked = joined.getLocation();
-			setShellStyle(SWT.CLOSE | SWT.TITLE | SWT.MAX | SWT.RESIZE);
+		public void setInput(String context, String path) {
+			super.setContextPath(context + path);
 		}
 
-		//Create a shade over the underlying composites when the dialog is activated 
-		@Override
-		protected void configureShell(Shell shell) {
-			super.configureShell(shell);
-			shell.setText( S_EDIT );
-		}
-
-		/**
-		 * Create contents of the dialog.
-		 * @param parent
-		 */
-		@Override
-		protected Control createDialogArea(Composite parent)
-		{
-			Composite container = (Composite) super.createDialogArea(parent);
-			container.setData( RWT.CUSTOM_ITEM_HEIGHT, Integer.valueOf( 10 ));
-			container.setLayout( new FillLayout() );
-			active = new ShowChuruatasComposite( container, SWT.NONE, clicked );
-			if( joined != null )
-				active.setInput(joined, true);
-			active.setInput( churuatas.getChuruatas() );
-			active.addEditListener( e->onCompositeEdited(e));
-			return container;
-		}
-
-		protected void onCompositeEdited( EditEvent<IChuruata> event ) {
-			Button button = getButton( IDialogConstants.OK_ID );
-			if( button != null )
-				button.setEnabled(EditEvent.EditTypes.COMPLETE.equals(event.getType()));
-		}
-				
-		/**
-		 * Create contents of the button bar.
-		 * @param parent
-		 */
-		@Override
-		protected void createButtonsForButtonBar(Composite parent)
-		{
-			createButton(parent, IDialogConstants.OK_ID, "OK",
-					false);
-			createButton(parent, IDialogConstants.CANCEL_ID,
-					"Cancel", true);
-			getButton( IDialogConstants.OK_ID ).setEnabled( false );
-		}
-
-		/**
-		 * Return the initial size of the dialog.
-		 */
-		@Override
-		protected Point getInitialSize(){
-			size = new Point( 800, 600 );
-			return size;
-		}
-				
-		/**
-		 * Response to pressing the OK-button
-		 */
-		public IChuruata  onOkButtonPressed(){
-			Logger logger = Logger.getLogger( this.getClass().getName() );
-			logger.info("OK Selected");
-			IChuruata churuata = active.getInput();
+		public void show() {
+			Map<String, String> params = new HashMap<>();
 			try {
-				if( !churuatas.contains(churuata))
-					churuatas.addChuruata((Churuata) churuata);
-			}
-			catch (Exception e) {
+				if( home == null )
+					return;
+				params.put(Parameters.LAT.toString(), String.valueOf( home.getLatitude()));
+				params.put(Parameters.LON.toString(), String.valueOf( home.getLongitude()));
+				sendGet(IChuruata.Requests.SHOW, params);
+			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			return churuata;
 		}
+		
+		@Override
+		protected String onHandleResponse(ResponseEvent<Requests, LatLng[]> event, LatLng[] data) throws IOException {
+			try {
+				switch( event.getRequest()){
+				case SHOW:
+					Gson gson = new Gson();
+					churuatas = gson.fromJson(event.getResponse(), LatLng[].class);
+					break;
+				default:
+					break;
+				}
+			} catch (JsonSyntaxException e) {
+				e.printStackTrace();
+			}
+			finally {
+				updateMap();
+			}
+			return null;
+		}
+		
+	}
+
+	private class SessionHandler extends AbstractSessionHandler<String>{
+
+		protected SessionHandler(Display display) {
+			super(display);
+		}
+
+		@Override
+		protected void onHandleSession(SessionEvent<String> sevent) {
+			// NOTHING		
+		}	
 	}
 }

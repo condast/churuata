@@ -11,7 +11,6 @@ import org.churuata.digital.core.location.IChuruata.Requests;
 import org.churuata.digital.core.rest.IRestPages;
 import org.churuata.digital.core.location.IChuruataType;
 import org.churuata.digital.ui.image.ImageUtils;
-import org.churuata.digital.ui.utils.RWTUtils;
 import org.condast.commons.authentication.user.ILoginUser;
 import org.condast.commons.data.latlng.LatLng;
 import org.condast.commons.messaging.http.AbstractHttpRequest;
@@ -47,7 +46,6 @@ public class EditChuruataComposite extends AbstractEntityComposite<LatLng>
 	public static final String S_SHOWLINK_DIALOG_ID = "showlink.dialog";
 	public static final String S_LINK_DIALOG_SHELL = "LinkDialogShell";
 	public static final String REGEXP = ("[\\ ;:,]");
-	private static final String S_INFORMATION_IMAGE = "/icons/information-icon.png";
 
 	private static final String S_ADD_IMAGE = "/icons/add-32.png";
 
@@ -362,7 +360,6 @@ public class EditChuruataComposite extends AbstractEntityComposite<LatLng>
 				break;
 			}
 			return null;
-		}
-		
+		}		
 	}
 }

@@ -2,14 +2,12 @@ package org.churuata.digital.authentication.ds;
 
 import org.churuata.digital.authentication.core.Dispatcher;
 import org.churuata.digital.authentication.services.LoginService;
-import org.churuata.digital.core.store.SessionStore;
 import org.condast.commons.authentication.core.LoginData;
 import org.condast.commons.authentication.ui.views.AuthenticationGroup;
 import org.condast.commons.authentication.user.ILoginUser;
 import org.condast.commons.ui.controller.EditEvent;
 import org.condast.commons.ui.provider.ICompositeProvider;
 import org.condast.commons.ui.utils.RWTUtils;
-import org.eclipse.rap.rwt.RWT;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.osgi.service.component.annotations.Component;
@@ -57,8 +55,6 @@ public class AuthCompositeProvider implements ICompositeProvider<AuthenticationG
 				}
 				if( user == null )
 					return;
-				SessionStore store = service.getStore( RWT.getUISession().getHttpSession());
-				store.setLoginUser(user);
 				service.addUser(user);
 				RWTUtils.redirect( S_REDIRECT_PAGE );
 				break;

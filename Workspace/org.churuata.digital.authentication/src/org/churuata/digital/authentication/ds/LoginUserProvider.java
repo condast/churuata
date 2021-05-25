@@ -41,10 +41,22 @@ public class LoginUserProvider implements ILoginProvider {
 
 	@Override
 	public void addAuthenticationListener(IAuthenticationListener listener) {
+		dispatcher.addAuthenticationListener(listener);
 	}
 
 	@Override
 	public void removeAuthenticationListener(IAuthenticationListener listener) {
+		dispatcher.removeAuthenticationListener(listener);
+	}
+
+	@Override
+	public boolean hasLoginUser(String userName, long token) {
+		return dispatcher.hasLoginUser(userName, token);
+	}
+
+	@Override
+	public void logout(ILoginUser user) {
+		dispatcher.logout(user.getId(), user.getToken());
 	}
 
 	@Override

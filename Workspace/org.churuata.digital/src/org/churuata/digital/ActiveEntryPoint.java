@@ -2,12 +2,10 @@ package org.churuata.digital;
 
 import java.util.concurrent.TimeUnit;
 
-import org.churuata.digital.core.Dispatcher;
 import org.churuata.digital.core.store.SessionStore;
 import org.churuata.digital.ui.image.ChuruataImages;
 import org.churuata.digital.ui.map.MapBrowser;
 import org.condast.commons.authentication.user.ILoginUser;
-import org.condast.commons.config.Config;
 import org.condast.commons.data.latlng.LatLng;
 import org.condast.commons.ui.controller.EditEvent;
 import org.condast.commons.ui.entry.AbstractRestEntryPoint;
@@ -22,7 +20,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 
-public class ActiveEntryPoint extends AbstractRestEntryPoint{
+public class ActiveEntryPoint extends AbstractRestEntryPoint<SessionStore>{
 	private static final long serialVersionUID = 1L;
 
 	public static final String S_PAGE = "page";
@@ -33,16 +31,11 @@ public class ActiveEntryPoint extends AbstractRestEntryPoint{
 
 	public static final String S_ERR_NO_VESSEL = "No Vessel has been found.";
 
-
-	private Dispatcher dispatcher = Dispatcher.getInstance(); 
-
 	private MapBrowser mapComposite;
 	private Button btnLocate;
 	private Button btnCreate;
 	private Button btnEdit;
-	
-	private SessionStore store;
-	
+		
 	/**
 	 * Slow down start time a bit in order to let the browser find the location
 	 * @param startTime
@@ -54,7 +47,7 @@ public class ActiveEntryPoint extends AbstractRestEntryPoint{
 
 	@Override
 	protected boolean prepare(Composite parent) {
-		store = dispatcher.getSessionStore(RWT.getUISession().getHttpSession());
+		SessionStore store = super.getData();
 		if( store == null )
 			return false;
 		ILoginUser user = store.getLoginUser();
@@ -143,11 +136,7 @@ public class ActiveEntryPoint extends AbstractRestEntryPoint{
 	@Override
 	protected boolean postProcess(Composite parent) {
 		mapComposite.locate();
-		Config config = new Config();
-		String context = config.getServerContext();
-
-		ILoginUser user = store.getLoginUser();
-		//mapComposite.setInput(context, user );
+		SessionStore store = super.getData();
 		LatLng selected = store.getSelected();
 		this.btnCreate.setEnabled( selected != null );
 		this.btnEdit.setEnabled( selected != null );
@@ -156,6 +145,7 @@ public class ActiveEntryPoint extends AbstractRestEntryPoint{
 	
 	protected void onLocationChanged( EditEvent<LatLng> event ) {
 		LatLng data = event.getData();
+		SessionStore store = super.getData();
 		switch( event.getType()) {
 		case INITIALISED:
 			break;
@@ -178,7 +168,8 @@ public class ActiveEntryPoint extends AbstractRestEntryPoint{
 	protected void handleTimer() {
 		try {
 			super.handleTimer();
-			if(( this.store == null ) || ( store.getLoginUser() == null ))
+			SessionStore store = super.getData();
+			if(( store == null ) || ( store.getLoginUser() == null ))
 				return;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -187,12 +178,13 @@ public class ActiveEntryPoint extends AbstractRestEntryPoint{
 
 	@Override
 	protected void handleSessionTimeout(boolean reload) {
-		this.store = null;
+		SessionStore store = super.getData();
+		store.setLoginUser(null);
+		super.handleSessionTimeout(reload);
 	}
 
 	@Override
 	public void close() {
-		this.store = null;
 		mapComposite.removeEditListener( e->onLocationChanged(e));
 		super.close();
 	}

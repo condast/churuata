@@ -8,7 +8,6 @@ Bundle-Vendor: Condast
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Automatic-Module-Name: org.churuata.rest
 Import-Package: com.google.gson;version="2.6.2",
- com.google.gson.stream;version="2.6.2",
  javax.persistence;version="2.2.0",
  javax.servlet;version="3.0.0",
  javax.ws.rs;version="2.0.1",
@@ -26,7 +25,6 @@ Import-Package: com.google.gson;version="2.6.2",
  org.condast.commons.messaging.rest,
  org.condast.commons.persistence.service,
  org.condast.commons.strings,
- org.condast.js.commons.push,
  org.condast.js.push.core.builder,
  org.glassfish.jersey;version="2.25.1",
  org.glassfish.jersey.server;version="2.25.1",
@@ -37,4 +35,4 @@ Bundle-ActivationPolicy: lazy
 Meta-Persistence: 
 Export-Package: org.churuata.rest.core
 Service-Component: OSGI-INF/org.churuata.rest.entity.service.xml,
- OSGI-INF/org.churuata.digital.dashboard.service.login.xml
+ OSGI-INF/org.churuata.digital.rest.service.login.xml
