@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -60,7 +61,7 @@ public class Churuata implements Comparable<Churuata>, IChuruata{
 	private Collection<Murmering> murmerings;
 
 	@OneToMany( mappedBy="churuata", cascade = CascadeType.ALL, orphanRemoval = true)
-	private ArrayList<Presentation> presentations;
+	private List<Presentation> presentations;
 
 	@Basic(optional = false)
 	@Column( nullable=true)
