@@ -12,7 +12,7 @@ import org.condast.commons.authentication.core.ILoginProvider;
 import org.condast.commons.authentication.user.ILoginUser;
 import org.osgi.service.component.annotations.Component;
 
-@Component( name="org.satr.arnac.authentication.login.factory",
+@Component( name="org.churuata.digital.authentication.login.factory",
 		immediate=true)
 public class LoginUserProvider implements ILoginProvider {
 

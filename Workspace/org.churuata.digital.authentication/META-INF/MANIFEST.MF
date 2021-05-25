@@ -54,8 +54,6 @@ Import-Package: com.google.gson;version="2.6.2",
  org.osgi.service.prefs;version="1.1.1"
 Bundle-ActivationPolicy: lazy
 Automatic-Module-Name: org.satr.arnac.authentication
-Service-Component: OSGI-INF/org.churuata.digital.authentication.ds.SessionStoreClient.xml,
- OSGI-INF/org.churuata.digital.authentication.composite.provider.xml,
+Service-Component: OSGI-INF/org.churuata.digital.authentication.composite.provider.xml,
  OSGI-INF/org.churuata.digital.authentication.entity.service.xml,
- OSGI-INF/org.churuata.digital.authentication.factory.xml,
- OSGI-INF/org.satr.arnac.authentication.login.factory.xml
+ OSGI-INF/org.churuata.digital.authentication.login.factory.xml

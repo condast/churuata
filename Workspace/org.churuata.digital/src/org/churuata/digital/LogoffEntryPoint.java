@@ -11,7 +11,7 @@ import org.eclipse.swt.widgets.Composite;
 public class LogoffEntryPoint extends AbstractEntryPoint implements IDataEntryPoint<SessionStore>{
 	private static final long serialVersionUID = 1L;
 
-	private static final String S_ARNAC_HOME = "/arnac";
+	private static final String S_CHURUATA_HOME = "/churuata";
 	
 	private AuthenticationDispatcher dispatcher = AuthenticationDispatcher.getInstance();
 
@@ -36,6 +36,6 @@ public class LogoffEntryPoint extends AbstractEntryPoint implements IDataEntryPo
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		RWTUtils.redirect(S_ARNAC_HOME);
+		RWTUtils.redirect(S_CHURUATA_HOME);
 	}
 }

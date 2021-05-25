@@ -49,6 +49,7 @@
 	<modules>
 		<module>../org.churuata.target</module>
 		<module>../org.churuata.digital</module>
+		<module>../org.churuata.digital.authentication</module>
 		<module>../org.churuata.digital.core</module>
 		<module>../org.churuata.digital.ui</module>
 		<module>../org.churuata.rest</module>
