@@ -222,6 +222,12 @@ PrefabInstance:
         type: 3}
     - target: {fileID: 8641297008059214508, guid: 9831d0989b8c1b3418da381edae11c09,
         type: 3}
+      propertyPath: TVObject
+      value: 
+      objectReference: {fileID: 4886124237019099069, guid: 29a1b696b54c497488eb973cd8ea729d,
+        type: 3}
+    - target: {fileID: 8641297008059214508, guid: 9831d0989b8c1b3418da381edae11c09,
+        type: 3}
       propertyPath: TVParent
       value: 
       objectReference: {fileID: 932703629}
@@ -255,6 +261,11 @@ PrefabInstance:
       propertyPath: buildingParent
       value: 
       objectReference: {fileID: 654105980}
+    - target: {fileID: 8641297008059214508, guid: 9831d0989b8c1b3418da381edae11c09,
+        type: 3}
+      propertyPath: getNetworkData
+      value: 
+      objectReference: {fileID: 1198046819}
     - target: {fileID: 8641297008059214509, guid: 9831d0989b8c1b3418da381edae11c09,
         type: 3}
       propertyPath: m_Name
@@ -1453,6 +1464,21 @@ PrefabInstance:
       objectReference: {fileID: 493308380804491331}
     - target: {fileID: 5410515915903351202, guid: 0538dbf6183ab674f99aae2ac73e8430,
         type: 3}
+      propertyPath: LOGInput
+      value: 
+      objectReference: {fileID: 1299080324}
+    - target: {fileID: 5410515915903351202, guid: 0538dbf6183ab674f99aae2ac73e8430,
+        type: 3}
+      propertyPath: LatInput
+      value: 
+      objectReference: {fileID: 2105068067}
+    - target: {fileID: 5410515915903351202, guid: 0538dbf6183ab674f99aae2ac73e8430,
+        type: 3}
+      propertyPath: LonInput
+      value: 
+      objectReference: {fileID: 242892611}
+    - target: {fileID: 5410515915903351202, guid: 0538dbf6183ab674f99aae2ac73e8430,
+        type: 3}
       propertyPath: UICanvas
       value: 
       objectReference: {fileID: 493308381403392864}
@@ -1471,6 +1497,11 @@ PrefabInstance:
       propertyPath: TypeInput
       value: 
       objectReference: {fileID: 493308381090149402}
+    - target: {fileID: 5410515915903351202, guid: 0538dbf6183ab674f99aae2ac73e8430,
+        type: 3}
+      propertyPath: RangeInput
+      value: 
+      objectReference: {fileID: 1020802799}
     - target: {fileID: 5410515915903351202, guid: 0538dbf6183ab674f99aae2ac73e8430,
         type: 3}
       propertyPath: TitleInput
@@ -3801,6 +3832,18 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1182390040}
   m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1198046819 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5410515915903351200, guid: 0538dbf6183ab674f99aae2ac73e8430,
+    type: 3}
+  m_PrefabInstance: {fileID: 399520075}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cfdfa2a648aa72e49b5e87bd9e9f094b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1198381694
 GameObject:
   m_ObjectHideFlags: 0
@@ -6139,7 +6182,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &493308379604839637
 RectTransform:
   m_ObjectHideFlags: 0
@@ -8382,8 +8425,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0.000022888}
-  m_SizeDelta: {x: 578.7602, y: 89.57199}
+  m_AnchoredPosition: {x: 3.2, y: 2.5}
+  m_SizeDelta: {x: 943.0766, y: 348.49884}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &493308380625369518
 MonoBehaviour:
@@ -8411,7 +8454,7 @@ MonoBehaviour:
     m_BestFit: 0
     m_MinSize: 3
     m_MaxSize: 40
-    m_Alignment: 4
+    m_Alignment: 0
     m_AlignByGeometry: 0
     m_RichText: 1
     m_HorizontalOverflow: 0
@@ -11160,8 +11203,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 0, y: -49.2959}
-  m_SizeDelta: {x: 598.18896, y: 98.591736}
+  m_AnchoredPosition: {x: 189.5, y: -190.20001}
+  m_SizeDelta: {x: 977.15674, y: 380.40918}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &493308381550346989
 GameObject:

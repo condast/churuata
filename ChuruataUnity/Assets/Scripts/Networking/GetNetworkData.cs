@@ -8,13 +8,6 @@ public class GetNetworkData : MonoBehaviour
     #region Variables
 
     string adress = "https://www.condast.com:8443/churuatas/rest/walkers/";
-    public int clientID = 1;
-    public string churuataName;
-    public int churuataID = 1;
-    public int clientToken = 1;
-    public string clientName = "mijnnaam";
-    public string clientType = "education";
-    public string description = "hellodolly";
 
     [TextArea(15, 20)]
     public string jsonResponse = "";
