@@ -4,7 +4,7 @@
 PlayerSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 20
-  productGUID: eede25ddac7a4b640b731916b4e07d8e
+  productGUID: 13e5d78a00a2d734d8326b0e11fb54ab
   AndroidProfiler: 0
   AndroidFilterTouchesWhenObscured: 0
   AndroidEnableSustainedPerformanceMode: 0
@@ -125,7 +125,7 @@ PlayerSettings:
     16:10: 1
     16:9: 1
     Others: 1
-  bundleVersion: 9.8.5
+  bundleVersion: 9.8.8
   preloadedAssets: []
   metroInputSource: 0
   wsaTransparentSwapchain: 0
@@ -173,7 +173,7 @@ PlayerSettings:
     iPhone: com.vuforia.engine.CoreSamplesUnity
   buildNumber:
     iPhone: 0
-  AndroidBundleVersionCode: 985
+  AndroidBundleVersionCode: 988
   AndroidMinSdkVersion: 19
   AndroidTargetSdkVersion: 0
   AndroidPreferredInstallLocation: 1
@@ -245,7 +245,7 @@ PlayerSettings:
   iOSRequireARKit: 0
   iOSAutomaticallyDetectAndAddCapabilities: 1
   appleEnableProMotion: 0
-  clonedFromGUID: 6468467d5297e4c0683f329668cb3f16
+  clonedFromGUID: 26b862f3f4b494dc0bd54726b6f9724d
   templatePackageId: 
   templateDefaultScene: 
   AndroidTargetArchitectures: 2
@@ -810,7 +810,7 @@ PlayerSettings:
   m_RenderingPath: 1
   m_MobileRenderingPath: 1
   metroPackageName: Vuforia.Engine.CoreSamplesUnity
-  metroPackageVersion: 9.8.5.0
+  metroPackageVersion: 9.8.8.0
   metroCertificatePath: Assets\WSATestCertificate.pfx
   metroCertificatePassword: 
   metroCertificateSubject: Vuforia
@@ -950,8 +950,8 @@ PlayerSettings:
     m_SignPackage: 1
   luminIsChannelApp: 0
   luminVersion:
-    m_VersionCode: 985
-    m_VersionName: 9.8.5
+    m_VersionCode: 988
+    m_VersionName: 9.8.8
   apiCompatibilityLevel: 3
   cloudProjectId: 
   framebufferDepthMemorylessMode: 0

@@ -9,19 +9,29 @@ public class NetworkingUI : MonoBehaviour
 {
     public GetNetworkData networkData;
 
-    [SerializeField] int clientID = 1;
-    [SerializeField] int churuataID = 1;
-    [SerializeField] int clientToken = 1;
-    [SerializeField] string clientName = "mijnnaam";
-    [SerializeField] string clientType = "education";
-    [SerializeField] string description = "hellodolly";
+    [SerializeField] int ID = 1;
+    [SerializeField] int Token = 1;
+    [SerializeField] string Name = "mijnnaam";
+    [SerializeField] string Title = "title";
+    [SerializeField] string Type = "education";
+    [SerializeField] string Description = "hellodolly";
+    [SerializeField] string URL = "videoURL";
+    [SerializeField] float Lat = 7;
+    [SerializeField] float Lon = 7;
+    [SerializeField] int Range = 5;
+    [SerializeField] string LOG = "LOG";
 
-    public TMP_InputField clientIDInput;
-    public TMP_InputField churuataIDInput;
-    public TMP_InputField clientTokenInput;
-    public TMP_InputField clientNameInput;
-    public TMP_InputField clientTypeInput;
-    public TMP_InputField descriptionInput;
+    public TMP_InputField IDInput;
+    public TMP_InputField TokenInput;
+    public TMP_InputField NameInput;
+    public TMP_InputField TitleInput;
+    public TMP_InputField TypeInput;
+    public TMP_InputField DescriptionInput;
+    public TMP_InputField URLInput;
+    public TMP_InputField LonInput;
+    public TMP_InputField LatInput;
+    public TMP_InputField RangeInput;
+    public TMP_InputField LOGInput;
 
     public GameObject UICanvas;
     public GameObject BuildCanvas;
@@ -38,28 +48,33 @@ public class NetworkingUI : MonoBehaviour
 
     public void Update()
     {
-        Int32.TryParse(clientIDInput.text, out clientID);
-        Int32.TryParse(churuataIDInput.text, out churuataID);
-        //Int32.TryParse(clientTokenInput.text, out clientToken);
-        clientName = clientNameInput.text;
-        //clientType = clientTypeInput.text;
-        description = descriptionInput.text;
+        Int32.TryParse(IDInput.text, out ID);
+        Name = NameInput.text;
+        Title = TitleInput.text;
+        Type = TypeInput.text;
+        Description = DescriptionInput.text;
+        URL = URLInput.text;
+        float.TryParse(LonInput.text, out Lon);
+        float.TryParse(LatInput.text, out Lat);
+        int.TryParse(RangeInput.text, out Range);
+        LOG = LOGInput.text;
+
         returnText.text = networkData.jsonResponse;
-    }
-
-    public void Register()
-    {
-        networkData.Register(clientID, clientToken, clientName, clientType);
-    }
-
-    public void GetChuruata()
-    {
-        networkData.GetChuruata(clientID, clientToken, churuataID);
     }
 
     public void Contribute()
     {
-        networkData.Contribute(clientID, clientToken, clientType, description);
+        networkData.Contribute(Name, Token, ID, Type, $"Added Type {Type}", $"Added a {Type} to the churuata");
+    }
+
+    public void GetChuruata()
+    {
+        networkData.GetState(Name, Token, ID);
+    }
+
+    public void GetHammocks()
+    {
+        networkData.GetHammocks(Name, Token, ID);
     }
 
     public void TestBuilding()
@@ -69,8 +84,28 @@ public class NetworkingUI : MonoBehaviour
         BuildCanvas.SetActive(!canvasEnabled);
     }
 
-    public void Login()
+    public void SelectChuruata()
     {
-        
+        networkData.Select(Name, Lat, Lon, Range);
+    }
+
+    public void RemoveContribution()
+    {
+        networkData.RemoveContribution(Name, Token, ID, Type);
+    }
+
+    public void UploadVideoURL()
+    {
+        networkData.AddPresentation(Name, Token, ID, "VIDEO", Title, Description, URL);
+    }
+
+    public void DeleteVideo()
+    {
+        networkData.RemovePresentation(Name, Token, ID, Title);
+    }
+
+    public void GetVideos()
+    {
+        networkData.GetVideos(name, Token, ID);
     }
 }

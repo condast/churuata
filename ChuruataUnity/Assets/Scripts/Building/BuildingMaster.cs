@@ -1,39 +1,74 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Video;
 
 public class BuildingMaster : MonoBehaviour
 {
-    public int buildingID;
-    public float posX;
-    public float posY;
+    [Header("Script References")]
     public SaveManager sManager;
+    public GetNetworkData getNetworkData;
 
+    [Header("Prefabs")]
     public GameObject Pillar;
     public GameObject Leaf;
     public GameObject Box;
+    public GameObject TVObject;
 
     public int currentPillars;
     public int currentLeafs;
     public int currentService;
 
-    [Header(" ")]
-    public GameObject prefab;
+    [Header("Settings")]
+    public int buildingID;
+    public string buildingName;
+    public int buildingToken;
+    public float posX;
+    public float posY;
     public int numberOfObjects = 20;
-    public float radius = 5f;
+    public float pillarRadius = 5f;
     public float serviceRadius = 3f;
     public float roofHeight = 1.6f;
+    public int currentTV;
+    public int TVCount;
+    public int TVRadius;
+    public List<GameObject> TVS;
+    public List<string> videoURLs;
 
+    [Header("Parents")]
     public GameObject serviceHolder;
     public GameObject buildingParent;
+    public GameObject TVParent;
 
-    public void OnEnable()
+
+
+    [Header("Test Variables")]
+    public bool demoTent = false;
+    public float delayCount = 5;
+
+    private void OnEnable()
     {
-        //GameObject GO = new GameObject();
-        //var EmptyObject = Instantiate(GO, new Vector3(0, 0, 0), Quaternion.identity);
-        //serviceHolder = EmptyObject;
-        //serviceHolder.name = "ServiceHolder";
-        //serviceHolder.transform.parent = buildingParent.transform;
+        if (demoTent)
+        {
+            StartCoroutine("Delay");
+        }
+    }
+
+    public IEnumerator Delay()
+    {
+        Debug.Log("starting timer");
+        yield return new WaitForSecondsRealtime(delayCount);
+        Debug.Log("building tent");
+        for (int i = 0; i < numberOfObjects * 2; i++)
+        {
+            AddPart();
+        }
+    }
+
+    void GetVideos()
+    {
+        getNetworkData.GetVideos(buildingName, buildingToken, buildingID);
+        videoURLs.Add(getNetworkData.jsonResponse);
     }
 
     public void AddPart()
@@ -48,9 +83,14 @@ public class BuildingMaster : MonoBehaviour
             currentLeafs++;
             createLeaf();
         }
-        int buildingProgress = currentLeafs + currentPillars;
-        if(!sManager.useLocalSave)
-        sManager.Save(currentService, buildingProgress, buildingID, posX, posY);
+        else if (currentPillars == numberOfObjects && currentLeafs == numberOfObjects)
+        {
+            GetVideos();
+            createTV();
+        }
+        int _buildingProgress = currentLeafs + currentPillars;
+        if (!sManager.useLocalSave)
+            sManager.Save(currentService, _buildingProgress, buildingID, posX, posY);
     }
 
     public void AddService()
@@ -59,24 +99,62 @@ public class BuildingMaster : MonoBehaviour
             GameObject.Destroy(child.gameObject);
         currentService++;
         for (int i = 0; i < currentService; i++)
-        {
-            float angle = i * Mathf.PI * 2 / currentService;
-            float x = Mathf.Cos(angle) * serviceRadius;
-            float z = Mathf.Sin(angle) * serviceRadius;
-            Vector3 pos = buildingParent.transform.position + new Vector3(x, 0, z);
-            float angleDegrees = -angle * Mathf.Rad2Deg;
-            Quaternion rot = Quaternion.Euler(0, angleDegrees, 0);
-            var serviceHolder = Instantiate(Box, pos, rot);
-            serviceHolder.transform.parent = this.serviceHolder.transform;
-        }
-        int buildingProgress = currentLeafs + currentPillars;
-        if (!sManager.useLocalSave)
-            sManager.Save(currentService, buildingProgress, buildingID, posX, posY);
+            createLoop(i, currentService, Box, serviceHolder, serviceRadius, "Service - ", 0);
     }
 
-    public void loadBuildingProgress(int buildingProgress, int serviceCount)
+    void createTV()
     {
-        for (int i = 0; i < buildingProgress; i++)
+        for (int i = 0; i < videoURLs.Count; i++)
+            createLoop(i, TVCount, TVObject, TVParent, TVRadius, "TV - ", 0);
+        int j = 0;
+        foreach (Transform child in TVParent.transform)
+        {
+            GameObject TV = child.GetComponent<GameObject>();
+            TVS.Add(TV);
+            TV.GetComponentInChildren<YoutubeSimplified>().url = videoURLs[j];
+            TV.GetComponentInChildren<YoutubeSimplified>().Play();
+            j++;
+        }
+    }
+
+    void createPillar()
+    {
+        createLoop(currentPillars, numberOfObjects, Pillar, buildingParent, pillarRadius, "Pillar - ", 0);
+    }
+
+    void createLeaf()
+    {
+        createLoop(currentLeafs, numberOfObjects, Leaf, buildingParent, pillarRadius, "Leaf - ", roofHeight);
+    }
+
+    // The loop for instantiating the gameobject in a certain radius a given time
+    // Object count is how many of the object there already are
+    // NumberOfObjects is how many of there should be in the end
+    // objectToInstantiate is which gameObject there will be instantiated
+    // objectParent is which gameObject will be the parent of the objectToInstantiate
+    // radius is in whatever radius the circle will be
+    // objectName is the name given to the object + the count of the object. FE; Pillar - 1
+    // objectHeight is the height the object will instantiate, if not necesarry enter 0
+
+    void createLoop(int _objectCount, int _numberOfObjects, GameObject _objectToInstantiate, GameObject _objectParent, float _radius, string _objectName, float _objectHeight)
+    {
+        float angle = _objectCount * Mathf.PI * 2 / _numberOfObjects;
+        float x = Mathf.Cos(angle) * _radius;
+        float z = Mathf.Sin(angle) * _radius;
+        Vector3 pos = _objectParent.transform.position + new Vector3(x, _objectHeight, z);
+        float angleDegrees = -angle * Mathf.Rad2Deg;
+        Quaternion rot = Quaternion.Euler(0, angleDegrees, 0);
+        var objectHolder = Instantiate(_objectToInstantiate, pos, rot);
+        objectHolder.transform.parent = _objectParent.transform;
+
+        // Optional stuff, setting name of gameObject
+        if (_objectName != string.Empty)
+            objectHolder.name = _objectName + " " + _objectCount;
+    }
+
+    public void loadBuildingProgress(int _buildingProgress, int _serviceCount)
+    {
+        for (int i = 0; i < _buildingProgress; i++)
         {
             if (currentPillars != numberOfObjects)
             {
@@ -89,48 +167,13 @@ public class BuildingMaster : MonoBehaviour
                 createLeaf();
             }
         }
-        for (int i = 0; i < serviceCount; i++)
+        for (int i = 0; i < _serviceCount; i++)
         {
             foreach (Transform child in serviceHolder.transform)
                 GameObject.Destroy(child.gameObject);
             currentService++;
             for (int j = 0; j < currentService; j++)
-            {
-                float angle = j * Mathf.PI * 2 / currentService;
-                float x = Mathf.Cos(angle) * serviceRadius;
-                float z = Mathf.Sin(angle) * serviceRadius;
-                Vector3 pos = this.serviceHolder.transform.position + new Vector3(x, 0, z);
-                float angleDegrees = -angle * Mathf.Rad2Deg;
-                Quaternion rot = Quaternion.Euler(0, angleDegrees, 0);
-                var serviceHolder = Instantiate(Box, pos, rot);
-                serviceHolder.transform.parent = this.serviceHolder.transform;
-            }
+                createLoop(j, currentService, Box, serviceHolder, serviceRadius, "Service - ", 0);
         }
-    }
-
-    void createPillar()
-    {
-        float angle = currentPillars * Mathf.PI * 2 / numberOfObjects;
-        float x = Mathf.Cos(angle) * radius;
-        float z = Mathf.Sin(angle) * radius;
-        Vector3 pos = serviceHolder.transform.position + new Vector3(x, 0, z);
-        float angleDegrees = -angle * Mathf.Rad2Deg;
-        Quaternion rot = Quaternion.Euler(0, angleDegrees, 0);
-        var item = Instantiate(Pillar, pos, rot);
-        item.transform.parent = buildingParent.transform;
-        item.name = "Pillar - " + currentPillars;
-    }
-
-    void createLeaf()
-    {
-        float angle = currentLeafs * Mathf.PI * 2 / numberOfObjects;
-        float x = Mathf.Cos(angle) * radius;
-        float z = Mathf.Sin(angle) * radius;
-        Vector3 pos = serviceHolder.transform.position + new Vector3(x, roofHeight, z);
-        float angleDegrees = -angle * Mathf.Rad2Deg;
-        Quaternion rot = Quaternion.Euler(0, angleDegrees, 0);
-        var item = Instantiate(Leaf, pos, rot);
-        item.transform.parent = buildingParent.transform;
-        item.name = "Leaf - " + currentLeafs;
     }
 }

@@ -4,8 +4,12 @@ using UnityEngine.Networking;
 
 public class GetNetworkData : MonoBehaviour
 {
-    string adress = "http://www.condast.com:8080/churuata/rest/";
+
+    #region Variables
+
+    string adress = "https://www.condast.com:8443/churuatas/rest/walkers/";
     public int clientID = 1;
+    public string churuataName;
     public int churuataID = 1;
     public int clientToken = 1;
     public string clientName = "mijnnaam";
@@ -15,44 +19,35 @@ public class GetNetworkData : MonoBehaviour
     [TextArea(15, 20)]
     public string jsonResponse = "";
 
-    public void Register(int clientID, int clientToken, string clientname, string clientType)
-    {
-        try
-        {
-            StartCoroutine(GetData(string.Format("{0}find?userid={1}&token={2}&name={3}&type={4}", adress, clientID, clientToken, clientname, clientType)));
-        }
-        catch
-        {
-            throw;
-        }
-    }
-    public void GetChuruata(int clientID, int clientToken, int churuataID)
-    {
-        try
-        {
-            StartCoroutine(GetData(string.Format("{0}find?userid={1}&token={2}&id={3}", adress, clientID, clientToken, churuataID)));
-        }
-        catch
-        {
-            throw;
-        }
-    }
+    #endregion
+
+    #region Coroutine
 
     public IEnumerator GetData(string url)
     {
         UnityWebRequest www = UnityWebRequest.Get(url);
         yield return www.SendWebRequest();
         if (www.isNetworkError || www.isHttpError)
+        {
             jsonResponse = www.error;
+            Debug.LogError(www.error);
+        }
         else
+        {
             jsonResponse = www.downloadHandler.text;
+            Debug.Log(www.downloadHandler.text);
+        }
     }
 
-    public void Contribute(int clientID, int token, string type, string description)
+    #endregion
+
+    #region Rest Calls
+
+    public void Select(string _name, float _lat, float _lon, int _range)
     {
         try
         {
-            StartCoroutine(GetData(string.Format("{0}add-contribution?userid={1}&token={2}&type={3}&description={4}&contribution=log", adress, clientID, token, type, description)));
+            StartCoroutine(GetData(string.Format($"{adress}select?name={_name}@lat={_lat}&lon={_lon}&range={_range}")));
         }
         catch
         {
@@ -60,15 +55,13 @@ public class GetNetworkData : MonoBehaviour
         }
     }
 
-    public void RegisterAccount(string username, string emailAdress, string password)
+    #region Contributions
+
+    public void RemoveContribution(string _name, int _token, int _churuataID, string _type)
     {
         try
         {
-            //Make register web link, should return an "Okay" signal if the creation was succesfull, and should be able to login afterwards
-            //string url = string.Format("{0}add-contribution?userid={1}&token={2}&type={3}&description={4}&contribution=log", adress, clientID, token, type, description);
-            
-            
-            //StartCoroutine(GetData(url));
+            StartCoroutine(GetData(string.Format($"{adress}")));
         }
         catch
         {
@@ -76,14 +69,13 @@ public class GetNetworkData : MonoBehaviour
         }
     }
 
-    public void LoginAccount(string username, int clientID, string message)
+    public void Contribute(string _name, int _token, int _churuataID, string _type, string _LOG, string _description)
     {
         try
         {
-            //string url = string.Format("{0}add-contribution?userid={1}&token={2}&type={3}&description={4}&contribution=log", adress, clientID, token, type, description);
-
-
-            //StartCoroutine(GetData(url));
+            string LOG = _LOG.Replace(" ", "%20");
+            string description = _description.Replace(" ", "%20");
+            StartCoroutine(GetData(string.Format($"{adress}contribute?name={_name}&token={_token}&churuata-id={_churuataID}&type={_type}&contribution={_LOG}&description={description}")));
         }
         catch
         {
@@ -91,14 +83,11 @@ public class GetNetworkData : MonoBehaviour
         }
     }
 
-    public void SendMessage(string username, int clientID, string message)
+    public void GetState(string _name, int _token, int _churuataID)
     {
         try
         {
-            //string url = string.Format("{0}add-contribution?userid={1}&token={2}&type={3}&description={4}&contribution=log", adress, clientID, token, type, description);
-
-
-            //StartCoroutine(GetData(url));
+            StartCoroutine(GetData(string.Format($"{adress}get-state?name={_name}&token={_token}&churuata-id={_churuataID}")));
         }
         catch
         {
@@ -106,18 +95,104 @@ public class GetNetworkData : MonoBehaviour
         }
     }
 
-    public void ReceiveMessage(string emailAdress, string password)
+    #endregion
+
+    #region Presentations
+
+    public void AddPresentation(string _name, int _token, int _churuataID, string _type, string _title, string _description, string _link)
     {
         try
         {
-            //string url = string.Format("{0}add-contribution?userid={1}&token={2}&type={3}&description={4}&contribution=log", adress, clientID, token, type, description);
-
-
-            //StartCoroutine(GetData(url));
+            string title = _title.Replace(" ", "%20");
+            string description = _description.Replace(" ", "%20");
+            StartCoroutine(GetData(string.Format($"{adress}add-presentation?name={_name}&token={_token}&churuata-id={_churuataID}&type={_type}&title={_name}&description={_description}&link={_link}")));
         }
         catch
         {
             throw;
         }
     }
+
+    public void RemovePresentation(string _name, int _token, int _churuataID, string _title)
+    {
+        try
+        {
+            string title = _title.Replace(" ", "%20");
+            StartCoroutine(GetData(string.Format($"{adress}remove-presentation?name={_name}&token={_token}&churuata-id={_churuataID}&title={title}")));
+        }
+        catch
+        {
+            throw;
+        }
+    }
+
+    public void GetVideos(string _name, int _token, int _churuataID)
+    {
+        try
+        {
+            StartCoroutine(GetData(string.Format($"{adress}get-videos?name={_name}&token={_token}&churuata-id={_churuataID}")));
+        }
+        catch
+        {
+            throw;
+        }
+    }
+
+    public void GetHammocks(string _name, int _token, int _churuataID)
+    {
+        try
+        {
+            StartCoroutine(GetData(string.Format($"{adress}get-hammocks?name={_name}&token={_token}&churuata-id={_churuataID}")));
+        }
+        catch
+        {
+            throw;
+        }
+    }
+
+    #endregion
+
+    #region Murmers
+
+    public void AddMurmering(string _name, int _token, int _churuataID, string _text)
+    {
+        try
+        {
+            string text = _text.Replace(" ", "%20");
+            StartCoroutine(GetData(string.Format($"{adress}add-murmering?name={_name}&token={_token}&churuata-id={_churuataID}&text={text}")));
+        }
+        catch
+        {
+            throw;
+        }
+    }
+
+    public void RemoveMurmering(string _name, int _token, int _churuataID, string _filter)
+    {
+        try
+        {
+            string filter = _filter.Replace(" ", "%20");
+            StartCoroutine(GetData(string.Format($"{adress}remove-presentation?name={_name}&token={_token}&churuata-id={_churuataID}&filter={filter}")));
+        }
+        catch
+        {
+            throw;
+        }
+    }
+
+    public void GetMurmering(string _name, int _token, int _churuataID)
+    {
+        try
+        {
+            StartCoroutine(GetData(string.Format($"{adress}get-murmerings?name={_name}&token={_token}&churuata-id={_churuataID}")));
+        }
+        catch
+        {
+            throw;
+        }
+    }
+
+    #endregion
+
+    #endregion
 }
