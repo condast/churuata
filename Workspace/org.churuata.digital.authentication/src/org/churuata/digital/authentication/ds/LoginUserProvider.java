@@ -13,6 +13,7 @@ import org.condast.commons.authentication.user.ILoginUser;
 import org.osgi.service.component.annotations.Component;
 
 @Component( name="org.churuata.digital.authentication.login.factory",
+		property={"type=churuata"},
 		immediate=true)
 public class LoginUserProvider implements ILoginProvider {
 

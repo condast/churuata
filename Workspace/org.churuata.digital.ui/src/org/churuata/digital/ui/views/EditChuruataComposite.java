@@ -10,6 +10,7 @@ import org.churuata.digital.core.location.IChuruata;
 import org.churuata.digital.core.location.IChuruata.Requests;
 import org.churuata.digital.core.rest.IRestPages;
 import org.churuata.digital.core.location.IChuruataType;
+import org.churuata.digital.ui.image.ChuruataImages;
 import org.churuata.digital.ui.image.ImageUtils;
 import org.condast.commons.authentication.user.ILoginUser;
 import org.condast.commons.data.latlng.LatLng;
@@ -202,11 +203,11 @@ public class EditChuruataComposite extends AbstractEntityComposite<LatLng>
 		gd_txtURL.widthHint = 260;
 		txtURL.setLayoutData(gd_txtURL);
 		
-		Image image = ImageUtils.getImage(getDisplay(), this.getClass().getResourceAsStream( S_ADD_IMAGE ));
+		ChuruataImages image = ChuruataImages.getInstance();
 		
 		Button addButton = new Button( container, SWT.None );
 		addButton.setLayoutData(new GridData( SWT.FILL, SWT.FILL, false, false, 1, 2));
-		addButton.setImage(image);
+		addButton.setImage(image.getImage(ChuruataImages.Images.ADD));
 		addButton.addSelectionListener( new SelectionAdapter() {
 			private static final long serialVersionUID = 1L;
 

@@ -1,5 +1,6 @@
 package org.churuata.rest.service;
 
+import java.util.Map;
 import java.util.logging.Logger;
 
 import javax.persistence.EntityManagerFactory;
@@ -28,19 +29,21 @@ public class EntityManagerService extends EntityManagerFactoryService{
 	public EntityManagerService() {
 		super( Activator.BUNDLE_ID );
 	}
-	
-	
-	@Reference( cardinality = ReferenceCardinality.MANDATORY,
+		
+	@Reference( cardinality = ReferenceCardinality.AT_LEAST_ONE,
 	policy=ReferencePolicy.DYNAMIC)
 	@Override
 	public synchronized void bindEMF( EntityManagerFactory emf) {
-		logger.info("Attempting to bind factory: ");
+		Map<String,Object> props = emf.getProperties();
+		String attr = (String) props.get(BUNDLE_NAME_KEY);
+		logger.info("Attempting to bind factory: " + attr);
+
 		if( !compare( emf, BUNDLE_NAME_KEY, Activator.BUNDLE_ID))
 			return;
-		logger.info("FACTRY FOUND: " + BUNDLE_NAME_KEY);
+		logger.info("FACTORY FOUND: " + BUNDLE_NAME_KEY);
 		service.setEMF(emf);
 		super.bindEMF(emf);
-		logger.info("FACTRY BOUND succesfully ");
+		logger.info("FACTORY BOUND succesfully ");
 	}
 
 	@Override

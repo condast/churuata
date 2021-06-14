@@ -16,7 +16,7 @@
 		<exclude-unlisted-classes>false</exclude-unlisted-classes>
 		<properties>
 			<property name="bundle-name" value="org.churuata.digital.authentication" />
-			<property name="unit-name"  	value="Chruata Digital Authentication" />
+			<property name="unit-name"  	value="Churuata Digital Authentication" />
 			<property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver" />
 			<!-- Add the following entry in the hosts file in C:\Windows\System32\drivers\etc: 
 				# CONDAST DATABASE SERVER 127.0.0.1 databaseserver otherwise only localhost 

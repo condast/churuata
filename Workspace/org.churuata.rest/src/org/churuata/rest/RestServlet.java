@@ -14,7 +14,7 @@ import org.glassfish.jersey.servlet.ServletContainer;
 public class RestServlet extends AbstractServletWrapper {
 
 	//Same as alias in plugin.xml
-	public static final String S_CONTEXT_PATH = "churuata";
+	public static final String S_CONTEXT_PATH = "churuatas";
 
 	public RestServlet() {
 		super( S_CONTEXT_PATH );

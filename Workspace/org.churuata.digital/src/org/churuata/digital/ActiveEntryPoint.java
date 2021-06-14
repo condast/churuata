@@ -6,6 +6,7 @@ import org.churuata.digital.core.store.SessionStore;
 import org.churuata.digital.ui.image.ChuruataImages;
 import org.churuata.digital.ui.map.MapBrowser;
 import org.condast.commons.authentication.user.ILoginUser;
+import org.condast.commons.config.Config;
 import org.condast.commons.data.latlng.LatLng;
 import org.condast.commons.ui.controller.EditEvent;
 import org.condast.commons.ui.entry.AbstractRestEntryPoint;
@@ -135,6 +136,9 @@ public class ActiveEntryPoint extends AbstractRestEntryPoint<SessionStore>{
 
 	@Override
 	protected boolean postProcess(Composite parent) {
+		Config config = new Config();
+		mapComposite.setInput(config.getServerContext());
+
 		mapComposite.locate();
 		SessionStore store = super.getData();
 		LatLng selected = store.getSelected();
@@ -168,6 +172,7 @@ public class ActiveEntryPoint extends AbstractRestEntryPoint<SessionStore>{
 	protected void handleTimer() {
 		try {
 			super.handleTimer();
+			mapComposite.refresh();
 			SessionStore store = super.getData();
 			if(( store == null ) || ( store.getLoginUser() == null ))
 				return;

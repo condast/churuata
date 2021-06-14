@@ -7,12 +7,12 @@ import org.condast.commons.authentication.ui.views.AuthenticationGroup;
 import org.condast.commons.authentication.user.ILoginUser;
 import org.condast.commons.ui.controller.EditEvent;
 import org.condast.commons.ui.provider.ICompositeProvider;
-import org.condast.commons.ui.utils.RWTUtils;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.osgi.service.component.annotations.Component;
 
 @Component( name="org.churuata.digital.authentication.composite.provider",
+		property={"type=churuata"},
 		immediate=true)
 public class AuthCompositeProvider implements ICompositeProvider<AuthenticationGroup> {
 
@@ -56,7 +56,6 @@ public class AuthCompositeProvider implements ICompositeProvider<AuthenticationG
 				if( user == null )
 					return;
 				service.addUser(user);
-				RWTUtils.redirect( S_REDIRECT_PAGE );
 				break;
 			default:
 				break;

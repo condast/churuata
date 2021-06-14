@@ -105,6 +105,7 @@
     </setAttribute>
     <setAttribute key="selected_workspace_bundles">
         <setEntry value="nl.martijndwars.webpush@default:default"/>
+        <setEntry value="org.churuata.digital.authentication@default:default"/>
         <setEntry value="org.churuata.digital.core@default:default"/>
         <setEntry value="org.churuata.digital.ui@default:default"/>
         <setEntry value="org.churuata.digital@default:default"/>
@@ -113,6 +114,7 @@
         <setEntry value="org.condast.commons.authentication@default:default"/>
         <setEntry value="org.condast.commons.data@default:default"/>
         <setEntry value="org.condast.commons.messaging@default:default"/>
+        <setEntry value="org.condast.commons.na@default:default"/>
         <setEntry value="org.condast.commons.persistence@default:default"/>
         <setEntry value="org.condast.commons.ui@default:default"/>
         <setEntry value="org.condast.commons@default:default"/>
@@ -120,7 +122,7 @@
         <setEntry value="org.condast.js.push@default:default"/>
         <setEntry value="org.openlayer.map@default:default"/>
     </setAttribute>
-    <booleanAttribute key="show_selected_only" value="true"/>
+    <booleanAttribute key="show_selected_only" value="false"/>
     <booleanAttribute key="tracing" value="false"/>
     <booleanAttribute key="useCustomFeatures" value="false"/>
     <booleanAttribute key="useDefaultConfigArea" value="true"/>

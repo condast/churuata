@@ -178,6 +178,7 @@ public class MapBrowser extends Browser {
 				}else {
 					Object[] coords = (Object[]) event.getData()[2];
 					LatLng latlng = new LatLng(( Double) coords[1], (Double)coords[0]);				
+					notifyEditListeners( new EditEvent<LatLng>( this, EditTypes.CHANGED, latlng ));
 				}
 			}
 		}
@@ -218,11 +219,14 @@ public class MapBrowser extends Browser {
 	}
 
 	public void refresh() {
-		this.controller.show();
-		
-		//NavigationView view = new NavigationView(mapController);
-		//view.getLocation();
-		//handler.addData("update");		
+		try {
+			this.controller.show();
+			//NavigationView view = new NavigationView(mapController);
+			//view.getLocation();
+			//handler.addData("update");		
+		} catch (Exception e) {
+			e.printStackTrace();
+		}		
 	}
 	
 	public void dispose() {

@@ -11,8 +11,7 @@
 		<class>org.churuata.rest.model.Presentation</class>
 		<exclude-unlisted-classes>true</exclude-unlisted-classes>
 		<properties>
-			<property name="bundle-name"
-				value="org.churuata.rest" />
+			<property name="bundle-name" value="org.churuata.rest" />
 			<property name="unit-name" value="Churuata" />
       		<property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>
 			<!-- Add the following entry in the hosts file in C:\Windows\System32\drivers\etc: 

@@ -33,8 +33,9 @@ public class EntryPointComponent{
 		logger.info("Deactivating the" + COMPONENT_NAME);				
 	}
 
-	@Reference( cardinality = ReferenceCardinality.AT_LEAST_ONE,
-			policy=ReferencePolicy.DYNAMIC)
+	@Reference( cardinality = ReferenceCardinality.MANDATORY,
+			policy=ReferencePolicy.DYNAMIC,
+			target="(type=churuata)")
 	public void setFactory( ICompositeProvider<Composite> provider ){
 		dispatcher.addEntryPoint(provider);
 	}
