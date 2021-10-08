@@ -40,10 +40,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 846874299692528043}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5f4c04703fef64848997c3e532a36969, type: 3}
+  m_Script: {fileID: 11500000, guid: 5a413bbf1d3ef0741bf0edca8d1670c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  building: {fileID: 1690614970431736750, guid: bbf746b373018df4c97cab2fb1c408e6,
-    type: 3}
+  building: {fileID: 0}
   load: 0
   createBuilding: 0
+  useLocalSave: 0
