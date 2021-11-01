@@ -35,7 +35,7 @@ public class GetGif : MonoBehaviour
             {
                 Debug.Log("Received: " + webRequest.downloadHandler.text);
                 string fulldata = webRequest.downloadHandler.text;
-                comments = fulldata.Split(new string[] { "<br>" }, StringSplitOptions.None);
+                comments = fulldata.Split(new string[] { "<brr>" }, StringSplitOptions.None);
                 Debug.Log(String.Format("There are {0} comments.", comments.Length));
                 foreach (string comment in comments)
                 {
