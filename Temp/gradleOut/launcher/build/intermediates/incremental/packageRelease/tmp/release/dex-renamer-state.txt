@@ -1,0 +1,4 @@
+#Mon Nov 01 11:04:52 CET 2021
+base.0=D\:\\Github Daan Oosterloo\\Cocktail-Game\\ARScene\\Temp\\gradleOut\\launcher\\build\\intermediates\\dex\\release\\mergeDexRelease\\classes.dex
+path.0=classes.dex
+renamed.0=classes.dex
