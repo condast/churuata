@@ -30,7 +30,7 @@ hs_err_pid*
 /[Oo]bj/
 [Ll]ogs/
 /[Mm]emoryCaptures/
-BuildOutput/
+[Bb]uildOutput/
 
 # Asset meta data should only be ignored when the corresponding asset is also ignored
 !/[Aa]ssets/**/*.meta
@@ -59,8 +59,9 @@ ExportedObj/
 *.mdb
 *.opendb
 *.VC.db
-*.sln
+*.apk
 *.vsconfig
+*.sln
 *.csproj
 
 # Unity3D generated meta files
