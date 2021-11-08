@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<design>
+	<language class="org.churuata.digital.dashboard.language.digitalLanguage" />
+	<image-provider class="org.churuata.digital.ui.images.digitalImages" />
+	<preferences>
+		<store id="org.digital.rwt.rest" name="Rest"/>
+	</preferences>
+	<frontend title="ACTIVE" id="org.digital.frontend" style="SWT.NONE">
+		<layout name="grid-layout" columns="1" />
+		<tabfolder rwt-custom="trajectoryitem" select="0">
+			<layout-data>
+				<horizontal align="fill" grab-excess="true" />
+				<vertical align="fill" grab-excess="true" />
+			</layout-data>
+			<layout name="grid-layout" columns="1" />
+			<item name="Route">
+				<composite class="org.churuata.digital.ui.map.MapBrowser" name="churuata-composite">
+					<layout-data type="grid-data">
+						<horizontal spacing="fill" grab-excess="true" columns="1" />
+						<vertical spacing="fill" />
+					</layout-data>
+				</composite>
+			</item>
+		</tabfolder>
+ 	</frontend>
+</design>
