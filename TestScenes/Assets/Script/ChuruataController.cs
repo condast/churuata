@@ -2,8 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Builder : MonoBehaviour
+public class ChuruataController : MonoBehaviour
 {
+
+    public GameObject sleepLocation;
+    public GameObject legalLocation;
+    public GameObject eatLocation;
+
+
     // Start is called before the first frame update
     void Start()
     {
