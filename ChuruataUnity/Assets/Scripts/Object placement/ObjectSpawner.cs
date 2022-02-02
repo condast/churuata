@@ -9,6 +9,7 @@ public class ObjectSpawner : MonoBehaviour
     public GameObject churuata;
     public GameObject objectToSpawn;
     private PlacementIndicator placementIndicator;
+    private GameObject LastPlacedObj;
 
     private void Start()
     {
@@ -22,7 +23,7 @@ public class ObjectSpawner : MonoBehaviour
         if (Input.touchCount > 0 && Input.touches[0].phase == TouchPhase.Began)
         {
             GameObject obj = Instantiate(objectToSpawn, placementIndicator.transform.position, placementIndicator.transform.rotation);
-
+            LastPlacedObj = obj;
         }
     }
 
@@ -35,4 +36,16 @@ public class ObjectSpawner : MonoBehaviour
     {
         objectToSpawn = churuata;
     }
+
+    public void ChangeSizeUp()
+    {
+        LastPlacedObj.transform.localScale += new Vector3(1, 1, 1);
+    }
+
+    public void ChangeSizeDown() 
+    {
+        LastPlacedObj.transform.localScale -= new Vector3(-1, -1, -1);
+    }
+
+
 }
