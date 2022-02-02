@@ -20,7 +20,7 @@ public class Builder : MonoBehaviour
     
     void Start()
     {
-        Debug.Log(1);
+        
         StartCoroutine(OnStart());
        // ConstructList();
     }
@@ -29,7 +29,7 @@ public class Builder : MonoBehaviour
     {
         WWW data = new WWW(dbURL);
         yield return data;
-            Debug.Log(data.text);
+
             rawData = data.text;
             
     }

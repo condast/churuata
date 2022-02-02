@@ -66,6 +66,8 @@
   <ItemGroup>
     <Compile Include="Assets\Scripts\Builder.cs" />
     <Compile Include="Assets\Scripts\ChuruataController.cs" />
+    <Compile Include="Assets\Scripts\ChuruataPanel.cs" />
+    <Compile Include="Assets\Scripts\ChuruateTypeHandler.cs" />
     <Compile Include="Assets\Scripts\ConnectToServer.cs" />
     <Compile Include="Assets\Scripts\PlacementIndicator.cs" />
     <Reference Include="UnityEngine">

@@ -17,12 +17,14 @@ public class Builder : MonoBehaviour
     public GameObject empty;
     public GameObject palm;
     public GameObject leaves;
+    public ChuruateTypeHandler handler;
     
     void Start()
     {
         Debug.Log(1);
         StartCoroutine(OnStart());
-       // ConstructList();
+        // ConstructList();
+        UseData();
     }
 
     IEnumerator OnStart()
@@ -31,7 +33,7 @@ public class Builder : MonoBehaviour
         yield return data;
             Debug.Log(data.text);
             rawData = data.text;
-            
+
     }
     private void ConstructList()
     {
@@ -51,5 +53,10 @@ public class Builder : MonoBehaviour
                 Debug.Log(i);
             }
         }
+    }
+    void UseData()
+    {
+        string[] data = rawData.Split('/');
+        handler.GiveData(data);
     }
 }
