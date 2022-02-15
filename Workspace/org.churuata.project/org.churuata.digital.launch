@@ -56,6 +56,7 @@
         <setEntry value="org.eclipse.equinox.app@default:default"/>
         <setEntry value="org.eclipse.equinox.common@2:true"/>
         <setEntry value="org.eclipse.equinox.console@default:default"/>
+        <setEntry value="org.eclipse.equinox.ds@1:true"/>
         <setEntry value="org.eclipse.equinox.http.jetty@default:default"/>
         <setEntry value="org.eclipse.equinox.http.registry@default:default"/>
         <setEntry value="org.eclipse.equinox.http.servlet@default:default"/>
@@ -63,7 +64,7 @@
         <setEntry value="org.eclipse.equinox.registry@default:default"/>
         <setEntry value="org.eclipse.equinox.security@default:default"/>
         <setEntry value="org.eclipse.gemini.dbaccess.mysql@default:default"/>
-        <setEntry value="org.eclipse.gemini.dbaccess.util"/>
+        <setEntry value="org.eclipse.gemini.dbaccess.util@default:default"/>
         <setEntry value="org.eclipse.gemini.jpa@default:default"/>
         <setEntry value="org.eclipse.jetty.continuation@default:default"/>
         <setEntry value="org.eclipse.jetty.http@default:default"/>
@@ -75,12 +76,12 @@
         <setEntry value="org.eclipse.osgi.services@default:default"/>
         <setEntry value="org.eclipse.osgi.util@default:default"/>
         <setEntry value="org.eclipse.osgi@-1:true"/>
-        <setEntry value="org.eclipse.persistence.antlr"/>
-        <setEntry value="org.eclipse.persistence.asm"/>
+        <setEntry value="org.eclipse.persistence.antlr@default:default"/>
+        <setEntry value="org.eclipse.persistence.asm@default:default"/>
         <setEntry value="org.eclipse.persistence.core@default:default"/>
         <setEntry value="org.eclipse.persistence.jpa.jpql@default:default"/>
         <setEntry value="org.eclipse.persistence.jpa@default:default"/>
-        <setEntry value="org.eclipse.persistence.nosql@default:default"/>
+        <setEntry value="org.eclipse.persistence.nosql@default:false"/>
         <setEntry value="org.eclipse.rap.filedialog@default:default"/>
         <setEntry value="org.eclipse.rap.fileupload@default:default"/>
         <setEntry value="org.eclipse.rap.jface@default:default"/>
@@ -98,12 +99,13 @@
         <setEntry value="org.glassfish.jersey.core.jersey-client@default:default"/>
         <setEntry value="org.glassfish.jersey.core.jersey-common@default:default"/>
         <setEntry value="org.glassfish.jersey.core.jersey-server@default:default"/>
-        <setEntry value="org.osgi.service.jdbc"/>
-        <setEntry value="org.osgi.service.jndi"/>
+        <setEntry value="org.osgi.service.jdbc@default:default"/>
+        <setEntry value="org.osgi.service.jndi@default:default"/>
         <setEntry value="slf4j.api@default:default"/>
-        <setEntry value="slf4j.jcl@default:default"/>
+        <setEntry value="slf4j.jcl@default:false"/>
     </setAttribute>
     <setAttribute key="selected_workspace_bundles">
+        <setEntry value="com.condast.auth.frontend@default:default"/>
         <setEntry value="nl.martijndwars.webpush@default:default"/>
         <setEntry value="org.churuata.digital.authentication@default:default"/>
         <setEntry value="org.churuata.digital.core@default:default"/>
