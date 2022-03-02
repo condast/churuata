@@ -1,55 +1,67 @@
 ﻿using System;
+using System.Net;
+using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 
 
+
 public class Builder : MonoBehaviour
 {
+
     
-    public string rawData;
-    public List<string> procesedData;
-    public WWWForm wwwForm;
+    public string testData;
+    public StreamReader rawData;
+    public string[] procesedData;
+    public string[] saveLock;
     //
-    public string dbURL = " https://www.condast.com:8443/churuatas/rest/walkers/select?name=keesp&lat=52&lon=6.5&range=10000";
+    HttpWebRequest dbURL = (HttpWebRequest)WebRequest.Create("https://www.condast.com:8443/churuatas/rest/walkers/select?name=keesp&lat=52&lon=6.5&range=10000");
     public List<GameObject> locationList;
-    public GameObject empty;
+    public List<Canvas> churuataLocation;
+    public GameObject type1;
+    public GameObject type2;
+    public GameObject type3;
     public GameObject palm;
     public GameObject leaves;
     
     void Start()
     {
-        
-        StartCoroutine(OnStart());
-       // ConstructList();
+        HandleData(testData);
+        /*
+        HttpWebResponse response = (HttpWebResponse)dbURL.GetResponse();
+
+        rawData = new StreamReader(response.GetResponseStream());
+        Debug.Log(rawData.ReadToEnd());
+        */
+       ConstructList();
     }
-
-    IEnumerator OnStart()
+    public void HandleData(string data)
     {
-        WWW data = new WWW(dbURL);
-        yield return data;
+        procesedData = data.Split('/');
 
-            rawData = data.text;
-            
+        saveLock = data.Split('|');
     }
     private void ConstructList()
     {
-        foreach(string data in procesedData)
+
+        int i = 0;
+        foreach (string data in saveLock)
         {
-            GameObject x =Instantiate(empty,this.transform);            
-            string[] saveLock;
-            saveLock = data.Split(char.Parse("|"));
-            for(int i =0;i < Int32.Parse(saveLock[1]) ; i++)
+            
+            Debug.Log(data);
+
+            string[] processedUIData = data.Split('.');
+            Debug.Log(processedUIData[2]);
+            switch (processedUIData[0])
             {
-                Instantiate(palm, x.transform);
-                Debug.Log(i);
+                case "type1": Debug.Log(1); Instantiate(type1, churuataLocation[i].transform).GetComponent<ChuruataPanel>().InstantiateChuruatePannel(processedUIData); break;
+                case "type2": Debug.Log(2); Instantiate(type2, churuataLocation[i].transform).GetComponent<ChuruataPanel>().InstantiateChuruatePannel(processedUIData); break;
+                case "type3":Debug.Log(3); Instantiate(type3, churuataLocation[i].transform).GetComponent<ChuruataPanel>().InstantiateChuruatePannel(processedUIData); break;
+                default: Debug.Log("data is missing"); break;
             }
-            for (int i = 0; i < Int32.Parse(saveLock[2]); i++)
-            {
-                Instantiate(leaves, x.transform);
-                Debug.Log(i);
-            }
-        }
+            i++;
+        }  
     }
 }

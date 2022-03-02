@@ -7,7 +7,7 @@ public class ChuruataPanel : MonoBehaviour
 {
     public Text textPanel;
     public GameObject asset;
-
+    
     public virtual void InstantiateChuruatePannel(string[] saveLock)
     {
         Debug.Log("started");
@@ -22,7 +22,7 @@ public class ChuruataPanel : MonoBehaviour
     public void CreateAssets(string ammountString)
     {
         int amount = int.Parse(ammountString);
-        for (int i = 1; i <= amount; i++)
+        for(int i = 1;i <= amount; i++)
         {
             Instantiate(asset, this.transform);
         }

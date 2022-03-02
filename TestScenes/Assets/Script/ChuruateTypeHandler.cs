@@ -10,7 +10,7 @@ public class ChuruateTypeHandler : MonoBehaviour
     public string[] churuataData;
     public ChuruataPanel[] churuatepanels;
     public Canvas UI;
-
+    
     void Start()
     {
         
@@ -30,11 +30,12 @@ public class ChuruateTypeHandler : MonoBehaviour
             string[] splitData = data.Split('.');
             foreach(ChuruataPanel panel in churuatepanels)
             {
-                Debug.Log(splitData[0] + " " + panel.GetChuruataType());
+                /*
                 if (splitData[0] == panel.GetChuruataType())
                 {                    
                     panel.SetText(splitData[1]);
                 }
+                */
             }
         }
     }
