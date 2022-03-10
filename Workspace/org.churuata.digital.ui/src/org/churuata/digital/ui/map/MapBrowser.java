@@ -286,7 +286,8 @@ public class MapBrowser extends Browser {
 				params.put(Parameters.LON.toString(), String.valueOf( home.getLongitude()));
 				sendGet(IChuruata.Requests.SHOW, params);
 			} catch (IOException e) {
-				e.printStackTrace();
+				logger.warning(e.getMessage());
+				//e.printStackTrace();
 			}
 		}
 		

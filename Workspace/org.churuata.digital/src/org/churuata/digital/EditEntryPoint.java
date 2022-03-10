@@ -21,7 +21,7 @@ public class EditEntryPoint extends AbstractRestEntryPoint<SessionStore>{
 
 	public static final String S_PAGE = "page";
 
-	public static final String S_ARNAC = "arnac";
+	public static final String S_CHURUATA = "churuata";
 
 	public static final String S_ERR_NO_VESSEL = "No Vessel has been found.";	
 
@@ -51,7 +51,7 @@ public class EditEntryPoint extends AbstractRestEntryPoint<SessionStore>{
 	protected Composite createComposite(Composite parent) {
 		parent.setLayout( new FillLayout());
 		editComposite = new EditChuruataComposite(parent, SWT.NONE );
-		editComposite.setData( RWT.CUSTOM_VARIANT, S_ARNAC );
+		editComposite.setData( RWT.CUSTOM_VARIANT, S_CHURUATA );
 		editComposite.addEditListener( e->onRegistrationCompleted(e));
 		return editComposite;
 	}

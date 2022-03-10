@@ -11,7 +11,6 @@ import org.churuata.digital.core.location.IChuruata.Requests;
 import org.churuata.digital.core.rest.IRestPages;
 import org.churuata.digital.core.location.IChuruataType;
 import org.churuata.digital.ui.image.ChuruataImages;
-import org.churuata.digital.ui.image.ImageUtils;
 import org.condast.commons.authentication.user.ILoginUser;
 import org.condast.commons.data.latlng.LatLng;
 import org.condast.commons.messaging.http.AbstractHttpRequest;
@@ -28,7 +27,6 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.events.VerifyListener;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -36,6 +34,7 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
 
 public class EditChuruataComposite extends AbstractEntityComposite<LatLng>
 {
@@ -53,9 +52,10 @@ public class EditChuruataComposite extends AbstractEntityComposite<LatLng>
 	private static final String S_NAME_INFORMATION_TIP = "The Churuata name";
 	private static final String S_DESCRIPTION = "Description";
 	private static final String S_DESCRIPTOR_INFORMATION_TIP = "Describe the Churuata";
-	private static final String S_CHURUATA_TYPE = "Churuata Type";
+	private static final String S_SERVICES = "Services";
 	private static final String S_CHURUATA_INFORMATION_TIP = "The type of churuata";
 	private static final String S_WEBSITE = "Website";
+	private static final String S_LOCATION = "Location:";
 	
 	public enum Parameters{
 		ID,
@@ -77,7 +77,9 @@ public class EditChuruataComposite extends AbstractEntityComposite<LatLng>
 	private InputField txtURL;
 	private AttributeFieldComposite scopeField;
 	private Combo comboTypes;
-		
+	
+	private Label latlngLabel;
+	
 	private ChuruataTableComposite churuataTypesTable;
 
 	private ILoginUser user;
@@ -158,7 +160,7 @@ public class EditChuruataComposite extends AbstractEntityComposite<LatLng>
 		});
 		
 		this.scopeField = new AttributeFieldComposite( grpFillIn, SWT.NONE );
-		this.scopeField.setLabel( S_CHURUATA_TYPE + ": ");
+		this.scopeField.setLabel( S_SERVICES + ": ");
 		this.scopeField.setLabelWidth(115);
 		this.scopeField.setIconSize(17);
 		this.scopeField.setInformationMessage( S_CHURUATA_INFORMATION_TIP);
@@ -203,6 +205,15 @@ public class EditChuruataComposite extends AbstractEntityComposite<LatLng>
 		gd_txtURL.widthHint = 260;
 		txtURL.setLayoutData(gd_txtURL);
 		
+		Label locationLabel = new Label( grpFillIn, SWT.NONE);
+		GridData locGrid = new GridData( SWT.FILL, SWT.FILL, false, true);
+		locGrid.widthHint = 120;
+		locationLabel.setLayoutData( locGrid);
+		locationLabel.setText( S_LOCATION);
+		
+		latlngLabel = new Label( grpFillIn, SWT.BORDER);
+		latlngLabel.setLayoutData( new GridData( SWT.FILL, SWT.FILL, true, true));
+
 		ChuruataImages image = ChuruataImages.getInstance();
 		
 		Button addButton = new Button( container, SWT.None );
@@ -231,7 +242,7 @@ public class EditChuruataComposite extends AbstractEntityComposite<LatLng>
 		});
 
 		this.churuataTypesTable = new ChuruataTableComposite(container, SWT.NONE);
-		//this.categoryTable.setLayoutData( new GridData(SWT.FILL, SWT.FILL, true, true ));	
+		this.churuataTypesTable.setLayoutData( new GridData(SWT.FILL, SWT.FILL, true, true ));	
 	}
 
 	public void setInput( String context, ILoginUser user ){
@@ -251,6 +262,7 @@ public class EditChuruataComposite extends AbstractEntityComposite<LatLng>
 
 	@Override
 	protected void onSetInput(LatLng input, boolean overwrite) {
+		latlngLabel.setText(input.toLocation());
 		//this.churuataTypesTable.setInput(input.getTypes());
 	}
 

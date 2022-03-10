@@ -47,6 +47,7 @@ public class CaminantesResource {
 	private Logger logger = Logger.getLogger(this.getClass().getName());
 	
 	public CaminantesResource() {
+		logger.info("SERVLET REGISTERED");
 	}
 
 	/**

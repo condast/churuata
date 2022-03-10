@@ -137,6 +137,7 @@ public class ChuruataResource {
 			@QueryParam("max-leaves") int leaves ) {
 		Dispatcher dispatcher = Dispatcher.getInstance();
 		Response result = null;
+		ChuruataService service = new ChuruataService( dispatcher );
 		try{
 			AuthenticationDispatcher ad = AuthenticationDispatcher.getInstance();
 			ILoginUser user = ad.getLoginUser(userId, token);
@@ -146,7 +147,7 @@ public class ChuruataResource {
 			if(( logs < 0 ) || ( leaves < 0 ))
 				return Response.status( Status.BAD_REQUEST).build();
 	
-			ChuruataService service = new ChuruataService( dispatcher );
+			service.open();
 			Churuata churuata = service.find(churuataId);		
 			if( churuata == null )
 				return Response.noContent().build();
@@ -155,13 +156,16 @@ public class ChuruataResource {
 			if( logs > 0 )
 				churuata.setMaxLogs(logs);
 			if( leaves > 0 )
-				churuata.setMaxLeaves(logs);
+				churuata.setMaxLeaves(leaves);
 			
 			result = Response.ok().build();
 		}
 		catch( Exception ex ){
 			ex.printStackTrace();
 			return Response.serverError().build();
+		}
+		finally {
+			service.close();
 		}
 		return result;
 	}

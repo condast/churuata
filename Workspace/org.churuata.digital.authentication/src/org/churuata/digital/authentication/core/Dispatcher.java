@@ -122,7 +122,7 @@ public class Dispatcher extends AbstractPersistencyService implements IPersisten
 		if( StringUtils.isEmpty(userName))
 			return false;
 		for( ILoginUser user: this.users) {
-			if( userName.equals( user.getId()) && ( user.getToken() - token ) == 0) 
+			if( userName.equals( user.getUserName()) && ( user.getToken() - token ) == 0) 
 				return true;
 		}
 		return false;

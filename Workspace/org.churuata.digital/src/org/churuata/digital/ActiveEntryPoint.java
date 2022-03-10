@@ -69,7 +69,7 @@ public class ActiveEntryPoint extends AbstractRestEntryPoint<SessionStore>{
 		mapComposite.addEditListener( e->onLocationChanged(e));
 		
 		Group group = new Group( parent, SWT.NONE );
-		group.setText("Vessel");
+		group.setText("Edit Churuata");
 		group.setLayout( new GridLayout(5, false ));
 		group.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 
