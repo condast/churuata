@@ -21,6 +21,19 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 1.8
+      
+      # --------------------------------------------
+      # Setup caching for m2 repository
+      # --------------------------------------------
+      - name: Setup - Cache local Maven repository
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2/repository/
+          key: ${{ runner.os }}-local-maven-deploy-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-local-maven-deploy-
+            ${{ runner.os }}-local-maven-
+            
       - name: Maven Package
         run: mvn -B clean package -DskipTests
       - name: Maven Verify
