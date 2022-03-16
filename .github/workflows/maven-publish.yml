@@ -35,6 +35,6 @@ jobs:
             ${{ runner.os }}-local-maven-
             
       - name: Maven Package
-        run: mvn -f ./org.condast.churuata.project -B clean package -DskipTests
+        run: mvn -f ./org.condast.churuata.project/pom.xml -B clean package -DskipTests
       - name: Maven Verify
         run: mvn -B clean verify
