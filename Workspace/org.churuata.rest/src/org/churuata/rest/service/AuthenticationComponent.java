@@ -32,8 +32,9 @@ public class AuthenticationComponent{
 		logger.info("Deactivating the" + COMPONENT_NAME);				
 	}
 
-	@Reference( cardinality = ReferenceCardinality.AT_LEAST_ONE,
-			policy=ReferencePolicy.DYNAMIC)
+	@Reference( cardinality = ReferenceCardinality.MANDATORY,
+			policy=ReferencePolicy.DYNAMIC,
+			target="(type=churuata)")
 	public void setFactory( ILoginProvider provider ){
 		dispatcher.setLoginProvider(provider);
 	}
