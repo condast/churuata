@@ -57,7 +57,7 @@ public class LoginUserProvider implements ILoginProvider {
 
 	@Override
 	public void logout(ILoginUser user) {
-		dispatcher.logout(user.getId(), user.getToken());
+		dispatcher.logout(user.getId(), user.getSecurity());
 	}
 
 	@Override
@@ -67,10 +67,5 @@ public class LoginUserProvider implements ILoginProvider {
 
 	@Override
 	public void logoutRequest() {
-	}
-
-	@Override
-	public CallbackHandler createCallbackHandler() {
-		return null;
 	}
 }

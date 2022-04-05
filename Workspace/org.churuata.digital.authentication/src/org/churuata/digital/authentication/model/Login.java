@@ -143,12 +143,11 @@ public class Login implements ILoginUser {
 	}
 	
 	@Override
-	public long getToken() {
+	public long getSecurity() {
 		return token;
 	}
 	
-	@Override
-	public void setToken(long token) {
+	public void setSecurity(long token) {
 		this.token = token;
 	}
 
@@ -157,7 +156,7 @@ public class Login implements ILoginUser {
 		if (( this.id != userId ) || StringUtils.isEmpty(token))
 			return false;
 		long tkn = Long.parseLong(token);
-		return (tkn == this.getToken());
+		return (tkn == this.getSecurity());
 	}
 
 	/**

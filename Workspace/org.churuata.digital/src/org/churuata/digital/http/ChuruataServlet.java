@@ -61,6 +61,12 @@ public class ChuruataServlet extends HttpServlet {
 				path += S_LOGOFF.toLowerCase() + "?" + ILoginUser.Attributes.TOKEN.name().toLowerCase() + "=" + token;				
 			}
 			return path;
+		}
+
+		@Override
+		protected String getToken() {
+			// TODO Auto-generated method stub
+			return null;
 		}		
 	}
 }

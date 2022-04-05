@@ -32,7 +32,7 @@ public class AuthenticationDispatcher extends AbstractLoginClient{
 
 	public boolean hasLoginUser( long token) {
 		for( ILoginUser user: stores.keySet()) {
-			if( user.getToken() == token )
+			if( user.getSecurity() == token )
 				return true;
 		}
 		return false;
@@ -40,7 +40,7 @@ public class AuthenticationDispatcher extends AbstractLoginClient{
 
 	public ILoginUser getLoginUser( long token) {
 		for( ILoginUser user: stores.keySet()) {
-			if( user.getToken() == token )
+			if( user.getSecurity() == token )
 				return user;
 		}
 		return null;

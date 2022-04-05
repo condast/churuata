@@ -358,7 +358,7 @@ public class EditChuruataComposite extends AbstractEntityComposite<LatLng>
 			Map<String, String> params = new HashMap<>();
 			if( user != null ) {
 				params.put(Parameters.ID.toString(), String.valueOf( user.getId() ));
-				params.put(Parameters.TOKEN.toString(), String.valueOf( user.getToken() ));
+				params.put(Parameters.TOKEN.toString(), String.valueOf( user.getSecurity() ));
 			}
 			return params;
 		}

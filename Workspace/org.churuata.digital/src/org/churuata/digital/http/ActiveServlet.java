@@ -79,6 +79,12 @@ public class ActiveServlet extends HttpServlet {
 				break;
 			}
 			return result;
+		}
+
+		@Override
+		protected String getToken() {
+			// TODO Auto-generated method stub
+			return null;
 		}		
 	}
 }

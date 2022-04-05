@@ -58,7 +58,7 @@ public class LoginEntryPoint extends AbstractRestEntryPoint<SessionStore>{
 		switch( event.getEvent()) {
 		case LOGIN:
 			user = event.getUser();
-			user.setToken(token);
+			//store.user.setToken(token);
 			store.setLoginUser(user);
 			authentication.putUser(user, store);
 			String next = S_CHURUATA_ACTIVE_HOME + token;

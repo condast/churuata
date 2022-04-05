@@ -207,7 +207,7 @@ public class AuthenticationResource{
 	public static String toResponseString( ILoginUser user ) {
 		long[] str = new long[2];
 		str[0] = user.getId();
-		str[1] = user.getToken();
+		str[1] = user.getSecurity();
 		Gson gson = new Gson();
 		return gson.toJson(str, long[].class);
 	}
