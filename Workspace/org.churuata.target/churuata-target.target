@@ -21,15 +21,11 @@
 	<location path="P:\Virgo\virgo-jetty-server-3.7.4.RELEASE\repository\orientdb" type="Directory"/>
 </locations>
 <includeBundles>
-<plugin id="javax.mail.glassfish"/>
 <plugin id="javax.persistence"/>
 <plugin id="javax.validation.api"/>
 <plugin id="org.apache.commons.lang3"/>
 <plugin id="org.apache.commons.logging"/>
-<plugin id="org.apache.felix.gogo.runtime"/>
-<plugin id="org.eclipse.equinox.console"/>
 <plugin id="org.eclipse.equinox.console.ssh"/>
-<plugin id="org.eclipse.equinox.security"/>
 <plugin id="org.eclipse.persistence.antlr"/>
 <plugin id="org.eclipse.persistence.asm"/>
 <plugin id="org.eclipse.persistence.core"/>
@@ -58,34 +54,23 @@
 	<plugin id="com.orientechnologies.orientdb-lucene"/>
 	<plugin id="com.orientechnologies.orientdb-object"/>
 	<plugin id="com.orientechnologies.orientdb-graphdb"/>
-	<plugin id="com.fasterxml.jackson.core.jackson-core"/>
-	<plugin id="com.fasterxml.jackson.core.jackson-databind"/>
 	<plugin id="org.codehaus.jettison.jettison"/>
-	<plugin id="com.fasterxml.jackson.core.jackson-annotations"/>
 	<plugin id="com.ibm.icu" version="67.1.0.v20200706-1749"/>
 	<plugin id="com.ibm.icu.source"/>
 	<plugin id="org.apache.commons.fileupload" version="1.3.2.v20170320-2229"/>
 	<plugin id="org.apache.commons.io" version="2.6.0.v20190123-2029"/>
-	<plugin id="org.eclipse.core.commands"/>
 	<plugin id="org.eclipse.core.commands.source"/>
-	<plugin id="org.eclipse.core.contenttype"/>
 	<plugin id="org.eclipse.core.contenttype.source"/>
-	<plugin id="org.eclipse.core.expressions"/>
 	<plugin id="org.eclipse.core.expressions.source"/>
-	<plugin id="org.eclipse.core.jobs"/>
 	<plugin id="org.eclipse.core.jobs.source"/>
 	<plugin id="org.eclipse.core.runtime.source"/>
-	<plugin id="org.eclipse.equinox.app"/>
 	<plugin id="org.eclipse.equinox.app.source"/>
 	<plugin id="org.eclipse.equinox.common" version="3.14.0.v20201102-2053"/>
 	<plugin id="org.eclipse.equinox.common.source"/>
-	<plugin id="org.eclipse.equinox.http.registry"/>
 	<plugin id="org.eclipse.equinox.http.registry.source"/>
 	<plugin id="org.eclipse.equinox.preferences" version="3.8.100.v20201102-2042"/>
 	<plugin id="org.eclipse.equinox.preferences.source"/>
-	<plugin id="org.eclipse.equinox.registry"/>
 	<plugin id="org.eclipse.equinox.registry.source"/>
-	<plugin id="org.eclipse.help"/>
 	<plugin id="org.eclipse.help.source"/>
 	<plugin id="org.eclipse.osgi" version="3.13.300.v20190218-1622"/>
 	<plugin id="org.eclipse.osgi.source"/>
@@ -222,30 +207,18 @@
 	<plugin id="org.eclipse.nebula.widgets.xviewer.core"/>
 	<plugin id="org.eclipse.nebula.widgets.xviewer.example"/>
 	<plugin id="javassist" version="3.22.0.GA"/>
-	<plugin id="org.eclipse.equinox.http.servlet"/>
 	<plugin id="javax.annotation-api"/>
 	<plugin id="com.mysql.jdbc"/>
 	<plugin id="org.eclipse.gemini.dbaccess.mysql"/>
 	<plugin id="org.eclipse.gemini.dbaccess.util"/>
 	<plugin id="org.eclipse.gemini.jpa" version="1.2.0.M1"/>
 	<plugin id="org.apache.felix.scr"/>
-	<plugin id="org.eclipse.jetty.xml"/>
-	<plugin id="org.eclipse.jetty.webapp"/>
-	<plugin id="org.eclipse.jetty.util"/>
-	<plugin id="org.eclipse.jetty.servlet"/>
-	<plugin id="org.eclipse.jetty.server"/>
-	<plugin id="org.eclipse.jetty.security"/>
-	<plugin id="org.eclipse.jetty.io"/>
-	<plugin id="org.eclipse.jetty.http"/>
 	<plugin id="org.eclipse.jetty.deploy"/>
 	<plugin id="org.eclipse.jetty.continuation"/>
 	<plugin id="org.eclipse.osgi.services" version="3.8.0.v20190206-2147"/>
 	<plugin id="javax.servlet" version="3.1.0.v201410161800"/>
 	<plugin id="org.osgi.service.jdbc"/>
 	<plugin id="org.osgi.service.jndi"/>
-	<plugin id="javax.activation"/>
-	<plugin id="org.apache.felix.gogo.shell"/>
-	<plugin id="com.google.gson"/>
 	<plugin id="slf4j.api"/>
 	<plugin id="slf4j.jcl"/>
 	<plugin id="org.eclipse.equinox.ds" version="1.6.200.v20200422-1833"/>
@@ -254,7 +227,29 @@
 	<plugin id="org.glassfish.jersey.bundles.repackaged.jersey-guava"/>
 	<plugin id="javax.servlet.source"/>
 	<plugin id="org.glassfish.hk2.osgi-resource-locator"/>
-	<plugin id="org.eclipse.equinox.http.jetty"/>
 	<plugin id="org.apache.commons.commons-codec"/>
+	<plugin id="org.eclipse.osgi.services.source"/>
+	<plugin id="com.google.gson"/>
+	<plugin id="org.eclipse.equinox.http.registry"/>
+	<plugin id="org.eclipse.equinox.registry"/>
+	<plugin id="org.eclipse.equinox.http.jetty"/>
+	<plugin id="org.eclipse.jetty.http"/>
+	<plugin id="org.eclipse.jetty.io"/>
+	<plugin id="org.eclipse.jetty.osgi.boot"/>
+	<plugin id="org.eclipse.jetty.security"/>
+	<plugin id="org.eclipse.jetty.server"/>
+	<plugin id="org.eclipse.jetty.servlet"/>
+	<plugin id="org.eclipse.jetty.util"/>
+	<plugin id="org.eclipse.jetty.webapp"/>
+	<plugin id="org.eclipse.jetty.xml"/>
+	<plugin id="org.eclipse.equinox.security"/>
+	<plugin id="org.eclipse.core.commands"/>
+	<plugin id="org.eclipse.core.contenttype"/>
+	<plugin id="org.eclipse.core.jobs"/>
+	<plugin id="org.eclipse.equinox.app"/>
+	<plugin id="org.eclipse.equinox.http.servlet"/>
+	<plugin id="org.eclipse.equinox.console"/>
+	<plugin id="org.apache.felix.gogo.runtime"/>
+	<plugin id="org.apache.felix.gogo.shell"/>
 </includeBundles>
 </target>

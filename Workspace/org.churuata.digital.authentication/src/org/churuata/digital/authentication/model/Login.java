@@ -59,10 +59,13 @@ public class Login implements ILoginUser {
 	
 	private transient LatLng location;
 	
+	private transient boolean confirmed;
+	
 	public Login() {
 		this.createDate = Calendar.getInstance().getTime();
 		this.updateDate = this.createDate;
 		token = new Random().nextLong();
+		this.confirmed = false;
 	}
 
 	@Override
@@ -100,6 +103,16 @@ public class Login implements ILoginUser {
 
 	public void setEmail(String email) {
 		this.email = email;
+	}
+
+	@Override
+	public boolean isConfirmed() {
+		return confirmed;
+	}
+
+	@Override
+	public void setConfirmed(boolean confirmed) {
+		this.confirmed = confirmed;
 	}
 
 	@Override

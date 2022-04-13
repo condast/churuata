@@ -15,10 +15,12 @@
     <setAttribute key="deselected_workspace_bundles"/>
     <booleanAttribute key="includeOptional" value="false"/>
     <booleanAttribute key="org.eclipse.debug.core.appendEnvironmentVariables" value="true"/>
-    <stringAttribute key="org.eclipse.jdt.launching.JRE_CONTAINER" value="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
+    <booleanAttribute key="org.eclipse.jdt.launching.ATTR_ATTR_USE_ARGFILE" value="false"/>
+    <booleanAttribute key="org.eclipse.jdt.launching.ATTR_SHOW_CODEDETAILS_IN_EXCEPTION_MESSAGES" value="true"/>
+    <stringAttribute key="org.eclipse.jdt.launching.JRE_CONTAINER" value="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/java-1.8.0-openjdk"/>
     <stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="-os ${target.os} -ws ${target.ws} -arch ${target.arch} -nl ${target.nl} -console -consolelog"/>
     <stringAttribute key="org.eclipse.jdt.launching.SOURCE_PATH_PROVIDER" value="org.eclipse.pde.ui.workbenchClasspathProvider"/>
-    <stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Declipse.ignoreApp=true -Dosgi.noShutdown=true -Dorg.eclipse.equinox.http.jetty.log.stderr.threshold=info"/>
+    <stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Declipse.ignoreApp=true -Dosgi.noShutdown=true&#13;&#10;-Dorg.eclipse.equinox.http.jetty.log.stderr.threshold=info&#13;&#10;-Djava.util.logging.config.file=&quot;logging.properties&quot;"/>
     <stringAttribute key="org.eclipse.rap.launch.browserMode" value="EXTERNAL"/>
     <stringAttribute key="org.eclipse.rap.launch.contextpath" value="/"/>
     <stringAttribute key="org.eclipse.rap.launch.dataLocation" value="${workspace_loc}/.metadata/.plugins/org.eclipse.rap.tools.launch/org.churuata.digital"/>
@@ -35,6 +37,7 @@
     <stringAttribute key="pde.version" value="3.3"/>
     <setAttribute key="selected_target_bundles">
         <setEntry value="com.google.gson@default:default"/>
+        <setEntry value="com.googlecode.concurrentlinkedhashmap.lru@default:default"/>
         <setEntry value="com.mysql.jdbc@default:default"/>
         <setEntry value="javassist@default:default"/>
         <setEntry value="javax.annotation-api@default:default"/>
@@ -80,7 +83,7 @@
         <setEntry value="org.eclipse.persistence.asm@default:default"/>
         <setEntry value="org.eclipse.persistence.core@default:default"/>
         <setEntry value="org.eclipse.persistence.jpa.jpql@default:default"/>
-        <setEntry value="org.eclipse.persistence.jpa@default:default"/>
+        <setEntry value="org.eclipse.persistence.jpa@4:true"/>
         <setEntry value="org.eclipse.persistence.nosql@default:false"/>
         <setEntry value="org.eclipse.rap.filedialog@default:default"/>
         <setEntry value="org.eclipse.rap.fileupload@default:default"/>
@@ -88,6 +91,7 @@
         <setEntry value="org.eclipse.rap.nebula.widgets.richtext@default:default"/>
         <setEntry value="org.eclipse.rap.rwt.osgi@default:default"/>
         <setEntry value="org.eclipse.rap.rwt@default:default"/>
+        <setEntry value="org.freemarker.freemarker@default:default"/>
         <setEntry value="org.glassfish.hk2.api@default:default"/>
         <setEntry value="org.glassfish.hk2.external.aopalliance-repackaged@default:default"/>
         <setEntry value="org.glassfish.hk2.external.javax.inject@default:default"/>
@@ -105,6 +109,7 @@
         <setEntry value="slf4j.jcl@default:false"/>
     </setAttribute>
     <setAttribute key="selected_workspace_bundles">
+        <setEntry value="com.condast.auth.backend@default:default"/>
         <setEntry value="com.condast.auth.frontend@default:default"/>
         <setEntry value="nl.martijndwars.webpush@default:default"/>
         <setEntry value="org.churuata.digital.authentication@default:default"/>
@@ -122,6 +127,7 @@
         <setEntry value="org.condast.commons@default:default"/>
         <setEntry value="org.condast.js.commons@default:default"/>
         <setEntry value="org.condast.js.push@default:default"/>
+        <setEntry value="org.javax.mail@default:default"/>
         <setEntry value="org.openlayer.map@default:default"/>
     </setAttribute>
     <booleanAttribute key="show_selected_only" value="false"/>

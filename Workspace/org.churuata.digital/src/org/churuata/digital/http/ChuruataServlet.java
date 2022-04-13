@@ -17,8 +17,12 @@ public class ChuruataServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	//same as alias in plugin.xml
-	public static final String S_CHURUATA = "churuata/";
-	public static final String S_CONTEXT_PATH = S_CHURUATA + "index";
+	public static final String S_CHURUATA = "churuata";
+	public static final String S_CONTEXT_PATH = S_CHURUATA + "/index";
+
+	public static final String S_CONDAST = "condast/";
+	public static final String S_CONDAST_CONTEXT = S_CONDAST + "auth/";
+
 	public static final String S_LOGIN = "Login";
 	public static final String S_LOGOFF = "Logoff";
 
@@ -52,13 +56,13 @@ public class ChuruataServlet extends HttpServlet {
 		@Override
 		protected String onCreateLink(String link, String url, String arguments) {
 			boolean user = dispatcher.hasLoginUser( token );
-			String path = S_CHURUATA;
+			String path = S_CONDAST_CONTEXT;
 			if( !user ) {
 				Random random = new Random();
 				token = random.nextLong();
-				path += S_LOGIN.toLowerCase() + "?" + ILoginUser.Attributes.TOKEN.name().toLowerCase() + "=" + token;
+				path += getPath( S_LOGIN, S_CHURUATA, token);
 			}else {
-				path += S_LOGOFF.toLowerCase() + "?" + ILoginUser.Attributes.TOKEN.name().toLowerCase() + "=" + token;				
+				path += getPath( S_LOGOFF, S_CHURUATA, token);				
 			}
 			return path;
 		}
@@ -68,5 +72,10 @@ public class ChuruataServlet extends HttpServlet {
 			// TODO Auto-generated method stub
 			return null;
 		}		
+	}
+	
+	private static String getPath( String login, String domain, long token ) {
+		return login.toLowerCase() + "?" + ILoginUser.Attributes.TOKEN.name().toLowerCase() + "=" + token +
+				 "&" +ILoginUser.Attributes.DOMAIN.name().toLowerCase() + "=" + domain;
 	}
 }
