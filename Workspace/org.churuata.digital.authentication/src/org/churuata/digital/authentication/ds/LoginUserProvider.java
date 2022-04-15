@@ -3,8 +3,6 @@ package org.churuata.digital.authentication.ds;
 import java.util.Collection;
 import java.util.Map;
 
-import javax.security.auth.callback.CallbackHandler;
-
 import org.churuata.digital.authentication.core.Dispatcher;
 import org.churuata.digital.authentication.services.LoginService;
 import org.condast.commons.authentication.core.IAuthenticationListener;

@@ -10,7 +10,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.churuata.digital.core.AuthenticationDispatcher;
 import org.condast.commons.authentication.user.ILoginUser;
-import org.condast.commons.strings.StringUtils;
 import org.condast.js.commons.parser.AbstractResourceParser;
 
 public class ChuruataServlet extends HttpServlet {
@@ -36,9 +35,6 @@ public class ChuruataServlet extends HttpServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		String tokenstr = req.getParameter(ILoginUser.Attributes.TOKEN.name().toLowerCase());
-		if(!StringUtils.isEmpty(tokenstr))
-			token = Long.parseLong(tokenstr);
 		FileParser parser = new FileParser();
 		String str = parser.parse( this.getClass().getResourceAsStream(S_RESOURCE_FILE) );
 		resp.getWriter().write( str );
@@ -59,7 +55,7 @@ public class ChuruataServlet extends HttpServlet {
 			String path = S_CONDAST_CONTEXT;
 			if( !user ) {
 				Random random = new Random();
-				token = random.nextLong();
+				token = Math.abs( random.nextLong() );
 				path += getPath( S_LOGIN, S_CHURUATA, token);
 			}else {
 				path += getPath( S_LOGOFF, S_CHURUATA, token);				
