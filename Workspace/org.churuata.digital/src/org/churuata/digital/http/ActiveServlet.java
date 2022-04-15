@@ -7,8 +7,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.churuata.digital.core.AuthenticationDispatcher;
-import org.condast.commons.authentication.user.ILoginUser;
+import org.condast.commons.authentication.http.IDomainProvider;
+import org.condast.commons.messaging.http.IHttpRequest.HttpStatus;
 import org.condast.commons.strings.StringStyler;
 import org.condast.commons.strings.StringUtils;
 import org.condast.js.commons.parser.AbstractResourceParser;
@@ -28,8 +28,6 @@ public class ActiveServlet extends HttpServlet {
 		ACTIVE,
 		LOG,
 		LOGIN,
-		MANUAL,
-		NMEA,
 		OVERVIEW,
 		SYSTEM;
 
@@ -39,7 +37,7 @@ public class ActiveServlet extends HttpServlet {
 		}
 	}
 
-	private String userName;
+	private long userId;
 	private long token;
 
 	public ActiveServlet() {
@@ -49,10 +47,15 @@ public class ActiveServlet extends HttpServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		this.userName = req.getParameter(ILoginUser.Attributes.USERNAME.name().toLowerCase());
-		String tokenstr = req.getParameter(ILoginUser.Attributes.TOKEN.name().toLowerCase());
-		if(!StringUtils.isEmpty(tokenstr))
-			token = Long.parseLong(tokenstr);
+		String userstr = req.getParameter(IDomainProvider.Attributes.USERID.name().toLowerCase());
+		String tokenstr = req.getParameter(IDomainProvider.Attributes.TOKEN.name().toLowerCase());
+		if(StringUtils.isEmpty(userstr) || StringUtils.isEmpty(tokenstr)) {
+			resp.setStatus( HttpStatus.BAD_REQUEST.getStatus());
+			return;
+		}
+		token = Long.parseLong(tokenstr);
+		userId = Long.parseLong(userstr);
+		
 		FileParser parser = new FileParser();
 		String str = parser.parse( this.getClass().getResourceAsStream(S_RESOURCE_FILE) );
 		resp.getWriter().write( str );
@@ -60,11 +63,23 @@ public class ActiveServlet extends HttpServlet {
 
 	private class FileParser extends AbstractResourceParser{
 
-		AuthenticationDispatcher dispatcher = AuthenticationDispatcher.getInstance();
-
 		@Override
 		protected String onHandleLabel(String id, Attributes attr) {
-			return dispatcher.hasLoginUser( token )?S_LOGOFF: S_LOGIN;
+			String result = S_LOGOFF;
+			if( !IDomainProvider.Attributes.isValid(id))
+				return result;
+			
+			switch( IDomainProvider.Attributes.getAttribute(id)) {
+			case USERID:
+				result = "userid=" + userId;
+				break;
+			case TOKEN:
+				result = "token=" + token;
+				break;
+			default:
+				break;
+			}
+			return result;
 		}
 
 		@Override
@@ -73,7 +88,7 @@ public class ActiveServlet extends HttpServlet {
 			switch( Pages.valueOf(StringStyler.styleToEnum(page))) {
 			case LOGIN:
 				result = S_LOGOFF.toLowerCase() + "?"  + 
-						ILoginUser.Attributes.USERNAME.name().toLowerCase() + "=" + userName + ILoginUser.Attributes.TOKEN.name().toLowerCase() + "=" + token;				
+						IDomainProvider.Attributes.USERID.name().toLowerCase() + "=" + userId + IDomainProvider.Attributes.TOKEN.name().toLowerCase() + "=" + token;				
 				break;
 			default:
 				break;

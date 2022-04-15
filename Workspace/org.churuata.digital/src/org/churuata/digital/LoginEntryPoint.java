@@ -6,6 +6,7 @@ import org.churuata.digital.core.AuthenticationDispatcher;
 import org.churuata.digital.core.Dispatcher;
 import org.churuata.digital.core.store.SessionStore;
 import org.condast.commons.authentication.core.AuthenticationEvent;
+import org.condast.commons.authentication.http.IDomainProvider;
 import org.condast.commons.authentication.ui.views.AuthenticationGroup;
 import org.condast.commons.authentication.user.ILoginUser;
 import org.condast.commons.ui.entry.AbstractRestEntryPoint;
@@ -37,7 +38,7 @@ public class LoginEntryPoint extends AbstractRestEntryPoint<SessionStore>{
 	@Override
 	protected Composite createComposite(Composite parent) {
 		StartupParameters service = RWT.getClient().getService( StartupParameters.class );
-		String tokenstr = service.getParameter(ILoginUser.Attributes.TOKEN.name().toLowerCase());
+		String tokenstr = service.getParameter( IDomainProvider.Attributes.TOKEN.name().toLowerCase());
 		token = Long.parseLong(tokenstr);
 		ICompositeProvider<Composite> provider = dispatcher.getComposite(BasicApplication.Pages.LOGIN.name().toLowerCase());
 		login = (AuthenticationGroup) provider.getComposite(parent, SWT.NONE);

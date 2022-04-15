@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.churuata.digital.core.AuthenticationDispatcher;
-import org.condast.commons.authentication.user.ILoginUser;
+import org.condast.commons.authentication.http.IDomainProvider;
 import org.condast.js.commons.parser.AbstractResourceParser;
 
 public class ChuruataServlet extends HttpServlet {
@@ -24,6 +24,9 @@ public class ChuruataServlet extends HttpServlet {
 
 	public static final String S_LOGIN = "Login";
 	public static final String S_LOGOFF = "Logoff";
+
+	public static final String S_PATH = "path";
+	public static final String S_ACTIVE = "active";
 
 	public static final String S_RESOURCE_FILE = "/resources/index.html";
 	
@@ -56,9 +59,9 @@ public class ChuruataServlet extends HttpServlet {
 			if( !user ) {
 				Random random = new Random();
 				token = Math.abs( random.nextLong() );
-				path += getPath( S_LOGIN, S_CHURUATA, token);
+				path += getPath( S_LOGIN, S_CHURUATA, token, S_ACTIVE);
 			}else {
-				path += getPath( S_LOGOFF, S_CHURUATA, token);				
+				path += getPath( S_LOGOFF, S_CHURUATA, token, S_ACTIVE);				
 			}
 			return path;
 		}
@@ -70,8 +73,17 @@ public class ChuruataServlet extends HttpServlet {
 		}		
 	}
 	
-	private static String getPath( String login, String domain, long token ) {
-		return login.toLowerCase() + "?" + ILoginUser.Attributes.TOKEN.name().toLowerCase() + "=" + token +
-				 "&" +ILoginUser.Attributes.DOMAIN.name().toLowerCase() + "=" + domain;
+	/**
+	 * The return path is by definition: {context}/{domain}/{path}
+	 * @param login
+	 * @param domain
+	 * @param token
+	 * @param path
+	 * @return
+	 */
+	private static String getPath( String login, String domain, long token, String path ) {
+		return login.toLowerCase() + "?" + IDomainProvider.Attributes.TOKEN.name().toLowerCase() + "=" + token +
+				 "&" +IDomainProvider.Attributes.DOMAIN.name().toLowerCase() + "=" + domain +
+				 "&" + S_PATH + "=" + path;
 	}
 }

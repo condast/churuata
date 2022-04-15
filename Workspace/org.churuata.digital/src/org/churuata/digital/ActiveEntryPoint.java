@@ -5,13 +5,15 @@ import java.util.concurrent.TimeUnit;
 import org.churuata.digital.core.store.SessionStore;
 import org.churuata.digital.ui.image.ChuruataImages;
 import org.churuata.digital.ui.map.MapBrowser;
-import org.condast.commons.authentication.user.ILoginUser;
+import org.condast.commons.authentication.http.IDomainProvider;
 import org.condast.commons.config.Config;
 import org.condast.commons.data.latlng.LatLng;
+import org.condast.commons.strings.StringUtils;
 import org.condast.commons.ui.controller.EditEvent;
 import org.condast.commons.ui.entry.AbstractRestEntryPoint;
 import org.condast.commons.ui.utils.RWTUtils;
 import org.eclipse.rap.rwt.RWT;
+import org.eclipse.rap.rwt.client.service.StartupParameters;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -48,12 +50,14 @@ public class ActiveEntryPoint extends AbstractRestEntryPoint<SessionStore>{
 
 	@Override
 	protected boolean prepare(Composite parent) {
-		SessionStore store = super.getData();
-		if( store == null )
+		StartupParameters service = RWT.getClient().getService( StartupParameters.class );
+		String tokenstr = service.getParameter( IDomainProvider.Attributes.TOKEN.name().toLowerCase());
+		String user = service.getParameter( IDomainProvider.Attributes.USERID.name().toLowerCase());
+		if(StringUtils.isEmpty(user) || StringUtils.isEmpty(tokenstr)) 
 			return false;
-		ILoginUser user = store.getLoginUser();
-		if ( user == null )
-			return false;
+		
+		//token = Long.parseLong(tokenstr);
+		//userId = Long.parseLong(userstr);
 		return true;
 	}
 	
