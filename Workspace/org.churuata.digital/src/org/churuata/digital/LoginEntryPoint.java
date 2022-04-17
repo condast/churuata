@@ -10,7 +10,6 @@ import org.condast.commons.authentication.http.IDomainProvider;
 import org.condast.commons.authentication.ui.views.AuthenticationGroup;
 import org.condast.commons.authentication.user.ILoginUser;
 import org.condast.commons.ui.entry.AbstractRestEntryPoint;
-import org.condast.commons.ui.provider.ICompositeProvider;
 import org.condast.commons.ui.session.AbstractSessionHandler;
 import org.condast.commons.ui.session.SessionEvent;
 import org.condast.commons.ui.utils.RWTUtils;
@@ -37,17 +36,16 @@ public class LoginEntryPoint extends AbstractRestEntryPoint<SessionStore>{
 	private AuthenticationDispatcher authentication = AuthenticationDispatcher.getInstance(); 
 	@Override
 	protected Composite createComposite(Composite parent) {
-		StartupParameters service = RWT.getClient().getService( StartupParameters.class );
-		String tokenstr = service.getParameter( IDomainProvider.Attributes.TOKEN.name().toLowerCase());
-		token = Long.parseLong(tokenstr);
-		ICompositeProvider<Composite> provider = dispatcher.getComposite(BasicApplication.Pages.LOGIN.name().toLowerCase());
-		login = (AuthenticationGroup) provider.getComposite(parent, SWT.NONE);
+		login = new AuthenticationGroup( parent, SWT.NONE);
 		session = new SessionHandler(login.getDisplay());
 		return login;
 	}
 
 	@Override
 	protected boolean prepare(Composite parent) {
+		StartupParameters service = RWT.getClient().getService( StartupParameters.class );
+		String tokenstr = service.getParameter( IDomainProvider.Attributes.TOKEN.name().toLowerCase());
+		token = Long.parseLong(tokenstr);
 		authentication.getLoginProvider().addAuthenticationListener( e->onAuthenticationEvent(e));
 		return true;
 	}

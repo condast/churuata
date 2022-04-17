@@ -5,14 +5,18 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.http.HttpSession;
+
+import org.churuata.digital.BasicApplication;
 import org.churuata.digital.core.location.Churuata;
 import org.churuata.digital.core.location.IChuruata;
 import org.churuata.digital.core.location.IChuruataCollection;
+import org.churuata.digital.session.SessionStore;
+import org.condast.commons.authentication.http.IDomainProvider;
 import org.condast.commons.data.latlng.LatLng;
 import org.condast.commons.data.latlng.LatLngUtils;
-import org.condast.commons.strings.StringUtils;
-import org.condast.commons.ui.provider.ICompositeProvider;
-import org.eclipse.swt.widgets.Composite;
+import org.condast.commons.ui.utils.RWTUtils;
+import org.eclipse.rap.rwt.RWT;
 
 public class Dispatcher implements IChuruataCollection {
 
@@ -20,11 +24,11 @@ public class Dispatcher implements IChuruataCollection {
 	
 	private Collection<IChuruata> churuatas;
 	
-	private Map<String,ICompositeProvider<Composite>> composites;
+	private Map<Long, SessionStore> sotires;
 	
 	public Dispatcher() {
 		super();
-		composites = new HashMap<>();
+		sotires = new HashMap<>();
 		churuatas = new ArrayList<>();
 	}
 
@@ -32,22 +36,8 @@ public class Dispatcher implements IChuruataCollection {
 		return dispatcher;
 	}
 	
-	public void addEntryPoint(ICompositeProvider<Composite> provider) {
-		this.composites.put(provider.getName(), provider);
-	}
-
-	public void removeEntryPoint(ICompositeProvider<Composite> provider) {
-		this.composites.remove(provider.getName());
-	}
-
-	public ICompositeProvider<Composite> getComposite( String name ) {
-		if( StringUtils.isEmpty(name))
-			return null;
-		for( ICompositeProvider<Composite> provider: this.composites.values()) {
-			if( name.equals(provider.getName()))
-				return provider;
-		}
-		return null;
+	public SessionStore getComposite( long token ) {
+		return sotires.get(token);
 	}
 
 	@Override
@@ -79,4 +69,18 @@ public class Dispatcher implements IChuruataCollection {
 		}
 		return results.toArray( new Churuata[ results.size() ]);
 	}
+	
+	public static boolean redirect( BasicApplication.Pages page, long token ) {
+		return redirect( page.toPath(), token );
+	}
+
+	public static boolean redirect( String path, long token ) {
+		if( token < 0 )
+			return false;
+		HttpSession session = RWT.getUISession().getHttpSession();
+		session.setAttribute( IDomainProvider.Attributes.TOKEN.name(), token);
+		return RWTUtils.redirect( path);
+	}
+
+
 }

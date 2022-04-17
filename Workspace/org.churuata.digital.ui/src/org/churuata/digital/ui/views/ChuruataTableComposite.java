@@ -1,11 +1,28 @@
 package org.churuata.digital.ui.views;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Logger;
 
+import javax.servlet.http.HttpSession;
+
+import org.churuata.digital.core.location.IChuruata;
 import org.churuata.digital.core.location.IChuruataType;
+import org.churuata.digital.core.location.IChuruata.Requests;
+import org.churuata.digital.core.rest.IRestPages;
 import org.churuata.digital.ui.image.InformationImages;
 import org.churuata.digital.ui.image.IInformationImages.Information;
+import org.churuata.digital.ui.views.EditChuruataComposite.Parameters;
+import org.condast.commons.Utils;
+import org.condast.commons.data.latlng.LatLng;
+import org.condast.commons.messaging.http.AbstractHttpRequest;
+import org.condast.commons.messaging.http.ResponseEvent;
 import org.condast.commons.strings.StringStyler;
+import org.condast.commons.ui.controller.EditEvent.EditTypes;
 import org.condast.commons.ui.image.ImageController;
 import org.condast.commons.ui.table.AbstractTableComposite;
 import org.condast.commons.ui.table.ITableEventListener.TableEvents;
@@ -16,11 +33,16 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
+
 import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
+import org.eclipse.rap.rwt.RWT;
 
 public class ChuruataTableComposite extends AbstractTableComposite<IChuruataType>{
 	private static final long serialVersionUID = 976428552549736382L;
@@ -44,7 +66,9 @@ public class ChuruataTableComposite extends AbstractTableComposite<IChuruataType
 		}
 	}
 	
-	private ImageController controller;
+	private ImageController icontroller;
+	
+	private WebController controller;
 	
 	private Logger logger = Logger.getLogger(this.getClass().getName());
 	
@@ -55,7 +79,8 @@ public class ChuruataTableComposite extends AbstractTableComposite<IChuruataType
 	 */
 	public ChuruataTableComposite( Composite parent, int style){
 		super( parent, style);
-		controller = new ImageController( );
+		controller = new WebController( );
+		icontroller = new ImageController( );
 	}
 
 	/**
@@ -68,7 +93,6 @@ public class ChuruataTableComposite extends AbstractTableComposite<IChuruataType
 			ColumnLabelProvider clp = new ColumnLabelProvider(){
 				private static final long serialVersionUID = 1L;
 
-				@SuppressWarnings("unchecked")
 				@Override
 				public String getText(Object element) {
 					String result = null;
@@ -171,6 +195,11 @@ public class ChuruataTableComposite extends AbstractTableComposite<IChuruataType
 			tclayout.setColumnData( table.getColumn( col.ordinal()), new ColumnWeightData( col.getWeight() ) );
 	}
 
+	public void setInput( String context ){
+		controller.setInput(context, IRestPages.Pages.SUPPORT.toPath());
+		controller.services();
+	}
+
 	/* (non-Javadoc)
 	 * @see org.condast.eclipse.swt.composite.AbstractTableComposite#prepareInput(org.aieonf.concept.model.IModelLeaf)
 	 */
@@ -214,4 +243,57 @@ public class ChuruataTableComposite extends AbstractTableComposite<IChuruataType
 	{
 		// Disable the check that prevents subclassing of SWT components
 	}
+
+	private class WebController extends AbstractHttpRequest<IChuruata.Requests, LatLng[]>{
+		
+		private Collection<LatLng> churuatas;
+		
+		public WebController() {
+			super();
+			churuatas = new ArrayList<>();
+		}
+
+		public void setInput(String context, String path) {
+			super.setContextPath(context + path);
+		}
+
+		public void services() {
+			Map<String, String> params = new HashMap<>();
+			try {
+				HttpSession session = RWT.getUISession().getHttpSession();		
+				LatLng selected = (LatLng) session.getAttribute( EditTypes.SELECTED.name());
+				params.put(Parameters.LAT.toString(), String.valueOf( selected.getLatitude()));
+				params.put(Parameters.LON.toString(), String.valueOf( selected.getLongitude()));
+				sendGet(IChuruata.Requests.FIND, params);
+			} catch (IOException e) {
+				logger.warning(e.getMessage());
+			}
+		}
+		
+		@Override
+		protected String onHandleResponse(ResponseEvent<Requests, LatLng[]> event, LatLng[] data) throws IOException {
+			try {
+				switch( event.getRequest()){
+				case FIND:
+					churuatas.clear();
+					Gson gson = new Gson();
+					int xmax = 10000; int ymax = 10000;
+					LatLng[] results = gson.fromJson(event.getResponse(), LatLng[].class);
+					if(!Utils.assertNull(results))
+						churuatas.addAll(Arrays.asList(results));
+					break;
+				default:
+					break;
+				}
+			} catch (JsonSyntaxException e) {
+				e.printStackTrace();
+			}
+			finally {
+				//updateMap();
+			}
+			return null;
+		}
+		
+	}
+
 }

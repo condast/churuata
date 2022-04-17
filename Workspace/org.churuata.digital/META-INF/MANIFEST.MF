@@ -8,9 +8,7 @@ Automatic-Module-Name: org.churuata.digital
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: org.eclipse.rap.rwt;bundle-version="[3.0.0,4.0.0)"
 Service-Component: OSGI-INF/contribution.xml,
- OSGI-INF/org.churuata.digital.authenticator.xml,
- OSGI-INF/org.churuata.digital.dashboard.service.entry.point.xml,
- OSGI-INF/org.churuata.digital.dashboard.service.login.xml
+ OSGI-INF/org.churuata.digital.authenticator.xml
 Bundle-ActivationPolicy: lazy
 Import-Package: javax.servlet;version="3.1.0",
  javax.servlet.http;version="3.0.0",
@@ -24,6 +22,7 @@ Import-Package: javax.servlet;version="3.1.0",
  org.condast.commons.authentication.core,
  org.condast.commons.authentication.http,
  org.condast.commons.authentication.service,
+ org.condast.commons.authentication.session,
  org.condast.commons.authentication.ui.views,
  org.condast.commons.authentication.user,
  org.condast.commons.config,
