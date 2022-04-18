@@ -37,10 +37,10 @@ public interface IChuruata {
 
 	boolean setType(IChuruataType type);
 
-	boolean addType( String contributor, IChuruataType.Types type);
+	IChuruataType addType( String contributor, IChuruataType.Types type);
 
 
-	boolean addType(String contributor, Types type, Contribution contribution);
+	IChuruataType addType(String contributor, Types type, Contribution contribution);
 
 	boolean removeType(IChuruataType type);	
 

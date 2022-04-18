@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.churuata.digital.core.location.Churuata;
+import org.churuata.digital.core.location.ChuruataData;
 import org.churuata.digital.core.location.ChuruataType;
 import org.churuata.digital.core.location.IChuruata;
 import org.churuata.digital.core.location.IChuruata.Requests;
@@ -62,8 +62,8 @@ public class EditChuruataComposite extends AbstractEntityComposite<LatLng>
 		TOKEN,
 		NAME,
 		DESCRIPTION,
-		LAT,
-		LON,
+		LATITUDE,
+		LONGITUDE,
 		TYPE;
 
 		@Override
@@ -225,13 +225,13 @@ public class EditChuruataComposite extends AbstractEntityComposite<LatLng>
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				try {
-					IChuruata churuata = new Churuata( getInput());
+					IChuruata churuata = new ChuruataData( getInput());
 					churuata.setName(nameField.getText());
 					churuata.setDescription( descriptionField.getText());
 					churuata.setName(nameField.getText());
 					churuata.setHomepage(txtURL.getText());
 					
-					IChuruataType ct = new ChuruataType(user, IChuruataType.Types.values()[ comboTypes.getSelectionIndex()]);
+					IChuruataType ct = new ChuruataType( IChuruataType.Types.values()[ comboTypes.getSelectionIndex()]);
 					churuata.setType(ct);
 					controller.register(churuata);
 					super.widgetSelected(e);
@@ -270,7 +270,7 @@ public class EditChuruataComposite extends AbstractEntityComposite<LatLng>
 		super.setInput( input, false );
 	}
 
-	protected void onNotifyTableEvent( TableEvent<Churuata> event ) {
+	protected void onNotifyTableEvent( TableEvent<ChuruataData> event ) {
 		switch( event.getTableEvent()) {
 		case DELETE:
 			LatLng model = getInput();
@@ -346,8 +346,8 @@ public class EditChuruataComposite extends AbstractEntityComposite<LatLng>
 				
 				IChuruataType ct = churuata.getTypes()[0];
 				params.put(Parameters.TYPE.toString(), String.valueOf( ct.getType().name()));
-				params.put(Parameters.LAT.toString(), String.valueOf( churuata.getLocation().getLatitude()));
-				params.put(Parameters.LON.toString(), String.valueOf( churuata.getLocation().getLongitude()));
+				params.put(Parameters.LATITUDE.toString(), String.valueOf( churuata.getLocation().getLatitude()));
+				params.put(Parameters.LONGITUDE.toString(), String.valueOf( churuata.getLocation().getLongitude()));
 				sendGet(IChuruata.Requests.REGISTER, params);
 			} catch (IOException e) {
 				e.printStackTrace();

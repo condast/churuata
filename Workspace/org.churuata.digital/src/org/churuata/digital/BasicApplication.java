@@ -29,6 +29,7 @@ public class BasicApplication implements ApplicationConfiguration {
 		LOGIN,
 		LOGOFF,
 		MAP,
+		SERVICES,
 		READY;
 
 		@Override
@@ -64,6 +65,9 @@ public class BasicApplication implements ApplicationConfiguration {
 			case MAP:
 				result = "Map";
 				break;
+			case SERVICES:
+				result = "Services";
+				break;
 			default:
 				break;
 			}
@@ -90,6 +94,9 @@ public class BasicApplication implements ApplicationConfiguration {
 				break;
 			case LOGOFF:
 				result = new LogoffEntryPoint();
+				break;
+			case SERVICES:
+				result = new ServicesEntryPoint();
 				break;
 			case MAP:
 				result = new BasicEntryPoint();

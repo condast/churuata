@@ -8,7 +8,7 @@ public interface IChuruataCollection {
 
 	boolean removeChuruata(IChuruata churuata);
 
-	Churuata[] getChuruatas();
+	ChuruataData[] getChuruatas();
 
 	IChuruata[] getChuruatas( LatLng latlng, int distance );
 

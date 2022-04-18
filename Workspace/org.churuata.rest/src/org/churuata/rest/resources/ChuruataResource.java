@@ -2,8 +2,8 @@ package org.churuata.rest.resources;
 
 import com.google.gson.Gson;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Random;
 import java.util.logging.Logger;
 
 import javax.ws.rs.Consumes;
@@ -16,6 +16,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.churuata.digital.core.location.ChuruataData;
+import org.churuata.digital.core.location.IChuruata;
 import org.churuata.digital.core.location.IChuruataType;
 import org.churuata.digital.core.location.IChuruataType.Contribution;
 import org.churuata.digital.core.location.IChuruataType.Types;
@@ -25,8 +27,12 @@ import org.churuata.rest.model.Churuata;
 import org.churuata.rest.model.ChuruataType;
 import org.churuata.rest.service.ChuruataService;
 import org.churuata.rest.service.ChuruataTypeService;
+import org.condast.commons.Utils;
 import org.condast.commons.authentication.user.ILoginUser;
 import org.condast.commons.data.latlng.LatLng;
+import org.condast.commons.data.latlng.LatLngUtils;
+import org.condast.commons.data.plane.Field;
+import org.condast.commons.data.plane.FieldData;
 import org.condast.commons.strings.StringStyler;
 import org.condast.commons.strings.StringUtils;
 
@@ -35,6 +41,10 @@ public class ChuruataResource {
 
 	private Logger logger = Logger.getLogger(this.getClass().getName());
 	
+	public ChuruataResource() {
+		super();
+	}
+
 	/**
 	 * Register a churuata
 	 * @param id
@@ -95,22 +105,40 @@ public class ChuruataResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/show")
-	public Response showAll( @QueryParam("lat") double latitude, @QueryParam("lon") double longitude ) {
+	public Response showAll( @QueryParam("latitude") double latitude, @QueryParam("longitude") double longitude ) {
 		Dispatcher dispatcher = Dispatcher.getInstance();
 		Response result = null;
 		try{
 			ChuruataService service = new ChuruataService( dispatcher );
 			service.open();
-			Collection<LatLng> results = new ArrayList<>();
+			dispatcher.clear();
+			Collection<ChuruataData> results = dispatcher.getResults();
 			try {
+				FieldData fieldData = new FieldData( -1, new LatLng( "home", latitude, longitude), 10000l, 10000l, 0d, 11);
+				dispatcher.setFieldData(fieldData);
 				Collection<Churuata> churuatas = service.findAll();
-				churuatas.forEach(c-> results.add(c.getLocation()));
+				churuatas.forEach(c-> results.add(new ChuruataData( c )));
+				int xmax = 10000; int ymax = 10000;
+				int amount = 25;
+				Random random = new Random();
+				Field field = new Field( fieldData );
+				for( int i=0; i<amount; i++ ) {	
+					int x = random.nextInt(xmax);
+					int y = random.nextInt(ymax);
+					char newChar = (char)('A' + i);
+					String id = String.valueOf( newChar );
+					LatLng location = LatLngUtils.transform( field.getCentre(), x, y);
+					location.setId( id);
+					ChuruataData cd = new ChuruataData( location ); 
+					cd.setName("Organisation " + i);
+					results.add( cd);
+				}
 			}
 			finally {
 				service.close();
 			}
 			Gson gson = new Gson();
-			String str = gson.toJson( results.toArray( new LatLng[ results.size()]), LatLng[].class);
+			String str = gson.toJson( results.toArray( new IChuruata[ results.size()]), Churuata[].class);
 			result = Response.ok( str ).build();
 		}
 		catch( Exception ex ){
@@ -183,19 +211,58 @@ public class ChuruataResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/find")
-	public Response find( @QueryParam("userid") long userId, @QueryParam("token") long token, 
-			@QueryParam("id") long id) {
+	public Response find( @QueryParam("churuata-id") long churuataId, @QueryParam("latitude") double latitude, 
+			@QueryParam("longitude") double longitude) {
 		Dispatcher dispatcher = Dispatcher.getInstance();
-		Response result = null;
+		Collection<ChuruataData> results = dispatcher.getResults();
+		Response result = Response.noContent().build();
 		try{
-			AuthenticationDispatcher ad = AuthenticationDispatcher.getInstance();
-			if( !ad.isRegistered( userId, token))
-				return Response.status( Status.UNAUTHORIZED).build();
+			//AuthenticationDispatcher ad = AuthenticationDispatcher.getInstance();
+			//if( !ad.isRegistered( userId, token))
+			//	return Response.status( Status.UNAUTHORIZED).build();
 			Gson gson = new Gson();
-			ChuruataService service = new ChuruataService( dispatcher );
-			Churuata churuata = service.find(id);
-			String str = gson.toJson( churuata, Churuata.class);
-			result = Response.ok( str ).build();
+			if( Utils.assertNull(results))
+				return Response.noContent().build();
+			LatLng location = new LatLng( latitude, longitude );
+			for( IChuruata churuata: results ) {
+				if( LatLngUtils.isInRange( churuata.getLocation(), location, 1000)) {
+					for(int i=0; i<5; i++ ) {
+						int size = IChuruataType.Types.values().length;
+						IChuruataType.Types type = IChuruataType.Types.values()[ i%size];
+						String description = "We help";
+						switch( type) {
+						case COMMUNITY:
+							description = "Various community services";
+							break;
+						case EDUCATION:
+							description = "Volunteers are teaching children for free";
+							break;
+						case FAMILY:
+							description = "Family services by professional people";
+							break;
+						case FOOD:
+							description = "Fruit, vegetables and water";
+							break;
+						case MEDICINE:
+							description = "Various donations from pharmacies";
+							break;
+						case SHELTER:
+							description = "Temporary homes provided by the minucipality";
+							break;
+						case LEGAL:
+							description = "Online consultation by specialists";
+							break;
+						default:
+							break;
+						}
+						IChuruataType ct = churuata.addType("contributor: " + i, type);
+						ct.setDescription(description);
+					}
+					String str = gson.toJson( churuata, ChuruataData.class);
+					result = Response.ok( str ).build();
+					return result;			
+				}
+			}
 		}
 		catch( Exception ex ){
 			ex.printStackTrace();

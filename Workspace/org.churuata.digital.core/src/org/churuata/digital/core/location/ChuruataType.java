@@ -1,6 +1,7 @@
 package org.churuata.digital.core.location;
 
-import org.condast.commons.authentication.user.ILoginUser;
+import java.util.Calendar;
+import java.util.Date;
 
 public class ChuruataType implements Comparable<IChuruataType>, IChuruataType{
 
@@ -12,24 +13,36 @@ public class ChuruataType implements Comparable<IChuruataType>, IChuruataType{
 	
 	private String contributor;
 	
-	public ChuruataType( ILoginUser user, Types type) {
-		this( user, type, Contribution.LOG );
+	private long fromDate;
+	private long toDate;
+	
+	
+	public ChuruataType() {
+		super();
 	}
 
-	public ChuruataType(ILoginUser user, Types type, String description) {
-		this( user, type, description, Contribution.LOG);
+	public ChuruataType(Types type) {
+		this( type, Contribution.LOG );
 	}
 
-	public ChuruataType(ILoginUser user, Types type, Contribution contribution) {
-		this( user, type, null, contribution);
+	public ChuruataType(Types type, String description) {
+		this( type, description, Contribution.LOG);
+	}
+
+	public ChuruataType(Types type, Contribution contribution) {
+		this( type, null, contribution);
 	}
 	
-	public ChuruataType(ILoginUser user, Types type, String description, Contribution contribution) {
+	public ChuruataType(Types type, String description, Contribution contribution) {
 		super();
 		this.type = type;
 		this.description = description;
-		this.contributor = user.getUserName();
+		this.contributor = "home";
 		this.contribution = contribution;
+		Calendar current = Calendar.getInstance();
+		fromDate = current.getTimeInMillis();
+		current.add( Calendar.DAY_OF_YEAR, 60);
+		toDate = current.getTimeInMillis();
 	}
 
 	@Override
@@ -57,14 +70,38 @@ public class ChuruataType implements Comparable<IChuruataType>, IChuruataType{
 	public Contribution getContribution() {
 		return contribution;
 	}
+	
+	@Override
+	public String getContributor() {
+		return contributor;
+	}	
+
+	@Override
+	public Date from() {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTimeInMillis(fromDate);
+		return calendar.getTime();
+	}
+	
+	@Override
+	public void setFrom(Date date) {
+		this.fromDate = date.getTime();
+	}
+
+	@Override
+	public Date to() {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTimeInMillis(toDate);
+		return calendar.getTime();
+	}
+
+	@Override
+	public void setTo(Date date) {
+		this.toDate = date.getTime();
+	}
 
 	@Override
 	public int compareTo(IChuruataType o) {
 		return type.toString().compareTo(o.getType().toString());
-	}
-
-	@Override
-	public String getContributor() {
-		return contributor;
 	}
 }

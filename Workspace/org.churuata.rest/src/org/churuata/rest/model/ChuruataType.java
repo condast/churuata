@@ -39,6 +39,16 @@ public class ChuruataType implements Comparable<ChuruataType>, IChuruataType{
 	@Basic(optional = false)
 	@Column( nullable=false)
 	@Temporal(TemporalType.TIMESTAMP)
+	private Date fromDate;
+	
+	@Basic(optional = false)
+	@Column( nullable=false)
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date toDate;
+
+	@Basic(optional = false)
+	@Column( nullable=false)
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date createDate;
 	
 	@Basic(optional = false)
@@ -48,6 +58,10 @@ public class ChuruataType implements Comparable<ChuruataType>, IChuruataType{
 	
 	public ChuruataType() {
 		super();
+		this.fromDate = Calendar.getInstance().getTime();
+		Calendar calendar = Calendar.getInstance();
+		calendar.add(Calendar.DAY_OF_YEAR, 60);
+		this.toDate = calendar.getTime();
 		this.createDate = Calendar.getInstance().getTime();
 		this.updateDate = Calendar.getInstance().getTime();
 	}
@@ -105,6 +119,26 @@ public class ChuruataType implements Comparable<ChuruataType>, IChuruataType{
 	@Override
 	public Contribution getContribution() {
 		return Contribution.values()[contribution];
+	}
+
+	@Override
+	public Date from() {
+		return this.fromDate;
+	}
+	
+	@Override
+	public void setFrom(Date date) {
+		this.fromDate = date;
+	}
+
+	@Override
+	public Date to() {
+		return this.toDate;
+	}
+
+	@Override
+	public void setTo(Date date) {
+		this.toDate = date;
 	}
 
 	public Date getCreateDate() {
