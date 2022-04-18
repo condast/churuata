@@ -1,5 +1,7 @@
 package org.churuata.digital.core.location;
 
+import java.util.Date;
+
 import org.condast.commons.strings.StringStyler;
 import org.condast.js.commons.images.IDefaultMarkers.Markers;
 
@@ -94,5 +96,12 @@ public interface IChuruataType {
 	
 	Contribution getContribution();
 	
+	public Date from();
+	
+	public void setFrom( Date date );
+	
+	public Date to();
+	
+	public void setTo( Date date );
 
 }

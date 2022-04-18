@@ -8,7 +8,7 @@ import java.util.Map;
 import javax.servlet.http.HttpSession;
 
 import org.churuata.digital.BasicApplication;
-import org.churuata.digital.core.location.Churuata;
+import org.churuata.digital.core.location.ChuruataData;
 import org.churuata.digital.core.location.IChuruata;
 import org.churuata.digital.core.location.IChuruataCollection;
 import org.churuata.digital.session.SessionStore;
@@ -56,8 +56,8 @@ public class Dispatcher implements IChuruataCollection {
 	}
 	
 	@Override
-	public Churuata[] getChuruatas() {
-		return this.churuatas.toArray( new Churuata[ this.churuatas.size()]);
+	public ChuruataData[] getChuruatas() {
+		return this.churuatas.toArray( new ChuruataData[ this.churuatas.size()]);
 	}
 
 	@Override
@@ -67,7 +67,7 @@ public class Dispatcher implements IChuruataCollection {
 			if( LatLngUtils.distance( churuata.getLocation(), latlng) < distance )
 				results.add(churuata);
 		}
-		return results.toArray( new Churuata[ results.size() ]);
+		return results.toArray( new ChuruataData[ results.size() ]);
 	}
 	
 	public static boolean redirect( BasicApplication.Pages page, long token ) {

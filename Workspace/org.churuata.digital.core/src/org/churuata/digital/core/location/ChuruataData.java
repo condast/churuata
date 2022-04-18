@@ -1,5 +1,6 @@
 package org.churuata.digital.core.location;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.TreeSet;
 
@@ -9,7 +10,7 @@ import org.churuata.digital.core.location.IChuruataType.Types;
 import org.condast.commons.authentication.user.ILoginUser;
 import org.condast.commons.data.latlng.LatLng;
 
-public class Churuata implements Comparable<Churuata>, IChuruata{
+public class ChuruataData implements Comparable<ChuruataData>, IChuruata{
 	
 	private ILoginUser owner;
 	
@@ -29,11 +30,20 @@ public class Churuata implements Comparable<Churuata>, IChuruata{
 
 	private Collection<String> presentation;
 
-	public Churuata( LatLng location) {
+	public ChuruataData( LatLng location) {
 		this( null, location.getId(), location );
 	}
-	
-	public Churuata( ILoginUser owner, String name, LatLng location) {
+
+	public ChuruataData( IChuruata churuata) {
+		super();
+		this.name = churuata.getName();
+		this.owner = churuata.getOwner();
+		this.location = churuata.getLocation();
+		this.types = new TreeSet<>();
+		this.types.addAll( Arrays.asList( churuata.getTypes()));
+	}
+
+	public ChuruataData( ILoginUser owner, String name, LatLng location) {
 		super();
 		this.name = name;
 		this.owner = owner;
@@ -115,7 +125,7 @@ public class Churuata implements Comparable<Churuata>, IChuruata{
 	}
 
 	@Override
-	public int compareTo(Churuata o) {
+	public int compareTo(ChuruataData o) {
 		return this.name.compareTo(o.getName());
 	}
 
@@ -157,14 +167,14 @@ public class Churuata implements Comparable<Churuata>, IChuruata{
 
 	@Override
 	public boolean addType(String contributor, Types type) {
-		// TODO Auto-generated method stub
-		return false;
+		types.add( new ChuruataType( type, contributor ));
+		return true;
 	}
 
 	@Override
 	public boolean addType(String contributor, Types type, Contribution contribution) {
-		// TODO Auto-generated method stub
-		return false;
+		types.add( new ChuruataType( type, contributor ));
+		return true;
 	}
 
 	@Override

@@ -9,10 +9,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 import java.util.logging.Logger;
 
-import org.churuata.digital.core.location.Churuata;
+import org.churuata.digital.core.location.ChuruataData;
 import org.churuata.digital.core.location.IChuruata;
 import org.churuata.digital.core.location.IChuruataCollection;
 import org.churuata.digital.core.location.IChuruataType;
@@ -22,8 +21,6 @@ import org.churuata.digital.ui.utils.RWTUtils;
 import org.churuata.digital.ui.views.EditChuruataComposite.Parameters;
 import org.condast.commons.Utils;
 import org.condast.commons.data.latlng.LatLng;
-import org.condast.commons.data.latlng.LatLngUtils;
-import org.condast.commons.data.plane.Field;
 import org.condast.commons.data.plane.FieldData;
 import org.condast.commons.data.plane.IPolygon;
 import org.condast.commons.messaging.http.AbstractHttpRequest;
@@ -169,7 +166,7 @@ public class MapBrowser extends Browser {
 					return;
 				IChuruata[] nearest = churuatas.getChuruatas(home, 1000); 
 				IconsView icons = new IconsView( mapController );
-				IChuruata churuata = new Churuata(home);
+				IChuruata churuata = new ChuruataData(home);
 				churuatas.addChuruata(churuata);
 				createMarker(icons, churuata, true);
 				updateMarkers(icons);
@@ -221,13 +218,13 @@ public class MapBrowser extends Browser {
 			return;
 		IconsView icons = new IconsView( mapController );
 		icons.clearIcons();
-		Collection<LatLng> churuatas = controller.churuatas;
+		Collection<IChuruata> churuatas = controller.churuatas;
 		if( Utils.assertNull(churuatas))
 			return;
 		
-		for( LatLng mt: churuatas ) {
+		for( IChuruata mt: churuatas ) {
 			Markers marker = Markers.GREEN;
-			icons.addMarker(mt, marker, mt.getId().charAt(0));
+			icons.addMarker(mt.getLocation(), marker, mt.getLocation().getId().charAt(0));
 		}
 	}
 
@@ -280,7 +277,7 @@ public class MapBrowser extends Browser {
 
 	private class WebController extends AbstractHttpRequest<IChuruata.Requests, LatLng[]>{
 		
-		private Collection<LatLng> churuatas;
+		private Collection<IChuruata> churuatas;
 		
 		public WebController() {
 			super();
@@ -297,8 +294,8 @@ public class MapBrowser extends Browser {
 				if( fieldData == null )
 					return;
 				LatLng home = fieldData.getCoordinates();
-				params.put(Parameters.LAT.toString(), String.valueOf( home.getLatitude()));
-				params.put(Parameters.LON.toString(), String.valueOf( home.getLongitude()));
+				params.put(Parameters.LATITUDE.toString(), String.valueOf( home.getLatitude()));
+				params.put(Parameters.LONGITUDE.toString(), String.valueOf( home.getLongitude()));
 				sendGet(IChuruata.Requests.SHOW, params);
 			} catch (IOException e) {
 				logger.warning(e.getMessage());
@@ -312,20 +309,7 @@ public class MapBrowser extends Browser {
 				case SHOW:
 					churuatas.clear();
 					Gson gson = new Gson();
-					int xmax = 10000; int ymax = 10000;
-					int amount = 25;
-					Random random = new Random();
-					Field field = new Field( fieldData );
-					for( int i=0; i<amount; i++ ) {	
-						int x = random.nextInt(xmax);
-						int y = random.nextInt(ymax);
-						char newChar = (char)('A' + i);
-						String id = String.valueOf( newChar );
-						LatLng location = LatLngUtils.transform( field.getCentre(), x, y);
-						location.setId( id);
-						churuatas.add(location);
-					}
-					LatLng[] results = gson.fromJson(event.getResponse(), LatLng[].class);
+					IChuruata[] results = gson.fromJson(event.getResponse(), ChuruataData[].class);
 					if(!Utils.assertNull(results))
 						churuatas.addAll(Arrays.asList(results));
 					break;

@@ -1,6 +1,6 @@
 package org.churuata.digital.ui.views;
 
-import org.churuata.digital.core.location.Churuata;
+import org.churuata.digital.core.location.ChuruataData;
 import org.churuata.digital.core.location.ChuruataType;
 import org.churuata.digital.core.location.IChuruata;
 import org.churuata.digital.core.location.IChuruataType;
@@ -201,7 +201,7 @@ public class ShowChuruatasComposite extends AbstractEntityComposite<IChuruata>
 				descriptionField.setEnabled(true);
 				typeField.setEnabled(true);
 				comboTypes.setEnabled(true);
-				setInput( new Churuata( location ), true);
+				setInput( new ChuruataData( location ), true);
 			}
 		});
 
@@ -242,7 +242,7 @@ public class ShowChuruatasComposite extends AbstractEntityComposite<IChuruata>
 		text = this.descriptionField.getText();
 		if( !StringUtils.isEmpty(text ))
 			input.setDescription( this.descriptionField.getText());
-		input.setType( new ChuruataType( null, ChuruataType.Types.values()[ this.comboTypes.getSelectionIndex()] ));
+		input.setType( new ChuruataType( ChuruataType.Types.values()[ this.comboTypes.getSelectionIndex()] ));
 	}
 
 	@Override
@@ -261,7 +261,7 @@ public class ShowChuruatasComposite extends AbstractEntityComposite<IChuruata>
 		this.comboTypes.select( type .ordinal());	
 	}
 
-	public void setInput( Churuata[] input ){
+	public void setInput( ChuruataData[] input ){
 		this.churuataTypesTable.setInput(input);
 	}
 
@@ -276,7 +276,7 @@ public class ShowChuruatasComposite extends AbstractEntityComposite<IChuruata>
 			IChuruata churuata = getInput();
 			churuata.setName( this.nameField.getText());
 			churuata.setDescription(this.descriptionField.getText());
-			churuata.setType( new ChuruataType( null, IChuruataType.Types.values()[ this.comboTypes.getSelectionIndex()] ));
+			churuata.setType( new ChuruataType( IChuruataType.Types.values()[ this.comboTypes.getSelectionIndex()] ));
 			break;
 		default:
 			break;

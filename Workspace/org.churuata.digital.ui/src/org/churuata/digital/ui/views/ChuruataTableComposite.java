@@ -10,49 +10,45 @@ import java.util.logging.Logger;
 
 import javax.servlet.http.HttpSession;
 
+import org.churuata.digital.core.location.ChuruataData;
+import org.churuata.digital.core.location.ChuruataType;
 import org.churuata.digital.core.location.IChuruata;
 import org.churuata.digital.core.location.IChuruataType;
 import org.churuata.digital.core.location.IChuruata.Requests;
 import org.churuata.digital.core.rest.IRestPages;
 import org.churuata.digital.ui.image.InformationImages;
-import org.churuata.digital.ui.image.IInformationImages.Information;
 import org.churuata.digital.ui.views.EditChuruataComposite.Parameters;
-import org.condast.commons.Utils;
 import org.condast.commons.data.latlng.LatLng;
 import org.condast.commons.messaging.http.AbstractHttpRequest;
 import org.condast.commons.messaging.http.ResponseEvent;
 import org.condast.commons.strings.StringStyler;
+import org.condast.commons.ui.controller.EditEvent;
 import org.condast.commons.ui.controller.EditEvent.EditTypes;
-import org.condast.commons.ui.image.ImageController;
-import org.condast.commons.ui.table.AbstractTableComposite;
-import org.condast.commons.ui.table.ITableEventListener.TableEvents;
-import org.condast.commons.ui.table.TableEvent;
+import org.condast.commons.ui.controller.IEditListener;
+import org.condast.commons.ui.table.AbstractTableViewerWithDelete;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
-import org.eclipse.jface.layout.TableColumnLayout;
-import org.eclipse.jface.viewers.ColumnLabelProvider;
-import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.rap.rwt.RWT;
 
-public class ChuruataTableComposite extends AbstractTableComposite<IChuruataType>{
+public class ChuruataTableComposite extends AbstractTableViewerWithDelete<IChuruataType>{
 	private static final long serialVersionUID = 976428552549736382L;
 
 	public static final String S_TABLECOLUMN_ID = "ChuruataTableColumn";
 
 	public enum Columns{
 		NAME,
-		DESCRIPTION,
-		TYPE,
+		ADDRESS,
+		SERVICES,
 		DELETE;
 
 		public int getWeight() {
@@ -66,10 +62,12 @@ public class ChuruataTableComposite extends AbstractTableComposite<IChuruataType
 		}
 	}
 	
-	private ImageController icontroller;
-	
 	private WebController controller;
-	
+
+	private Collection<IEditListener<IChuruataType>> listeners;
+
+	private Composite container;
+
 	private Logger logger = Logger.getLogger(this.getClass().getName());
 	
 	/**
@@ -80,97 +78,109 @@ public class ChuruataTableComposite extends AbstractTableComposite<IChuruataType
 	public ChuruataTableComposite( Composite parent, int style){
 		super( parent, style);
 		controller = new WebController( );
-		icontroller = new ImageController( );
+		this.container = this;
+		listeners = new ArrayList<>();
 	}
 
-	/**
-	 * Initialise the composite
-	 */
-	@Override
-	protected void prepare() {
-		//Description
-		for( Columns column: Columns.values()) {
-			ColumnLabelProvider clp = new ColumnLabelProvider(){
-				private static final long serialVersionUID = 1L;
-
-				@Override
-				public String getText(Object element) {
-					String result = null;
-					IChuruataType p = (IChuruataType) element;
-					try {
-						switch( column ) {
-						case NAME:
-							result = p.getType().toString();
-							break;
-						case DESCRIPTION:
-							result = p.getDescription();
-							break;
-						case TYPE:
-							result = p.getType().toString();
-							break;
-						case DELETE:
-							break;
-						}
-					}
-					catch( Exception ex ) {
-						return super.getText(element);
-					}
-					return result;
-				}
-
-				public Image getImage(Object element) {				
-					Image image = super.getImage(element);
-					try {
-						switch( column ) {
-						case DELETE:
-/*
-							LabelProviderImages images= new LabelProviderImages();
-							Churuata model = (Churuata) element;
-							if( model.isReadOnly()) {
-								return null;
-							}
-							Boolean result = isInList( model );
-							image = images.getChecked((result==null)?false:result);
-							*/
-							break;
-						default:
-							image = null;
-							break;
-						}
-					}
-					catch( Exception ex ) {
-						ex.printStackTrace();
-					}
-					return image;
-				}
-
-				/* (non-Javadoc)
-				 * @see org.eclipse.jface.viewers.CellLabelProvider#getToolTipText(java.lang.Object)
-				 */
-				@Override
-				public String getToolTipText(Object element){
-					return null;//Descriptor.getText(element);
-				}		
-			};
-			super.addColumnLabelProvider(clp);
-		}	
+	public void addEditListener( IEditListener<IChuruataType> listener ) {
+		this.listeners.add(listener);
 	}
 
-	// This will create the columns for the table
+	public void removeEditListener( IEditListener<IChuruataType> listener ) {
+		this.listeners.remove(listener);
+	}
+
+	private void notifyEditListeners( EditEvent<IChuruataType> event ) {
+		for( IEditListener<IChuruataType> listener: this.listeners ) {
+			listener.notifyInputEdited(event);
+		}
+	}
+
 	@Override
-	protected void createColumns(final Composite parent, final TableViewer viewer) {
-		TableViewerColumn column = null;
+	protected void createContentComposite( Composite parent,int style ){
+		super.createContentComposite(parent, style);
+		TableViewer viewer = super.getViewer();
+		for( Columns column: Columns.values() ){
+			createColumn( column );
+		}
+		String deleteStr = Buttons.DELETE.toString();
+		super.createDeleteColumn( Columns.values().length, deleteStr, 10 );
+		viewer.setLabelProvider( new ChuruataLabelProvider() );
+	}
+
+	public void setInput( String context ){
+		controller.setInput(context, IRestPages.Pages.SUPPORT.toPath());
+		controller.services();
+	}
+	
+
+	protected void setInput( IChuruata churuata) {
+		super.setInput( Arrays.asList( churuata.getTypes()));
+	}
+
+	@Override
+	protected void onRowDoubleClick(IChuruataType selection) {
+		try{
+			notifyEditListeners(new EditEvent<>( container, EditTypes.SELECTED, selection));
+		}
+		catch( Exception ex ){
+			ex.printStackTrace();
+		}
+	}
+
+	@Override
+	protected void onButtonCreated(Buttons type, Button button) {
+		GridData gd_button = new GridData(32, 32);
+		gd_button.horizontalAlignment = SWT.RIGHT;
+		button.setLayoutData(gd_button);
+		button.setText("");
+	}
+
+	@Override
+	protected boolean onAddButtonSelected(SelectionEvent e) {
+		boolean result = false;
+		try{
+			notifyEditListeners(new EditEvent<IChuruataType>( container, EditTypes.ADDED));
+		}
+		catch( Exception ex ){
+			ex.printStackTrace();
+		}
+		return result;
+	}
+
+	@Override
+	protected boolean onDeleteButton( Collection<IChuruataType> deleted ) {
+		Collection<Long> ids = new ArrayList<>();
+		boolean result = false;
+		for( IChuruataType vessel: deleted )
+			ids.add(vessel.getId());
+		//try {
+			//Map<String, String> params = controller.getUserParams(user.getId(), user.getSecurity());
+			//Gson gson = new Gson();
+			//String data = gson.toJson(ids.toArray(new Long[ ids.size()]), Long[].class);
+			//params.put( IChuruataType.Parameters.IDS.toString(), data);
+			//controller.delete(IUserData.Requests.REMOVE_ALL, params, data);
+			result = true;
+		//} catch (IOException e) {
+		//	e.printStackTrace();
+		//}
+		return result;
+	}
+
+	private TableViewerColumn createColumn( final Columns column ) {
+		TableViewerColumn result = super.createColumn( column.toString(), column.ordinal(), column.getWeight() );
 		InformationImages images = InformationImages.getInstance();		
 		for( Columns col: Columns.values()) {
-			column = this.registerColum( S_TABLECOLUMN_ID, SWT.NONE, col.getWeight(), col.ordinal() );
+			/*
+			result = this.registerColum( S_TABLECOLUMN_ID, SWT.NONE, col.getWeight(), col.ordinal() );
 			switch( col ) {
-			case DESCRIPTION:
-				column.getColumn().setText(col.toString());
-				column.getColumn().addListener(SWT.Selection, e->{				
+			case ADDRESS:
+				result.getColumn().setText(col.toString());
+				result.getColumn().addListener(SWT.Selection, e->{				
 					notifyTableEvent( new TableEvent<IChuruataType>( e.widget, TableEvents.VIEW_TABLE, getInput() ));
 				});
 				break;
-			case TYPE:
+			case SERVICES:
 				Image image = images.getImage( Information.EDIT, true );
 				column.getColumn().setImage( image);
 				column.getColumn().addListener(SWT.Selection, e->{				
@@ -184,73 +194,100 @@ public class ChuruataTableComposite extends AbstractTableComposite<IChuruataType
 				column.getColumn().setText(col.toString());
 				break;
 			}
-		}
-	}
-
-	@Override
-	protected void initTableColumnLayout(TableColumnLayout tclayout)
-	{
-		Table table = super.getTableViewer().getTable();
-		for( Columns col: Columns.values())
-			tclayout.setColumnData( table.getColumn( col.ordinal()), new ColumnWeightData( col.getWeight() ) );
-	}
-
-	public void setInput( String context ){
-		controller.setInput(context, IRestPages.Pages.SUPPORT.toPath());
-		controller.services();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.condast.eclipse.swt.composite.AbstractTableComposite#prepareInput(org.aieonf.concept.model.IModelLeaf)
-	 */
-	@Override
-	protected void onSetInput(IChuruataType[] input){
-	}
-
-	@Override
-	protected int compareTables(int columnIndex, IChuruataType o1, IChuruataType o2) {
-		Columns column = Columns.values()[columnIndex];
-		int result = 0;
-		switch( column) {
-		case DESCRIPTION:
-			break;
-		default:
-			break;
+			*/
 		}
 		return result;
 	}
 
-	@Override
-	public void onHeaderClicked(SelectionEvent e){
-		if( !( e.getSource() instanceof TableColumn ))
-			return;
-		TableColumn col = ( TableColumn )e.getSource();
-		int index = ( Integer )col.getData( S_INDEX );
-		Columns column = Columns.values()[index];
-		switch( column ){
-			case DESCRIPTION:
-				break;
-			case TYPE:
-				//RWTUtils.redirect( S_EDIT_LOCATION );
-				break;
-			default:
-				break;
-		}	
+	public void refresh() {
+		controller.services();
 	}
-	
+
 	@Override
-	protected void checkSubclass()
-	{
-		// Disable the check that prevents subclassing of SWT components
+	protected void onRefresh() {
+		//updateTable( controller.getInput());
+	}
+
+	protected void setChuruata(IChuruata churuata) {
+		try {
+			setInput(churuata);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	private class ChuruataLabelProvider extends DeleteLabelProvider{
+		private static final long serialVersionUID = 1L;
+
+		@SuppressWarnings("unchecked")
+		@Override
+		public String getColumnText(Object element, int columnIndex) {
+			StoreWithDelete store = (AbstractTableViewerWithDelete<IChuruataType>.StoreWithDelete) element;
+			String result = super.getColumnText(element, columnIndex);
+			if( result != null )
+				return result;
+			Columns column = Columns.values()[ columnIndex ];
+			IChuruataType p = (IChuruataType) store.getStore();
+			try {
+				switch( column ) {
+				case NAME:
+					result = p.getType().toString();
+					break;
+				case ADDRESS:
+					result = p.getDescription();
+					break;
+				case SERVICES:
+					result = p.getType().toString();
+					break;
+				case DELETE:
+					break;
+				}
+			}
+			catch( Exception ex ) {
+				return super.getText(element);
+			}
+			return result;
+		}
+
+		@SuppressWarnings("unchecked")
+		public Image getColumnImage(Object element, int columnIndex) {				
+			Image image = super.getColumnImage(element, columnIndex);
+			StoreWithDelete store = (AbstractTableViewerWithDelete<IChuruataType>.StoreWithDelete) element;
+			if( columnIndex == getDeleteColumnindex() ){
+				return image;
+			}
+			Columns column = Columns.values()[ columnIndex ];
+			try {
+				switch( column ) {
+				case DELETE:
+/*
+					LabelProviderImages images= new LabelProviderImages();
+					Churuata model = (Churuata) element;
+					if( model.isReadOnly()) {
+						return null;
+					}
+					Boolean result = isInList( model );
+					image = images.getChecked((result==null)?false:result);
+					*/
+					break;
+				default:
+					image = null;
+					break;
+				}
+			}
+			catch( Exception ex ) {
+				ex.printStackTrace();
+			}
+			return image;
+		}
 	}
 
 	private class WebController extends AbstractHttpRequest<IChuruata.Requests, LatLng[]>{
 		
-		private Collection<LatLng> churuatas;
+		private IChuruata churuata;
 		
 		public WebController() {
 			super();
-			churuatas = new ArrayList<>();
 		}
 
 		public void setInput(String context, String path) {
@@ -262,8 +299,8 @@ public class ChuruataTableComposite extends AbstractTableComposite<IChuruataType
 			try {
 				HttpSession session = RWT.getUISession().getHttpSession();		
 				LatLng selected = (LatLng) session.getAttribute( EditTypes.SELECTED.name());
-				params.put(Parameters.LAT.toString(), String.valueOf( selected.getLatitude()));
-				params.put(Parameters.LON.toString(), String.valueOf( selected.getLongitude()));
+				params.put(Parameters.LATITUDE.toString(), String.valueOf( selected.getLatitude()));
+				params.put(Parameters.LONGITUDE.toString(), String.valueOf( selected.getLongitude()));
 				sendGet(IChuruata.Requests.FIND, params);
 			} catch (IOException e) {
 				logger.warning(e.getMessage());
@@ -275,12 +312,13 @@ public class ChuruataTableComposite extends AbstractTableComposite<IChuruataType
 			try {
 				switch( event.getRequest()){
 				case FIND:
-					churuatas.clear();
 					Gson gson = new Gson();
-					int xmax = 10000; int ymax = 10000;
-					LatLng[] results = gson.fromJson(event.getResponse(), LatLng[].class);
-					if(!Utils.assertNull(results))
-						churuatas.addAll(Arrays.asList(results));
+					IChuruata result = gson.fromJson(event.getResponse(), ChuruataData.class);
+					if( result == null )
+						return null;
+						churuata = result;
+						setChuruata(churuata);
+
 					break;
 				default:
 					break;
@@ -293,6 +331,31 @@ public class ChuruataTableComposite extends AbstractTableComposite<IChuruataType
 			}
 			return null;
 		}
+
+		@Override
+		protected void onHandleResponseFail(HttpStatus status, ResponseEvent<Requests, LatLng[]> event)
+				throws IOException {
+			try {
+				switch( event.getRequest()){
+				case FIND:
+					HttpSession session = RWT.getUISession().getHttpSession();		
+					LatLng selected = (LatLng) session.getAttribute( EditTypes.SELECTED.name());
+					churuata = new ChuruataData( selected );
+					churuata.setType( new ChuruataType(IChuruataType.Types.FOOD ));
+					setChuruata(churuata);
+					break;
+				default:
+					super.onHandleResponseFail(status, event);
+					break;
+				}
+			} catch (JsonSyntaxException e) {
+				e.printStackTrace();
+			}
+			finally {
+				//updateMap();
+			}
+		}	
+		
 		
 	}
 
