@@ -251,5 +251,6 @@
 	<plugin id="org.eclipse.equinox.console"/>
 	<plugin id="org.apache.felix.gogo.runtime"/>
 	<plugin id="org.apache.felix.gogo.shell"/>
+	<plugin id="javax.activation"/>
 </includeBundles>
 </target>

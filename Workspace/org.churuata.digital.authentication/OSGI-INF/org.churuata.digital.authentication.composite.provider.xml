@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" immediate="true" name="org.churuata.digital.authentication.composite.provider">
-   <property name="type" value="churuata"/>
-   <service>
-      <provide interface="org.condast.commons.ui.provider.ICompositeProvider"/>
-   </service>
-   <implementation class="org.churuata.digital.authentication.ds.AuthCompositeProvider"/>
-</scr:component>

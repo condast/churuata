@@ -40,6 +40,7 @@
         <setEntry value="com.googlecode.concurrentlinkedhashmap.lru@default:default"/>
         <setEntry value="com.mysql.jdbc@default:default"/>
         <setEntry value="javassist@default:default"/>
+        <setEntry value="javax.activation@default:default"/>
         <setEntry value="javax.annotation-api@default:default"/>
         <setEntry value="javax.persistence@default:default"/>
         <setEntry value="javax.servlet@default:default"/>
