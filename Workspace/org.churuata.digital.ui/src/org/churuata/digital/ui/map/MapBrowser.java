@@ -70,6 +70,8 @@ public class MapBrowser extends Browser {
 	private IChuruataCollection churuatas;
 
 	private Collection<IEditListener<LatLng>> listeners;
+	
+	private boolean located;
 
 	private ProgressListener plistener = new ProgressListener() {
 		private static final long serialVersionUID = 1L;
@@ -99,6 +101,7 @@ public class MapBrowser extends Browser {
 
 	public MapBrowser(Composite parent, int style) {
 		super(parent, style);
+		this.located = false;
 		LatLng location = new LatLng( "Cucuta", 7.89391, -72.50782);
 		this.mapController = new OpenLayerController( this, location, 11 );
 		this.mapController.addEvaluationListener( listener);
@@ -150,6 +153,7 @@ public class MapBrowser extends Browser {
 					Object[] arr = (Object[]) event.getData()[2];
 					home = new LatLng( "home", (double)arr[0], (double)arr[1]);
 					fieldData = new FieldData( -1, home, 10000l, 10000l, 0d, 11);
+					this.located = true;
 					GeoView geo = new GeoView( this.mapController );
 					geo.setFieldData(fieldData);
 					geo.jump();
@@ -204,6 +208,7 @@ public class MapBrowser extends Browser {
 
 	public void setInput( String context ){
 		controller.setInput(context, IRestPages.Pages.SUPPORT.toPath());
+		onNavigation();
 	}
 
 	public void setInput( IChuruataCollection input ){
@@ -211,6 +216,19 @@ public class MapBrowser extends Browser {
 		NavigationView view = new NavigationView(mapController);
 		view.getLocation();
 		handler.addData("update");
+	}
+
+	private void onNavigation() {
+		try {
+			if( located )
+				return;
+			NavigationView navigation = new NavigationView(mapController);
+			navigation.getLocation();
+			//Only needed to enforce a refresh
+			handler.addData("update");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	protected void updateMap() {
@@ -231,9 +249,7 @@ public class MapBrowser extends Browser {
 	public void refresh() {
 		try {
 			this.controller.show();
-			//NavigationView view = new NavigationView(mapController);
-			//view.getLocation();
-			//handler.addData("update");		
+			onNavigation();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}		

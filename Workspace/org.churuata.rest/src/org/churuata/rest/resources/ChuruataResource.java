@@ -108,8 +108,8 @@ public class ChuruataResource {
 	public Response showAll( @QueryParam("latitude") double latitude, @QueryParam("longitude") double longitude ) {
 		Dispatcher dispatcher = Dispatcher.getInstance();
 		Response result = null;
+		ChuruataService service = new ChuruataService( dispatcher );
 		try{
-			ChuruataService service = new ChuruataService( dispatcher );
 			service.open();
 			dispatcher.clear();
 			Collection<ChuruataData> results = dispatcher.getResults();
