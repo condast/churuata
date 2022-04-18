@@ -338,6 +338,7 @@ public class ChuruataTableComposite extends AbstractTableViewerWithDelete<IChuru
 			try {
 				switch( event.getRequest()){
 				case FIND:
+					
 					HttpSession session = RWT.getUISession().getHttpSession();		
 					LatLng selected = (LatLng) session.getAttribute( EditTypes.SELECTED.name());
 					churuata = new ChuruataData( selected );
