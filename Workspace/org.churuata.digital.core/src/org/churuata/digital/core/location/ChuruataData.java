@@ -24,7 +24,7 @@ public class ChuruataData implements Comparable<ChuruataData>, IChuruata{
 	private int leaves;
 	private int maxLeaves;
 	
-	private Collection<IChuruataType> types;
+	private Collection<ChuruataType> types;
 
 	private Collection<IMurmering> murmerings;
 
@@ -40,7 +40,7 @@ public class ChuruataData implements Comparable<ChuruataData>, IChuruata{
 		this.owner = churuata.getOwner();
 		this.location = churuata.getLocation();
 		this.types = new TreeSet<>();
-		this.types.addAll( Arrays.asList( churuata.getTypes()));
+		this.setTypes( Arrays.asList( churuata.getTypes()));
 	}
 
 	public ChuruataData( ILoginUser owner, String name, LatLng location) {
@@ -80,7 +80,12 @@ public class ChuruataData implements Comparable<ChuruataData>, IChuruata{
 
 	@Override
 	public void setTypes(Collection<IChuruataType> types) {
-		this.types = types;
+		for( IChuruataType tp: types) {
+			ChuruataType ct = new ChuruataType( tp.getType(), tp.getContributor(), tp.getContribution());
+			ct.setFrom(tp.from());
+			ct.setTo(tp.to());
+			this.types.add(ct );
+		}
 	}
 
 	@Override
@@ -111,7 +116,11 @@ public class ChuruataData implements Comparable<ChuruataData>, IChuruata{
 	@Override
 	public boolean setType( IChuruataType type ) {
 		this.types.clear();
-		return this.types.add(type);
+		ChuruataType ct = new ChuruataType( type.getType(), type.getContributor(), type.getContribution());
+		ct.setFrom(type.from());
+		ct.setTo(type.to());
+		this.types.add(ct );
+		return this.types.add(ct);
 	}
 
 	@Override
@@ -166,15 +175,17 @@ public class ChuruataData implements Comparable<ChuruataData>, IChuruata{
 	}
 
 	@Override
-	public boolean addType(String contributor, Types type) {
-		types.add( new ChuruataType( type, contributor ));
-		return true;
+	public IChuruataType addType(String contributor, Types type) {
+		ChuruataType ct =  new ChuruataType( type, contributor ); 
+		types.add(ct);
+		return ct;
 	}
 
 	@Override
-	public boolean addType(String contributor, Types type, Contribution contribution) {
-		types.add( new ChuruataType( type, contributor ));
-		return true;
+	public IChuruataType addType(String contributor, Types type, Contribution contribution) {
+		ChuruataType ct =  new ChuruataType( type, contributor, contribution ); 
+		types.add( ct);
+		return ct;
 	}
 
 	@Override

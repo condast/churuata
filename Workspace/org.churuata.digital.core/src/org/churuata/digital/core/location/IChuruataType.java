@@ -13,7 +13,8 @@ public interface IChuruataType {
 		MEDICINE,
 		COMMUNITY,
 		FAMILY,
-		EDUCATION;
+		EDUCATION,
+		LEGAL;
 
 		@Override
 		public String toString() {

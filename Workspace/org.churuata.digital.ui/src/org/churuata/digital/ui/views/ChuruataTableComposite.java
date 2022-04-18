@@ -16,7 +16,6 @@ import org.churuata.digital.core.location.IChuruata;
 import org.churuata.digital.core.location.IChuruataType;
 import org.churuata.digital.core.location.IChuruata.Requests;
 import org.churuata.digital.core.rest.IRestPages;
-import org.churuata.digital.ui.image.InformationImages;
 import org.churuata.digital.ui.views.EditChuruataComposite.Parameters;
 import org.condast.commons.data.latlng.LatLng;
 import org.condast.commons.messaging.http.AbstractHttpRequest;
@@ -46,13 +45,15 @@ public class ChuruataTableComposite extends AbstractTableViewerWithDelete<IChuru
 	public static final String S_TABLECOLUMN_ID = "ChuruataTableColumn";
 
 	public enum Columns{
-		NAME,
-		ADDRESS,
 		SERVICES,
-		DELETE;
+		CONTRIBUTOR,
+		NAME,
+		CONTRIBUTION,
+		FROM,
+		TO;
 
 		public int getWeight() {
-			int[] bounds = { 50, 100, 5, 5 };
+			int[] bounds = { 40, 100, 30, 30, 30, 30 };
 			return bounds[ordinal()];
 		}
 
@@ -169,33 +170,6 @@ public class ChuruataTableComposite extends AbstractTableViewerWithDelete<IChuru
 
 	private TableViewerColumn createColumn( final Columns column ) {
 		TableViewerColumn result = super.createColumn( column.toString(), column.ordinal(), column.getWeight() );
-		InformationImages images = InformationImages.getInstance();		
-		for( Columns col: Columns.values()) {
-			/*
-			result = this.registerColum( S_TABLECOLUMN_ID, SWT.NONE, col.getWeight(), col.ordinal() );
-			switch( col ) {
-			case ADDRESS:
-				result.getColumn().setText(col.toString());
-				result.getColumn().addListener(SWT.Selection, e->{				
-					notifyTableEvent( new TableEvent<IChuruataType>( e.widget, TableEvents.VIEW_TABLE, getInput() ));
-				});
-				break;
-			case SERVICES:
-				Image image = images.getImage( Information.EDIT, true );
-				column.getColumn().setImage( image);
-				column.getColumn().addListener(SWT.Selection, e->{				
-					notifyTableEvent( new TableEvent<IChuruataType>( e.widget, TableEvents.SELECT, getInput() ));
-				});
-				break;
-			case DELETE:
-				//super.setDeleteColumn(column, true);
-				break;
-			default:
-				column.getColumn().setText(col.toString());
-				break;
-			}
-			*/
-		}
 		return result;
 	}
 
@@ -230,16 +204,22 @@ public class ChuruataTableComposite extends AbstractTableViewerWithDelete<IChuru
 			IChuruataType p = (IChuruataType) store.getStore();
 			try {
 				switch( column ) {
-				case NAME:
-					result = p.getType().toString();
-					break;
-				case ADDRESS:
-					result = p.getDescription();
-					break;
 				case SERVICES:
 					result = p.getType().toString();
 					break;
-				case DELETE:
+				case CONTRIBUTOR:
+					result = p.getContributor();
+					break;
+				case NAME:
+					result = p.getDescription();
+					break;
+				case FROM:
+					result = p.from().toString();
+					break;
+				case TO:
+					result = p.to().toString();
+					break;
+				default:
 					break;
 				}
 			}
@@ -259,17 +239,6 @@ public class ChuruataTableComposite extends AbstractTableViewerWithDelete<IChuru
 			Columns column = Columns.values()[ columnIndex ];
 			try {
 				switch( column ) {
-				case DELETE:
-/*
-					LabelProviderImages images= new LabelProviderImages();
-					Churuata model = (Churuata) element;
-					if( model.isReadOnly()) {
-						return null;
-					}
-					Boolean result = isInList( model );
-					image = images.getChecked((result==null)?false:result);
-					*/
-					break;
 				default:
 					image = null;
 					break;
@@ -313,12 +282,11 @@ public class ChuruataTableComposite extends AbstractTableViewerWithDelete<IChuru
 				switch( event.getRequest()){
 				case FIND:
 					Gson gson = new Gson();
-					IChuruata result = gson.fromJson(event.getResponse(), ChuruataData.class);
+					ChuruataData result = gson.fromJson(event.getResponse(), ChuruataData.class);
 					if( result == null )
 						return null;
-						churuata = result;
-						setChuruata(churuata);
-
+					churuata = result;
+					setChuruata(churuata);
 					break;
 				default:
 					break;

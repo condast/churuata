@@ -221,13 +221,17 @@ public class Churuata implements Comparable<Churuata>, IChuruata{
 	}
 
 	@Override
-	public boolean addType( String contributor, IChuruataType.Types type ) {
-		return this.types.add( new ChuruataType( contributor, type ));
+	public IChuruataType addType( String contributor, IChuruataType.Types type ) {
+		ChuruataType ct = new ChuruataType( contributor, type );
+		this.types.add( ct);
+		return ct;
 	}
 
 	@Override
-	public boolean addType( String contributor, IChuruataType.Types type, IChuruataType.Contribution contribution ) {
-		return this.types.add( new ChuruataType(contributor, type, contribution));
+	public IChuruataType addType( String contributor, IChuruataType.Types type, IChuruataType.Contribution contribution ) {
+		ChuruataType ct = new ChuruataType( contributor, type, contribution );
+		this.types.add( ct);
+		return ct;
 	}
 
 	@Override

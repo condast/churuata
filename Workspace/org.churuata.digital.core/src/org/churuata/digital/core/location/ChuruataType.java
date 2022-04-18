@@ -16,6 +16,11 @@ public class ChuruataType implements Comparable<IChuruataType>, IChuruataType{
 	private long fromDate;
 	private long toDate;
 	
+	
+	public ChuruataType() {
+		super();
+	}
+
 	public ChuruataType(Types type) {
 		this( type, Contribution.LOG );
 	}

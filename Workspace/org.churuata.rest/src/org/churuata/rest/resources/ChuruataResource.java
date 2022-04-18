@@ -129,7 +129,9 @@ public class ChuruataResource {
 					String id = String.valueOf( newChar );
 					LatLng location = LatLngUtils.transform( field.getCentre(), x, y);
 					location.setId( id);
-					results.add( new ChuruataData( location ));
+					ChuruataData cd = new ChuruataData( location ); 
+					cd.setName("Organisation " + i);
+					results.add( cd);
 				}
 			}
 			finally {
@@ -227,7 +229,34 @@ public class ChuruataResource {
 					for(int i=0; i<5; i++ ) {
 						int size = IChuruataType.Types.values().length;
 						IChuruataType.Types type = IChuruataType.Types.values()[ i%size];
-						churuata.addType("contributor: " + i, type);
+						String description = "We help";
+						switch( type) {
+						case COMMUNITY:
+							description = "Various community services";
+							break;
+						case EDUCATION:
+							description = "Volunteers are teaching children for free";
+							break;
+						case FAMILY:
+							description = "Family services by professional people";
+							break;
+						case FOOD:
+							description = "Fruit, vegetables and water";
+							break;
+						case MEDICINE:
+							description = "Various donations from pharmacies";
+							break;
+						case SHELTER:
+							description = "Temporary homes provided by the minucipality";
+							break;
+						case LEGAL:
+							description = "Online consultation by specialists";
+							break;
+						default:
+							break;
+						}
+						IChuruataType ct = churuata.addType("contributor: " + i, type);
+						ct.setDescription(description);
 					}
 					String str = gson.toJson( churuata, ChuruataData.class);
 					result = Response.ok( str ).build();
