@@ -47,8 +47,6 @@ public class EditChuruataComposite extends AbstractEntityComposite<LatLng>
 	public static final String S_LINK_DIALOG_SHELL = "LinkDialogShell";
 	public static final String REGEXP = ("[\\ ;:,]");
 
-	private static final String S_ADD_IMAGE = "/icons/add-32.png";
-
 	private static final String S_NAME_INFORMATION_TIP = "The Churuata name";
 	private static final String S_DESCRIPTION = "Description";
 	private static final String S_DESCRIPTOR_INFORMATION_TIP = "Describe the Churuata";
@@ -252,7 +250,7 @@ public class EditChuruataComposite extends AbstractEntityComposite<LatLng>
 
 	@Override
 	public void update(){
-		LatLng result = super.getInput();
+		//LatLng result = super.getInput();
 	}
 
 	@Override
@@ -273,7 +271,7 @@ public class EditChuruataComposite extends AbstractEntityComposite<LatLng>
 	protected void onNotifyTableEvent( TableEvent<ChuruataData> event ) {
 		switch( event.getTableEvent()) {
 		case DELETE:
-			LatLng model = getInput();
+			//LatLng model = getInput();
 			//Collection<Churuata> remove = (Collection<Churuata>) event.getData();
 			//database.removeOnDescriptorId(remove.getID(), model.getData().getID());
 			break;
@@ -302,24 +300,6 @@ public class EditChuruataComposite extends AbstractEntityComposite<LatLng>
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	}
-
-	private boolean isFilled(){
-		/*
-		boolean filled = !StringUtils.isEmpty( nameField.getText());
-		if( !filled )
-			return false;
-		filled = !StringUtils.isEmpty( txtURL.getText());
-		if( !filled )
-			return false;
-		filled = !StringUtils.isEmpty( comboScope.getText());
-		*/
-		return true;//filled;
-	}
-
-	private final boolean enableWidgets(VerifyEvent event, String attribute){
-		boolean enable = true;//!StringUtils.isEmpty( nameField.getText()) && !StringUtils.isEmpty( txtURL.getText() );
-		return enable;
 	}
 
 	@Override

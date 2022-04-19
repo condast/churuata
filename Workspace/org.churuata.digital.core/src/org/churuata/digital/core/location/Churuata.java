@@ -4,7 +4,6 @@ import java.util.Collection;
 import java.util.TreeSet;
 
 import org.churuata.digital.core.IPresentation;
-import org.churuata.digital.core.location.IChuruataType.Contribution;
 import org.churuata.digital.core.location.IChuruataType.Types;
 import org.condast.commons.authentication.user.ILoginUser;
 import org.condast.commons.data.latlng.LatLng;
@@ -25,9 +24,9 @@ public class Churuata implements Comparable<Churuata>, IChuruata{
 	
 	private Collection<IChuruataType> types;
 
-	private Collection<IMurmering> murmerings;
+	//private Collection<IMurmering> murmerings;
 
-	private Collection<String> presentation;
+	//private Collection<String> presentation;
 
 	public Churuata( LatLng location) {
 		this( null, location.getId(), location );

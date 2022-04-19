@@ -24,6 +24,9 @@ public class MapFilter implements Filter {
 	private static final String S_CHURUATA = "/churuata";
 	private static final String S_REST_SERVICE = S_CHURUATA + "/rest/";
 
+	private static final String S_REFUGEE_MAP = S_CHURUATA + "/map";
+	private static final String S_REFUGEE_BANNER = S_CHURUATA + "/banner";
+
 	private static final String S_ERR_ILLEGAL_ACCESS = "This page cannot be accessed.";
 
 	private Logger logger = Logger.getLogger(this.getClass().getName());
@@ -51,6 +54,12 @@ public class MapFilter implements Filter {
 
 		//Pass the REST services
 		if(path.contains( IRestPages.S_CHURUATA_CONTEXT_PATH)) {
+			arg2.doFilter(arg0, arg1);
+			return;			
+		}
+
+		//Pass the map and the banner
+		if(path.contains( S_REFUGEE_MAP) || path.contains( S_REFUGEE_BANNER )) {
 			arg2.doFilter(arg0, arg1);
 			return;			
 		}

@@ -229,10 +229,8 @@ public class ChuruataTableComposite extends AbstractTableViewerWithDelete<IChuru
 			return result;
 		}
 
-		@SuppressWarnings("unchecked")
 		public Image getColumnImage(Object element, int columnIndex) {				
 			Image image = super.getColumnImage(element, columnIndex);
-			StoreWithDelete store = (AbstractTableViewerWithDelete<IChuruataType>.StoreWithDelete) element;
 			if( columnIndex == getDeleteColumnindex() ){
 				return image;
 			}

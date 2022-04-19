@@ -26,9 +26,9 @@ public class ChuruataData implements Comparable<ChuruataData>, IChuruata{
 	
 	private Collection<ChuruataType> types;
 
-	private Collection<IMurmering> murmerings;
+	//private Collection<IMurmering> murmerings;
 
-	private Collection<String> presentation;
+	//private Collection<String> presentation;
 
 	public ChuruataData( LatLng location) {
 		this( null, location.getId(), location );

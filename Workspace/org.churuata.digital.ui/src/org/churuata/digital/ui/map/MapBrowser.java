@@ -168,7 +168,6 @@ public class MapBrowser extends Browser {
 
 				if( churuatas == null )
 					return;
-				IChuruata[] nearest = churuatas.getChuruatas(home, 1000); 
 				IconsView icons = new IconsView( mapController );
 				IChuruata churuata = new ChuruataData(home);
 				churuatas.addChuruata(churuata);
@@ -340,6 +339,14 @@ public class MapBrowser extends Browser {
 			}
 			return null;
 		}
+
+		@Override
+		protected void onHandleResponseFail(HttpStatus status, ResponseEvent<Requests, LatLng[]> event)
+				throws IOException {
+			// TODO Auto-generated method stub
+			super.onHandleResponseFail(status, event);
+		}
+		
 		
 	}
 

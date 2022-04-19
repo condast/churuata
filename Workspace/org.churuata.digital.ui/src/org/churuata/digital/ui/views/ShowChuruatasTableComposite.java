@@ -1,11 +1,7 @@
 package org.churuata.digital.ui.views;
 
-import java.util.logging.Logger;
-
 import org.churuata.digital.core.location.IChuruata;
-import org.churuata.digital.ui.image.InformationImages;
 import org.condast.commons.strings.StringStyler;
-import org.condast.commons.ui.image.ImageController;
 import org.condast.commons.ui.table.AbstractTableComposite;
 import org.condast.commons.ui.table.ITableEventListener.TableEvents;
 import org.condast.commons.ui.table.TableEvent;
@@ -43,10 +39,6 @@ public class ShowChuruatasTableComposite extends AbstractTableComposite<IChuruat
 		}
 	}
 	
-	private ImageController controller;
-	
-	private Logger logger = Logger.getLogger(this.getClass().getName());
-	
 	/**
 	 * Create the composite.
 	 * @param parent
@@ -55,7 +47,6 @@ public class ShowChuruatasTableComposite extends AbstractTableComposite<IChuruat
 	public ShowChuruatasTableComposite( Composite parent, int style){
 		super( parent, style);
 		setContentProvider( ArrayContentProvider.getInstance());
-		controller = new ImageController( );
 	}
 
 	/**
@@ -132,7 +123,6 @@ public class ShowChuruatasTableComposite extends AbstractTableComposite<IChuruat
 	@Override
 	protected void createColumns(final Composite parent, final TableViewer viewer) {
 		TableViewerColumn column = null;
-		InformationImages images = InformationImages.getInstance();		
 		for( Columns col: Columns.values()) {
 			column = this.registerColum( S_TABLECOLUMN_ID, SWT.NONE, col.getWeight(), col.ordinal() );
 			switch( col ) {
