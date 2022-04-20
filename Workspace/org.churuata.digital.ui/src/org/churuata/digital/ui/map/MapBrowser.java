@@ -235,7 +235,7 @@ public class MapBrowser extends Browser {
 			return;
 		
 		for( IChuruata mt: churuatas ) {
-			Markers marker = Markers.GREEN;
+			Markers marker = IChuruataType.Types.getMarker( IChuruataType.Types.values()[ mt.getMaxLeaves()]);
 			icons.addMarker(mt.getLocation(), marker, mt.getLocation().getId().charAt(0));
 		}
 	}

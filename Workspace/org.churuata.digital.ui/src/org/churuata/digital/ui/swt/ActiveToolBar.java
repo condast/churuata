@@ -3,8 +3,10 @@ package org.churuata.digital.ui.swt;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.churuata.digital.core.location.IChuruata;
 import org.condast.commons.ui.controller.EditEvent;
 import org.condast.commons.ui.controller.IEditListener;
+import org.eclipse.rap.rwt.RWT;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -31,6 +33,7 @@ public class ActiveToolBar extends Group{
 
 	private void createComposite(Composite parent, int style) {
 		setLayout( new GridLayout(6, false ));
+		setData(RWT.CUSTOM_VARIANT, IChuruata.S_CHURUATA);
 
 		btnBack = new Button(this, SWT.NONE);
 		btnBack.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true));

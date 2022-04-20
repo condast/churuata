@@ -64,6 +64,7 @@ public class ActiveEntryPoint extends AbstractRestEntryPoint<SessionStore>{
 	@Override
 	protected Composite createComposite(Composite parent) {
 		GridLayout layout = new GridLayout(1,true);
+		parent.setData( RWT.CUSTOM_VARIANT, S_CHURUATA );
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
 		parent.setLayout(layout);

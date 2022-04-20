@@ -18,6 +18,8 @@ public interface IChuruata {
 		REMOVE,
 		UPDATE;
 	}
+
+	public static String S_CHURUATA = "Churuata";
 	
 	long getId();
 

@@ -37,10 +37,11 @@ public class ServicesEntryPoint extends AbstractRestEntryPoint<SessionStore> {
     protected Composite createComposite(Composite parent) {
         parent.setLayout(new GridLayout(1, false));
         churuataComposite = new ChuruataTableComposite( parent, SWT.NONE);
- 		churuataComposite.setData( RWT.CUSTOM_VARIANT, S_CHURUATA );
+ 		churuataComposite.setData( RWT.CUSTOM_VARIANT, BasicApplication.S_CHURUATA_VARIANT );
 		churuataComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
  
 		toolbar = new ActiveToolBar(parent, SWT.NONE);
+		toolbar.setData( RWT.CUSTOM_VARIANT, BasicApplication.S_CHURUATA_VARIANT );
 		toolbar.setText("Select");
 		toolbar.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 		toolbar.addEditListener( listener);

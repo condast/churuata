@@ -45,7 +45,7 @@ public class BasicApplication implements ApplicationConfiguration {
 			String result = StringStyler.prettyString(name());
 			switch( this ) {
 			case READY:
-				result = "Arnac Control";
+				result = "Churuata Control";
 				break;
 			case BANNER:
 				result = "Banner";

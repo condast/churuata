@@ -131,6 +131,7 @@ public class ChuruataResource {
 					LatLng location = LatLngUtils.transform( field.getCentre(), x, y);
 					location.setId( id);
 					ChuruataData cd = new ChuruataData( location ); 
+					cd.setMaxLeaves(i%IChuruataType.Types.values().length);
 					cd.setName("Organisation " + i);
 					results.add( cd);
 				}
