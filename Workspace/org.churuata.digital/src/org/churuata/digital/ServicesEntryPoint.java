@@ -2,13 +2,19 @@ package org.churuata.digital;
 
 import java.util.concurrent.TimeUnit;
 
+import org.churuata.digital.BasicApplication.Pages;
+import org.churuata.digital.core.Dispatcher;
 import org.churuata.digital.core.store.SessionStore;
+import org.churuata.digital.ui.swt.ActiveToolBar;
 import org.churuata.digital.ui.views.ChuruataTableComposite;
 import org.condast.commons.config.Config;
+import org.condast.commons.ui.controller.EditEvent;
+import org.condast.commons.ui.controller.IEditListener;
 import org.condast.commons.ui.entry.AbstractRestEntryPoint;
 import org.eclipse.rap.rwt.RWT;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 
 
@@ -20,19 +26,37 @@ public class ServicesEntryPoint extends AbstractRestEntryPoint<SessionStore> {
 	public static final String S_CHURUATA_PAGE = "/churuata";
 
 	private ChuruataTableComposite churuataComposite;
+
+	private ActiveToolBar toolbar;
 	
-	@Override
-	protected boolean prepare(Composite parent) {
-		return true;
-	}
+	private long token;
+
+	private IEditListener<String> listener = e->onButtonBackPressed(e);
 
 	@Override
     protected Composite createComposite(Composite parent) {
-        parent.setLayout(new FillLayout());
+        parent.setLayout(new GridLayout(1, false));
         churuataComposite = new ChuruataTableComposite( parent, SWT.NONE);
  		churuataComposite.setData( RWT.CUSTOM_VARIANT, S_CHURUATA );
+		churuataComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+ 
+		toolbar = new ActiveToolBar(parent, SWT.NONE);
+		toolbar.setText("Select");
+		toolbar.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+		toolbar.addEditListener( listener);
+		this.token = 1;
  		return churuataComposite;
     }
+
+	private Object onButtonBackPressed(EditEvent<String> e) {
+		Dispatcher.redirect( Pages.MAP, token);
+		return null;
+	}
+
+		@Override
+		protected boolean prepare(Composite parent) {
+			return true;
+		}
 
 	@Override
 	protected boolean postProcess(Composite parent) {
@@ -58,6 +82,7 @@ public class ServicesEntryPoint extends AbstractRestEntryPoint<SessionStore> {
 
 	@Override
 	public void close() {
+		toolbar.removeEditListener(listener);
 		super.close();
 	}	
 }

@@ -102,7 +102,8 @@ public class MapBrowser extends Browser {
 	public MapBrowser(Composite parent, int style) {
 		super(parent, style);
 		this.located = false;
-		LatLng location = new LatLng( "Cucuta", 7.89391, -72.50782);
+		LatLng location = new LatLng( "Cucuta", 50.380502,31.539470);
+		this.fieldData = new FieldData(-1, location, 10000, 10000, 0, 11 );
 		this.mapController = new OpenLayerController( this, location, 11 );
 		this.mapController.addEvaluationListener( listener);
 		this.listeners = new ArrayList<>();
@@ -125,9 +126,9 @@ public class MapBrowser extends Browser {
 
 	private void onNotifyEvaluation(EvaluationEvent<Object> event) {
 		try {
+			logger.info("evaluating: " + event.getId());
 			if( !OpenLayerController.S_CALLBACK_ID.equals(event.getId()) || Utils.assertNull( event.getData()))
 				return;
-			logger.info("evaluating: " + event.getId());
 			Collection<Object> eventData = Arrays.asList(event.getData());
 			StringBuilder builder = new StringBuilder();
 			builder.append("Map data: ");
@@ -204,13 +205,10 @@ public class MapBrowser extends Browser {
 
 	public void setInput( String context ){
 		controller.setInput(context, IRestPages.Pages.SUPPORT.toPath());
+		GeoView geo = new GeoView(this.mapController);
+		geo.setFieldData(fieldData);
+		geo.jump();
 		onNavigation();
-	}
-
-	public void setInput( IChuruataCollection input ){
-		this.churuatas = input;
-		NavigationView view = new NavigationView(mapController);
-		view.getLocation();
 	}
 
 	private void onNavigation() {
@@ -218,8 +216,8 @@ public class MapBrowser extends Browser {
 			if( located )
 				return;
 			logger.info("Requesting geo location");
-			NavigationView navigation = new NavigationView(mapController);
-			navigation.getLocation();
+			//NavigationView navigation = new NavigationView(mapController);
+			//navigation.getLocation();
 			handler.addData("update");
 			//Only needed to enforce a refresh
 		} catch (Exception e) {
@@ -232,7 +230,7 @@ public class MapBrowser extends Browser {
 			return;
 		IconsView icons = new IconsView( mapController );
 		icons.clearIcons();
-		Collection<IChuruata> churuatas = controller.churuatas;
+		Collection<IChuruata> churuatas = new ArrayList<IChuruata>( controller.churuatas );
 		if( Utils.assertNull(churuatas))
 			return;
 		
