@@ -52,14 +52,15 @@ public class MapFilter implements Filter {
 			return;			
 		}
 
-		//Pass the REST services
-		if(path.contains( IRestPages.S_CHURUATA_CONTEXT_PATH)) {
+		//Pass the map and the banner
+		if(path.contains( S_REFUGEE_MAP) || path.contains( S_REFUGEE_BANNER )) {
 			arg2.doFilter(arg0, arg1);
 			return;			
 		}
 
-		//Pass the map and the banner
-		if(path.contains( S_REFUGEE_MAP) || path.contains( S_REFUGEE_BANNER )) {
+
+		//Pass the REST services
+		if(path.contains( IRestPages.S_CHURUATA_CONTEXT_PATH)) {
 			arg2.doFilter(arg0, arg1);
 			return;			
 		}

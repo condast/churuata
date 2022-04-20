@@ -142,8 +142,6 @@ public class ActiveEntryPoint extends AbstractRestEntryPoint<SessionStore>{
 	protected boolean postProcess(Composite parent) {
 		Config config = new Config();
 		mapComposite.setInput(config.getServerContext());
-
-		mapComposite.locate();
 		SessionStore store = super.getData();
 		LatLng selected = store.getSelected();
 		this.btnCreate.setEnabled( selected != null );

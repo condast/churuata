@@ -58,7 +58,6 @@ public class BasicEntryPoint extends AbstractRestEntryPoint<SessionStore> {
 	protected boolean postProcess(Composite parent) {
 		Config config = new Config();
 		mapComposite.setInput(config.getServerContext());
-		mapComposite.locate();
 		return super.postProcess(parent);
 	}
 

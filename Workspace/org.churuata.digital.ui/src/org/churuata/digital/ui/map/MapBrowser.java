@@ -29,9 +29,9 @@ import org.condast.commons.strings.StringStyler;
 import org.condast.commons.strings.StringUtils;
 import org.condast.commons.ui.controller.EditEvent;
 import org.condast.commons.ui.controller.IEditListener;
-import org.condast.commons.ui.controller.EditEvent.EditTypes;
 import org.condast.commons.ui.session.AbstractSessionHandler;
 import org.condast.commons.ui.session.SessionEvent;
+import org.condast.commons.ui.controller.EditEvent.EditTypes;
 import org.condast.js.commons.eval.EvaluationEvent;
 import org.condast.js.commons.eval.IEvaluationListener;
 import org.condast.js.commons.images.IDefaultMarkers.Markers;
@@ -125,15 +125,9 @@ public class MapBrowser extends Browser {
 
 	private void onNotifyEvaluation(EvaluationEvent<Object> event) {
 		try {
-			if(!OpenLayerController.S_CALLBACK_ID.equals(event.getId())) {
-				IconsView icons = new IconsView( mapController );
-				updateMarkers(icons);
-				NavigationView view = new NavigationView(mapController);
-				view.getLocation();
+			if( !OpenLayerController.S_CALLBACK_ID.equals(event.getId()) || Utils.assertNull( event.getData()))
 				return;
-			}
-			if( Utils.assertNull( event.getData()))
-				return;
+			logger.info("evaluating: " + event.getId());
 			Collection<Object> eventData = Arrays.asList(event.getData());
 			StringBuilder builder = new StringBuilder();
 			builder.append("Map data: ");
@@ -142,14 +136,16 @@ public class MapBrowser extends Browser {
 					builder.append(obj.toString());
 				builder.append(", ");
 			}
-			logger.fine(builder.toString());
+			logger.info(builder.toString());
 			String str = (String) event.getData()[0];
 
 			LatLng home = null;
 			if( NavigationView.Commands.isValue(str)) {
+				logger.info("String found: " + str);
 				NavigationView.Commands cmd = NavigationView.Commands.valueOf(StringStyler.styleToEnum(str));
 				switch( cmd ) {
 				case GET_GEO_LOCATION:
+					logger.info("Setting geo location");
 					Object[] arr = (Object[]) event.getData()[2];
 					home = new LatLng( "home", (double)arr[0], (double)arr[1]);
 					fieldData = new FieldData( -1, home, 10000l, 10000l, 0d, 11);
@@ -157,6 +153,7 @@ public class MapBrowser extends Browser {
 					GeoView geo = new GeoView( this.mapController );
 					geo.setFieldData(fieldData);
 					geo.jump();
+					logger.info("Jumped to geo location");
 					return;
 				}
 			}
@@ -214,17 +211,17 @@ public class MapBrowser extends Browser {
 		this.churuatas = input;
 		NavigationView view = new NavigationView(mapController);
 		view.getLocation();
-		handler.addData("update");
 	}
 
 	private void onNavigation() {
 		try {
 			if( located )
 				return;
+			logger.info("Requesting geo location");
 			NavigationView navigation = new NavigationView(mapController);
 			navigation.getLocation();
-			//Only needed to enforce a refresh
 			handler.addData("update");
+			//Only needed to enforce a refresh
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -249,6 +246,7 @@ public class MapBrowser extends Browser {
 		try {
 			this.controller.show();
 			onNavigation();
+			handler.addData("update");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}		
@@ -327,6 +325,7 @@ public class MapBrowser extends Browser {
 					IChuruata[] results = gson.fromJson(event.getResponse(), ChuruataData[].class);
 					if(!Utils.assertNull(results))
 						churuatas.addAll(Arrays.asList(results));
+					logger.info("Churuatas found: " + churuatas.size());
 					break;
 				default:
 					break;
@@ -344,12 +343,11 @@ public class MapBrowser extends Browser {
 		protected void onHandleResponseFail(HttpStatus status, ResponseEvent<Requests, LatLng[]> event)
 				throws IOException {
 			// TODO Auto-generated method stub
+			logger.info("Failed: " + event.getRequest());
 			super.onHandleResponseFail(status, event);
-		}
-		
-		
+		}		
 	}
-
+	
 	private class SessionHandler extends AbstractSessionHandler<String>{
 
 		protected SessionHandler(Display display) {
@@ -358,7 +356,7 @@ public class MapBrowser extends Browser {
 
 		@Override
 		protected void onHandleSession(SessionEvent<String> sevent) {
-			// NOTHING		
+			updateMap();		
 		}	
 	}
 }
