@@ -47,7 +47,7 @@ public class ActiveServlet extends HttpServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		String userstr = req.getParameter(IDomainProvider.Attributes.USERID.name().toLowerCase());
+		String userstr = req.getParameter(IDomainProvider.Attributes.USER_ID.name().toLowerCase());
 		String tokenstr = req.getParameter(IDomainProvider.Attributes.TOKEN.name().toLowerCase());
 		if(StringUtils.isEmpty(userstr) || StringUtils.isEmpty(tokenstr)) {
 			resp.setStatus( HttpStatus.BAD_REQUEST.getStatus());
@@ -70,7 +70,7 @@ public class ActiveServlet extends HttpServlet {
 				return result;
 			
 			switch( IDomainProvider.Attributes.getAttribute(id)) {
-			case USERID:
+			case USER_ID:
 				result = "userid=" + userId;
 				break;
 			case TOKEN:
@@ -88,7 +88,7 @@ public class ActiveServlet extends HttpServlet {
 			switch( Pages.valueOf(StringStyler.styleToEnum(page))) {
 			case LOGIN:
 				result = S_LOGOFF.toLowerCase() + "?"  + 
-						IDomainProvider.Attributes.USERID.name().toLowerCase() + "=" + userId + IDomainProvider.Attributes.TOKEN.name().toLowerCase() + "=" + token;				
+						IDomainProvider.Attributes.USER_ID.name().toLowerCase() + "=" + userId + IDomainProvider.Attributes.TOKEN.name().toLowerCase() + "=" + token;				
 				break;
 			default:
 				break;

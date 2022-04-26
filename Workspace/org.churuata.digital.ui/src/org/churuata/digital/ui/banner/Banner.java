@@ -14,7 +14,7 @@ public class Banner extends AbstractBanner {
 
 	public static final String S_CONDAST_URL = "http://www.condast.com/";
 	public static final String S_DIRKSEN_URL = "http://www.dirksen.nl/";
-	public static final String S_RU_URL = "https://twitter.com/refugiadosuorg?s=11";
+	public static final String S_RU_URL = "https://www.refugiadosunidos.org/";
 
 	public Banner(Composite parent, int style) {
 		super(parent, style);
@@ -26,8 +26,8 @@ public class Banner extends AbstractBanner {
 		button.setData( S_RU_URL);
 		button = createImageButton( comp, BannerImages.getImage( BannerImages.Images.CONDAST ), SWT.FLAT );
 		button.setData( S_CONDAST_URL );
-		button = createImageButton( comp, BannerImages.getImage( BannerImages.Images.DIRKSEN ), SWT.FLAT );
-		button.setData( S_DIRKSEN_URL );
+		//button = createImageButton( comp, BannerImages.getImage( BannerImages.Images.DIRKSEN ), SWT.FLAT );
+		//button.setData( S_DIRKSEN_URL );
 	}
 
 	@Override
