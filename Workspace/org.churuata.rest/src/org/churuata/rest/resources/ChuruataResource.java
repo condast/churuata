@@ -109,6 +109,8 @@ public class ChuruataResource {
 		Dispatcher dispatcher = Dispatcher.getInstance();
 		Response result = null;
 		try{
+			if( !dispatcher.isConnected())
+				return Response.status( Status.NOT_FOUND).build();
 			ChuruataService service = new ChuruataService( dispatcher );
 			service.open();
 			dispatcher.clear();

@@ -20,6 +20,7 @@ public class Dispatcher extends AbstractPersistencyService {
 	private FieldData fieldData;
 
 	private static Dispatcher dispatcher = new Dispatcher();
+	
 	private Dispatcher() {
 		super( S_CHURUATA_SERVICE_ID, S_CHURUATA_SERVICE );
 		results = new ArrayList<>();

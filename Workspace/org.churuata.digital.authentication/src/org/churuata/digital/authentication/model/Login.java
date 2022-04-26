@@ -37,6 +37,8 @@ public class Login implements ILoginUser {
 	@Basic(optional = true)
 	@Column( nullable=true)
 	private String email;
+	
+	private boolean registered;
 
 	@Basic(optional = false)
 	@Column( nullable=false)
@@ -66,6 +68,7 @@ public class Login implements ILoginUser {
 		this.updateDate = this.createDate;
 		token = new Random().nextLong();
 		this.confirmed = false;
+		this.registered = false;
 	}
 
 	@Override
@@ -103,6 +106,16 @@ public class Login implements ILoginUser {
 
 	public void setEmail(String email) {
 		this.email = email;
+	}
+
+	@Override
+	public boolean isRegistered() {
+		return registered;
+	}
+
+	@Override
+	public void setRegistered(boolean registered) {
+		this.registered = registered;
 	}
 
 	@Override

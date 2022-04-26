@@ -5,9 +5,6 @@ import java.util.concurrent.TimeUnit;
 import org.churuata.digital.core.store.SessionStore;
 import org.churuata.digital.ui.views.ChuruataTableComposite;
 import org.condast.commons.config.Config;
-import org.condast.commons.data.latlng.LatLng;
-import org.condast.commons.ui.controller.EditEvent;
-import org.condast.commons.ui.controller.IEditListener;
 import org.condast.commons.ui.entry.AbstractRestEntryPoint;
 import org.eclipse.rap.rwt.RWT;
 import org.eclipse.swt.SWT;
@@ -24,22 +21,9 @@ public class ServicesEntryPoint extends AbstractRestEntryPoint<SessionStore> {
 
 	private ChuruataTableComposite churuataComposite;
 	
-	private IEditListener<LatLng> listener = e->onEditEvent( e );
-	
 	@Override
 	protected boolean prepare(Composite parent) {
 		return true;
-	}
-
-	private Object onEditEvent(EditEvent<LatLng> e) {
-		switch( e.getType()) {
-		case SELECTED:
-			LatLng selected = e.getData();
-			break;
-		default:
-			break;
-		}
-		return null;
 	}
 
 	@Override

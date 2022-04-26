@@ -3,7 +3,6 @@ package org.churuata.digital;
 import java.util.concurrent.TimeUnit;
 
 import org.churuata.digital.core.AuthenticationDispatcher;
-import org.churuata.digital.core.Dispatcher;
 import org.churuata.digital.core.store.SessionStore;
 import org.condast.commons.authentication.core.AuthenticationEvent;
 import org.condast.commons.authentication.http.IDomainProvider;
@@ -31,8 +30,6 @@ public class LoginEntryPoint extends AbstractRestEntryPoint<SessionStore>{
 	
 	private AuthenticationGroup login;
 	
-	private Dispatcher dispatcher = Dispatcher.getInstance();
-
 	private AuthenticationDispatcher authentication = AuthenticationDispatcher.getInstance(); 
 	@Override
 	protected Composite createComposite(Composite parent) {

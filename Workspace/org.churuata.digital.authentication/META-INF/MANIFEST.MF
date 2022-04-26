@@ -8,10 +8,6 @@ Bundle-Vendor: Condast
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Meta-Persistence: 
 Import-Package: com.google.gson;version="2.6.2",
- javax.annotation;version="1.1.0",
- javax.crypto,
- javax.crypto.interfaces,
- javax.crypto.spec,
  javax.persistence;version="2.1.0",
  javax.servlet;version="3.1.0",
  javax.servlet.http;version="3.1.0",
@@ -19,7 +15,6 @@ Import-Package: com.google.gson;version="2.6.2",
  javax.ws.rs.container;version="2.0.1",
  javax.ws.rs.core;version="2.0.1",
  javax.ws.rs.ext;version="2.0.1",
- org.apache.commons.codec;version="1.0.0",
  org.churuata.digital.core.store,
  org.condast.commons,
  org.condast.commons.authentication.core,
@@ -32,18 +27,11 @@ Import-Package: com.google.gson;version="2.6.2",
  org.condast.commons.persistence.service,
  org.condast.commons.strings,
  org.condast.commons.verification,
- org.eclipse.core.commands,
- org.eclipse.equinox.http.registry;version="1.0.0",
- org.eclipse.equinox.security.auth.module;version="1.0.0",
- org.eclipse.jface,
- org.eclipse.jface.window,
- org.eclipse.rap.rwt.service;version="3.4.0",
  org.glassfish.jersey;version="2.25",
  org.glassfish.jersey.server;version="2.25",
  org.glassfish.jersey.servlet;version="2.25",
  org.osgi.framework;version="1.7.0",
- org.osgi.service.component.annotations;version="1.2.0",
- org.osgi.service.prefs;version="1.1.1"
+ org.osgi.service.component.annotations;version="1.2.0"
 Bundle-ActivationPolicy: lazy
 Automatic-Module-Name: org.satr.arnac.authentication
 Service-Component: OSGI-INF/org.churuata.digital.authentication.entity.service.xml,

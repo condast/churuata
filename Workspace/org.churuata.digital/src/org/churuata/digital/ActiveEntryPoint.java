@@ -52,7 +52,7 @@ public class ActiveEntryPoint extends AbstractRestEntryPoint<SessionStore>{
 	protected boolean prepare(Composite parent) {
 		StartupParameters service = RWT.getClient().getService( StartupParameters.class );
 		String tokenstr = service.getParameter( IDomainProvider.Attributes.TOKEN.name().toLowerCase());
-		String user = service.getParameter( IDomainProvider.Attributes.USERID.name().toLowerCase());
+		String user = service.getParameter( IDomainProvider.Attributes.USER_ID.name().toLowerCase());
 		if(StringUtils.isEmpty(user) || StringUtils.isEmpty(tokenstr)) 
 			return false;
 		

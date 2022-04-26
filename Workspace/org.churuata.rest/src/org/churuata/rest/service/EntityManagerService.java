@@ -18,8 +18,7 @@ import org.osgi.service.component.annotations.ReferencePolicy;
  * @author Kees
  *
  */
-@Component( name="org.churuata.rest.entity.service",
-immediate=true)
+@Component( name="org.churuata.rest.entity.service")
 public class EntityManagerService extends EntityManagerFactoryService{
 
 	private Dispatcher service = Dispatcher.getInstance();
