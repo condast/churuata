@@ -1,35 +1,25 @@
-package org.churuata.digital.ui.map;
+package test.churuata.rap.ui;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
-
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Random;
 import java.util.logging.Logger;
 
 import org.churuata.digital.core.location.ChuruataData;
 import org.churuata.digital.core.location.IChuruata;
-import org.churuata.digital.core.location.IChuruataCollection;
 import org.churuata.digital.core.location.IChuruataType;
-import org.churuata.digital.core.location.IChuruata.Requests;
-import org.churuata.digital.core.rest.IRestPages;
-import org.churuata.digital.ui.utils.RWTUtils;
-import org.churuata.digital.ui.views.EditChuruataComposite.Parameters;
 import org.condast.commons.Utils;
 import org.condast.commons.data.latlng.LatLng;
+import org.condast.commons.data.latlng.LatLngUtils;
+import org.condast.commons.data.plane.Field;
 import org.condast.commons.data.plane.FieldData;
 import org.condast.commons.data.plane.IPolygon;
-import org.condast.commons.messaging.http.AbstractHttpRequest;
-import org.condast.commons.messaging.http.ResponseEvent;
 import org.condast.commons.strings.StringStyler;
 import org.condast.commons.strings.StringUtils;
 import org.condast.commons.ui.controller.EditEvent;
-import org.condast.commons.ui.controller.IEditListener;
 import org.condast.commons.ui.controller.EditEvent.EditTypes;
+import org.condast.commons.ui.controller.IEditListener;
 import org.condast.commons.ui.session.AbstractSessionHandler;
 import org.condast.commons.ui.session.SessionEvent;
 import org.condast.js.commons.eval.EvaluationEvent;
@@ -42,6 +32,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.openlayer.map.control.GeoView;
 import org.openlayer.map.control.IconsView;
+import org.openlayer.map.control.MapField;
 import org.openlayer.map.control.NavigationView;
 import org.openlayer.map.controller.OpenLayerController;
 
@@ -67,8 +58,6 @@ public class MapBrowser extends Browser {
 
 	private OpenLayerController mapController;
 	
-	private IChuruataCollection churuatas;
-
 	private Collection<IEditListener<LatLng>> listeners;
 
 	private ProgressListener plistener = new ProgressListener() {
@@ -92,6 +81,9 @@ public class MapBrowser extends Browser {
 	private WebController controller;
 	
 	private FieldData fieldData;
+	private LatLng clicked;
+	
+	private boolean located;
 	
 	private IEvaluationListener<Object> listener = e->onNotifyEvaluation(e);
 
@@ -99,8 +91,9 @@ public class MapBrowser extends Browser {
 
 	public MapBrowser(Composite parent, int style) {
 		super(parent, style);
-		LatLng location = new LatLng( "Cucuta", 7.89391, -72.50782);
-		this.mapController = new OpenLayerController( this, location, 11 );
+		clicked = new LatLng( "Cucuta", 7.89391, -72.50782);
+		this.located = false;
+		this.mapController = new OpenLayerController( this, clicked, 11 );
 		this.mapController.addEvaluationListener( listener);
 		this.listeners = new ArrayList<>();
 		controller = new WebController();
@@ -122,6 +115,8 @@ public class MapBrowser extends Browser {
 
 	private void onNotifyEvaluation(EvaluationEvent<Object> event) {
 		try {
+			MapField mapview = new MapField(mapController );
+			mapview.clear();
 			if(!OpenLayerController.S_CALLBACK_ID.equals(event.getId())) {
 				IconsView icons = new IconsView( mapController );
 				updateMarkers(icons);
@@ -153,6 +148,7 @@ public class MapBrowser extends Browser {
 					GeoView geo = new GeoView( this.mapController );
 					geo.setFieldData(fieldData);
 					geo.jump();
+					located = true;
 					return;
 				}
 			}
@@ -162,14 +158,13 @@ public class MapBrowser extends Browser {
 				home = new LatLng((String) event.getData()[1], (double)loc[1], (double)loc[0] );
 				notifyEditListeners( new EditEvent<LatLng>( this, EditTypes.CHANGED, home ));
 
-				if( churuatas == null )
+				if( Utils.assertNull( controller.churuatas ))
 					return;
 				IconsView icons = new IconsView( mapController );
 				IChuruata churuata = new ChuruataData(home);
-				churuatas.addChuruata(churuata);
+				controller.churuatas.add(churuata);
 				createMarker(icons, churuata, true);
 				updateMarkers(icons);
-				RWTUtils.redirect( S_UNITY_START_PAGE );
 			}
 			if( IEvaluationListener.EventTypes.SELECTED.equals( event.getEventType())) {
 				logger.info(event.getData()[2].toString());
@@ -186,8 +181,8 @@ public class MapBrowser extends Browser {
 					logger.fine( buffer.toString());
 				}else {
 					Object[] coords = (Object[]) event.getData()[2];
-					LatLng latlng = new LatLng(( Double) coords[1], (Double)coords[0]);				
-					notifyEditListeners( new EditEvent<LatLng>( this, EditTypes.SELECTED, latlng ));
+					clicked = new LatLng(( Double) coords[1], (Double)coords[0]);				
+					notifyEditListeners( new EditEvent<LatLng>( this, EditTypes.SELECTED, clicked ));
 				}
 			}
 		}
@@ -197,16 +192,8 @@ public class MapBrowser extends Browser {
 	}
 
 	public void locate() {
-		NavigationView view = new NavigationView(mapController);
-		view.getLocation();
-	}
-
-	public void setInput( String context ){
-		controller.setInput(context, IRestPages.Pages.SUPPORT.toPath());
-	}
-
-	public void setInput( IChuruataCollection input ){
-		this.churuatas = input;
+		if( located )
+			return;
 		NavigationView view = new NavigationView(mapController);
 		view.getLocation();
 		handler.addData("update");
@@ -217,6 +204,17 @@ public class MapBrowser extends Browser {
 			return;
 		IconsView icons = new IconsView( mapController );
 		icons.clearIcons();
+		
+		if( this.fieldData != null ) {
+			Markers marker = Markers.RED;
+			icons.addMarker(this.fieldData.getCoordinates(), marker, this.fieldData.getCoordinates().getId().charAt(0));		
+		}
+
+		if( this.clicked != null ) {
+			Markers marker = Markers.ORANGE;
+			icons.addMarker(clicked, marker, 'C');		
+		}
+
 		Collection<IChuruata> churuatas = controller.churuatas;
 		if( Utils.assertNull(churuatas))
 			return;
@@ -232,14 +230,13 @@ public class MapBrowser extends Browser {
 			this.controller.show();
 			//NavigationView view = new NavigationView(mapController);
 			//view.getLocation();
-			//handler.addData("update");		
 		} catch (Exception e) {
 			e.printStackTrace();
 		}		
 	}
 	
 	public void dispose() {
-		this.mapController.removeEvaluationListener( listener );
+		//this.mapController.removeEvaluationListener( listener );
 		this.mapController.dispose();
 		this.removeProgressListener(plistener);
 		super.dispose();
@@ -247,9 +244,9 @@ public class MapBrowser extends Browser {
 
 	public void updateMarkers( IconsView icons) {
 		icons.clearIcons();
-		if( this.churuatas == null )
+		if( Utils.assertNull( controller.churuatas ))
 			return;
-		for( IChuruata churuata: churuatas.getChuruatas()) {
+		for( IChuruata churuata: controller.churuatas) {
 			createMarker(icons, churuata, false);
 		}		
 	}
@@ -273,8 +270,7 @@ public class MapBrowser extends Browser {
 		return result;
 	}
 
-
-	private class WebController extends AbstractHttpRequest<IChuruata.Requests, LatLng[]>{
+	private class WebController {
 		
 		private Collection<IChuruata> churuatas;
 		
@@ -283,47 +279,27 @@ public class MapBrowser extends Browser {
 			churuatas = new ArrayList<>();
 		}
 
-		public void setInput(String context, String path) {
-			super.setContextPath(context + path);
-		}
-
 		public void show() {
-			Map<String, String> params = new HashMap<>();
-			try {
-				if( fieldData == null )
-					return;
-				LatLng home = fieldData.getCoordinates();
-				params.put(Parameters.LATITUDE.toString(), String.valueOf( home.getLatitude()));
-				params.put(Parameters.LONGITUDE.toString(), String.valueOf( home.getLongitude()));
-				sendGet(IChuruata.Requests.SHOW, params);
-			} catch (IOException e) {
-				logger.warning(e.getMessage());
+			int xmax = 10000; int ymax = 10000;
+			int amount = 25;
+			Random random = new Random();
+			if( fieldData == null )
+				return;
+			Field field = new Field( fieldData );
+			this.churuatas.clear();
+			for( int i=0; i<amount; i++ ) {	
+				int x = random.nextInt(xmax);
+				int y = random.nextInt(ymax);
+				char newChar = (char)('A' + i);
+				String id = String.valueOf( newChar );
+				LatLng location = LatLngUtils.transform( field.getCentre(), x, y);
+				location.setId( id);
+				ChuruataData cd = new ChuruataData( location ); 
+				cd.setName("Organisation " + i);
+				churuatas.add( cd);
 			}
-		}
-		
-		@Override
-		protected String onHandleResponse(ResponseEvent<Requests, LatLng[]> event, LatLng[] data) throws IOException {
-			try {
-				switch( event.getRequest()){
-				case SHOW:
-					churuatas.clear();
-					Gson gson = new Gson();
-					IChuruata[] results = gson.fromJson(event.getResponse(), ChuruataData[].class);
-					if(!Utils.assertNull(results))
-						churuatas.addAll(Arrays.asList(results));
-					break;
-				default:
-					break;
-				}
-			} catch (JsonSyntaxException e) {
-				e.printStackTrace();
-			}
-			finally {
-				updateMap();
-			}
-			return null;
-		}
-		
+			handler.addData("update");		
+		}		
 	}
 
 	private class SessionHandler extends AbstractSessionHandler<String>{
@@ -334,7 +310,10 @@ public class MapBrowser extends Browser {
 
 		@Override
 		protected void onHandleSession(SessionEvent<String> sevent) {
-			// NOTHING		
+			if( Utils.assertNull( controller.churuatas ))
+				return;
+			updateMap();
+			notifyEditListeners( new EditEvent<LatLng>( this,EditTypes.COMPLETE, fieldData.getCoordinates()));
 		}	
 	}
 }
