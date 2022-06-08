@@ -47,8 +47,6 @@ public class EditChuruataComposite extends AbstractEntityComposite<LatLng>
 	public static final String S_LINK_DIALOG_SHELL = "LinkDialogShell";
 	public static final String REGEXP = ("[\\ ;:,]");
 
-	private static final String S_ADD_IMAGE = "/icons/add-32.png";
-
 	private static final String S_NAME_INFORMATION_TIP = "The Churuata name";
 	private static final String S_DESCRIPTION = "Description";
 	private static final String S_DESCRIPTOR_INFORMATION_TIP = "Describe the Churuata";
@@ -328,7 +326,7 @@ public class EditChuruataComposite extends AbstractEntityComposite<LatLng>
 		return false;
 	}
 	
-	private class WebController extends AbstractHttpRequest<IChuruata.Requests, IChuruata>{
+	private class WebController extends AbstractHttpRequest<IChuruata.Requests>{
 		
 		public WebController() {
 			super();
@@ -364,7 +362,7 @@ public class EditChuruataComposite extends AbstractEntityComposite<LatLng>
 		}
 
 		@Override
-		protected String onHandleResponse(ResponseEvent<Requests, IChuruata> event, IChuruata data) throws IOException {
+		protected String onHandleResponse(ResponseEvent<Requests> event) throws IOException {
 			switch( event.getRequest()){
 			case REGISTER:
 				notifyInputEdited( new EditEvent<LatLng>( this, EditTypes.CHANGED, null));

@@ -11,7 +11,7 @@ import org.condast.commons.authentication.http.IDomainProvider;
 import org.condast.commons.messaging.http.IHttpRequest.HttpStatus;
 import org.condast.commons.strings.StringStyler;
 import org.condast.commons.strings.StringUtils;
-import org.condast.js.commons.parser.AbstractResourceParser;
+import org.condast.commons.parser.AbstractResourceParser;
 
 public class ActiveServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;

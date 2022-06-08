@@ -59,6 +59,18 @@ public class MapBrowser extends Browser {
 	private OpenLayerController mapController;
 	
 	private Collection<IEditListener<LatLng>> listeners;
+	
+	private SessionHandler handler;
+	private WebController controller;
+	
+	private FieldData fieldData;
+	private LatLng clicked;
+	
+	private boolean located;
+	
+	private IEvaluationListener<Object> listener = e->onNotifyEvaluation(e);
+
+	private Logger logger = Logger.getLogger( this.getClass().getName() );
 
 	private ProgressListener plistener = new ProgressListener() {
 		private static final long serialVersionUID = 1L;
@@ -76,18 +88,6 @@ public class MapBrowser extends Browser {
 		public void changed(ProgressEvent event) {
 		}
 	};
-
-	private SessionHandler handler;
-	private WebController controller;
-	
-	private FieldData fieldData;
-	private LatLng clicked;
-	
-	private boolean located;
-	
-	private IEvaluationListener<Object> listener = e->onNotifyEvaluation(e);
-
-	private Logger logger = Logger.getLogger( this.getClass().getName() );
 
 	public MapBrowser(Composite parent, int style) {
 		super(parent, style);

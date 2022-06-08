@@ -55,9 +55,9 @@ public class Login implements ILoginUser {
 	private Person person; 
 	
 	/**
-	 * token for communication
+	 * security for communication
 	 */
-	private transient long token;
+	private transient long security;
 	
 	private transient LatLng location;
 	
@@ -66,7 +66,7 @@ public class Login implements ILoginUser {
 	public Login() {
 		this.createDate = Calendar.getInstance().getTime();
 		this.updateDate = this.createDate;
-		token = new Random().nextLong();
+		security = new Random().nextLong();
 		this.confirmed = false;
 		this.registered = false;
 	}
@@ -170,30 +170,27 @@ public class Login implements ILoginUser {
 	
 	@Override
 	public long getSecurity() {
-		return token;
+		return security;
 	}
 	
-	public void setSecurity(long token) {
-		this.token = token;
+	public void setSecurity(long security) {
+		this.security = security;
 	}
 
 	@Override
-	public boolean isCorrect(long userId, String token) {
-		if (( this.id != userId ) || StringUtils.isEmpty(token))
-			return false;
-		long tkn = Long.parseLong(token);
-		return (tkn == this.getSecurity());
+	public boolean isCorrect(long userId, long security) {
+		return (( this.id == userId ) && ( this.security == security));
 	}
 
 	/**
 	 * returns true if the user has administrative privileges
 	 * @param userName
-	 * @param token
+	 * @param security
 	 * @return
 	 */
 	@Override
-	public boolean isAdmin( String userName, long token ) {
-		return ( ILoginUser.S_ADMIN.equals(userName)) && ILoginUser.AdminToken == token;
+	public boolean isAdmin( String userName, long security ) {
+		return ( ILoginUser.S_ADMIN.equals(userName)) && ILoginUser.AdminToken == security;
 	}
 
 	@Override

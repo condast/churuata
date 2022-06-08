@@ -23,7 +23,7 @@ public class LoginUserProvider implements ILoginProvider {
 	}
 	
 	@Override
-	public boolean isLoggedIn(long loginId) {
+	public boolean isLoggedIn(long loginId, long security) {
 		return dispatcher.isLoggedIn(loginId);
 	}
 
