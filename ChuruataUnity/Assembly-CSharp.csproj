@@ -53,12 +53,13 @@
     <UnityVersion>2020.3.20f1</UnityVersion>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Assets\Scripts\Object placement\PlacementIndicator.cs" />
-    <Compile Include="Assets\Scripts\Object placement\ObjectSpawner.cs" />
     <Compile Include="Assets\Scripts\ServerSided\Old\RestCallTest.cs" />
     <Compile Include="Assets\Scripts\ServerSided\Old\APIHelper.cs" />
-    <Compile Include="Assets\Scripts\ServerSided\Old\NewData.cs" />
+    <Compile Include="Assets\Scripts\Object placement\PlacementIndicator.cs" />
     <Compile Include="Assets\Scripts\ServerSided\New\ApiReader.cs" />
+    <Compile Include="Assets\Scripts\ServerSided\Old\NewData.cs" />
+    <Compile Include="Assets\Scripts\Object placement\ObjectSpawner.cs" />
+    <Compile Include="Assets\MenuButton.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />
