@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.churuata.digital.authentication.model;
+package org.churuata.digital.organisation.model;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;

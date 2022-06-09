@@ -4,7 +4,6 @@ import javax.servlet.Servlet;
 import javax.ws.rs.ApplicationPath;
 
 import org.churuata.digital.authentication.rest.AuthenticationResource;
-import org.churuata.digital.authentication.rest.CorsFilter;
 import org.condast.commons.messaging.http.AbstractServletWrapper;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.servlet.ServletContainer;
@@ -12,7 +11,7 @@ import org.glassfish.jersey.servlet.ServletContainer;
 public class RestServlet extends AbstractServletWrapper {
 
 	//Same as alias in plugin.xml
-	public static final String S_CONTEXT_PATH = "arnac";
+	public static final String S_CONTEXT_PATH = "churuata/auth";
 
 	public RestServlet() {
 		super( S_CONTEXT_PATH );
@@ -32,7 +31,6 @@ public class RestServlet extends AbstractServletWrapper {
 		private RestApplication() {
 			try {
 				register( AuthenticationResource.class );
-				register( CorsFilter.class );
 			}
 			catch( Exception ex ) {
 				ex.printStackTrace();

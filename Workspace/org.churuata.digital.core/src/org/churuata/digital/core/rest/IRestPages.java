@@ -5,9 +5,10 @@ import org.condast.commons.strings.StringStyler;
 public interface IRestPages {
 
 	//Same as the alias in plugin.xml
-	public static final String S_CHURUATA_CONTEXT_PATH = "churuatas/rest";
+	public static final String S_CHURUATA_CONTEXT_PATH = "churuata";
 
 	public static enum Pages{
+		AUTH,
 		SUPPORT,
 		WALKERS;
 

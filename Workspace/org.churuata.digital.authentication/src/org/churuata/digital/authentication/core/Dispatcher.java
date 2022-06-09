@@ -2,25 +2,25 @@ package org.churuata.digital.authentication.core;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 import java.util.TreeSet;
 
-import javax.persistence.EntityManager;
-import javax.servlet.http.HttpSession;
-
 import org.churuata.digital.authentication.services.LoginService;
-import org.churuata.digital.core.store.SessionStore;
 import org.condast.commons.authentication.core.AuthenticationEvent;
 import org.condast.commons.authentication.core.IAuthenticationListener;
 import org.condast.commons.authentication.core.IAuthenticationListener.AuthenticationEvents;
+import org.condast.commons.authentication.core.LoginData;
 import org.condast.commons.authentication.user.ILoginUser;
-import org.condast.commons.persistence.core.ISessionStoreFactory;
 import org.condast.commons.persistence.service.AbstractPersistencyService;
 import org.condast.commons.persistence.service.IPersistenceService;
 import org.condast.commons.strings.StringUtils;
 
 public class Dispatcher extends AbstractPersistencyService implements IPersistenceService{
+
+	public static final String S_CHURUATA = "churuata";
 
 	//Needs to be the same as in the persistence.xml file
 	private static final String S_CHURUATA_SERVICE_ID = "org.churuata.digital.authentication"; 
@@ -32,11 +32,12 @@ public class Dispatcher extends AbstractPersistencyService implements IPersisten
 	
 	private Collection<IAuthenticationListener> listeners;
 	
-	private ISessionStoreFactory<HttpSession, SessionStore> store;
+	private Map<Long, LoginData> confirmation;
 
 	private Dispatcher(  ) {
 		super( S_CHURUATA_SERVICE_ID, S_CHURUATA_SERVICE );
 		users = new TreeSet<ILoginUser>();
+		this.confirmation = new HashMap<>();
 		listeners = new ArrayList<>();
 	}
 
@@ -55,16 +56,6 @@ public class Dispatcher extends AbstractPersistencyService implements IPersisten
 	protected void notifyListeners( AuthenticationEvent event ) {
 		for( IAuthenticationListener listener: this.listeners )
 			listener.notifyLoginChanged( event );
-	}
-
-	@Override
-	protected Map<String, String> onPrepareManager() {
-		return null;
-	}
-
-	@Override
-	protected void onManagerCreated(EntityManager manager) {
-		// NOTHING
 	}
 
 	public boolean isRegistered( ILoginUser user ) {
@@ -96,6 +87,14 @@ public class Dispatcher extends AbstractPersistencyService implements IPersisten
 		return null;
 	}
 
+	public ILoginUser getUserFromSecurity( long security) {
+		for( ILoginUser user: this.users ) {
+			if( user.getSecurity() == security)
+				return user;
+		}
+		return null;
+	}
+
 	public boolean isRegistered( long loginId ) {
 		LoginService service = new LoginService( this );
 		ILoginUser user = service.find( loginId );
@@ -105,6 +104,14 @@ public class Dispatcher extends AbstractPersistencyService implements IPersisten
 	public boolean isLoggedIn(long loginId) {
 		for( ILoginUser user: this.users ) {
 			if( user.getId() == loginId )
+				return true;
+		}
+		return ( loginId <= 0);
+	}
+
+	public boolean isLoggedIn(long loginId, long security) {
+		for( ILoginUser user: this.users ) {
+			if(( user.getId() == loginId ) && ( user.getSecurity() == security ))
 				return true;
 		}
 		return ( loginId <= 0);
@@ -133,22 +140,28 @@ public class Dispatcher extends AbstractPersistencyService implements IPersisten
 		return service.getUserNames(userIds);
 	}
 
-	public void logout(long loginId, long token ) {
-		ILoginUser user = getLoginUser(loginId, token );
-		this.removeUser(user);
+	public long addConfirmRegistration( LoginData login ) {
+		long registration = Math.abs( new Random().nextLong());
+		this.confirmation.put(registration, login);
+		return registration;
 	}
 
-	public void setSessionStore(ISessionStoreFactory<HttpSession, SessionStore> store) {
-		this.store = store;
-	}	
+	public long addForgotPassword( ILoginUser login ) {
+		this.confirmation.put( login.getSecurity(),  new LoginData( login ));
+		return login.getSecurity();
+	}
 
-	public void removeSessionStore(ISessionStoreFactory<HttpSession, SessionStore> store) {
-		this.store = null;
-	}	
-
-	public SessionStore getStore( HttpSession session ) {
-		if(( session == null ) || ( this.store == null ))
+	public LoginData getStoredUser( long confirmation ) {
+		if( confirmation < 0)
 			return null;
-		return store.createSessionStore(session);
+		return this.confirmation.remove(confirmation);
+	}
+
+	public boolean logout(long loginId, long token ) {
+		ILoginUser user = getLoginUser(loginId, token );
+		if( user == null )
+			return false;
+		this.removeUser(user);
+		return true;
 	}
 }

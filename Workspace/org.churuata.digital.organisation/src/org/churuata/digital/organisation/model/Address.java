@@ -1,18 +1,13 @@
-package org.churuata.digital.authentication.model;
+package org.churuata.digital.organisation.model;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collection;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 
 import org.condast.commons.Utils;
 import org.condast.commons.data.latlng.LatLng;
@@ -45,9 +40,6 @@ public class Address implements IAddress, Serializable {
 	@Column(nullable=false)
 	private String country;
 		
-	@OneToMany( mappedBy="address", cascade = CascadeType.ALL, fetch=FetchType.EAGER)
-	private Collection<PersonAddress> locations;
-	
 	private double longitude;
 	private double latitude;
 	
@@ -56,7 +48,6 @@ public class Address implements IAddress, Serializable {
 	}
 
 	public Address( AddressTypes type ) {
-		locations = new ArrayList<PersonAddress>();
 		this.country = Countries.THE_NETHERLANDS.name();
 	}
 	
@@ -81,14 +72,6 @@ public class Address implements IAddress, Serializable {
 
 	public void setAddressId( long adresId) {
 		this.addressId = adresId;
-	}
-
-	public void addPersonAddress( PersonAddress pa ){
-		this.locations.add( pa );
-	}
-
-	public void removePersonAddress( PersonAddress pa ){
-		this.locations.remove( pa );
 	}
 
 	@Override

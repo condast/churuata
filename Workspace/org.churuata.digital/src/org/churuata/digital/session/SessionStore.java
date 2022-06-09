@@ -6,14 +6,18 @@ import org.condast.commons.data.latlng.LatLng;
 
 public class SessionStore extends DefaultSessionStore{
 
-	private static final String S_ARNAC_ID = "org.satr.arnac";
+	private static final String S_CHURUATA_ID = "org.churuata.digital";
 
 	private long token;
 	
 	private LatLng selected;
 
+	public SessionStore() {
+		super( S_CHURUATA_ID);
+	}
+
 	public SessionStore( long token ) {
-		super( S_ARNAC_ID);
+		this();
 		this.token = token;
 	}
 

@@ -3,7 +3,7 @@ package org.churuata.digital;
 import java.util.concurrent.TimeUnit;
 
 import org.churuata.digital.BasicApplication.Pages;
-import org.churuata.digital.core.store.SessionStore;
+import org.churuata.digital.session.SessionStore;
 import org.churuata.digital.ui.views.EditChuruataComposite;
 import org.condast.commons.authentication.user.ILoginUser;
 import org.condast.commons.config.Config;

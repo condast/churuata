@@ -2,7 +2,7 @@ package org.churuata.digital;
 
 import java.util.concurrent.TimeUnit;
 
-import org.churuata.digital.core.store.SessionStore;
+import org.churuata.digital.session.SessionStore;
 import org.churuata.digital.ui.views.ChuruataTableComposite;
 import org.condast.commons.config.Config;
 import org.condast.commons.ui.entry.AbstractRestEntryPoint;

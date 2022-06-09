@@ -3,7 +3,7 @@ package org.churuata.digital;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.churuata.digital.core.store.SessionStore;
+import org.churuata.digital.session.SessionStore;
 import org.condast.commons.strings.StringStyler;
 import org.condast.commons.strings.StringUtils;
 import org.condast.commons.ui.entry.IDataEntryPoint;
@@ -23,6 +23,7 @@ public class BasicApplication implements ApplicationConfiguration {
 	private static final String S_THEME_CSS = "themes/theme.css";
 
 	public enum Pages{
+		ACTIVE,
 		BANNER,
 		CREATE,
 		EDIT,
@@ -30,7 +31,8 @@ public class BasicApplication implements ApplicationConfiguration {
 		LOGOFF,
 		MAP,
 		SERVICES,
-		READY;
+		READY, 
+		GET_EMAIL;
 
 		@Override
 		public String toString() {

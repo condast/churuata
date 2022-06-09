@@ -6,7 +6,7 @@ import javax.servlet.http.HttpSession;
 
 import org.churuata.digital.BasicApplication.Pages;
 import org.churuata.digital.core.Dispatcher;
-import org.churuata.digital.core.store.SessionStore;
+import org.churuata.digital.session.SessionStore;
 import org.churuata.digital.ui.map.MapBrowser;
 import org.condast.commons.authentication.http.IDomainProvider;
 import org.condast.commons.config.Config;

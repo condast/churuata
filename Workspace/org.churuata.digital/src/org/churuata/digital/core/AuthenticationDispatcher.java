@@ -3,7 +3,7 @@ package org.churuata.digital.core;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.churuata.digital.core.store.SessionStore;
+import org.churuata.digital.session.SessionStore;
 import org.condast.commons.authentication.core.AbstractLoginClient;
 import org.condast.commons.authentication.user.ILoginUser;
 

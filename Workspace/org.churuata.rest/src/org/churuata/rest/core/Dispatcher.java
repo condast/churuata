@@ -46,16 +46,6 @@ public class Dispatcher extends AbstractPersistencyService {
 		return results;
 	}
 
-	@Override
-	protected Map<String, String> onPrepareManager() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	protected void onManagerCreated(EntityManager manager) {
-	}
-
 	public void subscribe(long id, int i) {
 		// TODO Auto-generated method stub
 		

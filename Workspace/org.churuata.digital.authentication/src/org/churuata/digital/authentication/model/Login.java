@@ -10,14 +10,12 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.condast.commons.authentication.user.ILoginUser;
 import org.condast.commons.data.latlng.LatLng;
 import org.condast.commons.date.DateUtils;
-import org.condast.commons.strings.StringUtils;
 
 @Entity
 public class Login implements ILoginUser {
@@ -50,10 +48,6 @@ public class Login implements ILoginUser {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date updateDate;
 
-	@Basic(optional = true)
-	@OneToOne
-	private Person person; 
-	
 	/**
 	 * security for communication
 	 */
@@ -136,10 +130,6 @@ public class Login implements ILoginUser {
 	@Override
 	public void setLocation(double latitude, double longitude) {
 		this.location = new LatLng( this.userName, latitude, longitude);
-	}
-
-	public Person getPerson() {
-		return person;
 	}
 
 	@Override
