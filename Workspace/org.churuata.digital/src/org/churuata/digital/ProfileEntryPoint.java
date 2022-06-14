@@ -16,7 +16,6 @@ import org.churuata.digital.ui.views.EditPersonComposite;
 import org.condast.commons.authentication.http.IDomainProvider;
 import org.condast.commons.authentication.user.ILoginUser;
 import org.condast.commons.config.Config;
-import org.condast.commons.data.latlng.LatLng;
 import org.condast.commons.messaging.http.AbstractHttpRequest;
 import org.condast.commons.messaging.http.ResponseEvent;
 import org.condast.commons.ui.controller.EditEvent;
@@ -112,18 +111,16 @@ public class ProfileEntryPoint extends AbstractChuruataEntryPoint{
 
 		SessionStore store = getSessionStore();
 		ILoginUser user = store.getLoginUser();
-		editComposite.setInput(context, user);
-		LatLng selected = store.getSelected();
 		ProfileData profile = store.getProfile();
 		if( profile == null ) {
 			profile = null;//new ProfileData( selected );
 			store.setProfile(profile); 
 		}
-		editComposite.setInput( profile );
 
 		controller = new WebController();
-		controller.setInput(context, IRestPages.Pages.ORGANISATION.toPath());
+		controller.setInput(context, IRestPages.Pages.CONTACT.toPath());
 		controller.user = user;
+		controller.get();
 		return true;
 	}
 
@@ -206,13 +203,30 @@ public class ProfileEntryPoint extends AbstractChuruataEntryPoint{
 				logger.warning(e.getMessage());
 			}
 		}
-		
+
+		public void get() {
+			Map<String, String> params = super.getParameters();
+			try {
+				params.put(ProfileData.Parameters.USER_ID.toString(), String.valueOf( user.getId()));
+				params.put(ProfileData.Parameters.SECURITY.toString(), String.valueOf( user.getSecurity() ));
+				sendGet(ProfileData.Requests.GET_PROFILE, params );
+			} catch (IOException e) {
+				logger.warning(e.getMessage());
+			}
+		}
+
 		@Override
 		protected String onHandleResponse(ResponseEvent<ProfileData.Requests> event) throws IOException {
 			try {
+				SessionStore store = getSessionStore();
 				switch( event.getRequest()){
 				case CREATE:
-					SessionStore store = getSessionStore();
+					Dispatcher.jump(BasicApplication.Pages.ACTIVE, store.getToken());
+					break;
+				case GET_PROFILE:
+					Gson gson = new Gson();
+					ProfileData profile = gson.fromJson(event.getResponse(), ProfileData.class);
+					editComposite.setInput(profile);
 					Dispatcher.jump(BasicApplication.Pages.ACTIVE, store.getToken());
 					break;
 				default:

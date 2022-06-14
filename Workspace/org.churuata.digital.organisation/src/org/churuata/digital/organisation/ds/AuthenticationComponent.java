@@ -34,7 +34,7 @@ public class AuthenticationComponent{
 
 	@Reference( cardinality = ReferenceCardinality.MANDATORY,
 			policy=ReferencePolicy.DYNAMIC,
-			target="(type=arnac)")
+			target="(type=churuata)")
 	public void setFactory( ILoginProvider loginProvider ){
 		dispatcher.setLoginProvider(loginProvider);
 	}

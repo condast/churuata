@@ -11,11 +11,18 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+
+import org.churuata.digital.core.data.OrganisationData;
 import org.churuata.digital.core.data.PersonData;
+import org.churuata.digital.core.data.ProfileData;
 import org.churuata.digital.organisation.core.AuthenticationDispatcher;
+import org.churuata.digital.organisation.model.Organisation;
 import org.churuata.digital.organisation.model.Person;
 import org.churuata.digital.organisation.services.ContactService;
+import org.churuata.digital.organisation.services.OrganisationService;
 import org.churuata.digital.organisation.services.PersonService;
+import org.condast.commons.Utils;
+import org.condast.commons.io.IOUtils;
 import org.condast.commons.na.model.IContact;
 import org.condast.commons.na.model.IContact.ContactTypes;
 import org.condast.commons.na.model.IContactPerson;
@@ -109,7 +116,7 @@ public class ContactPersonResource{
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/get")
-	public Response createContact( @QueryParam("user-id") long userId, @QueryParam("security") long security) {
+	public Response getContact( @QueryParam("user-id") long userId, @QueryParam("security") long security) {
 		logger.info( "ATTEMPT Get " );
 
 		AuthenticationDispatcher dispatcher=  AuthenticationDispatcher.getInstance();
@@ -118,7 +125,10 @@ public class ContactPersonResource{
 
 		PersonService ps = new PersonService(); 
 		try {
+			ps.open();
 			Collection<Person> persons = ps.findForLogin( userId );
+			if( Utils.assertNull(persons))
+				return Response.noContent().build();
 			Collection<PersonData> data = new ArrayList<>();
 			persons.forEach(p->data.add( new PersonData(p)));
 			Gson gson = new Gson();
@@ -130,7 +140,45 @@ public class ContactPersonResource{
 			return Response.serverError().build();
 		}
 		finally {
-			ps.close();
+			IOUtils.close( ps );
 		}
 	}
+
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/get-profile")
+	public Response getProfile( @QueryParam("user-id") long userId, @QueryParam("security") long security) {
+		logger.info( "ATTEMPT Get " );
+
+		AuthenticationDispatcher dispatcher=  AuthenticationDispatcher.getInstance();
+		if( !dispatcher.isLoggedIn(userId, security))
+			return Response.status( Status.UNAUTHORIZED).build();
+
+		PersonService ps = new PersonService(); 
+		OrganisationService os = new OrganisationService(); 
+		try {
+			ps.open();
+			Collection<Person> persons = ps.findForLogin( userId );
+			if( Utils.assertNull(persons))
+				return Response.noContent().build();
+			IContactPerson person = persons.iterator().next(); 
+			ProfileData profile = new ProfileData( person );
+			
+			os.open();
+			Collection<Organisation> orgs = os.getAll(person);
+			orgs.forEach(o->profile.addOrganisation( new OrganisationData(o)));
+			Gson gson = new Gson();
+			String str = gson.toJson(profile, ProfileData.class);
+			return Response.ok( str ).build();
+		}
+		catch( Exception ex ) {
+			ex.printStackTrace();
+			return Response.serverError().build();
+		}
+		finally {
+			IOUtils.close( os );
+			IOUtils.close( ps );
+		}
+	}
+
 }

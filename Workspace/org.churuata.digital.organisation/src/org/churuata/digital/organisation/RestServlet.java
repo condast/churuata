@@ -3,6 +3,7 @@ package org.churuata.digital.organisation;
 import javax.servlet.Servlet;
 import javax.ws.rs.ApplicationPath;
 
+import org.churuata.digital.organisation.rest.ContactPersonResource;
 import org.churuata.digital.organisation.rest.OrganisationResource;
 import org.condast.commons.messaging.http.AbstractServletWrapper;
 import org.glassfish.jersey.server.ResourceConfig;
@@ -31,6 +32,7 @@ public class RestServlet extends AbstractServletWrapper {
 		private RestApplication() {
 			try {
 				register( OrganisationResource.class );
+				register( ContactPersonResource.class );
 			}
 			catch( Exception ex ) {
 				ex.printStackTrace();

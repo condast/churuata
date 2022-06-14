@@ -1,16 +1,8 @@
 package org.churuata.digital.ui.views;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.churuata.digital.core.data.ProfileData;
 import org.churuata.digital.core.location.ChuruataData;
-import org.churuata.digital.core.rest.IRestPages;
 import org.condast.commons.Utils;
-import org.condast.commons.authentication.user.ILoginUser;
-import org.condast.commons.messaging.http.AbstractHttpRequest;
-import org.condast.commons.messaging.http.ResponseEvent;
 import org.condast.commons.strings.StringUtils;
 import org.condast.commons.ui.controller.AbstractEntityComposite;
 import org.condast.commons.ui.controller.EditEvent;
@@ -48,17 +40,12 @@ public class EditPersonComposite extends AbstractEntityComposite<ProfileData>
 	
 	private OrganisationTableComposite organisationTable;
 
-	private ILoginUser user;
-	
-	private WebController controller;
-
 	/**
 	 * Create the dialog.
 	 * @param parentShell
 	 */
 	public EditPersonComposite( Composite parent, int style ){
 		super(parent, style );
-		controller = new WebController();
 	}
 	
 
@@ -156,11 +143,6 @@ public class EditPersonComposite extends AbstractEntityComposite<ProfileData>
 		this.organisationTable.addEditListener(e->notifyInputEdited(new EditEvent<ProfileData>( this, EditTypes.ADDED)));
 	}
 
-	public void setInput( String context, ILoginUser user ){
-		controller.setInput(context, IRestPages.Pages.SUPPORT.toPath());
-		this.user = user;
-	}
-
 	@Override
 	public void update(){
 		ProfileData result = super.getInput();
@@ -241,52 +223,5 @@ public class EditPersonComposite extends AbstractEntityComposite<ProfileData>
 	public boolean checkRequiredFields() {
 		// TODO Auto-generated method stub
 		return false;
-	}
-	
-	private class WebController extends AbstractHttpRequest<ProfileData.Requests>{
-		
-		public WebController() {
-			super();
-		}
-
-		public void setInput(String context, String path) {
-			super.setContextPath(context + path);
-		}
-
-		public void register( ProfileData profile ) {
-			Map<String, String> params = getUserParams(user);
-			try {
-				params.put(ProfileData.Parameters.NAME.toString(), profile.getName() );
-				params.put(ProfileData.Parameters.DESCRIPTION.toString(), profile.getDescription());
-				
-				//params.put(ProfileData.Parameters.TYPE.toString(), String.valueOf( ct.getType().name()));
-				//params.put(ProfileData.Parameters.LATITUDE.toString(), String.valueOf( profile..getLocation().getLatitude()));
-				//params.put(ProfileData.Parameters.LONGITUDE.toString(), String.valueOf( profile.getLocation().getLongitude()));
-				sendGet(ProfileData.Requests.CREATE, params);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-		
-		public Map<String, String> getUserParams( ILoginUser user) {
-			Map<String, String> params = new HashMap<>();
-			if( user != null ) {
-				params.put(ProfileData.Parameters.USER_ID.toString(), String.valueOf( user.getId() ));
-				params.put(ProfileData.Parameters.SECURITY.toString(), String.valueOf( user.getSecurity() ));
-			}
-			return params;
-		}
-
-		@Override
-		protected String onHandleResponse(ResponseEvent<ProfileData.Requests> event) throws IOException {
-			switch( event.getRequest()){
-			case CREATE:
-				notifyInputEdited( new EditEvent<ProfileData>( this, EditTypes.CHANGED, null));
-				break;
-			default:
-				break;
-			}
-			return null;
-		}		
 	}
 }

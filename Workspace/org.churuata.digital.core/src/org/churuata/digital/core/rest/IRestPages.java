@@ -11,6 +11,7 @@ public interface IRestPages {
 	public static enum Pages{
 		AUTH,
 		SUPPORT,
+		CONTACT,
 		ORGANISATION,
 		WALKERS;
 

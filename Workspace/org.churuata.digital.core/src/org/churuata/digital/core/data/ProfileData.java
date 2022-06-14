@@ -17,6 +17,8 @@ public class ProfileData extends PersonData implements Serializable, Cloneable {
 	
 	public enum Requests{
 		CREATE,
+		GET,
+		GET_PROFILE,
 		FIND,
 		ADD_SERVICE,
 		REMOVE_SERVICE;
@@ -37,20 +39,20 @@ public class ProfileData extends PersonData implements Serializable, Cloneable {
 		}
 	}
 	
-	private Collection<OrganisationData> types;
+	private Collection<OrganisationData> organisations;
 	
 	public ProfileData( IContactPerson person ){
 		super( person );
-		types = new ArrayList<>();
+		organisations = new ArrayList<>();
 	}
 
 	
-	public void addChuruataType( OrganisationData type ) {
-		this.types.add(type);
+	public void addOrganisation( OrganisationData type ) {
+		this.organisations.add(type);
 	}
 
-	public OrganisationData[] getTypes() {
-		return types.toArray( new OrganisationData[ this.types.size()]);
+	public OrganisationData[] getOrganisations() {
+		return organisations.toArray( new OrganisationData[ this.organisations.size()]);
 	}
 	
 	
