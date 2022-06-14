@@ -2,15 +2,18 @@ package org.churuata.digital;
 
 import java.util.concurrent.TimeUnit;
 
+import org.churuata.digital.core.AbstractChuruataEntryPoint;
+import org.churuata.digital.core.Dispatcher;
 import org.churuata.digital.session.SessionStore;
 import org.churuata.digital.ui.image.ChuruataImages;
 import org.churuata.digital.ui.map.MapBrowser;
 import org.condast.commons.authentication.http.IDomainProvider;
+import org.condast.commons.authentication.user.ILoginUser;
 import org.condast.commons.config.Config;
 import org.condast.commons.data.latlng.LatLng;
 import org.condast.commons.strings.StringUtils;
 import org.condast.commons.ui.controller.EditEvent;
-import org.condast.commons.ui.entry.AbstractRestEntryPoint;
+import org.condast.commons.ui.controller.IEditListener;
 import org.condast.commons.ui.utils.RWTUtils;
 import org.eclipse.rap.rwt.RWT;
 import org.eclipse.rap.rwt.client.service.StartupParameters;
@@ -23,7 +26,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 
-public class ActiveEntryPoint extends AbstractRestEntryPoint<SessionStore>{
+public class ActiveEntryPoint extends AbstractChuruataEntryPoint{
 	private static final long serialVersionUID = 1L;
 
 	public static final String S_PAGE = "page";
@@ -38,6 +41,8 @@ public class ActiveEntryPoint extends AbstractRestEntryPoint<SessionStore>{
 	private Button btnLocate;
 	private Button btnCreate;
 	private Button btnEdit;
+	
+	private IEditListener<LatLng> listener = e->onLocationChanged(e);
 		
 	/**
 	 * Slow down start time a bit in order to let the browser find the location
@@ -52,13 +57,22 @@ public class ActiveEntryPoint extends AbstractRestEntryPoint<SessionStore>{
 	protected boolean prepare(Composite parent) {
 		StartupParameters service = RWT.getClient().getService( StartupParameters.class );
 		String tokenstr = service.getParameter( IDomainProvider.Attributes.TOKEN.name().toLowerCase());
-		String user = service.getParameter( IDomainProvider.Attributes.USER_ID.name().toLowerCase());
-		if(StringUtils.isEmpty(user) || StringUtils.isEmpty(tokenstr)) 
+		if(StringUtils.isEmpty(tokenstr)) 
 			return false;
 		
-		//token = Long.parseLong(tokenstr);
-		//userId = Long.parseLong(userstr);
-		return true;
+		long token = Long.parseLong(tokenstr);
+		Dispatcher dispatcher = Dispatcher.getInstance();
+		IDomainProvider<SessionStore> provider = dispatcher.getDomain(token );
+		if( provider == null )
+			return false;
+
+		SessionStore store = provider.getData();
+		if( store == null )
+			return false;
+		store.setToken(token);
+		setData(store);
+		ILoginUser user = store.getLoginUser();
+		return ( user != null );
 	}
 	
 	@Override
@@ -70,7 +84,7 @@ public class ActiveEntryPoint extends AbstractRestEntryPoint<SessionStore>{
 		mapComposite = new MapBrowser(parent, SWT.NONE );
 		mapComposite.setData( RWT.CUSTOM_VARIANT, S_CHURUATA );
 		mapComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		mapComposite.addEditListener( e->onLocationChanged(e));
+		mapComposite.addEditListener( listener );
 		
 		Group group = new Group( parent, SWT.NONE );
 		group.setText("Edit Churuata");
@@ -144,7 +158,7 @@ public class ActiveEntryPoint extends AbstractRestEntryPoint<SessionStore>{
 		mapComposite.setInput(config.getServerContext());
 
 		mapComposite.locate();
-		SessionStore store = super.getData();
+		SessionStore store = super.getSessionStore();
 		LatLng selected = store.getSelected();
 		this.btnCreate.setEnabled( selected != null );
 		this.btnEdit.setEnabled( selected != null );
@@ -153,7 +167,7 @@ public class ActiveEntryPoint extends AbstractRestEntryPoint<SessionStore>{
 	
 	protected void onLocationChanged( EditEvent<LatLng> event ) {
 		LatLng data = event.getData();
-		SessionStore store = super.getData();
+		SessionStore store = super.getSessionStore();
 		switch( event.getType()) {
 		case INITIALISED:
 			break;
@@ -161,6 +175,10 @@ public class ActiveEntryPoint extends AbstractRestEntryPoint<SessionStore>{
 			store.setSelected( data);
 			this.btnCreate.setEnabled( data != null );
 			this.btnEdit.setEnabled( data != null );
+			break;
+		case SELECTED:
+			store.setSelected( data);
+			Dispatcher.jump(BasicApplication.Pages.CREATE, store.getToken());
 			break;
 		default:
 			break;
@@ -177,7 +195,7 @@ public class ActiveEntryPoint extends AbstractRestEntryPoint<SessionStore>{
 		try {
 			super.handleTimer();
 			mapComposite.refresh();
-			SessionStore store = super.getData();
+			SessionStore store = super.getSessionStore();
 			if(( store == null ) || ( store.getLoginUser() == null ))
 				return;
 		} catch (Exception e) {
@@ -186,15 +204,15 @@ public class ActiveEntryPoint extends AbstractRestEntryPoint<SessionStore>{
 	}
 
 	@Override
-	protected void handleSessionTimeout(boolean reload) {
-		SessionStore store = super.getData();
+	protected boolean handleSessionTimeout(boolean reload) {
+		SessionStore store = super.getSessionStore();
 		store.setLoginUser(null);
-		super.handleSessionTimeout(reload);
+		return super.handleSessionTimeout(reload);
 	}
 
 	@Override
 	public void close() {
-		mapComposite.removeEditListener( e->onLocationChanged(e));
+		mapComposite.removeEditListener( listener);
 		super.close();
 	}
 }

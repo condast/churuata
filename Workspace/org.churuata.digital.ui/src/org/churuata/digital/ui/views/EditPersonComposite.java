@@ -3,12 +3,10 @@ package org.churuata.digital.ui.views;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import org.churuata.digital.core.data.OrganisationData;
+
+import org.churuata.digital.core.data.ProfileData;
 import org.churuata.digital.core.location.ChuruataData;
-import org.churuata.digital.core.location.IChuruata;
-import org.churuata.digital.core.location.IChuruata.Requests;
 import org.churuata.digital.core.rest.IRestPages;
-import org.churuata.digital.core.location.IChuruataType;
 import org.condast.commons.Utils;
 import org.condast.commons.authentication.user.ILoginUser;
 import org.condast.commons.messaging.http.AbstractHttpRequest;
@@ -29,7 +27,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 
-public class EditChuruataComposite extends AbstractEntityComposite<OrganisationData>
+public class EditPersonComposite extends AbstractEntityComposite<ProfileData>
 {
 	private static final long serialVersionUID = 7782765745284140623L;
 
@@ -48,7 +46,7 @@ public class EditChuruataComposite extends AbstractEntityComposite<OrganisationD
 	
 	private Label latlngLabel;
 	
-	private ChuruataTableComposite churuataTypesTable;
+	private OrganisationTableComposite organisationTable;
 
 	private ILoginUser user;
 	
@@ -58,7 +56,7 @@ public class EditChuruataComposite extends AbstractEntityComposite<OrganisationD
 	 * Create the dialog.
 	 * @param parentShell
 	 */
-	public EditChuruataComposite( Composite parent, int style ){
+	public EditPersonComposite( Composite parent, int style ){
 		super(parent, style );
 		controller = new WebController();
 	}
@@ -153,9 +151,9 @@ public class EditChuruataComposite extends AbstractEntityComposite<OrganisationD
 		latlngLabel = new Label( grpFillIn, SWT.BORDER);
 		latlngLabel.setLayoutData( new GridData( SWT.FILL, SWT.FILL, true, true));
 
-		this.churuataTypesTable = new ChuruataTableComposite(container, SWT.NONE);
-		this.churuataTypesTable.setLayoutData( new GridData(SWT.FILL, SWT.FILL, true, true ));	
-		this.churuataTypesTable.addEditListener(e->notifyInputEdited(new EditEvent<OrganisationData>( this, EditTypes.ADDED)));
+		this.organisationTable = new OrganisationTableComposite(container, SWT.NONE);
+		this.organisationTable.setLayoutData( new GridData(SWT.FILL, SWT.FILL, true, true ));	
+		this.organisationTable.addEditListener(e->notifyInputEdited(new EditEvent<ProfileData>( this, EditTypes.ADDED)));
 	}
 
 	public void setInput( String context, ILoginUser user ){
@@ -165,34 +163,34 @@ public class EditChuruataComposite extends AbstractEntityComposite<OrganisationD
 
 	@Override
 	public void update(){
-		OrganisationData result = super.getInput();
+		ProfileData result = super.getInput();
 	}
 
 	@Override
-	protected OrganisationData onGetInput(OrganisationData input) {
-		input.setName(this.nameField.getText());
-		input.setDescription( this.descriptionField.getText());
-		input.setWebsite( this.txtURL.getText());
+	protected ProfileData onGetInput(ProfileData input) {
+		//input.setName(this.nameField.getText());
+		//input.setDescription( this.descriptionField.getText());
+		//input.setWebsite( this.txtURL.getText());
 		return input;
 	}
 
 	@Override
-	protected void onSetInput(OrganisationData input, boolean overwrite) {
-		latlngLabel.setText(input.getLocation().toLocation());
+	protected void onSetInput(ProfileData input, boolean overwrite) {
+		//latlngLabel.setText(input.getLocation().toLocation());
 		this.nameField.setText(input.getName());
 		this.descriptionField.setText(input.getDescription());
-		this.txtURL.setText(input.getWebsite());
-		this.churuataTypesTable.setInput(input);
+		//this.txtURL.setText(input.getWebsite());
+		//this.churuataTypesTable.setInput(input);
 	}
 
-	public void setInput( OrganisationData input ){
+	public void setInput( ProfileData input ){
 		super.setInput( input, false );
 	}
 
 	protected void onNotifyTableEvent( TableEvent<ChuruataData> event ) {
 		switch( event.getTableEvent()) {
 		case DELETE:
-			OrganisationData model = getInput();
+			ProfileData model = getInput();
 			//Collection<Churuata> remove = (Collection<Churuata>) event.getData();
 			//database.removeOnDescriptorId(remove.getID(), model.getData().getID());
 			break;
@@ -215,7 +213,7 @@ public class EditChuruataComposite extends AbstractEntityComposite<OrganisationD
 				
 			this.enableWidgets( event, attribute );
 			if( this.isFilled() )
-				this.notifyInputEdited( new EditEvent<OrganisationData>( this, EditTypes.COMPLETE, getInput()));
+				this.notifyInputEdited( new EditEvent<ProfileData>( this, EditTypes.COMPLETE, getInput()));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -231,7 +229,7 @@ public class EditChuruataComposite extends AbstractEntityComposite<OrganisationD
 		filled = !StringUtils.isEmpty( txtURL.getText());
 		if( !filled )
 			return false;
-		return !Utils.assertNull( this.churuataTypesTable.getInput());
+		return !Utils.assertNull( this.organisationTable.getInput());
 	}
 
 	private final boolean enableWidgets(VerifyEvent event, String attribute){
@@ -245,7 +243,7 @@ public class EditChuruataComposite extends AbstractEntityComposite<OrganisationD
 		return false;
 	}
 	
-	private class WebController extends AbstractHttpRequest<IChuruata.Requests>{
+	private class WebController extends AbstractHttpRequest<ProfileData.Requests>{
 		
 		public WebController() {
 			super();
@@ -255,17 +253,16 @@ public class EditChuruataComposite extends AbstractEntityComposite<OrganisationD
 			super.setContextPath(context + path);
 		}
 
-		public void register( IChuruata churuata ) {
+		public void register( ProfileData profile ) {
 			Map<String, String> params = getUserParams(user);
 			try {
-				params.put(OrganisationData.Parameters.NAME.toString(), churuata.getName() );
-				params.put(OrganisationData.Parameters.DESCRIPTION.toString(), churuata.getDescription());
+				params.put(ProfileData.Parameters.NAME.toString(), profile.getName() );
+				params.put(ProfileData.Parameters.DESCRIPTION.toString(), profile.getDescription());
 				
-				IChuruataType ct = churuata.getTypes()[0];
-				params.put(OrganisationData.Parameters.TYPE.toString(), String.valueOf( ct.getType().name()));
-				params.put(OrganisationData.Parameters.LATITUDE.toString(), String.valueOf( churuata.getLocation().getLatitude()));
-				params.put(OrganisationData.Parameters.LONGITUDE.toString(), String.valueOf( churuata.getLocation().getLongitude()));
-				sendGet(IChuruata.Requests.REGISTER, params);
+				//params.put(ProfileData.Parameters.TYPE.toString(), String.valueOf( ct.getType().name()));
+				//params.put(ProfileData.Parameters.LATITUDE.toString(), String.valueOf( profile..getLocation().getLatitude()));
+				//params.put(ProfileData.Parameters.LONGITUDE.toString(), String.valueOf( profile.getLocation().getLongitude()));
+				sendGet(ProfileData.Requests.CREATE, params);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -274,17 +271,17 @@ public class EditChuruataComposite extends AbstractEntityComposite<OrganisationD
 		public Map<String, String> getUserParams( ILoginUser user) {
 			Map<String, String> params = new HashMap<>();
 			if( user != null ) {
-				params.put(OrganisationData.Parameters.USER_ID.toString(), String.valueOf( user.getId() ));
-				params.put(OrganisationData.Parameters.SECURITY.toString(), String.valueOf( user.getSecurity() ));
+				params.put(ProfileData.Parameters.USER_ID.toString(), String.valueOf( user.getId() ));
+				params.put(ProfileData.Parameters.SECURITY.toString(), String.valueOf( user.getSecurity() ));
 			}
 			return params;
 		}
 
 		@Override
-		protected String onHandleResponse(ResponseEvent<Requests> event) throws IOException {
+		protected String onHandleResponse(ResponseEvent<ProfileData.Requests> event) throws IOException {
 			switch( event.getRequest()){
-			case REGISTER:
-				notifyInputEdited( new EditEvent<OrganisationData>( this, EditTypes.CHANGED, null));
+			case CREATE:
+				notifyInputEdited( new EditEvent<ProfileData>( this, EditTypes.CHANGED, null));
 				break;
 			default:
 				break;

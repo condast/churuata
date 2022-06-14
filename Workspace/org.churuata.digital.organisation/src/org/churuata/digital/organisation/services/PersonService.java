@@ -6,6 +6,7 @@ import javax.persistence.TypedQuery;
 
 import org.churuata.digital.organisation.core.Dispatcher;
 import org.churuata.digital.organisation.model.Person;
+import org.condast.commons.authentication.user.ILoginUser;
 import org.condast.commons.na.model.IContact;
 import org.condast.commons.persistence.service.AbstractEntityService;
 
@@ -21,6 +22,12 @@ public class PersonService extends AbstractEntityService<Person>{
 	
 	public Person create( long userId, String name, String title, String description, IContact contact ) {
 		Person person = new Person( userId, name, title, description, contact );
+		super.create(person);
+		return person;
+	}
+
+	public Person create( ILoginUser user, IContact contact ) {
+		Person person = new Person( user.getId(), null, null, null, contact );
 		super.create(person);
 		return person;
 	}

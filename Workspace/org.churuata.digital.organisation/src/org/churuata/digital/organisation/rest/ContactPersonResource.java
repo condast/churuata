@@ -12,7 +12,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import org.churuata.digital.core.data.PersonData;
-import org.churuata.digital.organisation.core.Dispatcher;
+import org.churuata.digital.organisation.core.AuthenticationDispatcher;
 import org.churuata.digital.organisation.model.Person;
 import org.churuata.digital.organisation.services.ContactService;
 import org.churuata.digital.organisation.services.PersonService;
@@ -61,7 +61,7 @@ public class ContactPersonResource{
 			@QueryParam("description") String description, @QueryParam("email") String email) {
 		logger.info( "ATTEMPT Register " + name );
 
-		Dispatcher dispatcher=  Dispatcher.getInstance();
+		AuthenticationDispatcher dispatcher=  AuthenticationDispatcher.getInstance();
 		if( !dispatcher.isLoggedIn(userid, security))
 			return Response.status( Status.UNAUTHORIZED).build();
 
@@ -112,7 +112,7 @@ public class ContactPersonResource{
 	public Response createContact( @QueryParam("user-id") long userId, @QueryParam("security") long security) {
 		logger.info( "ATTEMPT Get " );
 
-		Dispatcher dispatcher=  Dispatcher.getInstance();
+		AuthenticationDispatcher dispatcher=  AuthenticationDispatcher.getInstance();
 		if( !dispatcher.isLoggedIn(userId, security))
 			return Response.status( Status.UNAUTHORIZED).build();
 

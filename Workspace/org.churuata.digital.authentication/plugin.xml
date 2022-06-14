@@ -4,7 +4,7 @@
    <extension
          point="org.eclipse.equinox.http.registry.servlets">
       <servlet
-            alias="/churuata/auth"
+            alias="/churuatas/auth"
             class="org.churuata.digital.authentication.RestServlet"
             load-on-startup="false">
         <init-param name="javax.ws.rs.Application"

@@ -1,5 +1,7 @@
 package org.churuata.digital.organisation.services;
 
+import org.churuata.digital.core.data.OrganisationData;
+import org.churuata.digital.core.location.IChuruataType;
 import org.churuata.digital.organisation.core.Dispatcher;
 import org.churuata.digital.organisation.model.Organisation;
 import org.condast.commons.na.model.IContactPerson;
@@ -18,4 +20,14 @@ public class OrganisationService extends AbstractEntityService<Organisation>{
 		super.create(organisation);
 		return organisation;
 	}
+
+	public Organisation create( IContactPerson person, OrganisationData data ) {
+		Organisation o = new Organisation( data.getName(), data.getDescription() );
+		for( IChuruataType tp: data.getTypes()) {
+			o.addService( tp);
+		}		
+		super.create(o);
+		return o;
+	}
+
 }

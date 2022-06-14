@@ -18,8 +18,9 @@ import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.churuata.digital.core.model.IChuruataService;
+import org.churuata.digital.core.location.IChuruataType;
 import org.churuata.digital.core.model.IOrganisation;
+import org.condast.commons.data.latlng.LatLng;
 import org.condast.commons.na.model.IAddress;
 import org.condast.commons.na.model.IContactPerson;
 import org.condast.commons.na.model.IName;
@@ -37,6 +38,9 @@ public class Organisation implements IOrganisation, Serializable, Cloneable {
 	@Column(name="ORGANISATION_ID", nullable=false)
 	@PrimaryKeyJoinColumn(name="ORGANISATION_ID")
 	private long organisationId;
+	
+	private double latitude;
+	private double longitude;
 	
 	@Basic(optional = true)
 	@Column( nullable=true)
@@ -86,6 +90,11 @@ public class Organisation implements IOrganisation, Serializable, Cloneable {
 	}
 
 	@Override
+	public LatLng getLocation() {
+		return new LatLng( this.name, this.description, latitude, longitude );
+	}
+
+	@Override
 	public String getName() {
 		return name;
 	}
@@ -120,7 +129,7 @@ public class Organisation implements IOrganisation, Serializable, Cloneable {
 	}
 
 	@Override
-	public IChuruataService[] getServiceTypes() {
+	public IChuruataType[] getServiceTypes() {
 		return this.services.toArray( new Service[ this.services.size()]);
 	}
 
@@ -130,44 +139,44 @@ public class Organisation implements IOrganisation, Serializable, Cloneable {
 	}
 
 	@Override
-	public void addService( IChuruataService.ServiceTypes type, String value) {
-		Service contact = new Service( this.services.size(), type, value );
+	public void addService( IChuruataType type, String value) {
+		Service contact = new Service( this.services.size(), type.getType(), value );
 		this.services.add( contact );
 	}
 
 	@Override
-	public int addService( IChuruataService contact) {
+	public int addService( IChuruataType contact) {
 		this.services.add(( Service )contact );
 		return this.services.size()-1;
 	}
 
 	@Override
-	public void removeService( IChuruataService contact) {
+	public void removeService( IChuruataType contact) {
 		this.services.remove( contact );
 	}
 
 	@Override
 	public void removeService( long serviceId) {
-		Collection<IChuruataService> temp = new ArrayList<>( this.services );
+		Collection<IChuruataType> temp = new ArrayList<>( this.services );
 		temp.forEach( s-> {
-			if( s.getServiceId() == serviceId )
+			if( s.getId() == serviceId )
 				this.services.remove(s);
 		});
 	}
 
 	@Override
 	public void removeService(String type, String value) {
-		Collection<IChuruataService> temp = new ArrayList<>( this.services );
+		Collection<IChuruataType> temp = new ArrayList<>( this.services );
 		temp.forEach( s-> {
-			if( s.getServiceType().name().equals(type) && s.getValue().equals(value))
+			if( s.getType().name().equals(type) && s.getDescription().equals(value))
 				this.services.remove(s);
 		});
 	}
 
 	@Override
-	public void setServices(IChuruataService[] services) {
+	public void setServices(IChuruataType[] services) {
 		this.services.clear();
-		for( IChuruataService contact: services )
+		for( IChuruataType contact: services )
 			addService( contact );
 	}
 

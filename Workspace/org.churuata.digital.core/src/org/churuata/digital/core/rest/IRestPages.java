@@ -5,11 +5,13 @@ import org.condast.commons.strings.StringStyler;
 public interface IRestPages {
 
 	//Same as the alias in plugin.xml
-	public static final String S_CHURUATA_CONTEXT_PATH = "churuata";
+	public static final String S_CHURUATA_CONTEXT_PATH = "churuatas";
+	//public static final String S_CHURUATA_CONTEXT_PATH_ORGANISATION = "churorg";
 
 	public static enum Pages{
 		AUTH,
 		SUPPORT,
+		ORGANISATION,
 		WALKERS;
 
 		@Override
@@ -18,7 +20,12 @@ public interface IRestPages {
 		}
 		
 		public String toPath() {
-			return S_CHURUATA_CONTEXT_PATH + "/" + toString();
+			switch( this ) {
+			//case ORGANISATION:
+			//	return S_CHURUATA_CONTEXT_PATH_ORGANISATION + "/" + toString();
+			default:
+				return S_CHURUATA_CONTEXT_PATH + "/" + toString();
+			}
 		}
 	}
 }

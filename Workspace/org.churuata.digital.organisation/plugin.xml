@@ -4,9 +4,9 @@
    <extension
          point="org.eclipse.equinox.http.registry.servlets">
       <servlet
-            alias="/churuata/organisation"
+            alias="/churuatas/organisation"
             class="org.churuata.digital.organisation.RestServlet"
-            load-on-startup="false">
+            load-on-startup="true">
         <init-param name="javax.ws.rs.Application"
     			    value="org.churuata.digital.organisation.RestApplication">
 		</init-param>

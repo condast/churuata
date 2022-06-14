@@ -1,6 +1,7 @@
 package org.churuata.digital.session;
 
-
+import org.churuata.digital.core.data.OrganisationData;
+import org.churuata.digital.core.data.ProfileData;
 import org.condast.commons.authentication.session.DefaultSessionStore;
 import org.condast.commons.data.latlng.LatLng;
 
@@ -11,6 +12,10 @@ public class SessionStore extends DefaultSessionStore{
 	private long token;
 	
 	private LatLng selected;
+	
+	private OrganisationData organisation;
+	
+	private ProfileData profile; 
 
 	public SessionStore() {
 		super( S_CHURUATA_ID);
@@ -42,5 +47,21 @@ public class SessionStore extends DefaultSessionStore{
 		this.selected = selected;
 	}
 
+	public OrganisationData getOrganisation() {
+		return organisation;
+	}
+
+	public void setOrganisation(OrganisationData organisation) {
+		this.organisation = organisation;
+	}
+
+	public ProfileData getProfile() {
+		return profile;
+	}
+
+	public void setProfile(ProfileData profile) {
+		this.profile = profile;
+	}
+	
 	
 }

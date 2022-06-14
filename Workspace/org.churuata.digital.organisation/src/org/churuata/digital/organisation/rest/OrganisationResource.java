@@ -1,8 +1,11 @@
 package org.churuata.digital.organisation.rest;
 
+import java.util.Collection;
 import java.util.logging.Logger;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
@@ -12,16 +15,19 @@ import javax.ws.rs.core.Response.Status;
 
 import org.churuata.digital.core.data.OrganisationData;
 import org.churuata.digital.core.data.PersonData;
-import org.churuata.digital.core.model.IChuruataService;
-import org.churuata.digital.organisation.core.Dispatcher;
+import org.churuata.digital.core.location.IChuruataType;
+import org.churuata.digital.organisation.core.AuthenticationDispatcher;
 import org.churuata.digital.organisation.model.Organisation;
+import org.churuata.digital.organisation.model.Person;
+import org.churuata.digital.organisation.services.ContactService;
 import org.churuata.digital.organisation.services.OrganisationService;
 import org.churuata.digital.organisation.services.PersonService;
 import org.churuata.digital.organisation.services.ServicesService;
+import org.condast.commons.Utils;
+import org.condast.commons.authentication.user.ILoginUser;
+import org.condast.commons.na.model.IContact;
 import org.condast.commons.na.model.IContactPerson;
 import org.condast.commons.strings.StringUtils;
-import org.condast.commons.verification.IVerification;
-import org.condast.commons.verification.IVerification.VerificationTypes;
 import com.google.gson.Gson;
 
 
@@ -34,8 +40,8 @@ import com.google.gson.Gson;
 
 // The browser requests per default the HTML MIME type.
 
-//Sets the path to base URL + /smash
-@Path("/organisation")
+//Sets the path to base URL + /organisation
+@Path("/")
 public class OrganisationResource{
 
 	public static final String S_ERR_UNKNOWN_REQUEST = "An invalid request was rertrieved: ";
@@ -57,41 +63,37 @@ public class OrganisationResource{
 		super();
 	}
 
-	@GET
+	@PUT
+	@Consumes(MediaType.TEXT_PLAIN)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/create")
-	public Response create( @QueryParam("user-id") long userid, @QueryParam("security") long security, 
-			@QueryParam("person-id") long personId, @QueryParam("name") String name,
-			@QueryParam("description") String description, @QueryParam("email") String email) {
-		logger.info( "ATTEMPT Register " + name );
+	public Response create( @QueryParam("user-id") long userId, @QueryParam("security") long security, String data) {
 
-		Dispatcher dispatcher=  Dispatcher.getInstance();
-		if( !dispatcher.isLoggedIn(userid, security))
+		AuthenticationDispatcher dispatcher=  AuthenticationDispatcher.getInstance();
+		if( !dispatcher.isLoggedIn(userId, security))
 			return Response.status( Status.UNAUTHORIZED).build();
 
-		if( StringUtils.isEmpty(name) || StringUtils.isEmpty( email )) 
-			return Response.notModified( ErrorMessages.NO_USERNAME_OR_EMAIL.name()).build();
-		
-		if( !IVerification.VerificationTypes.verify(VerificationTypes.EMAIL, email))
-			return Response.notModified( ErrorMessages.NO_USERNAME_OR_EMAIL.name()).build();
-		
-		if( StringUtils.isEmpty( name )) {
-			name = email.split("[@]")[0];
-		}
-		if( StringUtils.isEmpty( description ))
-			return Response.status( Status.BAD_REQUEST).build();
-
-		logger.info( "Adding organisation" + name + "(" + email + ")");
-
+		if( StringUtils.isEmpty(data)) 
+			return Response.noContent().build();
+	
+		ILoginUser user = dispatcher.getLoginUser(userId, security);
+		Gson gson = new Gson();
+		OrganisationData od = gson.fromJson(data, OrganisationData.class);
 		OrganisationService os = new OrganisationService(); 
 		PersonService ps = new PersonService(); 
+		ContactService cs = new ContactService();
 		Organisation organisation = null;
 		try {
-			IContactPerson person = ps.find(personId);
+			Collection<Person> persons = ps.findForLogin(userId); 
+			IContactPerson person = null;
+			if( Utils.assertNull(persons)) {
+				IContact contact = cs.createContact(IContact.ContactTypes.EMAIL, user.getEmail());
+				person = ps.create(user, contact);
+			}else
+				person = persons.iterator().next();
 			os.open();
-			organisation = os.create(person, name, description);
+			organisation = os.create(person, od);
 			
-			Gson gson = new Gson();
 			OrganisationData pd = new OrganisationData(organisation);
 			String str = gson.toJson(pd, PersonData.class);
 			return Response.ok( str ).build();
@@ -112,7 +114,7 @@ public class OrganisationResource{
 	public Response createContact( @QueryParam("user-id") long userId, @QueryParam("security") long security, @QueryParam("organisation-id") long organisationId) {
 		logger.info( "ATTEMPT Get " );
 
-		Dispatcher dispatcher=  Dispatcher.getInstance();
+		AuthenticationDispatcher dispatcher=  AuthenticationDispatcher.getInstance();
 		if( !dispatcher.isLoggedIn(userId, security))
 			return Response.status( Status.UNAUTHORIZED).build();
 
@@ -139,13 +141,13 @@ public class OrganisationResource{
 	public Response addService( @QueryParam("user-id") long userId, @QueryParam("security") long security,
 			@QueryParam("organisation-id") long organisationId, @QueryParam("type") String type, @QueryParam("name") String name) {
 
-		Dispatcher dispatcher=  Dispatcher.getInstance();
+		AuthenticationDispatcher dispatcher=  AuthenticationDispatcher.getInstance();
 		if( !dispatcher.isLoggedIn(userId, security))
 			return Response.status( Status.UNAUTHORIZED).build();
 
 		if( StringUtils.isEmpty(name) || StringUtils.isEmpty( type )) 
 			return Response.notModified( ErrorMessages.NO_USERNAME_OR_EMAIL.name()).build();
-		IChuruataService.ServiceTypes st = IChuruataService.ServiceTypes.valueOf(type);
+		IChuruataType.Types st = IChuruataType.Types.valueOf(type);
 		
 		
 		ServicesService cs = new ServicesService();
@@ -156,9 +158,9 @@ public class OrganisationResource{
 			Organisation organisation = os.find( organisationId );
 			if( organisation == null )
 				return Response.noContent().build();
-			IChuruataService service = cs.createService( organisation.getServicesSize(), st, name);
+			IChuruataType service = cs.createService( organisation.getServicesSize(), st, name);
 			organisation.addService(service);
-			return Response.ok(service.getServiceId()).build();
+			return Response.ok(service.getId()).build();
 		}
 		catch( Exception ex ) {
 			ex.printStackTrace();
@@ -175,7 +177,7 @@ public class OrganisationResource{
 	public Response removeService( @QueryParam("user-id") long userId, @QueryParam("security") long security,
 			@QueryParam("organisation-id") long organisationId, @QueryParam("service-id") long serviceId) {
 
-		Dispatcher dispatcher=  Dispatcher.getInstance();
+		AuthenticationDispatcher dispatcher=  AuthenticationDispatcher.getInstance();
 		if( !dispatcher.isLoggedIn(userId, security))
 			return Response.status( Status.UNAUTHORIZED).build();
 
@@ -202,17 +204,17 @@ public class OrganisationResource{
 
 	@GET
 	@Produces(MediaType.TEXT_PLAIN)
-	@Path("/remove-service")
+	@Path("/remove-service-by-name")
 	public Response removeService( @QueryParam("user-id") long userId, @QueryParam("security") long security,
 			@QueryParam("organisation-id") long organisationId, @QueryParam("type") String type, @QueryParam("name") String name) {
 
-		Dispatcher dispatcher=  Dispatcher.getInstance();
+		AuthenticationDispatcher dispatcher=  AuthenticationDispatcher.getInstance();
 		if( !dispatcher.isLoggedIn(userId, security))
 			return Response.status( Status.UNAUTHORIZED).build();
 
 		if( StringUtils.isEmpty(name) || StringUtils.isEmpty( type )) 
 			return Response.notModified( ErrorMessages.NO_USERNAME_OR_EMAIL.name()).build();
-		IChuruataService.ServiceTypes st = IChuruataService.ServiceTypes.valueOf(type);
+		IChuruataType.Types st = IChuruataType.Types.valueOf(type);
 		
 		OrganisationService os = new OrganisationService(); 
 		try {

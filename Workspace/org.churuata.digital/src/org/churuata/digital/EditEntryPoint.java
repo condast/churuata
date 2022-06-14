@@ -3,6 +3,7 @@ package org.churuata.digital;
 import java.util.concurrent.TimeUnit;
 
 import org.churuata.digital.BasicApplication.Pages;
+import org.churuata.digital.core.data.OrganisationData;
 import org.churuata.digital.session.SessionStore;
 import org.churuata.digital.ui.views.EditChuruataComposite;
 import org.condast.commons.authentication.user.ILoginUser;
@@ -65,12 +66,12 @@ public class EditEntryPoint extends AbstractRestEntryPoint<SessionStore>{
 		ILoginUser user = store.getLoginUser();
 		editComposite.setInput(context, user );
 		LatLng selected = store.getSelected();
-		editComposite.setInput(selected);
+		//editComposite.setInput(selected);
 		return true;
 	}
 	
-	protected void onRegistrationCompleted( EditEvent<LatLng> event ) {
-		LatLng data = event.getData();
+	protected void onRegistrationCompleted( EditEvent<OrganisationData> event ) {
+		LatLng data = event.getData().getLocation();
 		SessionStore store = getData();
 		switch( event.getType()) {
 		case COMPLETE:

@@ -25,6 +25,7 @@ import org.condast.commons.ui.controller.IEditListener;
 import org.condast.commons.ui.session.AbstractSessionHandler;
 import org.condast.commons.ui.session.SessionEvent;
 import org.condast.commons.ui.utils.RWTUtils;
+import org.eclipse.rap.rwt.RWT;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
@@ -49,6 +50,7 @@ public class LoginEntryPoint extends AbstractChuruataEntryPoint{
 	protected Composite createComposite(Composite parent) {
 		Config config = new Config();
 		group = new AuthenticationGroup(parent, SWT.NONE);
+		group.setData( RWT.CUSTOM_VARIANT, BasicApplication.S_CHURUATA_VARIANT );
 		String path = LegalUtils.createLegalPath(config.getServerContext(), S_CHURUATA, "privacy");
 		group.setPrivacyPath( path);
 		path = LegalUtils.createLegalPath(config.getServerContext(), S_CHURUATA, "tos");
@@ -157,6 +159,7 @@ public class LoginEntryPoint extends AbstractChuruataEntryPoint{
 				next += S_TOKEN_ARG + token;
 				logger.info("Redirecting; " + next );
 				Dispatcher.redirect( next, token);
+				handler.addData(getSessionStore());
 				break;
 			default:
 				break;

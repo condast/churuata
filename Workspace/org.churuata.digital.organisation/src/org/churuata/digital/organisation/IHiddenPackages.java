@@ -12,6 +12,7 @@
 package org.churuata.digital.organisation;
 
 import org.glassfish.jersey.*;
+import org.eclipse.equinox.http.registry.*;
 
 @SuppressWarnings("unused")
 public interface IHiddenPackages {

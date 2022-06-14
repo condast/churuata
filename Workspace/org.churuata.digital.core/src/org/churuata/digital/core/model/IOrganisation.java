@@ -1,12 +1,15 @@
 package org.churuata.digital.core.model;
 
-import org.churuata.digital.core.model.IChuruataService.ServiceTypes;
+import org.churuata.digital.core.location.IChuruataType;
+import org.condast.commons.data.latlng.LatLng;
 import org.condast.commons.na.model.IAddress;
 import org.condast.commons.na.model.IContactPerson;
 
 public interface IOrganisation {
 
 	long getId();
+	
+	LatLng getLocation();
 
 	public String getName();
 	
@@ -16,11 +19,11 @@ public interface IOrganisation {
 	
 	public IContactPerson getContact();
 
-	void setServices(IChuruataService[] services);
+	void setServices(IChuruataType[] services);
 
-	int addService(IChuruataService service);
+	int addService(IChuruataType service);
 
-	void removeService(IChuruataService service);
+	void removeService(IChuruataType service);
 
 	void removeService(String type, String value);
 
@@ -28,9 +31,9 @@ public interface IOrganisation {
 
 	void clearServices();
 
-	IChuruataService[] getServiceTypes();
+	IChuruataType[] getServiceTypes();
 
-	void addService(ServiceTypes type, String value);
+	void addService( IChuruataType type, String value);
 
 	int getServicesSize();
 }

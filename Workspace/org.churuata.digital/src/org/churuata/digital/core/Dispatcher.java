@@ -9,30 +9,23 @@ import java.util.Random;
 import javax.servlet.http.HttpSession;
 
 import org.churuata.digital.BasicApplication;
-import org.churuata.digital.core.location.ChuruataData;
-import org.churuata.digital.core.location.IChuruata;
-import org.churuata.digital.core.location.IChuruataCollection;
 import org.churuata.digital.session.SessionStore;
 import org.condast.commons.authentication.core.AuthenticationEvent;
 import org.condast.commons.authentication.core.IAuthenticationListener;
 import org.condast.commons.authentication.http.AbstractDomainProvider;
 import org.condast.commons.authentication.http.IDomainProvider;
 import org.condast.commons.authentication.user.ILoginUser;
-import org.condast.commons.data.latlng.LatLng;
-import org.condast.commons.data.latlng.LatLngUtils;
 import org.condast.commons.strings.StringStyler;
 import org.condast.commons.strings.StringUtils;
 import org.condast.commons.ui.utils.RWTUtils;
 import org.eclipse.rap.rwt.RWT;
 import org.eclipse.rap.rwt.client.service.StartupParameters;
 
-public class Dispatcher implements IChuruataCollection {
+public class Dispatcher {
 
 	private static final String S_CHURUATA = "churuata";
 
 	private static Dispatcher dispatcher = new Dispatcher();
-	
-	private Collection<IChuruata> churuatas;
 	
 	private Map<Long, IDomainProvider<SessionStore>> domains;
 	
@@ -42,7 +35,6 @@ public class Dispatcher implements IChuruataCollection {
 	public Dispatcher() {
 		super();
 		domains = new HashMap<>();
-		churuatas = new ArrayList<>();
 		auth.addAuthenticationListener(listener);
 	}
 
@@ -126,36 +118,6 @@ public class Dispatcher implements IChuruataCollection {
 				this.domains.remove(entry.getKey());
 		}
 	}
-
-	@Override
-	public boolean contains( IChuruata churuata ) {
-		return this.churuatas.contains(churuata);
-	}
-	
-	@Override
-	public boolean addChuruata(  IChuruata churuata ) {
-		return this.churuatas.add(churuata);
-	}
-
-	@Override
-	public boolean removeChuruata(  IChuruata churuata ) {
-		return this.churuatas.remove(churuata);
-	}
-	
-	@Override
-	public ChuruataData[] getChuruatas() {
-		return this.churuatas.toArray( new ChuruataData[ this.churuatas.size()]);
-	}
-
-	@Override
-	public IChuruata[] getChuruatas(LatLng latlng, int distance) {
-		Collection<IChuruata> results = new ArrayList<>();
-		for( IChuruata churuata: this.churuatas) {
-			if( LatLngUtils.distance( churuata.getLocation(), latlng) < distance )
-				results.add(churuata);
-		}
-		return results.toArray( new ChuruataData[ results.size() ]);
-	}
 	
 	public static boolean redirect( BasicApplication.Pages page, long token ) {
 		return redirect( page.toPath(), token );
@@ -226,7 +188,7 @@ public class Dispatcher implements IChuruataCollection {
 		}else {
 			HttpSession session = RWT.getUISession().getHttpSession();
 			Long arg = (Long) session.getAttribute( IDomainProvider.Attributes.TOKEN.name());
-			if( arg!= null )
+			if(( arg!= null ) && ( arg > 0))
 				return dispatcher.getDomain(arg);
 		}
 		String userstr = service.getParameter( StringStyler.xmlStyleString( IDomainProvider.Attributes.USER_ID.name()));

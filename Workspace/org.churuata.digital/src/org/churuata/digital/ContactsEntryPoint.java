@@ -4,10 +4,11 @@ import java.util.concurrent.TimeUnit;
 
 import org.churuata.digital.core.AbstractChuruataEntryPoint;
 import org.churuata.digital.core.Dispatcher;
+import org.churuata.digital.core.data.ContactData;
 import org.churuata.digital.core.data.OrganisationData;
-import org.churuata.digital.core.location.IChuruataType;
 import org.churuata.digital.session.SessionStore;
 import org.churuata.digital.ui.image.ChuruataImages;
+import org.churuata.digital.ui.views.ContactsComposite;
 import org.churuata.digital.ui.views.ServicesComposite;
 import org.condast.commons.authentication.http.IDomainProvider;
 import org.condast.commons.authentication.user.ILoginUser;
@@ -28,21 +29,18 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 
 
-public class ServicesEntryPoint extends AbstractChuruataEntryPoint {
+public class ContactsEntryPoint extends AbstractChuruataEntryPoint {
 	private static final long serialVersionUID = 1L;
 
-	public static final String S_CHURUATA = "Churuata-Digital";
 
-	public static final String S_CHURUATA_PAGE = "/churuata";
-
-	private ServicesComposite servicesComposite;
+	private ContactsComposite servicesComposite;
 	private Button btnAdd;
 
 	private SessionHandler handler;
 	
-	private IChuruataType data = null;
+	private ContactData data = null;
 
-	private IEditListener<IChuruataType> listener = e->onServiceEvent(e);
+	private IEditListener<ContactData> listener = e->onServiceEvent(e);
 
 	@Override
 	protected boolean prepare(Composite parent) {
@@ -62,7 +60,7 @@ public class ServicesEntryPoint extends AbstractChuruataEntryPoint {
 	@Override
     protected Composite createComposite(Composite parent) {
         parent.setLayout(new GridLayout( 1, false ));
-        servicesComposite = new ServicesComposite( parent, SWT.NONE);
+        servicesComposite = new ContactsComposite( parent, SWT.NONE);
  		servicesComposite.setData( RWT.CUSTOM_VARIANT, S_CHURUATA );
  		servicesComposite.setLayoutData( new GridData(SWT.FILL, SWT.FILL, true, false));
 		Group group = new Group( parent, SWT.NONE );
@@ -86,7 +84,7 @@ public class ServicesEntryPoint extends AbstractChuruataEntryPoint {
 						return;
 					SessionStore store = getSessionStore();
 					OrganisationData organisation = store.getOrganisation();
-					organisation.addChuruataType(data);
+					//organisation.addChuruataType(data);
 					Dispatcher.jump(BasicApplication.Pages.CREATE, store.getToken());
 				}
 				catch( Exception ex ){
@@ -105,7 +103,7 @@ public class ServicesEntryPoint extends AbstractChuruataEntryPoint {
 		return super.postProcess(parent);
 	}
 
-	protected void onServiceEvent( EditEvent<IChuruataType> event ) {
+	protected void onServiceEvent( EditEvent<ContactData> event ) {
 		switch( event.getType()) {
 		case COMPLETE:
 			data = event.getData();

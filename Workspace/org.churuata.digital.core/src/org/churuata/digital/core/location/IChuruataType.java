@@ -8,6 +8,7 @@ import org.condast.js.commons.images.IDefaultMarkers.Markers;
 public interface IChuruataType {
 
 	public enum Types{
+		UNKNOWN,
 		FOOD,
 		SHELTER,
 		MEDICINE,
@@ -68,7 +69,14 @@ public interface IChuruataType {
 	public enum Contribution{
 		LOG,
 		LEAF;
-		
+
+		public static String[] getItems() {
+			String[] items = new String[ values().length ];
+			for( int i=0; i< values().length; i++ )
+				items[i] = values()[i].toString();
+			return items;
+		}
+
 		@Override
 		public String toString() {
 			return StringStyler.prettyString( name());

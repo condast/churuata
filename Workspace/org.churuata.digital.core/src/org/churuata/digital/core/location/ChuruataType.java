@@ -3,7 +3,7 @@ package org.churuata.digital.core.location;
 import java.util.Calendar;
 import java.util.Date;
 
-public class ChuruataType implements Comparable<IChuruataType>, IChuruataType{
+public class ChuruataType implements IChuruataType, Comparable<IChuruataType>{
 
 	private Types type;
 	

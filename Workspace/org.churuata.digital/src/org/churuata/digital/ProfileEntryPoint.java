@@ -8,12 +8,11 @@ import java.util.logging.Logger;
 
 import org.churuata.digital.core.AbstractChuruataEntryPoint;
 import org.churuata.digital.core.Dispatcher;
-import org.churuata.digital.core.data.OrganisationData;
-import org.churuata.digital.core.data.OrganisationData.Requests;
+import org.churuata.digital.core.data.ProfileData;
 import org.churuata.digital.core.rest.IRestPages;
 import org.churuata.digital.session.SessionStore;
 import org.churuata.digital.ui.image.ChuruataImages;
-import org.churuata.digital.ui.views.EditChuruataComposite;
+import org.churuata.digital.ui.views.EditPersonComposite;
 import org.condast.commons.authentication.http.IDomainProvider;
 import org.condast.commons.authentication.user.ILoginUser;
 import org.condast.commons.config.Config;
@@ -36,17 +35,17 @@ import org.eclipse.swt.widgets.Group;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
-public class CreateEntryPoint extends AbstractChuruataEntryPoint{
+public class ProfileEntryPoint extends AbstractChuruataEntryPoint{
 	private static final long serialVersionUID = 1L;
 
 	public static final String S_PAGE = "page";
 
 	public static final String S_CHURUATA = "churuata";
 
-	private EditChuruataComposite editComposite;
+	private EditPersonComposite editComposite;
 	private Button btnAdd;
 
-	private IEditListener<OrganisationData> listener = e->onOrganisationEvent(e);
+	private IEditListener<ProfileData> listener = e->onOrganisationEvent(e);
 
 	private WebController controller;
 	
@@ -69,7 +68,7 @@ public class CreateEntryPoint extends AbstractChuruataEntryPoint{
 	@Override
 	protected Composite createComposite(Composite parent) {
 		parent.setLayout( new GridLayout(1,false));
-		editComposite = new EditChuruataComposite(parent, SWT.NONE );
+		editComposite = new EditPersonComposite(parent, SWT.NONE );
 		editComposite.setData( RWT.CUSTOM_VARIANT, S_CHURUATA );
 		editComposite.setLayoutData( new GridData( SWT.FILL, SWT.FILL, true, true ));
 		editComposite.addEditListener( listener);
@@ -94,7 +93,7 @@ public class CreateEntryPoint extends AbstractChuruataEntryPoint{
 					SessionStore store = getSessionStore();
 					if( store.getOrganisation() == null )
 						return;
-					controller.create( store.getOrganisation());
+					controller.create( store.getProfile());
 				}
 				catch( Exception ex ){
 					ex.printStackTrace();
@@ -115,12 +114,12 @@ public class CreateEntryPoint extends AbstractChuruataEntryPoint{
 		ILoginUser user = store.getLoginUser();
 		editComposite.setInput(context, user);
 		LatLng selected = store.getSelected();
-		OrganisationData organisation = store.getOrganisation();
-		if( organisation == null ) {
-			organisation = new OrganisationData( selected );
-			store.setOrganisation(organisation); 
+		ProfileData profile = store.getProfile();
+		if( profile == null ) {
+			profile = null;//new ProfileData( selected );
+			store.setProfile(profile); 
 		}
-		editComposite.setInput( organisation );
+		editComposite.setInput( profile );
 
 		controller = new WebController();
 		controller.setInput(context, IRestPages.Pages.ORGANISATION.toPath());
@@ -128,19 +127,19 @@ public class CreateEntryPoint extends AbstractChuruataEntryPoint{
 		return true;
 	}
 
-	protected void onOrganisationEvent( EditEvent<OrganisationData> event ) {
-		LatLng data = null;
+	protected void onOrganisationEvent( EditEvent<ProfileData> event ) {
+		ProfileData data = null;
 		SessionStore store = super.getSessionStore();
 		switch( event.getType()) {
 		case INITIALISED:
 			break;
 		case CHANGED:
-			data = event.getData().getLocation();
-			store.setSelected( data);
+			data = event.getData();
+			store.setProfile(data);
 			break;
 		case SELECTED:
-			data = event.getData().getLocation();
-			store.setSelected( data);
+			data = event.getData();
+			store.setProfile(data);
 			Dispatcher.jump(BasicApplication.Pages.CREATE, store.getToken());
 			break;
 		case ADDED:
@@ -148,8 +147,8 @@ public class CreateEntryPoint extends AbstractChuruataEntryPoint{
 			Dispatcher.jump(BasicApplication.Pages.SERVICES, store.getToken());
 			break;
 		case COMPLETE:
-			data = event.getData().getLocation();
-			store.setSelected( data);
+			data = event.getData();
+			store.setProfile(data);
 			btnAdd.setEnabled(true);
 			break;
 		default:
@@ -181,7 +180,7 @@ public class CreateEntryPoint extends AbstractChuruataEntryPoint{
 		return super.handleSessionTimeout(reload);
 	}
 	
-	private class WebController extends AbstractHttpRequest<OrganisationData.Requests>{
+	private class WebController extends AbstractHttpRequest<ProfileData.Requests>{
 		
 		private ILoginUser user;
 		
@@ -193,23 +192,23 @@ public class CreateEntryPoint extends AbstractChuruataEntryPoint{
 			super.setContextPath(context + path);
 		}
 
-		public void create( OrganisationData organisation ) {
+		public void create( ProfileData profile ) {
 			Map<String, String> params = new HashMap<>();
 			try {
-				if( organisation == null )
+				if( profile == null )
 					return;
-				params.put(OrganisationData.Parameters.USER_ID.toString(), String.valueOf( user.getId()));
-				params.put(OrganisationData.Parameters.SECURITY.toString(), String.valueOf( user.getSecurity() ));
+				params.put(ProfileData.Parameters.USER_ID.toString(), String.valueOf( user.getId()));
+				params.put(ProfileData.Parameters.SECURITY.toString(), String.valueOf( user.getSecurity() ));
 				Gson gson = new Gson();
-				String str = gson.toJson( organisation, OrganisationData.class);
-				sendPut(OrganisationData.Requests.CREATE, params, str );
+				String str = gson.toJson( profile, ProfileData.class);
+				sendPut(ProfileData.Requests.CREATE, params, str );
 			} catch (IOException e) {
 				logger.warning(e.getMessage());
 			}
 		}
 		
 		@Override
-		protected String onHandleResponse(ResponseEvent<OrganisationData.Requests> event) throws IOException {
+		protected String onHandleResponse(ResponseEvent<ProfileData.Requests> event) throws IOException {
 			try {
 				switch( event.getRequest()){
 				case CREATE:
@@ -228,7 +227,7 @@ public class CreateEntryPoint extends AbstractChuruataEntryPoint{
 		}
 
 		@Override
-		protected void onHandleResponseFail(HttpStatus status, ResponseEvent<Requests> event) throws IOException {
+		protected void onHandleResponseFail(HttpStatus status, ResponseEvent<ProfileData.Requests> event) throws IOException {
 			super.onHandleResponseFail(status, event);
 		}
 	

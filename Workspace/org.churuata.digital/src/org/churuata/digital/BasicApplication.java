@@ -25,11 +25,15 @@ public class BasicApplication implements ApplicationConfiguration {
 	public enum Pages{
 		ACTIVE,
 		BANNER,
+		CONTACTS,
 		CREATE,
 		EDIT,
+		EDIT_PROFILE,
 		LOGIN,
 		LOGOFF,
 		MAP,
+		ORGANISATION,
+		PROFILE,
 		SERVICES,
 		READY, 
 		GET_EMAIL;
@@ -52,11 +56,17 @@ public class BasicApplication implements ApplicationConfiguration {
 			case BANNER:
 				result = "Banner";
 				break;
+			case CONTACTS:
+				result = "Edit Contact Details";
+				break;
 			case CREATE:
 				result = "create a Churuata";
 				break;
 			case EDIT:
 				result = "Change a Churuata";
+				break;
+			case EDIT_PROFILE:
+				result = "Edit Profile";
 				break;
 			case LOGIN:
 				result = "Login";
@@ -66,6 +76,12 @@ public class BasicApplication implements ApplicationConfiguration {
 				break;
 			case MAP:
 				result = "Map";
+				break;
+			case ORGANISATION:
+				result = "Edit Organisation Details";
+				break;
+			case PROFILE:
+				result = "Edit Profile";
 				break;
 			case SERVICES:
 				result = "Services";
@@ -85,17 +101,29 @@ public class BasicApplication implements ApplicationConfiguration {
 			case BANNER:
 				result = new BannerEntryPoint();
 				break;
+			case CONTACTS:
+				result = new ContactsEntryPoint();
+				break;
 			case CREATE:
 				result = new CreateEntryPoint();
 				break;
 			case EDIT:
 				result = new EditEntryPoint();
 				break;
+			case EDIT_PROFILE:
+				result = new ProfileEntryPoint();
+				break;
 			case LOGIN:
 				result = new LoginEntryPoint();
 				break;
 			case LOGOFF:
 				result = new LogoffEntryPoint();
+				break;
+			case ORGANISATION:
+				result = new OrganisationEntryPoint();
+				break;
+			case PROFILE:
+				result = new ProfileEntryPoint();
 				break;
 			case SERVICES:
 				result = new ServicesEntryPoint();

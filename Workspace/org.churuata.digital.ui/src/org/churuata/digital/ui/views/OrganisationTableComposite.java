@@ -1,11 +1,9 @@
 package org.churuata.digital.ui.views;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 
 import org.churuata.digital.core.data.OrganisationData;
-import org.churuata.digital.core.location.IChuruataType;
 import org.condast.commons.Utils;
 import org.condast.commons.strings.StringStyler;
 import org.condast.commons.ui.controller.EditEvent;
@@ -22,18 +20,16 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 
-public class ChuruataTableComposite extends AbstractTableViewerWithDelete<IChuruataType>{
+public class OrganisationTableComposite extends AbstractTableViewerWithDelete<OrganisationData>{
 	private static final long serialVersionUID = 976428552549736382L;
 
-	public static final String S_TABLECOLUMN_ID = "ChuruataTableColumn";
+	public static final String S_TABLECOLUMN_ID = "OrganisationTableColumn";
 
 	public enum Columns{
-		SERVICES,
-		CONTRIBUTOR,
 		NAME,
-		CONTRIBUTION,
-		FROM,
-		TO;
+		DESCRIPTION,
+		WEBSITE,
+		LOCATION;
 
 		public int getWeight() {
 			int[] bounds = { 40, 100, 30, 30, 30, 30 };
@@ -46,7 +42,7 @@ public class ChuruataTableComposite extends AbstractTableViewerWithDelete<IChuru
 		}
 	}
 	
-	private Collection<IEditListener<IChuruataType>> listeners;
+	private Collection<IEditListener<OrganisationData>> listeners;
 
 	private Composite container;
 
@@ -55,22 +51,22 @@ public class ChuruataTableComposite extends AbstractTableViewerWithDelete<IChuru
 	 * @param parent
 	 * @param style
 	 */
-	public ChuruataTableComposite( Composite parent, int style){
+	public OrganisationTableComposite( Composite parent, int style){
 		super( parent, style, true);
 		this.container = this;
 		listeners = new ArrayList<>();
 	}
 
-	public void addEditListener( IEditListener<IChuruataType> listener ) {
+	public void addEditListener( IEditListener<OrganisationData> listener ) {
 		this.listeners.add(listener);
 	}
 
-	public void removeEditListener( IEditListener<IChuruataType> listener ) {
+	public void removeEditListener( IEditListener<OrganisationData> listener ) {
 		this.listeners.remove(listener);
 	}
 
-	private void notifyEditListeners( EditEvent<IChuruataType> event ) {
-		for( IEditListener<IChuruataType> listener: this.listeners ) {
+	private void notifyEditListeners( EditEvent<OrganisationData> event ) {
+		for( IEditListener<OrganisationData> listener: this.listeners ) {
 			listener.notifyInputEdited(event);
 		}
 	}
@@ -84,24 +80,20 @@ public class ChuruataTableComposite extends AbstractTableViewerWithDelete<IChuru
 		}
 		String deleteStr = Buttons.DELETE.toString();
 		super.createDeleteColumn( Columns.values().length, deleteStr, 10 );
-		viewer.setLabelProvider( new ChuruataLabelProvider() );
+		viewer.setLabelProvider( new OrganisationLabelProvider() );
 	}
 
-	public IChuruataType[] getInput() {
-		Collection<IChuruataType> types = new ArrayList<>();
+	public OrganisationData[] getInput() {
+		Collection<OrganisationData> types = new ArrayList<>();
 		if( !Utils.assertNull(super.getInput())) {
 			for( Object tp: super.getInput() )
-				types.add((IChuruataType) tp);
+				types.add((OrganisationData) tp);
 		}
-		return types.toArray( new IChuruataType[ types.size()]);
+		return types.toArray( new OrganisationData[ types.size()]);
 	}
 	
-	protected void setInput( OrganisationData churuata) {
-		super.setInput( Arrays.asList( churuata.getTypes()));
-	}
-
 	@Override
-	protected void onRowDoubleClick(IChuruataType selection) {
+	protected void onRowDoubleClick(OrganisationData selection) {
 		try{
 			notifyEditListeners(new EditEvent<>( container, EditTypes.SELECTED, selection));
 		}
@@ -122,7 +114,7 @@ public class ChuruataTableComposite extends AbstractTableViewerWithDelete<IChuru
 	protected boolean onAddButtonSelected(SelectionEvent e) {
 		boolean result = false;
 		try{
-			notifyEditListeners(new EditEvent<IChuruataType>( container, EditTypes.ADDED));
+			notifyEditListeners(new EditEvent<OrganisationData>( container, EditTypes.ADDED));
 		}
 		catch( Exception ex ){
 			ex.printStackTrace();
@@ -131,16 +123,16 @@ public class ChuruataTableComposite extends AbstractTableViewerWithDelete<IChuru
 	}
 
 	@Override
-	protected boolean onDeleteButton( Collection<IChuruataType> deleted ) {
+	protected boolean onDeleteButton( Collection<OrganisationData> deleted ) {
 		Collection<Long> ids = new ArrayList<>();
 		boolean result = false;
-		for( IChuruataType vessel: deleted )
+		for( OrganisationData vessel: deleted )
 			ids.add(vessel.getId());
 		//try {
 			//Map<String, String> params = controller.getUserParams(user.getId(), user.getSecurity());
 			//Gson gson = new Gson();
 			//String data = gson.toJson(ids.toArray(new Long[ ids.size()]), Long[].class);
-			//params.put( IChuruataType.Parameters.IDS.toString(), data);
+			//params.put( OrganisationData.Parameters.IDS.toString(), data);
 			//controller.delete(IUserData.Requests.REMOVE_ALL, params, data);
 			result = true;
 		//} catch (IOException e) {
@@ -159,34 +151,31 @@ public class ChuruataTableComposite extends AbstractTableViewerWithDelete<IChuru
 		//updateTable( controller.getInput());
 	}
 
-	private class ChuruataLabelProvider extends DeleteLabelProvider{
+	private class OrganisationLabelProvider extends DeleteLabelProvider{
 		private static final long serialVersionUID = 1L;
 
 		@SuppressWarnings("unchecked")
 		@Override
 		public String getColumnText(Object element, int columnIndex) {
-			StoreWithDelete store = (AbstractTableViewerWithDelete<IChuruataType>.StoreWithDelete) element;
+			StoreWithDelete store = (AbstractTableViewerWithDelete<OrganisationData>.StoreWithDelete) element;
 			String result = super.getColumnText(element, columnIndex);
 			if( result != null )
 				return result;
 			Columns column = Columns.values()[ columnIndex ];
-			IChuruataType p = (IChuruataType) store.getStore();
+			OrganisationData organisation = (OrganisationData) store.getStore();
 			try {
 				switch( column ) {
-				case SERVICES:
-					result = p.getType().toString();
+				case DESCRIPTION:
+					result = organisation.getDescription();
 					break;
-				case CONTRIBUTOR:
-					result = p.getContribution().toString();
+				case WEBSITE:
+					result = organisation.getWebsite();
 					break;
 				case NAME:
-					result = p.getDescription();
+					result = organisation.getName();
 					break;
-				case FROM:
-					result = p.from().toString();
-					break;
-				case TO:
-					result = p.to().toString();
+				case LOCATION:
+					result = organisation.getLocation().toLocation();
 					break;
 				default:
 					break;
