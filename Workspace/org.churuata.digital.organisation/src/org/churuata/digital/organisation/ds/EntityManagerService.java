@@ -15,7 +15,7 @@ import org.osgi.service.component.annotations.ReferencePolicy;
  * @author Kees
  *
  */
-@Component( name="org.churuata.digital.authentication.entity.service",
+@Component( name="org.churuata.digital.organisation.entity.service",
 immediate=true)
 public class EntityManagerService extends EntityManagerFactoryService{
 		

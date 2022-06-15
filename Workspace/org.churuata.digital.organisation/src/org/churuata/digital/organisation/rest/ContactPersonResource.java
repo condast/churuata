@@ -22,6 +22,7 @@ import org.churuata.digital.organisation.services.ContactService;
 import org.churuata.digital.organisation.services.OrganisationService;
 import org.churuata.digital.organisation.services.PersonService;
 import org.condast.commons.Utils;
+import org.condast.commons.authentication.user.ILoginUser;
 import org.condast.commons.io.IOUtils;
 import org.condast.commons.na.model.IContact;
 import org.condast.commons.na.model.IContact.ContactTypes;
@@ -154,17 +155,29 @@ public class ContactPersonResource{
 		if( !dispatcher.isLoggedIn(userId, security))
 			return Response.status( Status.UNAUTHORIZED).build();
 
+		ILoginUser user = dispatcher.getLoginUser(userId, security);
 		PersonService ps = new PersonService(); 
-		OrganisationService os = new OrganisationService(); 
+		IContactPerson person = null;
 		try {
 			ps.open();
 			Collection<Person> persons = ps.findForLogin( userId );
-			if( Utils.assertNull(persons))
-				return Response.noContent().build();
-			IContactPerson person = persons.iterator().next(); 
-			ProfileData profile = new ProfileData( person );
+			if( Utils.assertNull(persons)) {
+				person = ps.create( user);
+			}else
+				person = persons.iterator().next(); 
+		}
+		catch( Exception ex ) {
+			ex.printStackTrace();
+			return Response.serverError().build();
+		}
+		finally {
+			IOUtils.close( ps );
+		}
+		ProfileData profile = new ProfileData( person );
+
+		OrganisationService os = new OrganisationService(); 
+		try {			
 			
-			os.open();
 			Collection<Organisation> orgs = os.getAll(person);
 			orgs.forEach(o->profile.addOrganisation( new OrganisationData(o)));
 			Gson gson = new Gson();
@@ -177,7 +190,6 @@ public class ContactPersonResource{
 		}
 		finally {
 			IOUtils.close( os );
-			IOUtils.close( ps );
 		}
 	}
 

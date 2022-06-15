@@ -3,14 +3,23 @@ package org.churuata.digital.organisation.model;
 import java.util.Calendar;
 import java.util.Date;
 
-import javax.persistence.Embeddable;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 
 import org.churuata.digital.core.location.IChuruataType;
+import org.churuata.digital.core.model.IOrganisation;
 import org.condast.commons.Utils;
 
-@Embeddable
+@Entity
 public class Service implements IChuruataType {
 
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
 	
 	private String serviceType;
@@ -19,7 +28,10 @@ public class Service implements IChuruataType {
 	private String description;
 	
 	private String contributor;
-	
+
+	@ManyToOne(cascade=CascadeType.PERSIST, fetch=FetchType.LAZY)
+	private Organisation organisation;
+
 	private long fromDate;
 	
 	private long toDate;
@@ -36,14 +48,18 @@ public class Service implements IChuruataType {
 		this.fromDate = calendar.getTimeInMillis();
 		calendar.add(Calendar.YEAR, 1);
 		this.toDate = calendar.getTimeInMillis();
-
 	}	
 	
 	@Override
 	public long getId() {
 		return id;
 	}
-	
+
+	@Override
+	public IOrganisation getOrganisation() {
+		return organisation;
+	}
+
 	@Override
 	public String getDescription() {
 		return description;

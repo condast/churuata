@@ -15,7 +15,6 @@ public class ContactService extends AbstractEntityService<Contact>{
 	
 	public Contact createContact( ContactTypes type, String value ) {
 		Contact contact = new Contact( type, value );
-		super.create(contact);
 		return contact;
 	}
 

@@ -16,6 +16,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.churuata.digital.core.location.IChuruataType;
+import org.churuata.digital.core.model.IOrganisation;
 import org.condast.commons.authentication.user.ILoginUser;
 
 @Entity
@@ -94,6 +95,11 @@ public class ChuruataType implements Comparable<ChuruataType>, IChuruataType{
 
 	public long getId() {
 		return id;
+	}
+
+	@Override
+	public IOrganisation getOrganisation() {
+		return null;
 	}
 
 	@Override

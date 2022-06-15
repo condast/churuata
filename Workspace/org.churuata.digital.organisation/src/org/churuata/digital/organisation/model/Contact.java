@@ -1,12 +1,22 @@
 package org.churuata.digital.organisation.model;
 
-import javax.persistence.Embeddable;
+import java.io.Serializable;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 
 import org.condast.commons.Utils;
 import org.condast.commons.na.model.IContact;
 
-@Embeddable
-public class Contact implements IContact {
+@Entity
+public class Contact implements IContact, Serializable {
+	private static final long serialVersionUID = -5944022062333100217L;
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private long id;
 
 	private String contactType;
 	private String value;
@@ -22,7 +32,12 @@ public class Contact implements IContact {
 		this.value = value;
 		this.application = -1;
 	}
-	
+
+	@Override
+	public long getId() {
+		return id;
+	}
+
 	@Override
 	public ContactTypes getContactType() {
 		if( Utils.assertNull( this.contactType ))

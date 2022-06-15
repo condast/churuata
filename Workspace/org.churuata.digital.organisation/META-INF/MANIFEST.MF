@@ -33,5 +33,5 @@ Import-Package: com.google.gson;version="2.6.2",
  org.osgi.service.component.annotations;version="1.2.0"
 Bundle-ActivationPolicy: lazy
 Automatic-Module-Name: org.satr.arnac.authentication
-Service-Component: OSGI-INF/org.churuata.digital.authentication.entity.service.xml,
+Service-Component: OSGI-INF/org.churuata.digital.organisation.entity.service.xml,
  OSGI-INF/org.churuata.digital.organisation.service.login.xml

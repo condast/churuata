@@ -23,8 +23,7 @@ public class Address implements IAddress, Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name="ADDRESS_ID", nullable=false)
-	private long addressId;
+	private long id;
 		
 	@Column(nullable=false)
 	private String town;
@@ -67,11 +66,11 @@ public class Address implements IAddress, Serializable {
 	
 	@Override
 	public long getAddressId() {
-		return this.addressId;
+		return this.id;
 	}
 
 	public void setAddressId( long adresId) {
-		this.addressId = adresId;
+		this.id = adresId;
 	}
 
 	@Override

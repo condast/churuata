@@ -7,14 +7,15 @@ import java.util.Collection;
 import java.util.Date;
 
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.PrimaryKeyJoinColumn;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -35,9 +36,7 @@ public class Organisation implements IOrganisation, Serializable, Cloneable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name="ORGANISATION_ID", nullable=false)
-	@PrimaryKeyJoinColumn(name="ORGANISATION_ID")
-	private long organisationId;
+	private long id;
 	
 	private double latitude;
 	private double longitude;
@@ -46,15 +45,15 @@ public class Organisation implements IOrganisation, Serializable, Cloneable {
 	@Column( nullable=true)
 	private Address address;
 
-	@Basic(optional = false)
-	@Column( nullable=false)
+	@JoinColumn( nullable=false)
+	@OneToOne
 	private Person contact;
 	
 	private String name;
 	
 	private String description;
 
-	@ElementCollection(fetch = FetchType.EAGER)
+	@OneToMany( mappedBy="organisation", cascade = CascadeType.ALL, orphanRemoval = true)
 	private Collection<Service> services;
 
 	@Column( nullable=false)
@@ -82,11 +81,11 @@ public class Organisation implements IOrganisation, Serializable, Cloneable {
 
 	@Override
 	public long getId() {
-		return this.organisationId;
+		return this.id;
 	}
 
 	public void setId( long organisationId) {
-		this.organisationId = organisationId;
+		this.id = organisationId;
 	}
 
 	@Override

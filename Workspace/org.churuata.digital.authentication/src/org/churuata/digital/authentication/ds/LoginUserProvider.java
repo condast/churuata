@@ -32,6 +32,7 @@ public class LoginUserProvider implements ILoginProvider {
 		return dispatcher.getLoginUser( loginId, token );
 	}
 	
+	@SuppressWarnings("resource")
 	@Override
 	public Map<Long, String> getUserNames( Collection<Long> userIds ){
 		LoginService service = new LoginService( dispatcher );
@@ -61,9 +62,5 @@ public class LoginUserProvider implements ILoginProvider {
 	@Override
 	public void logout(long loginId, long token) {
 		dispatcher.logout(loginId, token);
-	}
-
-	@Override
-	public void logoutRequest() {
 	}
 }

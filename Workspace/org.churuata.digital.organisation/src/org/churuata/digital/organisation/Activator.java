@@ -5,7 +5,7 @@ import org.osgi.framework.BundleContext;
 
 public class Activator implements BundleActivator {
 
-    public static String BUNDLE_ID = "org.churuata.digital.authentication";
+    public static String BUNDLE_ID = "org.churuata.digital.organisation";
     
     private static BundleContext defaultContext;
  

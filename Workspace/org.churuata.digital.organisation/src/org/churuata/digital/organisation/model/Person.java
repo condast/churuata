@@ -33,7 +33,7 @@ public class Person implements IContactPerson, Serializable, Cloneable {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name="PERSON_ID", nullable=false)
 	@PrimaryKeyJoinColumn(name="PERSON_ID")
-	private long personId;
+	private long id;
 	
 	private long userId;
 	
@@ -65,11 +65,11 @@ public class Person implements IContactPerson, Serializable, Cloneable {
 
 	@Override
 	public long getContactId() {
-		return this.personId;
+		return this.id;
 	}
 
-	public void setPersonId( long persoonId) {
-		this.personId = persoonId;
+	public void setPersonId( long personId) {
+		this.id = personId;
 	}
 
 	@Override
