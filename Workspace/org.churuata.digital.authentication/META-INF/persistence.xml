@@ -8,10 +8,6 @@
 		transaction-type="RESOURCE_LOCAL">
 		<description>Churuata Digital Database Provider</description>
 		<provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
-		<class>org.churuata.digital.authentication.model.Name</class>
-		<class>org.churuata.digital.authentication.model.Person</class>
-		<class>org.churuata.digital.authentication.model.Address</class>
-		<class>org.churuata.digital.authentication.model.PersonAddress</class>
 		<class>org.churuata.digital.authentication.model.Login</class>
 		<exclude-unlisted-classes>false</exclude-unlisted-classes>
 		<properties>

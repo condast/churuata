@@ -1,0 +1,11 @@
+Dear ${label.name.key},
+
+Thank you for using our products at ${label.domain.key}. Please press the confirmation code below to log in:
+ 
+ <h1>
+ ${label.confirm-code.key}
+ </h1>
+ 
+ Kind regards,
+ 
+ The ${label.domain.key} team.

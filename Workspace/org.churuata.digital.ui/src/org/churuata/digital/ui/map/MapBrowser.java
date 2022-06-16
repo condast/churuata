@@ -11,14 +11,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import org.churuata.digital.core.data.OrganisationData;
 import org.churuata.digital.core.location.ChuruataData;
 import org.churuata.digital.core.location.IChuruata;
 import org.churuata.digital.core.location.IChuruataCollection;
 import org.churuata.digital.core.location.IChuruataType;
 import org.churuata.digital.core.location.IChuruata.Requests;
 import org.churuata.digital.core.rest.IRestPages;
-import org.churuata.digital.ui.utils.RWTUtils;
-import org.churuata.digital.ui.views.EditChuruataComposite.Parameters;
 import org.condast.commons.Utils;
 import org.condast.commons.data.latlng.LatLng;
 import org.condast.commons.data.plane.FieldData;
@@ -169,7 +168,7 @@ public class MapBrowser extends Browser {
 				churuatas.addChuruata(churuata);
 				createMarker(icons, churuata, true);
 				updateMarkers(icons);
-				RWTUtils.redirect( S_UNITY_START_PAGE );
+				//RWTUtils.redirect( S_UNITY_START_PAGE );
 			}
 			if( IEvaluationListener.EventTypes.SELECTED.equals( event.getEventType())) {
 				logger.info(event.getData()[2].toString());
@@ -293,8 +292,8 @@ public class MapBrowser extends Browser {
 				if( fieldData == null )
 					return;
 				LatLng home = fieldData.getCoordinates();
-				params.put(Parameters.LATITUDE.toString(), String.valueOf( home.getLatitude()));
-				params.put(Parameters.LONGITUDE.toString(), String.valueOf( home.getLongitude()));
+				params.put(OrganisationData.Parameters.LATITUDE.toString(), String.valueOf( home.getLatitude()));
+				params.put(OrganisationData.Parameters.LONGITUDE.toString(), String.valueOf( home.getLongitude()));
 				sendGet(IChuruata.Requests.SHOW, params);
 			} catch (IOException e) {
 				logger.warning(e.getMessage());

@@ -52,6 +52,7 @@
 		<module>../org.churuata.digital.authentication</module>
 		<module>../org.churuata.digital.core</module>
 		<module>../org.churuata.digital.ui</module>
+		<module>../org.churuata.digital.organisation</module>
 		<module>../org.churuata.rest</module>
 		<module>../org.churuata.feature</module>
 		<module>../org.churuata.update</module>

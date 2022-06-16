@@ -1,0 +1,9 @@
+Dear ${label.name.key},
+
+Thank you for registering at ${label.domain.key}. Please press the confirmation code below to complete the registration process:
+ 
+ ${label.confirmation.key}
+ 
+ Kind regards,
+ 
+ The ${label.domain.key} team.

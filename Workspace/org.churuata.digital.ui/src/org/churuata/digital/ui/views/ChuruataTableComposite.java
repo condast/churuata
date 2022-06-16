@@ -1,25 +1,12 @@
 package org.churuata.digital.ui.views;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.logging.Logger;
 
-import javax.servlet.http.HttpSession;
-
-import org.churuata.digital.core.location.ChuruataData;
-import org.churuata.digital.core.location.ChuruataType;
-import org.churuata.digital.core.location.IChuruata;
+import org.churuata.digital.core.data.OrganisationData;
 import org.churuata.digital.core.location.IChuruataType;
-import org.churuata.digital.core.location.IChuruata.Requests;
-import org.churuata.digital.core.rest.IRestPages;
-import org.churuata.digital.ui.views.EditChuruataComposite.Parameters;
-import org.condast.commons.data.latlng.LatLng;
-import org.condast.commons.messaging.http.AbstractHttpRequest;
-import org.condast.commons.messaging.http.ResponseEvent;
+import org.condast.commons.Utils;
 import org.condast.commons.strings.StringStyler;
 import org.condast.commons.ui.controller.EditEvent;
 import org.condast.commons.ui.controller.EditEvent.EditTypes;
@@ -32,12 +19,8 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
-
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
-import org.eclipse.rap.rwt.RWT;
 
 public class ChuruataTableComposite extends AbstractTableViewerWithDelete<IChuruataType>{
 	private static final long serialVersionUID = 976428552549736382L;
@@ -63,22 +46,17 @@ public class ChuruataTableComposite extends AbstractTableViewerWithDelete<IChuru
 		}
 	}
 	
-	private WebController controller;
-
 	private Collection<IEditListener<IChuruataType>> listeners;
 
 	private Composite container;
 
-	private Logger logger = Logger.getLogger(this.getClass().getName());
-	
 	/**
 	 * Create the composite.
 	 * @param parent
 	 * @param style
 	 */
 	public ChuruataTableComposite( Composite parent, int style){
-		super( parent, style);
-		controller = new WebController( );
+		super( parent, style, true);
 		this.container = this;
 		listeners = new ArrayList<>();
 	}
@@ -109,13 +87,16 @@ public class ChuruataTableComposite extends AbstractTableViewerWithDelete<IChuru
 		viewer.setLabelProvider( new ChuruataLabelProvider() );
 	}
 
-	public void setInput( String context ){
-		controller.setInput(context, IRestPages.Pages.SUPPORT.toPath());
-		controller.services();
+	public IChuruataType[] getInput() {
+		Collection<IChuruataType> types = new ArrayList<>();
+		if( !Utils.assertNull(super.getInput())) {
+			for( Object tp: super.getInput() )
+				types.add((IChuruataType) tp);
+		}
+		return types.toArray( new IChuruataType[ types.size()]);
 	}
 	
-
-	protected void setInput( IChuruata churuata) {
+	protected void setInput( OrganisationData churuata) {
 		super.setInput( Arrays.asList( churuata.getTypes()));
 	}
 
@@ -173,21 +154,9 @@ public class ChuruataTableComposite extends AbstractTableViewerWithDelete<IChuru
 		return result;
 	}
 
-	public void refresh() {
-		controller.services();
-	}
-
 	@Override
 	protected void onRefresh() {
 		//updateTable( controller.getInput());
-	}
-
-	protected void setChuruata(IChuruata churuata) {
-		try {
-			setInput(churuata);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 	}
 
 	private class ChuruataLabelProvider extends DeleteLabelProvider{
@@ -208,7 +177,7 @@ public class ChuruataTableComposite extends AbstractTableViewerWithDelete<IChuru
 					result = p.getType().toString();
 					break;
 				case CONTRIBUTOR:
-					result = p.getContributor();
+					result = p.getContribution().toString();
 					break;
 				case NAME:
 					result = p.getDescription();
@@ -229,10 +198,8 @@ public class ChuruataTableComposite extends AbstractTableViewerWithDelete<IChuru
 			return result;
 		}
 
-		@SuppressWarnings("unchecked")
 		public Image getColumnImage(Object element, int columnIndex) {				
 			Image image = super.getColumnImage(element, columnIndex);
-			StoreWithDelete store = (AbstractTableViewerWithDelete<IChuruataType>.StoreWithDelete) element;
 			if( columnIndex == getDeleteColumnindex() ){
 				return image;
 			}
@@ -250,82 +217,4 @@ public class ChuruataTableComposite extends AbstractTableViewerWithDelete<IChuru
 			return image;
 		}
 	}
-
-	private class WebController extends AbstractHttpRequest<IChuruata.Requests>{
-		
-		private IChuruata churuata;
-		
-		public WebController() {
-			super();
-		}
-
-		public void setInput(String context, String path) {
-			super.setContextPath(context + path);
-		}
-
-		public void services() {
-			Map<String, String> params = new HashMap<>();
-			try {
-				HttpSession session = RWT.getUISession().getHttpSession();		
-				LatLng selected = (LatLng) session.getAttribute( EditTypes.SELECTED.name());
-				params.put(Parameters.LATITUDE.toString(), String.valueOf( selected.getLatitude()));
-				params.put(Parameters.LONGITUDE.toString(), String.valueOf( selected.getLongitude()));
-				sendGet(IChuruata.Requests.FIND, params);
-			} catch (IOException e) {
-				logger.warning(e.getMessage());
-			}
-		}
-		
-		@Override
-		protected String onHandleResponse(ResponseEvent<Requests> event) throws IOException {
-			try {
-				switch( event.getRequest()){
-				case FIND:
-					Gson gson = new Gson();
-					ChuruataData result = gson.fromJson(event.getResponse(), ChuruataData.class);
-					if( result == null )
-						return null;
-					churuata = result;
-					setChuruata(churuata);
-					break;
-				default:
-					break;
-				}
-			} catch (JsonSyntaxException e) {
-				e.printStackTrace();
-			}
-			finally {
-				//updateMap();
-			}
-			return null;
-		}
-
-		@Override
-		protected void onHandleResponseFail(HttpStatus status, ResponseEvent<Requests> event)
-				throws IOException {
-			try {
-				switch( event.getRequest()){
-				case FIND:
-					
-					HttpSession session = RWT.getUISession().getHttpSession();		
-					LatLng selected = (LatLng) session.getAttribute( EditTypes.SELECTED.name());
-					churuata = new ChuruataData( selected );
-					churuata.setType( new ChuruataType(IChuruataType.Types.FOOD ));
-					setChuruata(churuata);
-					break;
-				default:
-					super.onHandleResponseFail(status, event);
-					break;
-				}
-			} catch (JsonSyntaxException e) {
-				e.printStackTrace();
-			}
-			finally {
-				//updateMap();
-			}
-		}	
-		
-		
-	}
-
 }

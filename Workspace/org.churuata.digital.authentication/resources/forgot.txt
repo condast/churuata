@@ -1,0 +1,11 @@
+Dear ${label.name.key},
+
+A request was received to restore a password. If you sent this request, then please press the link below to restore your password:
+ 
+ <h1>
+ ${label.forgotten.key}
+ </h1>
+ 
+ Kind regards,
+ 
+ The ${label.domain.key} team.

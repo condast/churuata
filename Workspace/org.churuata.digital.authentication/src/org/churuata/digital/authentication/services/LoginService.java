@@ -13,11 +13,13 @@ import org.condast.commons.authentication.core.LoginData;
 import org.condast.commons.authentication.user.ILoginUser;
 import org.condast.commons.persistence.service.AbstractEntityService;
 import org.condast.commons.persistence.service.IPersistenceService;
+import org.condast.commons.strings.StringUtils;
 
 public class LoginService extends AbstractEntityService<Login>{
 
 	private static final String SELECT = "SELECT l FROM Login l ";
 	private static final String SELECT_USER = SELECT + "WHERE l.userName=:userName AND l.password=:password";
+	private static final String SELECT_EMAIL = SELECT + "WHERE l.email=:email";
 
 	private static final String S_IDS = "ids"; 
 	private static final String SQL_LOGIN_ID_QUERY = SELECT + "WHERE l.id in :" + S_IDS;
@@ -34,7 +36,22 @@ public class LoginService extends AbstractEntityService<Login>{
 		super.create(login);
 		return login;
 	}
-	
+
+	/**
+	 * Returns all the users with the given email address
+	 * @param email
+	 * @return
+	 */
+	public ILoginUser[] hasEmail( String email ) {
+		if(( !super.isConnected()) || StringUtils.isEmpty(email))
+			return null;
+		String str = email.replace("\"", "").trim();
+		TypedQuery<ILoginUser> query = super.getManager().createQuery( SELECT_EMAIL, ILoginUser.class);
+		query.setParameter("email", str);
+		Collection<ILoginUser> users = query.getResultList();
+		return Utils.assertNull( users)? null: users.toArray( new ILoginUser[ users.size()]);
+	}
+
 	public ILoginUser login( String user, String password ) {
 		if( !super.isConnected())
 			return null;

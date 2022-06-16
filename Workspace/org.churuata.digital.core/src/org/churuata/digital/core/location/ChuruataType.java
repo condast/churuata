@@ -3,7 +3,10 @@ package org.churuata.digital.core.location;
 import java.util.Calendar;
 import java.util.Date;
 
-public class ChuruataType implements Comparable<IChuruataType>, IChuruataType{
+import org.churuata.digital.core.model.IOrganisation;
+
+@Deprecated
+public class ChuruataType implements IChuruataType, Comparable<IChuruataType>{
 
 	private Types type;
 	
@@ -49,6 +52,12 @@ public class ChuruataType implements Comparable<IChuruataType>, IChuruataType{
 	public long getId() {
 		// TODO Auto-generated method stub
 		return 0;
+	}
+
+	@Override
+	public IOrganisation getOrganisation() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override

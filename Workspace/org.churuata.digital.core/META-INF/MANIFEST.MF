@@ -6,11 +6,14 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Condast
 Automatic-Module-Name: org.churuata.digital.core
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Import-Package: org.condast.commons.authentication.user,
+Import-Package: org.condast.commons,
+ org.condast.commons.authentication.user,
  org.condast.commons.data.latlng,
+ org.condast.commons.na.model,
  org.condast.commons.strings,
  org.condast.js.commons.images
 Export-Package: org.churuata.digital.core,
+ org.churuata.digital.core.data,
  org.churuata.digital.core.location,
- org.churuata.digital.core.rest,
- org.churuata.digital.core.store
+ org.churuata.digital.core.model,
+ org.churuata.digital.core.rest

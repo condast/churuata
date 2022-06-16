@@ -7,7 +7,6 @@ import org.churuata.digital.core.location.IChuruataType;
 import org.churuata.digital.ui.image.ChuruataImages;
 import org.churuata.digital.ui.image.ImageUtils;
 import org.churuata.digital.ui.image.ChuruataImages.Images;
-import org.churuata.digital.ui.utils.RWTUtils;
 import org.condast.commons.Utils;
 import org.condast.commons.data.latlng.LatLng;
 import org.condast.commons.strings.StringUtils;
@@ -176,7 +175,7 @@ public class ShowChuruatasComposite extends AbstractEntityComposite<IChuruata>
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				RWTUtils.redirect("web/unity/index.html");
+				//RWTUtils.redirect("web/unity/index.html");
 				super.widgetSelected(e);
 			}
 		});

@@ -2,12 +2,14 @@ package org.churuata.digital.core.location;
 
 import java.util.Date;
 
+import org.churuata.digital.core.model.IOrganisation;
 import org.condast.commons.strings.StringStyler;
 import org.condast.js.commons.images.IDefaultMarkers.Markers;
 
 public interface IChuruataType {
 
 	public enum Types{
+		UNKNOWN,
 		FOOD,
 		SHELTER,
 		MEDICINE,
@@ -68,7 +70,14 @@ public interface IChuruataType {
 	public enum Contribution{
 		LOG,
 		LEAF;
-		
+
+		public static String[] getItems() {
+			String[] items = new String[ values().length ];
+			for( int i=0; i< values().length; i++ )
+				items[i] = values()[i].toString();
+			return items;
+		}
+
 		@Override
 		public String toString() {
 			return StringStyler.prettyString( name());
@@ -104,5 +113,7 @@ public interface IChuruataType {
 	public Date to();
 	
 	public void setTo( Date date );
+
+	IOrganisation getOrganisation();
 
 }
