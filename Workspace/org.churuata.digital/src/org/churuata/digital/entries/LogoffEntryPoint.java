@@ -1,4 +1,4 @@
-package org.churuata.digital;
+package org.churuata.digital.entries;
 
 import org.churuata.digital.core.AuthenticationDispatcher;
 import org.churuata.digital.session.SessionStore;

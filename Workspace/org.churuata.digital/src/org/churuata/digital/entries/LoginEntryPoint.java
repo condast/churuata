@@ -1,4 +1,4 @@
-package org.churuata.digital;
+package org.churuata.digital.entries;
 
 import com.google.gson.Gson;
 import java.io.IOException;
@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
+import org.churuata.digital.BasicApplication;
 import org.churuata.digital.core.AbstractChuruataEntryPoint;
 import org.churuata.digital.core.AuthenticationDispatcher;
 import org.churuata.digital.core.Dispatcher;

@@ -3,6 +3,17 @@ package org.churuata.digital;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.churuata.digital.entries.AccountEntryPoint;
+import org.churuata.digital.entries.ActiveEntryPoint;
+import org.churuata.digital.entries.AddressEntryPoint;
+import org.churuata.digital.entries.BannerEntryPoint;
+import org.churuata.digital.entries.BasicEntryPoint;
+import org.churuata.digital.entries.ContactsEntryPoint;
+import org.churuata.digital.entries.CreateEntryPoint;
+import org.churuata.digital.entries.EditEntryPoint;
+import org.churuata.digital.entries.LoginEntryPoint;
+import org.churuata.digital.entries.LogoffEntryPoint;
+import org.churuata.digital.entries.OrganisationEntryPoint;
 import org.churuata.digital.session.SessionStore;
 import org.condast.commons.strings.StringStyler;
 import org.condast.commons.strings.StringUtils;
@@ -16,6 +27,10 @@ import org.eclipse.rap.rwt.client.WebClient;
 
 public class BasicApplication implements ApplicationConfiguration {
 
+	public static final String S_CAMINANTES_TITLE = "Caminantes";
+	public static final String S_CAMINANTES_PATH = "/caminantes";
+
+	public static final String S_CHURUATA_TITLE = "Churuata Digital";
 	public static final String S_CHURUATA_VARIANT = "churuata";
 	public static final String S_CHURUATA = "/" + S_CHURUATA_VARIANT;
 
@@ -23,6 +38,8 @@ public class BasicApplication implements ApplicationConfiguration {
 	private static final String S_THEME_CSS = "themes/theme.css";
 
 	public enum Pages{
+		ACCOUNT,
+		ADDRESS,
 		ACTIVE,
 		BANNER,
 		CONTACTS,
@@ -33,7 +50,6 @@ public class BasicApplication implements ApplicationConfiguration {
 		LOGOFF,
 		MAP,
 		ORGANISATION,
-		PROFILE,
 		SERVICES,
 		READY, 
 		GET_EMAIL;
@@ -51,7 +67,13 @@ public class BasicApplication implements ApplicationConfiguration {
 			String result = StringStyler.prettyString(name());
 			switch( this ) {
 			case READY:
-				result = "Arnac Control";
+				result = "Churuata";
+				break;
+			case ACCOUNT:
+				result = "Edit Account";
+				break;
+			case ADDRESS:
+				result = "Edit Address";
 				break;
 			case BANNER:
 				result = "Banner";
@@ -80,11 +102,8 @@ public class BasicApplication implements ApplicationConfiguration {
 			case ORGANISATION:
 				result = "Edit Organisation Details";
 				break;
-			case PROFILE:
-				result = "Edit Profile";
-				break;
 			case SERVICES:
-				result = "Services";
+				result = "Edit Services";
 				break;
 			default:
 				break;
@@ -97,6 +116,12 @@ public class BasicApplication implements ApplicationConfiguration {
 			switch( this ) {
 			case READY:
 				result = new ActiveEntryPoint();
+				break;
+			case ACCOUNT:
+				result = new AccountEntryPoint();
+				break;
+			case ADDRESS:
+				result = new AddressEntryPoint();
 				break;
 			case BANNER:
 				result = new BannerEntryPoint();
@@ -111,7 +136,7 @@ public class BasicApplication implements ApplicationConfiguration {
 				result = new EditEntryPoint();
 				break;
 			case EDIT_PROFILE:
-				result = new ProfileEntryPoint();
+				result = new AccountEntryPoint();
 				break;
 			case LOGIN:
 				result = new LoginEntryPoint();
@@ -121,9 +146,6 @@ public class BasicApplication implements ApplicationConfiguration {
 				break;
 			case ORGANISATION:
 				result = new OrganisationEntryPoint();
-				break;
-			case PROFILE:
-				result = new ProfileEntryPoint();
 				break;
 			case SERVICES:
 				result = new ServicesEntryPoint();
@@ -156,11 +178,18 @@ public class BasicApplication implements ApplicationConfiguration {
 			if( page.getEntryPoint() == null )
 				continue;
 			Map<String, String> properties = new HashMap<String, String>();
-			properties.put(WebClient.PAGE_TITLE, "Churuata Digital");
+			properties.put(WebClient.PAGE_TITLE, S_CHURUATA_TITLE);
 			properties.put( WebClient.THEME_ID, S_CHURUATA_THEME );
 			ChuruataEntryPointFactory factory = new ChuruataEntryPointFactory(store, page);
 			application.addEntryPoint( page.toString(), factory, properties);
 		}
+		
+		//Add las caminantas
+		Map<String, String> properties = new HashMap<String, String>();
+		properties.put(WebClient.PAGE_TITLE, S_CAMINANTES_TITLE);
+		properties.put( WebClient.THEME_ID, S_CHURUATA_THEME );
+		application.addEntryPoint( S_CAMINANTES_PATH, BasicEntryPoint.class, properties);
+
 	}
 	
 	private class ChuruataEntryPointFactory  implements EntryPointFactory{

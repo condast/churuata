@@ -1,8 +1,10 @@
-package org.churuata.digital;
+package org.churuata.digital.entries;
 
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.Locale;
+
+import org.churuata.digital.BasicApplication;
 import org.churuata.digital.ui.banner.Banner;
 import org.eclipse.rap.rwt.RWT;
 import org.eclipse.rap.rwt.application.AbstractEntryPoint;

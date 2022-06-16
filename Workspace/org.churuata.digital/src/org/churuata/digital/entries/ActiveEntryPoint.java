@@ -1,7 +1,8 @@
-package org.churuata.digital;
+package org.churuata.digital.entries;
 
 import java.util.concurrent.TimeUnit;
 
+import org.churuata.digital.BasicApplication;
 import org.churuata.digital.core.AbstractChuruataEntryPoint;
 import org.churuata.digital.core.Dispatcher;
 import org.churuata.digital.session.SessionStore;

@@ -18,25 +18,25 @@ import org.condast.commons.messaging.http.IHttpRequest.HttpStatus;
 import org.condast.commons.strings.StringStyler;
 import org.condast.commons.strings.StringUtils;
 import org.condast.commons.parser.AbstractResourceParser;
+import org.condast.commons.parser.AbstractResourceParser.Attributes;
 
-public class ActiveServlet extends HttpServlet {
+public class ProfileServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	//same as alias in plugin.xml
 	public static final String S_CHURUATA = "churuata/";
 	public static final String S_CONTEXT_PATH = S_CHURUATA + "index";
-	public static final String S_LOGIN = "Login";
 	public static final String S_LOGOFF = "Logoff";
 
-	public static final String S_RESOURCE_FILE = "/resources/active.html";
+	public static final String S_RESOURCE_FILE = "/resources/profile.html";
 
 	private enum Pages{
 		ACTIVE,
-		LOG,
-		LOGIN,
-		OVERVIEW,
-		PROFILE,
-		SYSTEM;
+		LOGOFF,
+		ACCOUNT,
+		ADDRESS,
+		ORGANISATION,
+		SERVICES;
 
 		@Override
 		public String toString() {
@@ -57,21 +57,24 @@ public class ActiveServlet extends HttpServlet {
 		}
 	}
 
-	private long userId;
-	private long token;
-
-	public ActiveServlet() {
+	public ProfileServlet() {
 		super();
-		token = -1;
 	}
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		String tokenstr = req.getParameter(IDomainProvider.Attributes.TOKEN.toAttribute());
+		String selectstr = req.getParameter(Attributes.SELECT.toAttribute());
+		Pages active = Pages.ACCOUNT;
+		if(!StringUtils.isEmpty(selectstr)) {
+			active = Pages.getPage(selectstr);
+			
+		}
 		AuthenticationDispatcher authentication = AuthenticationDispatcher.getInstance();
 		ILoginUser user = null;
 		
 		//either enter through the login entry point, or see if login is attempted through a REST call
+		long token = -1;
 		if( !StringUtils.isEmpty(tokenstr)) {
 			token = Long.parseLong(tokenstr);
 			Dispatcher dispatcher = Dispatcher.getInstance();
@@ -97,8 +100,7 @@ public class ActiveServlet extends HttpServlet {
 			resp.setStatus( HttpStatus.UNAUTHORISED.getStatus());
 			return;
 		}
-		userId = user.getId();
-		FileParser parser = new FileParser( token );
+		FileParser parser = new FileParser( user, active, token );
 		String str =null;
 		try{
 			str = parser.parse( this.getClass().getResourceAsStream(S_RESOURCE_FILE) );
@@ -111,12 +113,15 @@ public class ActiveServlet extends HttpServlet {
 
 	private class FileParser extends AbstractResourceParser{
 
-		AuthenticationDispatcher dispatcher = AuthenticationDispatcher.getInstance();
+		private ILoginUser user;
 		private long token;
-		
-		public FileParser(long token) {
+		private Pages active;
+
+		public FileParser( ILoginUser user, Pages active, long token) {
 			super();
 			this.token = token;
+			this.user = user;
+			this.active = active;
 		}
 
 		@Override
@@ -126,24 +131,38 @@ public class ActiveServlet extends HttpServlet {
 
 		@Override
 		protected String onHandleLabel(String id, Attributes attr) {
-			String result = S_LOGOFF;
+			String result = null;
+			switch( attr ) {
+			case ACTIVE:
+				if( !Pages.isValid(id))
+					return null;
+				
+				Pages page = Pages.getPage(id);
+				result = page.equals(active)?id:"";
+				break;
+			case KEY:
+				result = handleKeyLabel(id);
+				break;
+			default:
+				result = handleKeyLabel(id);
+				break;
+			}
+			return result;
+		}
+
+		protected String handleKeyLabel(String id) {
 			if( Pages.isValid(id)) {
 				Pages page = Pages.getPage(id);
-				switch( page) {	
-				case LOGIN:
-					result = S_LOGOFF;
-					break;
-				default:
-					result = StringStyler.prettyString(page.name());
-					break;
-				}
+				return StringStyler.prettyString(page.name());
 			}
 
+			String result = S_LOGOFF;
 			if( !IDomainProvider.Attributes.isValid(id))
 				return result;
+			
 			switch( IDomainProvider.Attributes.getAttribute(id)) {
 			case USER_ID:
-				result = "user-id=" + userId;
+				result = "user-id=" + user.getId();
 				break;
 			case TOKEN:
 				result = "token=" + token;
@@ -155,17 +174,14 @@ public class ActiveServlet extends HttpServlet {
 		}
 
 		@Override
-		protected String onCreateLink(String link, String page, String arguments) {
+		protected String onCreateLink(String link, String id, String arguments) {
+			if( !Pages.isValid(id))
+				return null;
+			Pages page = Pages.getPage(id);
 			String result = null;
-			ILoginUser user = dispatcher.getLoginUser(token);
-			switch( Pages.valueOf(StringStyler.styleToEnum(page))) {
-			case LOGIN:
-				result = S_LOGOFF.toLowerCase() + "?"  +
-						ILoginUser.Attributes.USERNAME.name().toLowerCase() + "=" + user.getUserName() + 
-						IDomainProvider.Attributes.TOKEN.name().toLowerCase() + "=" + token;
-				break;
-			case PROFILE:
-				result = page.toLowerCase() + "?"  +
+			switch( page ) {
+			case ACTIVE:
+				result = StringStyler.xmlStyleString( this.active.name()) + "?"  +
 						ILoginUser.Attributes.USERNAME.name().toLowerCase() + "=" + user.getUserName() + 
 						IDomainProvider.Attributes.TOKEN.name().toLowerCase() + "=" + token;
 				break;
