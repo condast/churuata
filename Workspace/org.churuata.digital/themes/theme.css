@@ -40,8 +40,8 @@ Composite.wizard-container{
 	padding: 0px;
 }
 
-Composite.arnac{
-	background-color: #7092BE;
+Composite.churuata{
+	background-color: #0057B7;
 }
 
 Composite.highlight{
@@ -76,19 +76,19 @@ Composite.infobox{
 }
 
 Composite.search{
-  background-color: #004D9D;
+  background-color: #0057B7;
 }
 
 Composite.wizard{
-  background-color: #004D9D;
+  background-color: #0057B7;
 }
 
-Group.arnac{
-  background-color: #7092BE;
+Group.churuata{
+  background-color: #0057B7;
 }
 
 TabFolder{
-  background-color: #7092BE;
+  background-color: #0057B7;
 }
 
 TabItem{
@@ -98,7 +98,7 @@ TabItem{
 ToolBar{
   font: 15px Verdana, "Lucida Sans", Arial, Helvetica, sans-serif;
   color: white;
-  background-color: #004D9D;
+  background-color: #0057B7;
 }
 
 ToolItem{
@@ -124,7 +124,7 @@ ToolItem:pressed{
 ToolItem:selected{
   color: #1A2F86;
   border: none;
-  background-color: #004D9D;
+  background-color: #0057B7;
   background-image: none;
 }
 
@@ -135,18 +135,18 @@ ToolItem-DropDownIcon.selected{
 }
 
 Composite.navigation{
-  background-color: #004D9D;
+  background-color: #0057B7;
 }
 
 Label.navigation{
-  background-color: #004D9D;
+  background-color: #0057B7;
 }
 
 Button[CHECK]{
   background-color: transparent;
 }
 
-Button.arnac{
+Button.churuata{
   background-color: transparent;
   border: none;
 }
@@ -158,7 +158,7 @@ Button.navigation{
 
 ToolItem.navigation:selected{
   padding: 8px 8px 8px 8px;
-  background-color: #004D9D;
+  background-color: #0057B7;
 }
 
 Menu.navigation{
@@ -218,7 +218,7 @@ Label.pageHeadline{
 Label.search{
 	font: 16px Helvetica, Verdana, sans-serif; 
 	color: white;
-	background-color: #004D9D;
+	background-color: #0057B7;
 }
 
 Label.customLabel{
@@ -252,7 +252,7 @@ Text[MULTI].error{
 }
 
 Text.navigation{
-  background-color: #004D9D;
+  background-color: #0057B7;
   color: white;
 }
 
@@ -262,6 +262,6 @@ Text[MULTI].error:focused{
 }
 
 Text.wizard{
-  background-color: #004D9D;
+  background-color: #0057B7;
   color: white;
 }

@@ -30,13 +30,13 @@ public class ChuruataTableComposite extends AbstractTableViewerWithDelete<IChuru
 	public enum Columns{
 		SERVICES,
 		CONTRIBUTOR,
-		NAME,
+		DESCRIPTION,
 		CONTRIBUTION,
 		FROM,
 		TO;
 
 		public int getWeight() {
-			int[] bounds = { 40, 100, 30, 30, 30, 30 };
+			int[] bounds = { 40, 30, 100, 30, 30, 30 };
 			return bounds[ordinal()];
 		}
 
@@ -179,7 +179,7 @@ public class ChuruataTableComposite extends AbstractTableViewerWithDelete<IChuru
 				case CONTRIBUTOR:
 					result = p.getContribution().toString();
 					break;
-				case NAME:
+				case DESCRIPTION:
 					result = p.getDescription();
 					break;
 				case FROM:

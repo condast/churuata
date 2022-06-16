@@ -28,9 +28,9 @@ import org.condast.commons.strings.StringStyler;
 import org.condast.commons.strings.StringUtils;
 import org.condast.commons.ui.controller.EditEvent;
 import org.condast.commons.ui.controller.IEditListener;
-import org.condast.commons.ui.controller.EditEvent.EditTypes;
 import org.condast.commons.ui.session.AbstractSessionHandler;
 import org.condast.commons.ui.session.SessionEvent;
+import org.condast.commons.ui.controller.EditEvent.EditTypes;
 import org.condast.js.commons.eval.EvaluationEvent;
 import org.condast.js.commons.eval.IEvaluationListener;
 import org.condast.js.commons.images.IDefaultMarkers.Markers;
@@ -69,6 +69,8 @@ public class MapBrowser extends Browser {
 	private IChuruataCollection churuatas;
 
 	private Collection<IEditListener<LatLng>> listeners;
+	
+	private boolean located;
 
 	private ProgressListener plistener = new ProgressListener() {
 		private static final long serialVersionUID = 1L;
@@ -98,7 +100,9 @@ public class MapBrowser extends Browser {
 
 	public MapBrowser(Composite parent, int style) {
 		super(parent, style);
-		LatLng location = new LatLng( "Cucuta", 7.89391, -72.50782);
+		this.located = false;
+		LatLng location = new LatLng( "Cucuta", 50.380502,31.539470);
+		this.fieldData = new FieldData(-1, location, 10000, 10000, 0, 11 );
 		this.mapController = new OpenLayerController( this, location, 11 );
 		this.mapController.addEvaluationListener( listener);
 		this.listeners = new ArrayList<>();
@@ -121,14 +125,8 @@ public class MapBrowser extends Browser {
 
 	private void onNotifyEvaluation(EvaluationEvent<Object> event) {
 		try {
-			if(!OpenLayerController.S_CALLBACK_ID.equals(event.getId())) {
-				IconsView icons = new IconsView( mapController );
-				updateMarkers(icons);
-				NavigationView view = new NavigationView(mapController);
-				view.getLocation();
-				return;
-			}
-			if( Utils.assertNull( event.getData()))
+			logger.info("evaluating: " + event.getId());
+			if( !OpenLayerController.S_CALLBACK_ID.equals(event.getId()) || Utils.assertNull( event.getData()))
 				return;
 			Collection<Object> eventData = Arrays.asList(event.getData());
 			StringBuilder builder = new StringBuilder();
@@ -138,20 +136,24 @@ public class MapBrowser extends Browser {
 					builder.append(obj.toString());
 				builder.append(", ");
 			}
-			logger.fine(builder.toString());
+			logger.info(builder.toString());
 			String str = (String) event.getData()[0];
 
 			LatLng home = null;
 			if( NavigationView.Commands.isValue(str)) {
+				logger.info("String found: " + str);
 				NavigationView.Commands cmd = NavigationView.Commands.valueOf(StringStyler.styleToEnum(str));
 				switch( cmd ) {
 				case GET_GEO_LOCATION:
+					logger.info("Setting geo location");
 					Object[] arr = (Object[]) event.getData()[2];
 					home = new LatLng( "home", (double)arr[0], (double)arr[1]);
 					fieldData = new FieldData( -1, home, 10000l, 10000l, 0d, 11);
+					this.located = true;
 					GeoView geo = new GeoView( this.mapController );
 					geo.setFieldData(fieldData);
 					geo.jump();
+					logger.info("Jumped to geo location");
 					return;
 				}
 			}
@@ -202,13 +204,24 @@ public class MapBrowser extends Browser {
 
 	public void setInput( String context ){
 		controller.setInput(context, IRestPages.Pages.SUPPORT.toPath());
+		GeoView geo = new GeoView(this.mapController);
+		geo.setFieldData(fieldData);
+		geo.jump();
+		onNavigation();
 	}
 
-	public void setInput( IChuruataCollection input ){
-		this.churuatas = input;
-		NavigationView view = new NavigationView(mapController);
-		view.getLocation();
-		handler.addData("update");
+	private void onNavigation() {
+		try {
+			if( located )
+				return;
+			logger.info("Requesting geo location");
+			//NavigationView navigation = new NavigationView(mapController);
+			//navigation.getLocation();
+			handler.addData("update");
+			//Only needed to enforce a refresh
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	protected void updateMap() {
@@ -216,12 +229,12 @@ public class MapBrowser extends Browser {
 			return;
 		IconsView icons = new IconsView( mapController );
 		icons.clearIcons();
-		Collection<IChuruata> churuatas = controller.churuatas;
+		Collection<IChuruata> churuatas = new ArrayList<IChuruata>( controller.churuatas );
 		if( Utils.assertNull(churuatas))
 			return;
 		
 		for( IChuruata mt: churuatas ) {
-			Markers marker = Markers.GREEN;
+			Markers marker = IChuruataType.Types.getMarker( IChuruataType.Types.values()[ mt.getMaxLeaves()]);
 			icons.addMarker(mt.getLocation(), marker, mt.getLocation().getId().charAt(0));
 		}
 	}
@@ -229,9 +242,8 @@ public class MapBrowser extends Browser {
 	public void refresh() {
 		try {
 			this.controller.show();
-			//NavigationView view = new NavigationView(mapController);
-			//view.getLocation();
-			//handler.addData("update");		
+			onNavigation();
+			handler.addData("update");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}		
@@ -310,6 +322,7 @@ public class MapBrowser extends Browser {
 					IChuruata[] results = gson.fromJson(event.getResponse(), ChuruataData[].class);
 					if(!Utils.assertNull(results))
 						churuatas.addAll(Arrays.asList(results));
+					logger.info("Churuatas found: " + churuatas.size());
 					break;
 				default:
 					break;
@@ -322,9 +335,16 @@ public class MapBrowser extends Browser {
 			}
 			return null;
 		}
-		
-	}
 
+		@Override
+		protected void onHandleResponseFail(HttpStatus status, ResponseEvent<Requests> event)
+				throws IOException {
+			// TODO Auto-generated method stub
+			logger.info("Failed: " + event.getRequest());
+			super.onHandleResponseFail(status, event);
+		}		
+	}
+	
 	private class SessionHandler extends AbstractSessionHandler<String>{
 
 		protected SessionHandler(Display display) {
@@ -333,7 +353,7 @@ public class MapBrowser extends Browser {
 
 		@Override
 		protected void onHandleSession(SessionEvent<String> sevent) {
-			// NOTHING		
+			updateMap();		
 		}	
 	}
 }
