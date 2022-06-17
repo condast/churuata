@@ -11,8 +11,7 @@ import org.condast.commons.authentication.user.ILoginUser;
 import org.osgi.service.component.annotations.Component;
 
 @Component( name="org.churuata.digital.authentication.login.factory",
-		property={"type=churuata"},
-		immediate=true)
+		property={"type=churuata"})
 public class LoginUserProvider implements ILoginProvider {
 
 	private Dispatcher dispatcher = Dispatcher.getInstance();

@@ -14,7 +14,7 @@ import org.condast.commons.persistence.service.AbstractEntityService;
 
 public class OrganisationService extends AbstractEntityService<Organisation>{
 
-	public static final String S_QUERY_GET_ALL = "SELECT o FROM ORGANISATION o, PERSON c WHERE o.contact = c";
+	public static final String S_QUERY_GET_ALL = "SELECT o FROM ORGANISATION o, PERSON c WHERE o.contact.id = :personid";
 
 	private static Dispatcher dispatcher = Dispatcher.getInstance();
 	

@@ -13,6 +13,12 @@ public class ContactService extends AbstractEntityService<Contact>{
 		super( Contact.class, dispatcher );
 	}
 	
+	@Override
+	public void create(Contact contact) {
+		super.create(contact);
+	}
+
+
 	public Contact createContact( ContactTypes type, String value ) {
 		Contact contact = new Contact( type, value );
 		return contact;

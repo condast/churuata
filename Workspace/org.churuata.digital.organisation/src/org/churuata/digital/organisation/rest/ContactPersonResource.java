@@ -16,6 +16,7 @@ import org.churuata.digital.core.data.OrganisationData;
 import org.churuata.digital.core.data.PersonData;
 import org.churuata.digital.core.data.ProfileData;
 import org.churuata.digital.organisation.core.AuthenticationDispatcher;
+import org.churuata.digital.organisation.core.Dispatcher;
 import org.churuata.digital.organisation.model.Organisation;
 import org.churuata.digital.organisation.model.Person;
 import org.churuata.digital.organisation.services.ContactService;
@@ -26,21 +27,12 @@ import org.condast.commons.authentication.user.ILoginUser;
 import org.condast.commons.io.IOUtils;
 import org.condast.commons.na.model.IContact;
 import org.condast.commons.na.model.IContact.ContactTypes;
+import org.condast.commons.persistence.service.TransactionManager;
 import org.condast.commons.na.model.IContactPerson;
 import org.condast.commons.strings.StringUtils;
 import org.condast.commons.verification.IVerification;
 import org.condast.commons.verification.IVerification.VerificationTypes;
 import com.google.gson.Gson;
-
-
-// Plain old Java Object it does not extend as class or implements
-// an interface
-
-// The class registers its methods for the HTTP GET request using the @GET annotation.
-// Using the @Produces annotation, it defines that it can deliver several MIME types,
-// text, XML and HTML.
-
-// The browser requests per default the HTML MIME type.
 
 //Sets the path to base URL + /contact
 @Path("/contact")
@@ -90,13 +82,14 @@ public class ContactPersonResource{
 
 		logger.info( "Adding contact" + name + "(" + email + ")");
 
-		PersonService ps = new PersonService(); 
-		ContactService cs = new ContactService(); 
+		TransactionManager t = new TransactionManager( Dispatcher.getInstance() );
 		IContactPerson person = null;
 		try {
-			cs.open();
+			t.open();
+			PersonService ps = new PersonService(); 
+			ContactService cs = new ContactService(); 
+
 			IContact contact = cs.createContact(ContactTypes.EMAIL, email);
-			ps.open();
 			person = ps.create(userid, name, title, description, contact);
 			
 			Gson gson = new Gson();
@@ -109,8 +102,7 @@ public class ContactPersonResource{
 			return Response.serverError().build();
 		}
 		finally {
-			ps.close();
-			cs.close();
+			t.close();
 		}
 	}
 
@@ -124,9 +116,10 @@ public class ContactPersonResource{
 		if( !dispatcher.isLoggedIn(userId, security))
 			return Response.status( Status.UNAUTHORIZED).build();
 
-		PersonService ps = new PersonService(); 
+		TransactionManager t = new TransactionManager( Dispatcher.getInstance() );
 		try {
-			ps.open();
+			t.open();
+			PersonService ps = new PersonService(); 
 			Collection<Person> persons = ps.findForLogin( userId );
 			if( Utils.assertNull(persons))
 				return Response.noContent().build();
@@ -141,7 +134,7 @@ public class ContactPersonResource{
 			return Response.serverError().build();
 		}
 		finally {
-			IOUtils.close( ps );
+			IOUtils.close( t );
 		}
 	}
 
@@ -156,29 +149,21 @@ public class ContactPersonResource{
 			return Response.status( Status.UNAUTHORIZED).build();
 
 		ILoginUser user = dispatcher.getLoginUser(userId, security);
-		PersonService ps = new PersonService(); 
+		TransactionManager t = new TransactionManager( Dispatcher.getInstance() );
 		IContactPerson person = null;
 		try {
-			ps.open();
+			t.open();
+			PersonService ps = new PersonService(); 
+			OrganisationService os = new OrganisationService(); 
 			Collection<Person> persons = ps.findForLogin( userId );
+			Collection<Organisation> orgs = new ArrayList<>();
 			if( Utils.assertNull(persons)) {
 				person = ps.create( user);
-			}else
-				person = persons.iterator().next(); 
-		}
-		catch( Exception ex ) {
-			ex.printStackTrace();
-			return Response.serverError().build();
-		}
-		finally {
-			IOUtils.close( ps );
-		}
-		ProfileData profile = new ProfileData( person );
-
-		OrganisationService os = new OrganisationService(); 
-		try {			
-			
-			Collection<Organisation> orgs = os.getAll(person);
+			}else {
+				person = persons.iterator().next();
+				orgs = os.getAll(person);
+			}
+			ProfileData profile = new ProfileData( person );
 			orgs.forEach(o->profile.addOrganisation( new OrganisationData(o)));
 			Gson gson = new Gson();
 			String str = gson.toJson(profile, ProfileData.class);
@@ -189,7 +174,7 @@ public class ContactPersonResource{
 			return Response.serverError().build();
 		}
 		finally {
-			IOUtils.close( os );
+			IOUtils.close( t );
 		}
 	}
 

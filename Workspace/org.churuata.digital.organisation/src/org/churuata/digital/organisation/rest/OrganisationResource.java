@@ -17,6 +17,7 @@ import org.churuata.digital.core.data.OrganisationData;
 import org.churuata.digital.core.data.PersonData;
 import org.churuata.digital.core.location.IChuruataType;
 import org.churuata.digital.organisation.core.AuthenticationDispatcher;
+import org.churuata.digital.organisation.core.Dispatcher;
 import org.churuata.digital.organisation.model.Organisation;
 import org.churuata.digital.organisation.model.Person;
 import org.churuata.digital.organisation.services.ContactService;
@@ -27,6 +28,7 @@ import org.condast.commons.Utils;
 import org.condast.commons.authentication.user.ILoginUser;
 import org.condast.commons.na.model.IContact;
 import org.condast.commons.na.model.IContactPerson;
+import org.condast.commons.persistence.service.TransactionManager;
 import org.condast.commons.strings.StringUtils;
 import com.google.gson.Gson;
 
@@ -80,6 +82,7 @@ public class OrganisationResource{
 		Gson gson = new Gson();
 		OrganisationData od = gson.fromJson(data, OrganisationData.class);
 		OrganisationService os = new OrganisationService(); 
+		TransactionManager t = new TransactionManager( Dispatcher.getInstance() );
 		PersonService ps = new PersonService(); 
 		ContactService cs = new ContactService();
 		Organisation organisation = null;
@@ -91,7 +94,7 @@ public class OrganisationResource{
 				person = ps.create(user, contact);
 			}else
 				person = persons.iterator().next();
-			os.open();
+			t.open();
 			organisation = os.create(person, od);
 			
 			OrganisationData pd = new OrganisationData(organisation);
@@ -103,8 +106,7 @@ public class OrganisationResource{
 			return Response.serverError().build();
 		}
 		finally {
-			ps.close();
-			os.close();
+			t.close();
 		}
 	}
 	
@@ -118,9 +120,10 @@ public class OrganisationResource{
 		if( !dispatcher.isLoggedIn(userId, security))
 			return Response.status( Status.UNAUTHORIZED).build();
 
+		TransactionManager t = new TransactionManager( Dispatcher.getInstance() );
 		OrganisationService os = new OrganisationService(); 
 		try {
-			os.open();
+			t.open();
 			Organisation organisation = os.find( organisationId );
 			Gson gson = new Gson();
 			String str = gson.toJson( new OrganisationData( organisation ), OrganisationData.class);
@@ -131,7 +134,7 @@ public class OrganisationResource{
 			return Response.serverError().build();
 		}
 		finally {
-			os.close();
+			t.close();
 		}
 	}
 
@@ -149,12 +152,11 @@ public class OrganisationResource{
 			return Response.notModified( ErrorMessages.NO_USERNAME_OR_EMAIL.name()).build();
 		IChuruataType.Types st = IChuruataType.Types.valueOf(type);
 		
-		
+		TransactionManager t = new TransactionManager( Dispatcher.getInstance() );
 		ServicesService cs = new ServicesService();
 		OrganisationService os = new OrganisationService(); 
 		try {
-			cs.open();
-			os.open();
+			t.open();
 			Organisation organisation = os.find( organisationId );
 			if( organisation == null )
 				return Response.noContent().build();
@@ -167,7 +169,7 @@ public class OrganisationResource{
 			return Response.serverError().build();
 		}
 		finally {
-			os.close();
+			t.close();
 		}
 	}
 
@@ -184,9 +186,10 @@ public class OrganisationResource{
 		if( serviceId < 0 ) 
 			return Response.status( Status.BAD_REQUEST ).build();
 		
+		TransactionManager t = new TransactionManager( Dispatcher.getInstance() );
 		OrganisationService os = new OrganisationService(); 
 		try {
-			os.open();
+			t.open();
 			Organisation organisation = os.find( organisationId );
 			if( organisation == null )
 				return Response.noContent().build();
@@ -198,7 +201,7 @@ public class OrganisationResource{
 			return Response.serverError().build();
 		}
 		finally {
-			os.close();
+			t.close();
 		}
 	}
 
@@ -216,9 +219,10 @@ public class OrganisationResource{
 			return Response.notModified( ErrorMessages.NO_USERNAME_OR_EMAIL.name()).build();
 		IChuruataType.Types st = IChuruataType.Types.valueOf(type);
 		
+		TransactionManager t = new TransactionManager( Dispatcher.getInstance() );
 		OrganisationService os = new OrganisationService(); 
 		try {
-			os.open();
+			t.open();
 			Organisation organisation = os.find( organisationId );
 			if( organisation == null )
 				return Response.noContent().build();
@@ -230,7 +234,7 @@ public class OrganisationResource{
 			return Response.serverError().build();
 		}
 		finally {
-			os.close();
+			t.close();
 		}
 	}
 

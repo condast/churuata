@@ -3,6 +3,7 @@ package org.churuata.digital.organisation;
 import javax.servlet.Servlet;
 import javax.ws.rs.ApplicationPath;
 
+import org.churuata.digital.organisation.rest.ChatResource;
 import org.churuata.digital.organisation.rest.ContactPersonResource;
 import org.churuata.digital.organisation.rest.OrganisationResource;
 import org.condast.commons.messaging.http.AbstractServletWrapper;
@@ -33,6 +34,7 @@ public class RestServlet extends AbstractServletWrapper {
 			try {
 				register( OrganisationResource.class );
 				register( ContactPersonResource.class );
+				register( ChatResource.class );
 			}
 			catch( Exception ex ) {
 				ex.printStackTrace();

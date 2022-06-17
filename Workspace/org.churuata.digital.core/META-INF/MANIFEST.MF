@@ -16,4 +16,5 @@ Export-Package: org.churuata.digital.core,
  org.churuata.digital.core.data,
  org.churuata.digital.core.location,
  org.churuata.digital.core.model,
- org.churuata.digital.core.rest
+ org.churuata.digital.core.rest,
+ org.churuata.digital.core.utils

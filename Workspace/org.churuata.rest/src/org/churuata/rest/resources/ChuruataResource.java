@@ -33,6 +33,7 @@ import org.condast.commons.data.latlng.LatLng;
 import org.condast.commons.data.latlng.LatLngUtils;
 import org.condast.commons.data.plane.Field;
 import org.condast.commons.data.plane.FieldData;
+import org.condast.commons.persistence.service.TransactionManager;
 import org.condast.commons.strings.StringStyler;
 import org.condast.commons.strings.StringUtils;
 
@@ -72,16 +73,17 @@ public class ChuruataResource {
 				return Response.status( Status.BAD_REQUEST).build();
 			Gson gson = new Gson();
 
+			TransactionManager t = new TransactionManager( dispatcher );
 			ChuruataService service = new ChuruataService( dispatcher );
-			service.open();
 			Churuata churuata = null;
 			try {
+				t.open();
 				String typeStr = StringStyler.styleToEnum(type);
 				LatLng latlng = new LatLng( name, latitude, longitude);
 				churuata = service.create(user, name, description, latlng, Types.valueOf(typeStr));
 			}
 			finally {
-				service.close();
+				t.close();
 			}
 			String str = gson.toJson( churuata.getId(), long.class);
 			result = Response.ok( str ).build();
@@ -111,11 +113,12 @@ public class ChuruataResource {
 		try{
 			if( !dispatcher.isConnected())
 				return Response.status( Status.NOT_FOUND).build();
+			TransactionManager t = new TransactionManager( dispatcher );
 			ChuruataService service = new ChuruataService( dispatcher );
-			service.open();
 			dispatcher.clear();
 			Collection<ChuruataData> results = dispatcher.getResults();
 			try {
+				t.open();
 				FieldData fieldData = new FieldData( -1, new LatLng( "home", latitude, longitude), 10000l, 10000l, 0d, 11);
 				dispatcher.setFieldData(fieldData);
 				Collection<Churuata> churuatas = service.findAll();
@@ -137,7 +140,7 @@ public class ChuruataResource {
 				}
 			}
 			finally {
-				service.close();
+				t.close();
 			}
 			Gson gson = new Gson();
 			String str = gson.toJson( results.toArray( new IChuruata[ results.size()]), Churuata[].class);
@@ -167,6 +170,7 @@ public class ChuruataResource {
 			@QueryParam("max-leaves") int leaves ) {
 		Dispatcher dispatcher = Dispatcher.getInstance();
 		Response result = null;
+		TransactionManager t = new TransactionManager( dispatcher );
 		ChuruataService service = new ChuruataService( dispatcher );
 		try{
 			AuthenticationDispatcher ad = AuthenticationDispatcher.getInstance();
@@ -177,7 +181,7 @@ public class ChuruataResource {
 			if(( logs < 0 ) || ( leaves < 0 ))
 				return Response.status( Status.BAD_REQUEST).build();
 	
-			service.open();
+			t.open();
 			Churuata churuata = service.find(churuataId);		
 			if( churuata == null )
 				return Response.noContent().build();
@@ -195,7 +199,7 @@ public class ChuruataResource {
 			return Response.serverError().build();
 		}
 		finally {
-			service.close();
+			t.close();
 		}
 		return result;
 	}

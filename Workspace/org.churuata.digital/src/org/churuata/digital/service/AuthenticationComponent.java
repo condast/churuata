@@ -12,7 +12,7 @@ import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
 @Component(
-	name = AuthenticationComponent.COMPONENT_NAME
+	name = AuthenticationComponent.COMPONENT_NAME, immediate=true
 )
 public class AuthenticationComponent{
 

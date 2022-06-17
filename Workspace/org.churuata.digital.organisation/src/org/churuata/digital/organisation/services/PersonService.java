@@ -35,7 +35,9 @@ public class PersonService extends AbstractEntityService<Person>{
 	}
 
 	public Person create( ILoginUser user ) {
+		ContactService cs = new ContactService();
 		Contact contact = new Contact(ContactTypes.EMAIL, user.getEmail());
+		cs.create(contact);
 		Person person = new Person( user.getId(), null, null, null, contact );
 		super.create(person);
 		return person;

@@ -43,7 +43,7 @@ public class LoginService extends AbstractEntityService<Login>{
 	 * @return
 	 */
 	public ILoginUser[] hasEmail( String email ) {
-		if(( !super.isConnected()) || StringUtils.isEmpty(email))
+		if( StringUtils.isEmpty(email))
 			return null;
 		String str = email.replace("\"", "").trim();
 		TypedQuery<ILoginUser> query = super.getManager().createQuery( SELECT_EMAIL, ILoginUser.class);
@@ -53,8 +53,6 @@ public class LoginService extends AbstractEntityService<Login>{
 	}
 
 	public ILoginUser login( String user, String password ) {
-		if( !super.isConnected())
-			return null;
 		TypedQuery<ILoginUser> query = super.getManager().createQuery( SELECT_USER, ILoginUser.class);
 		query.setParameter("userName", user);
 		query.setParameter("password", password);
@@ -97,38 +95,15 @@ public class LoginService extends AbstractEntityService<Login>{
 	public static ILoginUser register( LoginData loginData ) {
 		Dispatcher dispatcher = Dispatcher.getInstance();
 		LoginService service = new LoginService( dispatcher ); 
-		ILoginUser user = null;
-		try{
-			service.open();
-			user = service.create( loginData.getNickName(), loginData.getPassword(), loginData.getEmail());
-			dispatcher.addUser(user);
-			return user;
-		}
-		catch( Exception ex ){
-			ex.printStackTrace();
-		}
-		finally {
-			service.close();
-		}
-		return null;
+		ILoginUser user = service.create( loginData.getNickName(), loginData.getPassword(), loginData.getEmail());
+		return user;
 	}
 
 	public static ILoginUser login( LoginData loginData ) {
 		Dispatcher dispatcher = Dispatcher.getInstance();
 		LoginService service = new LoginService( dispatcher ); 
-		ILoginUser user = null;
-		try{
-			service.open();
-			user = service.login( loginData.getNickName(), loginData.getPassword());
-			dispatcher.addUser(user);
-			return user;
-		}
-		catch( Exception ex ){
-			ex.printStackTrace();
-		}
-		finally {
-			service.close();
-		}
-		return null;
+		ILoginUser user = service.login( loginData.getNickName(), loginData.getPassword());
+		dispatcher.addUser(user);
+		return user;
 	}
 }
