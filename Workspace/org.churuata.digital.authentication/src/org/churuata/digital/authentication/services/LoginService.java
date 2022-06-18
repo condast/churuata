@@ -36,8 +36,6 @@ public class LoginService extends AbstractEntityService<Login>{
 	}
 	
 	public ILoginUser login( String user, String password ) {
-		if( !super.isConnected())
-			return null;
 		TypedQuery<ILoginUser> query = super.getManager().createQuery( SELECT_USER, ILoginUser.class);
 		query.setParameter("userName", user);
 		query.setParameter("password", password);
@@ -82,16 +80,12 @@ public class LoginService extends AbstractEntityService<Login>{
 		LoginService service = new LoginService( dispatcher ); 
 		ILoginUser user = null;
 		try{
-			service.open();
 			user = service.create( loginData.getNickName(), loginData.getPassword(), loginData.getEmail());
 			dispatcher.addUser(user);
 			return user;
 		}
 		catch( Exception ex ){
 			ex.printStackTrace();
-		}
-		finally {
-			service.close();
 		}
 		return null;
 	}
@@ -101,16 +95,12 @@ public class LoginService extends AbstractEntityService<Login>{
 		LoginService service = new LoginService( dispatcher ); 
 		ILoginUser user = null;
 		try{
-			service.open();
 			user = service.login( loginData.getNickName(), loginData.getPassword());
 			dispatcher.addUser(user);
 			return user;
 		}
 		catch( Exception ex ){
 			ex.printStackTrace();
-		}
-		finally {
-			service.close();
 		}
 		return null;
 	}

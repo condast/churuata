@@ -2,9 +2,6 @@ package org.churuata.rest.core;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Map;
-
-import javax.persistence.EntityManager;
 
 import org.churuata.digital.core.location.ChuruataData;
 import org.condast.commons.data.plane.FieldData;
@@ -43,16 +40,6 @@ public class Dispatcher extends AbstractPersistencyService {
 	
 	public Collection<ChuruataData> getResults() {
 		return results;
-	}
-
-	@Override
-	protected Map<String, String> onPrepareManager() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	protected void onManagerCreated(EntityManager manager) {
 	}
 
 	public void subscribe(long id, int i) {

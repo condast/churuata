@@ -286,7 +286,7 @@ public class MapBrowser extends Browser {
 	}
 
 
-	private class WebController extends AbstractHttpRequest<IChuruata.Requests, LatLng[]>{
+	private class WebController extends AbstractHttpRequest<IChuruata.Requests>{
 		
 		private Collection<IChuruata> churuatas;
 		
@@ -314,7 +314,7 @@ public class MapBrowser extends Browser {
 		}
 		
 		@Override
-		protected String onHandleResponse(ResponseEvent<Requests, LatLng[]> event, LatLng[] data) throws IOException {
+		protected String onHandleResponse(ResponseEvent<Requests> event) throws IOException {
 			try {
 				switch( event.getRequest()){
 				case SHOW:
@@ -338,7 +338,7 @@ public class MapBrowser extends Browser {
 		}
 
 		@Override
-		protected void onHandleResponseFail(HttpStatus status, ResponseEvent<Requests, LatLng[]> event)
+		protected void onHandleResponseFail(HttpStatus status, ResponseEvent<Requests> event)
 				throws IOException {
 			// TODO Auto-generated method stub
 			logger.info("Failed: " + event.getRequest());

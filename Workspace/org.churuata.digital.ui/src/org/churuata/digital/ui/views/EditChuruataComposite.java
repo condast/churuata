@@ -308,7 +308,7 @@ public class EditChuruataComposite extends AbstractEntityComposite<LatLng>
 		return false;
 	}
 	
-	private class WebController extends AbstractHttpRequest<IChuruata.Requests, IChuruata>{
+	private class WebController extends AbstractHttpRequest<IChuruata.Requests>{
 		
 		public WebController() {
 			super();
@@ -344,7 +344,7 @@ public class EditChuruataComposite extends AbstractEntityComposite<LatLng>
 		}
 
 		@Override
-		protected String onHandleResponse(ResponseEvent<Requests, IChuruata> event, IChuruata data) throws IOException {
+		protected String onHandleResponse(ResponseEvent<Requests> event) throws IOException {
 			switch( event.getRequest()){
 			case REGISTER:
 				notifyInputEdited( new EditEvent<LatLng>( this, EditTypes.CHANGED, null));

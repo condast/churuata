@@ -15,6 +15,7 @@ import org.churuata.digital.authentication.core.Dispatcher;
 import org.churuata.digital.authentication.model.Login;
 import org.churuata.digital.authentication.services.LoginService;
 import org.condast.commons.authentication.user.ILoginUser;
+import org.condast.commons.persistence.service.TransactionManager;
 import org.condast.commons.strings.StringUtils;
 import org.condast.commons.verification.IVerification;
 import org.condast.commons.verification.IVerification.VerificationTypes;
@@ -55,13 +56,10 @@ public class AuthenticationResource{
 	@Path("/register")
 	public Response register( @QueryParam("name") String name, @QueryParam("password") String password, @QueryParam("email") String email) {
 		logger.info( "ATTEMPT Register " + name );
-		Response retval = Response.noContent().build();
 		if( StringUtils.isEmpty(name) || StringUtils.isEmpty( email )) {
-			retval = Response.notModified( ErrorMessages.NO_USERNAME_OR_EMAIL.name()).build();
-			return retval;
+			return Response.notModified( ErrorMessages.NO_USERNAME_OR_EMAIL.name()).build();
 		}else if( !IVerification.VerificationTypes.verify(VerificationTypes.EMAIL, email)){
-			retval = Response.notModified( ErrorMessages.NO_USERNAME_OR_EMAIL.name()).build();
-			return retval;
+			return Response.notModified( ErrorMessages.NO_USERNAME_OR_EMAIL.name()).build();
 		}else if( StringUtils.isEmpty( name )) {
 			name = email.split("[@]")[0];
 		}else if( StringUtils.isEmpty( password )) {
@@ -71,33 +69,31 @@ public class AuthenticationResource{
 		logger.info( "Registering " + name + "(" + email + ")");
 		Dispatcher dispatcher=  Dispatcher.getInstance();
 
-		LoginService service = new LoginService( dispatcher ); 
+		TransactionManager t = new TransactionManager( dispatcher );
 		try{
-			service.open();
+			t.open();
+			LoginService service = new LoginService( dispatcher ); 
 			ILoginUser user = service.create(name, password, email);
 			dispatcher.addUser(user);
-			retval = Response.ok( String.valueOf( user.getId())).build();
+			return Response.ok( String.valueOf( user.getId())).build();
 		}
 		catch( Exception ex ){
 			ex.printStackTrace();
 			return Response.serverError().build();
 		}
 		finally {
-			service.close();
+			t.close();
 		}
-		return retval;
 	}
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/login")
 	public Response login( @QueryParam("name") String name, @QueryParam("password") String password ) {
-		Response retval = Response.noContent().build();
 		try{
 			logger.info( "ATTEMPT Login " + name );
 			if( StringUtils.isEmpty(name) || StringUtils.isEmpty(password )) {
-				retval = Response.notModified( ErrorMessages.NO_USERNAME_OR_EMAIL.name()).build();
-				return retval;
+				return Response.notModified( ErrorMessages.NO_USERNAME_OR_EMAIL.name()).build();
 			}else if( StringUtils.isEmpty( password )) {
 				return Response.status( Status.BAD_REQUEST).build();
 			}
@@ -110,27 +106,24 @@ public class AuthenticationResource{
 			if( user == null )
 				return Response.status( Status.NOT_FOUND).build();
 			dispatcher.addUser(user);
-			retval = Response.ok( String.valueOf( user.getId() )).build();
+			return Response.ok( String.valueOf( user.getId() )).build();
 		}
 		catch( Exception ex ){
 			ex.printStackTrace();
 			return Response.serverError().build();
 		}
-		return retval;
 	}
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/logoff")
-	public Response logoff( @QueryParam("userid") long id, @QueryParam("token") long token) {
-
-		Response retval = null;
+	public Response logoff( @QueryParam("userid") long id, @QueryParam("security") long security) {
 		Dispatcher dispatcher=  Dispatcher.getInstance();
 		try{
-			if( !dispatcher.isLoggedIn( id))
-				retval = Response.noContent().build();
+			if( !dispatcher.isLoggedIn( id, security))
+				return Response.noContent().build();
 			else {
-				ILoginUser user = dispatcher.getLoginUser(id, token);
+				ILoginUser user = dispatcher.getLoginUser(id, security);
 				dispatcher.removeUser(user);
 				return Response.ok(String.valueOf( user.getId() )).build();
 			}
@@ -139,48 +132,43 @@ public class AuthenticationResource{
 			ex.printStackTrace();
 			return Response.serverError().build();
 		}
-		return retval;
 	}
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/unregister")
 	public Response unregister( @QueryParam("id") long id ) {
-
-		Response retval = null;
 		Dispatcher dispatcher=  Dispatcher.getInstance();
 		if( !dispatcher.isRegistered(id)) {
-			retval = Response.noContent().build();
-			return retval;
+			return Response.noContent().build();
 		}
 
-		LoginService service = new LoginService( dispatcher ); 
+		TransactionManager t = new TransactionManager( dispatcher );
 		try{
-			service.open();	
+			t.open();	
+			LoginService service = new LoginService( dispatcher ); 
 			ILoginUser user = dispatcher.getUser( id );
 			logger.info( "Unregister " + user.getUserName() );			
 
 			service.remove(user.getId());
 			//manager.unregisterUser(user);
-			retval = Response.ok(String.valueOf( user.getId() )).build();
+			return Response.ok(String.valueOf( user.getId() )).build();
 		}
 		catch( Exception ex ){
 			ex.printStackTrace();
 			return Response.serverError().build();
 		}
 		finally{ 
-			service.close();
+			t.close();
 		}
-		return retval;
 	}
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/getall")
-	public Response getAll( @QueryParam("name") String userName, @QueryParam("token") long token ) {
-		Response retval = null;
+	public Response getAll( @QueryParam("name") String userName, @QueryParam("security") long security ) {
 		try{
-			//if(!AuthenticationUtils.isAdmin(userName, token)) {
+			//if(!AuthenticationUtils.isAdmin(userName, security)) {
 			//	retval = Response.status( Status.UNAUTHORIZED).build();
 			//	return retval;
 			//}
@@ -189,13 +177,12 @@ public class AuthenticationResource{
 			Collection<Login> Logins = service.findAll();
 			Gson gson = new Gson();
 			String str = gson.toJson(Logins.toArray( new Login[Logins.size()] ), Login[].class);
-			retval = Response.ok( str).build();
+			return Response.ok( str).build();
 		}
 		catch( Exception ex ){
 			ex.printStackTrace();
 			return Response.serverError().build();
 		}
-		return retval;
 	}
 
 

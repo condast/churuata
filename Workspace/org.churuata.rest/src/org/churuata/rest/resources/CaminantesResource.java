@@ -29,6 +29,7 @@ import org.churuata.rest.service.MurmeringService;
 import org.churuata.rest.service.PresentationService;
 import org.condast.commons.Utils;
 import org.condast.commons.data.latlng.LatLng;
+import org.condast.commons.persistence.service.TransactionManager;
 import org.condast.commons.strings.StringStyler;
 import org.condast.commons.strings.StringUtils;
 
@@ -69,8 +70,9 @@ public class CaminantesResource {
 		try{
 			if( StringUtils.isEmpty(name) || ( latitude < 0 ) || ( longitude < 0) || ( range < 0))
 				return Response.status( Status.BAD_REQUEST).build();
+			TransactionManager t = new TransactionManager( dispatcher );
 			ChuruataService service = new ChuruataService( dispatcher );
-			service.open();
+			t.open();
 			try {
 				LatLng latlng = new LatLng( name, latitude, longitude);
 				Collection<Churuata> churuatas = service.findChuruata(latlng, range);
@@ -80,7 +82,7 @@ public class CaminantesResource {
 				return Response.ok( churuata.getId()).build();
 			}
 			finally {
-				service.close();
+				t.close();
 			}
 		}
 		catch( Exception ex ){
@@ -106,6 +108,7 @@ public class CaminantesResource {
 			@QueryParam("description") String description, @QueryParam("contribution") String contribution ) {
 		logger.info( "Create " + name );
 		Dispatcher dispatcher = Dispatcher.getInstance();
+		TransactionManager t = new TransactionManager( dispatcher );
 		try{
 			if( StringUtils.isEmpty(name) || ( token < 0 ) || StringUtils.isEmpty(type ))
 				return Response.status( Status.BAD_REQUEST).build();
@@ -120,7 +123,7 @@ public class CaminantesResource {
 			IChuruataType.Contribution contr = IChuruataType.Contribution.valueOf(contrStr);
 
 			ChuruataService service = new ChuruataService( dispatcher );
-			service.open();
+			t.open();
 			Churuata churuata = null;
 			try {
 				churuata = service.find(churuataId);
@@ -130,7 +133,7 @@ public class CaminantesResource {
 				return Response.ok().build();
 			}
 			finally {
-				service.close();
+				t.close();
 			}
 		}
 		catch( Exception ex ){
@@ -155,6 +158,7 @@ public class CaminantesResource {
 			@QueryParam("churuata-id") long churuataId, @QueryParam("type") String type ) {
 		logger.info( "Create " + name );
 		Dispatcher dispatcher = Dispatcher.getInstance();
+		TransactionManager t = new TransactionManager( dispatcher );
 		try{
 			if( StringUtils.isEmpty(name) || ( token < 0 ) || StringUtils.isEmpty(type ))
 				return Response.status( Status.BAD_REQUEST).build();
@@ -164,7 +168,7 @@ public class CaminantesResource {
 			IChuruataType.Types ct = IChuruataType.Types.valueOf(typeStr);
 
 			ChuruataService service = new ChuruataService( dispatcher );
-			service.open();
+			t.open();
 			Churuata churuata = null;
 			try {
 				churuata = service.find(churuataId);
@@ -174,7 +178,7 @@ public class CaminantesResource {
 				return Response.ok().build();
 			}
 			finally {
-				service.close();
+				t.close();
 			}
 		}
 		catch( Exception ex ){
@@ -201,6 +205,7 @@ public class CaminantesResource {
 			@QueryParam("link") String link ) {
 		logger.info( "Create " + name );
 		Dispatcher dispatcher = Dispatcher.getInstance();
+		TransactionManager t = new TransactionManager( dispatcher );
 		try{
 			if( StringUtils.isEmpty(name) || ( token < 0 ) || StringUtils.isEmpty(type ) || 
 					StringUtils.isEmpty( title ) || StringUtils.isEmpty( link ))
@@ -210,7 +215,7 @@ public class CaminantesResource {
 				return Response.status( Status.BAD_REQUEST).build();				
 
 			ChuruataService service = new ChuruataService( dispatcher );
-			service.open();
+			t.open();
 			Churuata churuata = null;
 			try {
 				churuata = service.find(churuataId);
@@ -224,7 +229,7 @@ public class CaminantesResource {
 				return Response.ok().build();
 			}
 			finally {
-				service.close();
+				t.close();
 			}
 		}
 		catch( Exception ex ){
@@ -249,12 +254,13 @@ public class CaminantesResource {
 			@QueryParam("churuata-id") long churuataId, @QueryParam("title") String title ) {
 		logger.info( "Create " + name );
 		Dispatcher dispatcher = Dispatcher.getInstance();
+		TransactionManager t = new TransactionManager( dispatcher );
 		try{
 			if( StringUtils.isEmpty(name) || ( token < 0 ) || StringUtils.isEmpty( title ))
 				return Response.status( Status.BAD_REQUEST).build();
 
 			ChuruataService service = new ChuruataService( dispatcher );
-			service.open();
+			t.open();
 			Churuata churuata = null;
 			try {
 				churuata = service.find(churuataId);
@@ -265,7 +271,7 @@ public class CaminantesResource {
 				return Response.ok().build();
 			}
 			finally {
-				service.close();
+				t.close();
 			}
 		}
 		catch( Exception ex ){
@@ -290,12 +296,13 @@ public class CaminantesResource {
 			@QueryParam("churuata-id") long churuataId) {
 		logger.info( "Create " + name );
 		Dispatcher dispatcher = Dispatcher.getInstance();
+		TransactionManager t = new TransactionManager( dispatcher );
 		try{
 			if( StringUtils.isEmpty(name) || ( token < 0 ))
 				return Response.status( Status.BAD_REQUEST).build();
 
 			ChuruataService service = new ChuruataService( dispatcher );
-			service.open();
+			t.open();
 			Churuata churuata = null;
 			try {
 				churuata = service.find(churuataId);
@@ -313,7 +320,7 @@ public class CaminantesResource {
 				return Response.ok( str ).build();
 			}
 			finally {
-				service.close();
+				t.close();
 			}
 		}
 		catch( Exception ex ){
@@ -338,12 +345,13 @@ public class CaminantesResource {
 			@QueryParam("churuata-id") long churuataId) {
 		logger.info( "Create " + name );
 		Dispatcher dispatcher = Dispatcher.getInstance();
+		TransactionManager t = new TransactionManager( dispatcher );
 		try{
 			if( StringUtils.isEmpty(name) || ( token < 0 ))
 				return Response.status( Status.BAD_REQUEST).build();
 
 			ChuruataService service = new ChuruataService( dispatcher );
-			service.open();
+			t.open();
 			Churuata churuata = null;
 			try {
 				churuata = service.find(churuataId);
@@ -359,7 +367,7 @@ public class CaminantesResource {
 				return Response.ok( str ).build();
 			}
 			finally {
-				service.close();
+				t.close();
 			}
 		}
 		catch( Exception ex ){
@@ -384,12 +392,13 @@ public class CaminantesResource {
 			@QueryParam("churuata-id") long churuataId, @QueryParam("text") String text ) {
 		logger.info( "Create " + name );
 		Dispatcher dispatcher = Dispatcher.getInstance();
+		TransactionManager t = new TransactionManager( dispatcher );
 		try{
 			if( StringUtils.isEmpty(name) || ( token < 0 ) || StringUtils.isEmpty(text ))
 				return Response.status( Status.BAD_REQUEST).build();
 
 			ChuruataService service = new ChuruataService( dispatcher );
-			service.open();
+			t.open();
 			Churuata churuata = null;
 			try {
 				churuata = service.find(churuataId);
@@ -402,7 +411,7 @@ public class CaminantesResource {
 				return Response.ok().build();
 			}
 			finally {
-				service.close();
+				t.close();
 			}
 		}
 		catch( Exception ex ){
@@ -427,12 +436,13 @@ public class CaminantesResource {
 			@QueryParam("churuata-id") long churuataId, @QueryParam("filter") String filter ) {
 		logger.info( "Create " + name );
 		Dispatcher dispatcher = Dispatcher.getInstance();
+		TransactionManager t = new TransactionManager( dispatcher );
 		try{
 			if( StringUtils.isEmpty(name) || ( token < 0 ))
 				return Response.status( Status.BAD_REQUEST).build();
 
 			ChuruataService service = new ChuruataService( dispatcher );
-			service.open();
+			t.open();
 			Churuata churuata = null;
 			try {
 				churuata = service.find(churuataId);
@@ -443,7 +453,7 @@ public class CaminantesResource {
 				return Response.ok().build();
 			}
 			finally {
-				service.close();
+				t.close();
 			}
 		}
 		catch( Exception ex ){
@@ -468,12 +478,13 @@ public class CaminantesResource {
 			@QueryParam("churuata-id") long churuataId) {
 		logger.info( "Create " + name );
 		Dispatcher dispatcher = Dispatcher.getInstance();
+		TransactionManager t = new TransactionManager( dispatcher );
 		try{
 			if( StringUtils.isEmpty(name) || ( token < 0 ))
 				return Response.status( Status.BAD_REQUEST).build();
 
 			ChuruataService service = new ChuruataService( dispatcher );
-			service.open();
+			t.open();
 			Churuata churuata = null;
 			try {
 				churuata = service.find(churuataId);
@@ -489,7 +500,7 @@ public class CaminantesResource {
 				return Response.ok( str ).build();
 			}
 			finally {
-				service.close();
+				t.close();
 			}
 		}
 		catch( Exception ex ){
@@ -518,8 +529,9 @@ public class CaminantesResource {
 			if( StringUtils.isEmpty(name) || ( token < 0 ))
 				return Response.status( Status.BAD_REQUEST).build();
 
+			TransactionManager t = new TransactionManager( dispatcher );
 			ChuruataService service = new ChuruataService( dispatcher );
-			service.open();
+			t.open();
 			Churuata churuata = null;
 			try {
 				churuata = service.find(churuataId);
@@ -538,7 +550,7 @@ public class CaminantesResource {
 				return Response.ok( str ).build();
 			}
 			finally {
-				service.close();
+				t.close();
 			}
 		}
 		catch( Exception ex ){

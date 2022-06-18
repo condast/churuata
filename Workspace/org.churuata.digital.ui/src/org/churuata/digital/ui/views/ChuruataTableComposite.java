@@ -249,7 +249,7 @@ public class ChuruataTableComposite extends AbstractTableViewerWithDelete<IChuru
 		}
 	}
 
-	private class WebController extends AbstractHttpRequest<IChuruata.Requests, LatLng[]>{
+	private class WebController extends AbstractHttpRequest<IChuruata.Requests>{
 		
 		private IChuruata churuata;
 		
@@ -275,7 +275,7 @@ public class ChuruataTableComposite extends AbstractTableViewerWithDelete<IChuru
 		}
 		
 		@Override
-		protected String onHandleResponse(ResponseEvent<Requests, LatLng[]> event, LatLng[] data) throws IOException {
+		protected String onHandleResponse(ResponseEvent<Requests> event) throws IOException {
 			try {
 				switch( event.getRequest()){
 				case FIND:
@@ -299,7 +299,7 @@ public class ChuruataTableComposite extends AbstractTableViewerWithDelete<IChuru
 		}
 
 		@Override
-		protected void onHandleResponseFail(HttpStatus status, ResponseEvent<Requests, LatLng[]> event)
+		protected void onHandleResponseFail(HttpStatus status, ResponseEvent<Requests> event)
 				throws IOException {
 			try {
 				switch( event.getRequest()){
