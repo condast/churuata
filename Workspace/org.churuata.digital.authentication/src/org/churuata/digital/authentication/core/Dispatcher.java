@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import javax.persistence.EntityManager;
 import javax.servlet.http.HttpSession;
 
 import org.churuata.digital.authentication.services.LoginService;
@@ -57,16 +56,6 @@ public class Dispatcher extends AbstractPersistencyService implements IPersisten
 			listener.notifyLoginChanged( event );
 	}
 
-	@Override
-	protected Map<String, String> onPrepareManager() {
-		return null;
-	}
-
-	@Override
-	protected void onManagerCreated(EntityManager manager) {
-		// NOTHING
-	}
-
 	public boolean isRegistered( ILoginUser user ) {
 		return this.users.contains( user );
 	}
@@ -102,9 +91,9 @@ public class Dispatcher extends AbstractPersistencyService implements IPersisten
 		return ( user != null );
 	}
 
-	public boolean isLoggedIn(long loginId) {
+	public boolean isLoggedIn(long loginId, long security) {
 		for( ILoginUser user: this.users ) {
-			if( user.getId() == loginId )
+			if( user.isCorrect( loginId, security ))
 				return true;
 		}
 		return ( loginId <= 0);

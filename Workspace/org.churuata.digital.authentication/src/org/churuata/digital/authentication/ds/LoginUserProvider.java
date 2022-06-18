@@ -23,11 +23,6 @@ public class LoginUserProvider implements ILoginProvider {
 	}
 	
 	@Override
-	public boolean isLoggedIn(long loginId) {
-		return dispatcher.isLoggedIn(loginId);
-	}
-
-	@Override
 	public ILoginUser getLoginUser( long loginId, long token ) {
 		return dispatcher.getLoginUser( loginId, token );
 	}
@@ -36,6 +31,11 @@ public class LoginUserProvider implements ILoginProvider {
 	public Map<Long, String> getUserNames( Collection<Long> userIds ){
 		LoginService service = new LoginService( dispatcher );
 		return service.getUserNames(userIds);
+	}
+
+	@Override
+	public boolean isLoggedIn(long loginId, long security) {
+		return dispatcher.isLoggedIn(loginId, security);
 	}
 
 	@Override
@@ -61,9 +61,5 @@ public class LoginUserProvider implements ILoginProvider {
 	@Override
 	public void logout(long loginId, long token) {
 		dispatcher.logout(loginId, token);
-	}
-
-	@Override
-	public void logoutRequest() {
 	}
 }

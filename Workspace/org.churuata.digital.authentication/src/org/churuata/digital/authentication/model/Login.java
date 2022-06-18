@@ -17,7 +17,6 @@ import javax.persistence.TemporalType;
 import org.condast.commons.authentication.user.ILoginUser;
 import org.condast.commons.data.latlng.LatLng;
 import org.condast.commons.date.DateUtils;
-import org.condast.commons.strings.StringUtils;
 
 @Entity
 public class Login implements ILoginUser {
@@ -55,17 +54,19 @@ public class Login implements ILoginUser {
 	/**
 	 * token for communication
 	 */
-	private transient long token;
+	private transient long security;
 	
 	private transient LatLng location;
 	
 	private transient boolean confirmed;
+	private transient boolean registered;
 	
 	public Login() {
 		this.createDate = Calendar.getInstance().getTime();
 		this.updateDate = this.createDate;
-		token = new Random().nextLong();
+		security = new Random().nextLong();
 		this.confirmed = false;
+		this.registered = false;
 	}
 
 	@Override
@@ -103,6 +104,17 @@ public class Login implements ILoginUser {
 
 	public void setEmail(String email) {
 		this.email = email;
+	}
+
+	@Override
+	public boolean isRegistered() {
+		return registered;
+	}
+
+	@Override
+	public void setRegistered(boolean registered) {
+		// TODO Auto-generated method stub
+		
 	}
 
 	@Override
@@ -157,19 +169,16 @@ public class Login implements ILoginUser {
 	
 	@Override
 	public long getSecurity() {
-		return token;
+		return security;
 	}
 	
 	public void setSecurity(long token) {
-		this.token = token;
+		this.security = token;
 	}
 
 	@Override
-	public boolean isCorrect(long userId, String token) {
-		if (( this.id != userId ) || StringUtils.isEmpty(token))
-			return false;
-		long tkn = Long.parseLong(token);
-		return (tkn == this.getSecurity());
+	public boolean isCorrect(long userId, long security) {
+		return (( this.id == userId ) && ( this.security == security));
 	}
 
 	/**

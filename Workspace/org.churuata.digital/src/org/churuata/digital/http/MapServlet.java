@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.churuata.digital.core.AuthenticationDispatcher;
 import org.condast.commons.authentication.http.IDomainProvider;
-import org.condast.js.commons.parser.AbstractResourceParser;
+import org.condast.commons.parser.AbstractResourceParser;
 
 public class MapServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -30,10 +30,7 @@ public class MapServlet extends HttpServlet {
 
 	public static final String S_RESOURCE_FILE = "/resources/map.html";
 	
-	private long token;
-
 	public MapServlet() {
-		token = -1;
 	}
 
 	@Override
@@ -44,6 +41,13 @@ public class MapServlet extends HttpServlet {
 	}
 
 	private class FileParser extends AbstractResourceParser{
+
+		long token;
+		
+		public FileParser() {
+			super();
+			this.token = -1;
+		}
 
 		AuthenticationDispatcher dispatcher = AuthenticationDispatcher.getInstance();
 

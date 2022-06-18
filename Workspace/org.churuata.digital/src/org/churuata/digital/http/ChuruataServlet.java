@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.churuata.digital.core.AuthenticationDispatcher;
 import org.condast.commons.authentication.http.IDomainProvider;
-import org.condast.js.commons.parser.AbstractResourceParser;
+import org.condast.commons.parser.AbstractResourceParser;
 
 public class ChuruataServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;

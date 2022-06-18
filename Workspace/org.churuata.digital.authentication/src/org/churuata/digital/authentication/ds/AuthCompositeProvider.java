@@ -5,6 +5,7 @@ import org.churuata.digital.authentication.services.LoginService;
 import org.condast.commons.authentication.core.LoginData;
 import org.condast.commons.authentication.ui.views.AuthenticationGroup;
 import org.condast.commons.authentication.user.ILoginUser;
+import org.condast.commons.persistence.service.TransactionManager;
 import org.condast.commons.ui.controller.EditEvent;
 import org.condast.commons.ui.provider.ICompositeProvider;
 import org.eclipse.swt.SWT;
@@ -41,9 +42,10 @@ public class AuthCompositeProvider implements ICompositeProvider<AuthenticationG
 	
 	protected void onEditEvent( EditEvent<LoginData> event ) {
 		Dispatcher service = Dispatcher.getInstance();
-		LoginService login = new LoginService( service );
-		login.open();
+		TransactionManager t = new TransactionManager( service );
 		try {
+			t.open();
+			LoginService login = new LoginService( service );
 			switch( event.getType()){			
 			case COMPLETE: 
 				LoginData data = event.getData();
@@ -64,7 +66,7 @@ public class AuthCompositeProvider implements ICompositeProvider<AuthenticationG
 			e.printStackTrace();
 		}
 		finally {
-			login.close();
+			t.close();
 		}
 	}
 }
