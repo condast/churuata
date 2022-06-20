@@ -4,11 +4,11 @@ import java.util.List;
 
 import javax.persistence.TypedQuery;
 
-import org.churuata.digital.core.data.PersonData;
 import org.churuata.digital.organisation.core.Dispatcher;
 import org.churuata.digital.organisation.model.Contact;
 import org.churuata.digital.organisation.model.Person;
 import org.condast.commons.authentication.user.ILoginUser;
+import org.condast.commons.na.data.PersonData;
 import org.condast.commons.na.model.IContact;
 import org.condast.commons.na.model.IContact.ContactTypes;
 import org.condast.commons.persistence.service.AbstractEntityService;

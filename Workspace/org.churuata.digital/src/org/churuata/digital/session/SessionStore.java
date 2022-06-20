@@ -1,10 +1,10 @@
 package org.churuata.digital.session;
 
 import org.churuata.digital.core.data.OrganisationData;
-import org.churuata.digital.core.data.PersonData;
 import org.churuata.digital.core.data.ProfileData;
 import org.condast.commons.authentication.session.DefaultSessionStore;
 import org.condast.commons.data.latlng.LatLng;
+import org.condast.commons.na.data.PersonData;
 
 public class SessionStore extends DefaultSessionStore{
 

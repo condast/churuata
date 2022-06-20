@@ -14,7 +14,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.churuata.digital.core.data.OrganisationData;
-import org.churuata.digital.core.data.PersonData;
 import org.churuata.digital.core.location.IChuruataType;
 import org.churuata.digital.organisation.core.AuthenticationDispatcher;
 import org.churuata.digital.organisation.core.Dispatcher;
@@ -26,6 +25,7 @@ import org.churuata.digital.organisation.services.PersonService;
 import org.churuata.digital.organisation.services.ServicesService;
 import org.condast.commons.Utils;
 import org.condast.commons.authentication.user.ILoginUser;
+import org.condast.commons.na.data.PersonData;
 import org.condast.commons.na.model.IContact;
 import org.condast.commons.na.model.IContactPerson;
 import org.condast.commons.persistence.service.TransactionManager;

@@ -7,6 +7,7 @@ import java.util.Collection;
 import org.churuata.digital.core.location.IChuruataType;
 import org.churuata.digital.core.model.IOrganisation;
 import org.condast.commons.data.latlng.LatLng;
+import org.condast.commons.na.data.PersonData;
 import org.condast.commons.strings.StringStyler;
 
 /**

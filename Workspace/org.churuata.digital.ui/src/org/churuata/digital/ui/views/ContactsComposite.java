@@ -2,7 +2,7 @@ package org.churuata.digital.ui.views;
 
 import java.util.Calendar;
 
-import org.churuata.digital.core.data.ContactData;
+import org.condast.commons.na.data.ContactData;
 import org.condast.commons.strings.StringUtils;
 import org.condast.commons.ui.controller.AbstractEntityComposite;
 import org.condast.commons.ui.controller.EditEvent;

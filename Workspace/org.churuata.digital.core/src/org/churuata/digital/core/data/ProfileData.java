@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.condast.commons.na.data.PersonData;
 import org.condast.commons.na.model.IContactPerson;
 import org.condast.commons.strings.StringStyler;
 
