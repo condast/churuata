@@ -69,6 +69,11 @@ public class Person implements IContactPerson, Serializable, Cloneable {
 		return this.id;
 	}
 
+	@Override
+	public long getId() {
+		return this.id;
+	}
+
 	public void setPersonId( long personId) {
 		this.id = personId;
 	}
@@ -182,5 +187,53 @@ public class Person implements IContactPerson, Serializable, Cloneable {
 		this.contacts.clear();
 		for( IContact contact: contacts )
 			addContact( contact );
+	}
+
+	@Override
+	public String getFirstName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setFirstName(String firstName) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setCallingName(String callingName) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public String getPrefix() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setPrefix(String prefix) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public String getSurname() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setSurname(String surName) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public int compareTo(IName o) {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 }

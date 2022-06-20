@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.persistence.TypedQuery;
 
+import org.churuata.digital.core.data.PersonData;
 import org.churuata.digital.organisation.core.Dispatcher;
 import org.churuata.digital.organisation.model.Contact;
 import org.churuata.digital.organisation.model.Person;
@@ -48,5 +49,18 @@ public class PersonService extends AbstractEntityService<Person>{
 		query.setParameter("userId", userId);
 		List<Person> persons = query.getResultList();
 		return persons;
+	}
+	
+	public Person update( PersonData data ) {
+		Person person = find( data.getPersonId());
+		if( person == null )
+			return null;
+		person.setName(data.getName());
+		person.setFirstName( data.getFirstName());
+		person.setCallingName(data.getName());
+		person.setPrefix(data.getPrefix());
+		person.setTitle(data.getTitle());
+		person.setDescription(data.getDescription());
+		return person;
 	}
 }

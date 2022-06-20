@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.logging.Logger;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
@@ -168,6 +170,41 @@ public class ContactPersonResource{
 			Gson gson = new Gson();
 			String str = gson.toJson(profile, ProfileData.class);
 			return Response.ok( str ).build();
+		}
+		catch( Exception ex ) {
+			ex.printStackTrace();
+			return Response.serverError().build();
+		}
+		finally {
+			IOUtils.close( t );
+		}
+	}
+
+	@PUT
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.TEXT_PLAIN)
+	@Path("/update-person")
+	public Response updatePerson( @QueryParam("user-id") long userId, @QueryParam("security") long security, String data) {
+		logger.info( "ATTEMPT Get " );
+
+		AuthenticationDispatcher dispatcher=  AuthenticationDispatcher.getInstance();
+		if( !dispatcher.isLoggedIn(userId, security))
+			return Response.status( Status.UNAUTHORIZED).build();
+
+		if( !dispatcher.isLoggedIn(userId, security))
+			return Response.status( Status.UNAUTHORIZED ).build();
+		
+		TransactionManager t = new TransactionManager( Dispatcher.getInstance() );
+		try {
+			t.open();
+			PersonService ps = new PersonService(); 
+			
+			Gson gson = new Gson();
+			PersonData personData = gson.fromJson(data, PersonData.class);
+			
+			IContactPerson person = ps.update(personData );
+			return ( person == null )? Response.status( Status.NOT_FOUND).build():
+				Response.ok().build();
 		}
 		catch( Exception ex ) {
 			ex.printStackTrace();

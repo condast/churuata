@@ -20,6 +20,7 @@ public class ProfileData extends PersonData implements Serializable, Cloneable {
 		GET,
 		GET_PROFILE,
 		FIND,
+		UPDATE_PERSON,
 		ADD_SERVICE,
 		REMOVE_SERVICE;
 	}
