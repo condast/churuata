@@ -25,18 +25,12 @@ public class ActiveServlet extends HttpServlet {
 	//same as alias in plugin.xml
 	public static final String S_CHURUATA = "churuata/";
 	public static final String S_CONTEXT_PATH = S_CHURUATA + "index";
-	public static final String S_LOGIN = "Login";
-	public static final String S_LOGOFF = "Logoff";
 
 	public static final String S_RESOURCE_FILE = "/resources/active.html";
 
 	private enum Pages{
-		ACTIVE,
-		LOG,
-		LOGIN,
-		OVERVIEW,
-		PROFILE,
-		SYSTEM;
+		LOGOFF,
+		PROFILE;
 
 		@Override
 		public String toString() {
@@ -57,12 +51,9 @@ public class ActiveServlet extends HttpServlet {
 		}
 	}
 
-	private long userId;
-	private long token;
 
 	public ActiveServlet() {
 		super();
-		token = -1;
 	}
 
 	@Override
@@ -72,6 +63,7 @@ public class ActiveServlet extends HttpServlet {
 		ILoginUser user = null;
 		
 		//either enter through the login entry point, or see if login is attempted through a REST call
+		long token = -1;
 		if( !StringUtils.isEmpty(tokenstr)) {
 			token = Long.parseLong(tokenstr);
 			Dispatcher dispatcher = Dispatcher.getInstance();
@@ -97,8 +89,7 @@ public class ActiveServlet extends HttpServlet {
 			resp.setStatus( HttpStatus.UNAUTHORISED.getStatus());
 			return;
 		}
-		userId = user.getId();
-		FileParser parser = new FileParser( token );
+		FileParser parser = new FileParser( token, user.getId() );
 		String str =null;
 		try{
 			str = parser.parse( this.getClass().getResourceAsStream(S_RESOURCE_FILE) );
@@ -112,11 +103,14 @@ public class ActiveServlet extends HttpServlet {
 	private class FileParser extends AbstractResourceParser{
 
 		AuthenticationDispatcher dispatcher = AuthenticationDispatcher.getInstance();
+		
+		private long userId;
 		private long token;
 		
-		public FileParser(long token) {
+		public FileParser(long token, long userId) {
 			super();
 			this.token = token;
+			this.userId = userId;
 		}
 
 		@Override
@@ -125,13 +119,56 @@ public class ActiveServlet extends HttpServlet {
 		}
 
 		@Override
+		protected String onHandleTitle(String subject, Attributes attr) {
+			String result = null;
+			switch( attr ){
+			case HTML:
+				result = "Churuata Digital";
+				break;
+			case PAGE:
+				result = "Churuata Digital";
+				break;
+			default:
+				break;
+			}
+			return result;
+		}
+
+		@Override
+		protected String onCreateList(String[] arguments) {
+			StringBuilder builder = new StringBuilder();
+			for( Pages page: Pages.values()) {
+				StringBuilder href = new StringBuilder();
+				href.append("/churuata/");
+				switch( page ) {
+				case LOGOFF:
+					href.append(page.toString());
+					break;
+				default:
+					href.append("profile");
+					href.append("?token=" + token + "&select=" + page.toString());
+					break;
+				}
+				builder.append(super.addLink(href.toString(), StringStyler.prettyString( page.name())));
+			}
+			return builder.toString();
+		}
+	
+		@Override
+		protected String onCreateFrame(Attributes attr, String[] arguments) {
+			StringBuilder builder = new StringBuilder();
+			builder.append("/churuata/ready?token=" + token + "&user-id=" + userId + "'");
+			return builder.toString();
+		}
+
+		@Override
 		protected String onHandleLabel(String id, Attributes attr) {
-			String result = S_LOGOFF;
+			String result = null;
 			if( Pages.isValid(id)) {
 				Pages page = Pages.getPage(id);
 				switch( page) {	
-				case LOGIN:
-					result = S_LOGOFF;
+				case LOGOFF:
+					result = page.toString();
 					break;
 				default:
 					result = StringStyler.prettyString(page.name());
@@ -159,8 +196,8 @@ public class ActiveServlet extends HttpServlet {
 			String result = null;
 			ILoginUser user = dispatcher.getLoginUser(token);
 			switch( Pages.valueOf(StringStyler.styleToEnum(page))) {
-			case LOGIN:
-				result = S_LOGOFF.toLowerCase() + "?"  +
+			case LOGOFF:
+				result = page.toString() + "?"  +
 						ILoginUser.Attributes.USERNAME.name().toLowerCase() + "=" + user.getUserName() + 
 						IDomainProvider.Attributes.TOKEN.name().toLowerCase() + "=" + token;
 				break;

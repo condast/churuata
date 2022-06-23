@@ -34,6 +34,14 @@
             load-on-startup="true">
       </servlet>
    </extension>
+   <extension
+         point="org.eclipse.equinox.http.registry.servlets">
+      <servlet
+            alias="/churuata/register"
+            class="org.churuata.digital.http.RegisterServlet"
+            load-on-startup="true">
+      </servlet>
+   </extension>
   <extension
          point="org.eclipse.equinox.http.registry.resources">
       <resource

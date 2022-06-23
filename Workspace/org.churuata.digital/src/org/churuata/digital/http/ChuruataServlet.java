@@ -7,8 +7,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.churuata.digital.BasicApplication;
 import org.condast.commons.parser.AbstractResourceParser;
+import org.condast.commons.strings.StringStyler;
 
 public class ChuruataServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -16,13 +16,24 @@ public class ChuruataServlet extends HttpServlet {
 	//same as alias in plugin.xml
 	public static final String S_CHURUATA = "churuata";
 
-	public static final String S_LOGIN = "Login";
-
-	public static final String S_PATH = "path";
-	public static final String S_ACTIVE = "active";
-
+	public static final String S_REGISTER_SERVICE = "Register Service";
 	public static final String S_RESOURCE_FILE = "/resources/index.html";
-	
+
+	private enum Pages{
+		LOGIN,
+		REGISTER;
+		
+		public String getHref( ){
+			return "/" + S_CHURUATA + "/" + toString();
+		}
+
+		@Override
+		public String toString() {
+			return StringStyler.xmlStyleString(name());
+		}
+				
+	}
+
 	public ChuruataServlet() {/* NOTHING */ }
 
 	@Override
@@ -40,13 +51,61 @@ public class ChuruataServlet extends HttpServlet {
 		}
 
 		@Override
+		protected String onHandleTitle(String subject, Attributes attr) {
+			String result = null;
+			switch( attr ){
+			case HTML:
+				result = "Churuata Digital";
+				break;
+			case PAGE:
+				result = "Churuata Digital";
+				break;
+			default:
+				break;
+			}
+			return result;
+		}
+
+		@Override
+		protected String onCreateList(String[] arguments) {
+			StringBuilder builder = new StringBuilder();
+			for( Pages page: Pages.values()) {
+				switch( page ) {	
+				case REGISTER:
+					builder.append(super.addLink(page.getHref(), S_REGISTER_SERVICE ));
+					break;
+				default:
+					builder.append(super.addLink(page.getHref(), StringStyler.prettyString( page.name())));
+					break;
+				}
+			}
+			return builder.toString();
+		}
+
+		@Override
+		protected String onCreateFrame( Attributes attr, String[] arguments) {
+			StringBuilder builder = new StringBuilder();
+			builder.append("/churuata/");
+			switch( attr ) {
+			case HOME:
+				builder.append("map");
+				break;				
+			default:
+				builder.append(attr.toAttribute());
+				break;								
+			}
+			builder.append("'");
+			return builder.toString();
+		}
+
+		@Override
 		protected String onHandleLabel(String id, Attributes attr) {
-			return S_LOGIN;
+			return null;
 		}
 
 		@Override
 		protected String onCreateLink(String link, String url, String arguments) {
-			return S_CHURUATA + BasicApplication.Pages.LOGIN.toString();
+			return null;
 		}
 	}
 }

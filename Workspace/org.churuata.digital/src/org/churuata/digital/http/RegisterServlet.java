@@ -7,36 +7,31 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
-import org.churuata.digital.BasicApplication;
-import org.churuata.digital.core.AuthenticationDispatcher;
-import org.churuata.digital.core.Dispatcher;
-import org.churuata.digital.session.SessionStore;
 import org.condast.commons.authentication.http.IDomainProvider;
-import org.condast.commons.authentication.user.ILoginUser;
 import org.condast.commons.messaging.http.IHttpRequest.HttpStatus;
 import org.condast.commons.strings.StringStyler;
 import org.condast.commons.strings.StringUtils;
 import org.condast.commons.parser.AbstractResourceParser;
 import org.condast.commons.parser.AbstractResourceParser.Attributes;
 
-public class ProfileServlet extends HttpServlet {
+public class RegisterServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	//same as alias in plugin.xml
 	public static final String S_CHURUATA = "churuata/";
 	public static final String S_CONTEXT_PATH = S_CHURUATA + "index";
-	public static final String S_LOGOFF = "Logoff";
 
 	public static final String S_RESOURCE_FILE = "/resources/active.html";
 
 	private enum Pages{
-		ACTIVE,
-		LOGOFF,
-		ACCOUNT,
-		ADDRESS,
+		ENTRY,
+		CONTACT,
 		ORGANISATION,
-		SERVICES;
+		SERVICES,
+		LEGAL,
+		CONFIRMATION;
 
 		@Override
 		public String toString() {
@@ -57,7 +52,7 @@ public class ProfileServlet extends HttpServlet {
 		}
 	}
 
-	public ProfileServlet() {
+	public RegisterServlet() {
 		super();
 	}
 
@@ -65,44 +60,33 @@ public class ProfileServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		String tokenstr = req.getParameter(IDomainProvider.Attributes.TOKEN.toAttribute());
 		String selectstr = req.getParameter(Attributes.SELECT.toAttribute());
-		Pages active = Pages.ACCOUNT;
-		if(!StringUtils.isEmpty(selectstr)) {
-			active = Pages.getPage(selectstr);
-			
-		}
-		AuthenticationDispatcher authentication = AuthenticationDispatcher.getInstance();
-		ILoginUser user = null;
-		
-		//either enter through the login entry point, or see if login is attempted through a REST call
-		long token = -1;
-		if( !StringUtils.isEmpty(tokenstr)) {
-			token = Long.parseLong(tokenstr);
-			Dispatcher dispatcher = Dispatcher.getInstance();
-			IDomainProvider<SessionStore> provider = dispatcher.getDomain(token);
-			if(( provider != null ) && ( provider.getData() != null ))
-				user = provider.getData().getLoginUser();
-		}
-		if( user == null ) {
-			String userstr = req.getParameter( IDomainProvider.Attributes.USER_ID.toAttribute() );
-			String securitystr = req.getParameter( IDomainProvider.Attributes.SECURITY.toAttribute());
-			if( !StringUtils.isEmpty(userstr) && !StringUtils.isEmpty( securitystr )) {
-				long userId = Long.parseLong(userstr);
-				long security = Long.parseLong( securitystr);
-				Random random = new Random();
-				token = Math.abs( random.nextLong() );
-				user = authentication.getLoginUser(userId, security);
-				if( user != null ) {
-					Dispatcher.createDomain(user, token, BasicApplication.Pages.ACTIVE.name().toLowerCase());
-				}
-			}
-		}
-		if( user == null ) {
-			resp.setStatus( HttpStatus.UNAUTHORISED.getStatus());
+		Pages active = Pages.ENTRY;
+		if(StringUtils.isEmpty(selectstr)) {
+			resp.sendError(HttpStatus.UNAUTHORISED.getStatus());
 			return;
 		}
-		FileParser parser = new FileParser( user, active, token );
+		long token = -1;
+		active = Pages.getPage(selectstr);		
 		String str =null;
 		try{
+			HttpSession session = req.getSession( true);
+			switch( active ) {
+			case ENTRY:
+				Random random = new Random();
+				token = Math.abs( random.nextLong() );	
+				session.setAttribute(IDomainProvider.Attributes.TOKEN.toAttribute(), token);
+				break;
+			default:
+				token = Long.parseLong(tokenstr);
+				long check = (long) session.getAttribute(IDomainProvider.Attributes.TOKEN.toAttribute());
+				if(token != check ) {
+					resp.sendError(HttpStatus.UNAUTHORISED.getStatus());
+					return;
+				}
+				break;
+			}
+
+			FileParser parser = new FileParser( token, active );
 			str = parser.parse( this.getClass().getResourceAsStream(S_RESOURCE_FILE) );
 		}
 		catch( Exception ex ) {
@@ -113,14 +97,13 @@ public class ProfileServlet extends HttpServlet {
 
 	private class FileParser extends AbstractResourceParser{
 
-		private ILoginUser user;
-		private long token;
 		private Pages active;
 
-		public FileParser( ILoginUser user, Pages active, long token) {
+		private long token;
+		
+		public FileParser( long token, Pages active) {
 			super();
 			this.token = token;
-			this.user = user;
 			this.active = active;
 		}
 
@@ -128,16 +111,16 @@ public class ProfileServlet extends HttpServlet {
 		protected String getToken() {
 			return String.valueOf(token);
 		}
-
+	
 		@Override
 		protected String onHandleTitle(String subject, Attributes attr) {
 			String result = null;
 			switch( attr ){
 			case HTML:
-				result = "Churuata Digital: Profile";
+				result = "Churuata Digital; Register a Service";
 				break;
 			case PAGE:
-				result = "Churuata Digital: Edit Profile";
+				result = "Churuata Digital; Register a Service";
 				break;
 			default:
 				break;
@@ -149,29 +132,19 @@ public class ProfileServlet extends HttpServlet {
 		protected String onCreateList(String[] arguments) {
 			StringBuilder builder = new StringBuilder();
 			for( Pages page: Pages.values()) {
-				StringBuilder href = new StringBuilder();
-				href.append("/churuata/");
-				switch( page ) {
-				case LOGOFF:
-					href.append(page.toString());
-					break;
-				default:
-					href.append("profile");
-					break;
-				}
-				href.append("?token=" + token + "&select=" + page.toString());
-				builder.append(super.addLink(href.toString(), StringStyler.prettyString( page.name())));
+				String href = "/churuata/register?token=" + token + "&select=" + page.toString();
+				builder.append(super.addLink(href, StringStyler.prettyString( page.name())));
 			}
 			return builder.toString();
 		}
 	
 		@Override
-		protected String onCreateFrame( Attributes attr, String[] arguments) {
+		protected String onCreateFrame(Attributes attr, String[] arguments) {
 			StringBuilder builder = new StringBuilder();
 			builder.append("/churuata/" + active + "?token='" + token);
 			return builder.toString();
 		}
-			
+
 		@Override
 		protected String onHandleLabel(String id, Attributes attr) {
 			String result = null;
@@ -199,14 +172,11 @@ public class ProfileServlet extends HttpServlet {
 				return StringStyler.prettyString(page.name());
 			}
 
-			String result = S_LOGOFF;
+			String result = Pages.ENTRY.toString();
 			if( !IDomainProvider.Attributes.isValid(id))
 				return result;
 			
 			switch( IDomainProvider.Attributes.getAttribute(id)) {
-			case USER_ID:
-				result = "user-id=" + user.getId();
-				break;
 			case TOKEN:
 				result = "token=" + token;
 				break;
@@ -223,10 +193,9 @@ public class ProfileServlet extends HttpServlet {
 			Pages page = Pages.getPage(id);
 			String result = null;
 			switch( page ) {
-			case ACTIVE:
-				result = StringStyler.xmlStyleString( this.active.name()) + "?"  +
-						ILoginUser.Attributes.USERNAME.name().toLowerCase() + "=" + user.getUserName() + 
-						IDomainProvider.Attributes.TOKEN.name().toLowerCase() + "=" + token;
+			case ENTRY:
+				result = StringStyler.xmlStyleString( this.active.name()) + "?"  + 
+			IDomainProvider.Attributes.TOKEN.name().toLowerCase() + "=" + token;
 				break;
 			default:
 				break;
