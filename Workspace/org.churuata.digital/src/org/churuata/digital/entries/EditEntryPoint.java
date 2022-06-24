@@ -65,8 +65,6 @@ public class EditEntryPoint extends AbstractRestEntryPoint<SessionStore>{
 
 		ILoginUser user = store.getLoginUser();
 		editComposite.setInput(context, user );
-		LatLng selected = store.getSelected();
-		//editComposite.setInput(selected);
 		return true;
 	}
 	

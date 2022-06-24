@@ -10,7 +10,6 @@ import org.churuata.digital.session.SessionStore;
 import org.churuata.digital.ui.image.ChuruataImages;
 import org.churuata.digital.ui.views.OrganisationComposite;
 import org.condast.commons.authentication.http.IDomainProvider;
-import org.condast.commons.authentication.user.ILoginUser;
 import org.condast.commons.ui.controller.EditEvent;
 import org.condast.commons.ui.controller.IEditListener;
 import org.condast.commons.ui.session.AbstractSessionHandler;
@@ -54,9 +53,8 @@ public class OrganisationEntryPoint extends AbstractChuruataEntryPoint {
 		if( store == null )
 			return false;
 		setData(store);
-		ILoginUser user = store.getLoginUser();
 		handler = new SessionHandler( parent.getDisplay());
-		return ( user != null );
+		return true;
 	}
 
 	@Override

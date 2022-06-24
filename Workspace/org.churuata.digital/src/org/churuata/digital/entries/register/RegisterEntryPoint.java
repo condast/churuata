@@ -9,9 +9,9 @@ import java.util.logging.Logger;
 import org.churuata.digital.core.AbstractChuruataEntryPoint;
 import org.churuata.digital.core.Dispatcher;
 import org.churuata.digital.core.Entries;
+import org.churuata.digital.core.Entries.Pages;
 import org.churuata.digital.core.data.ProfileData;
 import org.churuata.digital.core.rest.IRestPages;
-import org.churuata.digital.http.RegisterServiceServlet;
 import org.churuata.digital.session.SessionStore;
 import org.condast.commons.authentication.http.IDomainProvider;
 import org.condast.commons.config.Config;
@@ -225,8 +225,7 @@ public class RegisterEntryPoint extends AbstractChuruataEntryPoint{
 				case REGISTER:
 					PersonData data = gson.fromJson(event.getResponse(), PersonData.class);
 					store.setPersonData(data);
-					String href = RegisterServiceServlet.Pages.toHref( RegisterServiceServlet.Pages.CONTACT.next());
-					Dispatcher.redirect(href, store.getToken());
+					Dispatcher.jump( Pages.ORGANISATION, store.getToken());
 					break;
 				case UPDATE_PERSON:
 					Dispatcher.redirect(Entries.Pages.ACTIVE, store.getToken());
