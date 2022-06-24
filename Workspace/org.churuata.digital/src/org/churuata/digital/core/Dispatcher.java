@@ -125,6 +125,7 @@ public class Dispatcher {
 			return false;
 		HttpSession session = RWT.getUISession().getHttpSession();
 		session.setAttribute( IDomainProvider.Attributes.TOKEN.name(), token);
+		path +="&token=" + token;
 		return RWTUtils.redirect( path );
 	}
 

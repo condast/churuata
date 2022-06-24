@@ -43,7 +43,7 @@ public class RegisterEntryPoint extends AbstractChuruataEntryPoint{
 
 	public static final String S_ADD_ACCOUNT = "Add Account";
 
-	private ContactPersonComposite editComposite;
+	private ContactPersonComposite personComposite;
 	private Button btnNext;
 
 	private IEditListener<ContactPersonData> listener = e->onPersonEvent(e);
@@ -70,10 +70,10 @@ public class RegisterEntryPoint extends AbstractChuruataEntryPoint{
 	@Override
 	protected Composite createComposite(Composite parent) {
 		parent.setLayout( new GridLayout(1,false));
-		editComposite = new ContactPersonComposite(parent, SWT.NONE );
-		editComposite.setData( RWT.CUSTOM_VARIANT, S_CHURUATA );
-		editComposite.setLayoutData( new GridData( SWT.FILL, SWT.FILL, true, true ));
-		editComposite.addEditListener( listener);
+		personComposite = new ContactPersonComposite(parent, SWT.NONE );
+		personComposite.setData( RWT.CUSTOM_VARIANT, S_CHURUATA );
+		personComposite.setLayoutData( new GridData( SWT.FILL, SWT.FILL, true, true ));
+		personComposite.addEditListener( listener);
 
 		Group group = new Group( parent, SWT.NONE );
 		group.setText( S_ADD_ACCOUNT);
@@ -102,7 +102,7 @@ public class RegisterEntryPoint extends AbstractChuruataEntryPoint{
 			}
 		});
 
-		return editComposite;
+		return personComposite;
 	}
 
 	@Override
@@ -111,6 +111,10 @@ public class RegisterEntryPoint extends AbstractChuruataEntryPoint{
 		String context = config.getServerContext();
 		controller = new WebController();
 		controller.setInput(context, IRestPages.Pages.CONTACT.toPath());
+		SessionStore store = getSessionStore();
+		ContactPersonData person = store.getContactPersonData();
+		if( person != null )
+			personComposite.setInput(store.getContactPersonData(), true);
 		return true;
 	}
 
@@ -130,7 +134,7 @@ public class RegisterEntryPoint extends AbstractChuruataEntryPoint{
 			//Dispatcher.jump(BasicApplication.Pages.CREATE, store.getToken());
 			break;
 		case ADDED:
-			store.setContactPersonData( this.editComposite.getInput());
+			store.setContactPersonData( this.personComposite.getInput());
 			Dispatcher.jump(Entries.Pages.CONTACTS, store.getToken());
 			break;
 		case COMPLETE:

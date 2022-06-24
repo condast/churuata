@@ -50,7 +50,7 @@ public class RegisterServiceServlet extends HttpServlet {
 		}
 		
 		public static String toHref( Pages page ) {
-			return Entries.Pages.REGISTER_SERVICE.toPath() + "?session=" + page.toString();
+			return Entries.Pages.REGISTER_SERVICE.toPath() + "?select=" + page.toString();
 		}
 	}
 

@@ -10,7 +10,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.churuata.digital.core.AuthenticationDispatcher;
 import org.churuata.digital.core.Dispatcher;
-import org.churuata.digital.core.Entries;
 import org.churuata.digital.session.SessionStore;
 import org.condast.commons.authentication.http.IDomainProvider;
 import org.condast.commons.authentication.user.ILoginUser;
