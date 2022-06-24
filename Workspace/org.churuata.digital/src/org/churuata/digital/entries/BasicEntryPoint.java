@@ -4,8 +4,8 @@ import java.util.concurrent.TimeUnit;
 
 import javax.servlet.http.HttpSession;
 
-import org.churuata.digital.BasicApplication.Pages;
 import org.churuata.digital.core.Dispatcher;
+import org.churuata.digital.core.Entries;
 import org.churuata.digital.session.SessionStore;
 import org.churuata.digital.ui.map.MapBrowser;
 import org.condast.commons.authentication.http.IDomainProvider;
@@ -69,7 +69,7 @@ public class BasicEntryPoint extends AbstractRestEntryPoint<SessionStore> {
 				return null;
 			HttpSession hs = RWT.getUISession().getHttpSession();
 			hs.setAttribute(EditTypes.SELECTED.name(), e.getData());
-			Dispatcher.redirect(Pages.SERVICES, token);
+			Dispatcher.redirect(Entries.Pages.SERVICES, token);
 			break;
 		default:
 			break;

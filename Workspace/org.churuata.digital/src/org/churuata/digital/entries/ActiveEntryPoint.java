@@ -2,9 +2,9 @@ package org.churuata.digital.entries;
 
 import java.util.concurrent.TimeUnit;
 
-import org.churuata.digital.BasicApplication;
 import org.churuata.digital.core.AbstractChuruataEntryPoint;
 import org.churuata.digital.core.Dispatcher;
+import org.churuata.digital.core.Entries;
 import org.churuata.digital.session.SessionStore;
 import org.churuata.digital.ui.image.ChuruataImages;
 import org.churuata.digital.ui.map.MapBrowser;
@@ -179,7 +179,7 @@ public class ActiveEntryPoint extends AbstractChuruataEntryPoint{
 			break;
 		case SELECTED:
 			store.setSelected( data);
-			Dispatcher.jump(BasicApplication.Pages.CREATE, store.getToken());
+			Dispatcher.jump(Entries.Pages.CREATE, store.getToken());
 			break;
 		default:
 			break;

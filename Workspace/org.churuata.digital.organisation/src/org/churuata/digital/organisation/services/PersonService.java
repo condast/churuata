@@ -23,8 +23,8 @@ public class PersonService extends AbstractEntityService<Person>{
 		super( Person.class, dispatcher );
 	}
 	
-	public Person create( long userId, String name, String title, String description, IContact contact ) {
-		Person person = new Person( userId, name, title, description, contact );
+	public Person create( long userId, String name, String surname, String prefix, IContact contact ) {
+		Person person = new Person( userId, name, surname, prefix, contact );
 		super.create(person);
 		return person;
 	}

@@ -31,6 +31,7 @@ import org.condast.commons.na.model.IContact;
 import org.condast.commons.na.model.IContact.ContactTypes;
 import org.condast.commons.persistence.service.TransactionManager;
 import org.condast.commons.na.model.IContactPerson;
+import org.condast.commons.strings.StringStyler;
 import org.condast.commons.strings.StringUtils;
 import org.condast.commons.verification.IVerification;
 import org.condast.commons.verification.IVerification.VerificationTypes;
@@ -53,6 +54,52 @@ public class ContactPersonResource{
 
 	public ContactPersonResource() {
 		super();
+	}
+
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/register")
+	public Response registerContact( @QueryParam("name") String name, @QueryParam("surname") String surname,
+			@QueryParam("prefix") String prefix, @QueryParam("email") String email) {
+		logger.info( "ATTEMPT Request registration " + name );
+
+		if( StringUtils.isEmpty(name) || StringUtils.isEmpty( email )) 
+			return Response.notModified( ErrorMessages.NO_USERNAME_OR_EMAIL.name()).build();
+		
+		if( StringUtils.isEmpty(surname ))
+			return Response.notModified( ErrorMessages.NO_TITLE.name()).build();
+		
+		if( !IVerification.VerificationTypes.verify(VerificationTypes.EMAIL, email))
+			return Response.notModified( ErrorMessages.NO_USERNAME_OR_EMAIL.name()).build();
+		
+		if( StringUtils.isEmpty( name )) {
+			name = email.split("[@]")[0];
+		}
+
+		logger.info( "Adding contact" + name + "(" + email + ")");
+
+		TransactionManager t = new TransactionManager( Dispatcher.getInstance() );
+		IContactPerson person = null;
+		try {
+			t.open();
+			PersonService ps = new PersonService(); 
+			ContactService cs = new ContactService(); 
+
+			IContact contact = cs.createContact(ContactTypes.EMAIL, email);
+			person = ps.create(-1, name, surname, prefix, contact);
+			
+			Gson gson = new Gson();
+			PersonData pd = new PersonData(person);
+			String str = gson.toJson(pd, PersonData.class);
+			return Response.ok( str ).build();
+		}
+		catch( Exception ex ) {
+			ex.printStackTrace();
+			return Response.serverError().build();
+		}
+		finally {
+			t.close();
+		}
 	}
 
 	@GET
@@ -212,6 +259,47 @@ public class ContactPersonResource{
 		}
 		finally {
 			IOUtils.close( t );
+		}
+	}
+
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/add-contact-type")
+	public Response addContacttype( @QueryParam("person-id") long personId, @QueryParam("type") String type,
+			@QueryParam("value") String value, @QueryParam("restricted") boolean restricted) {
+		logger.info( "ATTEMPT Add contact " + type );
+
+		if( StringUtils.isEmpty(value) || StringUtils.isEmpty( type )) 
+			return Response.status( Status.BAD_REQUEST ).build();
+		
+		ContactTypes ct = ContactTypes.valueOf( StringStyler.styleToEnum(type));
+		if( !ContactTypes.verify(ct, value))
+			return Response.status( Status.BAD_REQUEST ).build();
+		
+		TransactionManager t = new TransactionManager( Dispatcher.getInstance() );
+		IContactPerson person = null;
+		try {
+			t.open();
+			PersonService ps = new PersonService(); 
+			person = ps.find(personId);
+			if( person == null )
+				return Response.status(Status.NOT_FOUND).build();
+			
+			ContactService cs = new ContactService(); 
+
+			IContact contact = cs.createContact(ct, value);
+			person.addContact(contact);
+			Gson gson = new Gson();
+			PersonData pd = new PersonData(person);
+			String str = gson.toJson(pd, PersonData.class);
+			return Response.ok( str ).build();
+		}
+		catch( Exception ex ) {
+			ex.printStackTrace();
+			return Response.serverError().build();
+		}
+		finally {
+			t.close();
 		}
 	}
 

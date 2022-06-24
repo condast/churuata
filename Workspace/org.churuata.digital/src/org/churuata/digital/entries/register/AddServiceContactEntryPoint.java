@@ -1,4 +1,4 @@
-package org.churuata.digital.entries;
+package org.churuata.digital.entries.register;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -36,7 +36,7 @@ import org.eclipse.swt.widgets.Group;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
-public class AccountEntryPoint extends AbstractChuruataEntryPoint{
+public class AddServiceContactEntryPoint extends AbstractChuruataEntryPoint{
 	private static final long serialVersionUID = 1L;
 
 	public static final String S_PAGE = "page";

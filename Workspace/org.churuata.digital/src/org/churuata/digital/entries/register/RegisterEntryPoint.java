@@ -1,4 +1,4 @@
-package org.churuata.digital.entries;
+package org.churuata.digital.entries.register;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -11,17 +11,19 @@ import org.churuata.digital.core.Dispatcher;
 import org.churuata.digital.core.Entries;
 import org.churuata.digital.core.data.ProfileData;
 import org.churuata.digital.core.rest.IRestPages;
+import org.churuata.digital.http.RegisterServiceServlet;
 import org.churuata.digital.session.SessionStore;
-import org.churuata.digital.ui.image.ChuruataImages;
 import org.condast.commons.authentication.http.IDomainProvider;
-import org.condast.commons.authentication.user.ILoginUser;
 import org.condast.commons.config.Config;
 import org.condast.commons.messaging.http.AbstractHttpRequest;
 import org.condast.commons.messaging.http.ResponseEvent;
+import org.condast.commons.na.data.ContactPersonData;
 import org.condast.commons.na.data.PersonData;
+import org.condast.commons.strings.StringUtils;
 import org.condast.commons.ui.controller.EditEvent;
 import org.condast.commons.ui.controller.IEditListener;
-import org.condast.commons.ui.na.person.PersonComposite;
+import org.condast.commons.ui.na.person.ContactPersonComposite;
+import org.condast.commons.ui.player.PlayerImages;
 import org.eclipse.rap.rwt.RWT;
 import org.eclipse.rap.rwt.client.service.StartupParameters;
 import org.eclipse.swt.SWT;
@@ -36,18 +38,15 @@ import org.eclipse.swt.widgets.Group;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
-public class AccountEntryPoint extends AbstractChuruataEntryPoint{
+public class RegisterEntryPoint extends AbstractChuruataEntryPoint{
 	private static final long serialVersionUID = 1L;
 
-	public static final String S_PAGE = "page";
-
-	public static final String S_CHURUATA = "churuata";
 	public static final String S_ADD_ACCOUNT = "Add Account";
 
-	private PersonComposite editComposite;
-	private Button btnAdd;
+	private ContactPersonComposite editComposite;
+	private Button btnNext;
 
-	private IEditListener<PersonData> listener = e->onPersonEvent(e);
+	private IEditListener<ContactPersonData> listener = e->onPersonEvent(e);
 
 	private WebController controller;
 	
@@ -56,21 +55,22 @@ public class AccountEntryPoint extends AbstractChuruataEntryPoint{
 	@Override
 	protected boolean prepare(Composite parent) {
 		StartupParameters service = RWT.getClient().getService( StartupParameters.class );
-		IDomainProvider<SessionStore> domain = Dispatcher.getDomainProvider( service );
-		if( domain == null )
+		String tokenStr = service.getParameter(IDomainProvider.Attributes.TOKEN.toAttribute());
+		IDomainProvider<SessionStore> provider = null;
+		if( StringUtils.isEmpty(tokenStr)) {
+			provider = Dispatcher.createDomain();
+		}else
+			provider = Dispatcher.getDomainProvider(service);
+		if( provider == null )
 			return false;
-		SessionStore store = domain.getData();
-		if( store == null )
-			return false;
-		setData(store);
-		ILoginUser user = store.getLoginUser();
-		return ( user != null );
+		setData(provider.getData());
+		return true;
 	}
 	
 	@Override
 	protected Composite createComposite(Composite parent) {
 		parent.setLayout( new GridLayout(1,false));
-		editComposite = new PersonComposite(parent, SWT.NONE );
+		editComposite = new ContactPersonComposite(parent, SWT.NONE );
 		editComposite.setData( RWT.CUSTOM_VARIANT, S_CHURUATA );
 		editComposite.setLayoutData( new GridData( SWT.FILL, SWT.FILL, true, true ));
 		editComposite.addEditListener( listener);
@@ -80,22 +80,20 @@ public class AccountEntryPoint extends AbstractChuruataEntryPoint{
 		group.setLayout( new GridLayout(5, false ));
 		group.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 
-		ChuruataImages images = ChuruataImages.getInstance();
-
-		btnAdd = new Button(group, SWT.NONE);
-		btnAdd.setEnabled(false);
-		btnAdd.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true));
-		btnAdd.setImage( images.getImage( ChuruataImages.Images.ADD));
-		btnAdd.addSelectionListener( new SelectionAdapter(){
+		btnNext = new Button(group, SWT.NONE);
+		btnNext.setEnabled(false);
+		btnNext.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true));
+		btnNext.setImage( PlayerImages.getImage( PlayerImages.Images.NEXT));
+		btnNext.addSelectionListener( new SelectionAdapter(){
 			private static final long serialVersionUID = 1L;
 
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
 				try{
 					SessionStore store = getSessionStore();
-					if( store.getPersonData() == null )
+					if( store.getContactPersonData() == null )
 						return;
-					controller.update( store.getPersonData());
+					controller.register( store.getContactPersonData());
 				}
 				catch( Exception ex ){
 					ex.printStackTrace();
@@ -111,24 +109,13 @@ public class AccountEntryPoint extends AbstractChuruataEntryPoint{
 	protected boolean postProcess(Composite parent) {
 		Config config = new Config();
 		String context = config.getServerContext();
-
-		SessionStore store = getSessionStore();
-		ILoginUser user = store.getLoginUser();
-		ProfileData profile = store.getProfile();
-		if( profile == null ) {
-			profile = null;//new ProfileData( selected );
-			store.setProfile(profile); 
-		}
-
 		controller = new WebController();
 		controller.setInput(context, IRestPages.Pages.CONTACT.toPath());
-		controller.user = user;
-		controller.get();
 		return true;
 	}
 
-	protected void onPersonEvent( EditEvent<PersonData> event ) {
-		PersonData data = null;
+	protected void onPersonEvent( EditEvent<ContactPersonData> event ) {
+		ContactPersonData data = null;
 		SessionStore store = super.getSessionStore();
 		switch( event.getType()) {
 		case INITIALISED:
@@ -143,13 +130,13 @@ public class AccountEntryPoint extends AbstractChuruataEntryPoint{
 			//Dispatcher.jump(BasicApplication.Pages.CREATE, store.getToken());
 			break;
 		case ADDED:
-			editComposite.getInput();
-			//Dispatcher.jump(BasicApplication.Pages.SERVICES, store.getToken());
+			store.setContactPersonData( this.editComposite.getInput());
+			Dispatcher.jump(Entries.Pages.CONTACTS, store.getToken());
 			break;
 		case COMPLETE:
 			data = event.getData();
-			store.setPersonData(data);
-			btnAdd.setEnabled(( data != null ));
+			store.setContactPersonData(data);
+			btnNext.setEnabled(( data != null ));
 			break;
 		default:
 			break;
@@ -182,8 +169,6 @@ public class AccountEntryPoint extends AbstractChuruataEntryPoint{
 	
 	private class WebController extends AbstractHttpRequest<ProfileData.Requests>{
 		
-		private ILoginUser user;
-		
 		public WebController() {
 			super();
 		}
@@ -192,11 +177,22 @@ public class AccountEntryPoint extends AbstractChuruataEntryPoint{
 			super.setContextPath(context + path);
 		}
 
+		public void register( ContactPersonData person ) {
+			Map<String, String> params = super.getParameters();
+			params.put(ProfileData.Parameters.NAME.toString(), person.getName());
+			params.put(ProfileData.Parameters.PREFIX.toString(), person.getPrefix());
+			params.put(ProfileData.Parameters.SURNAME.toString(), person.getSurname());
+			params.put(ProfileData.Parameters.EMAIL.toString(), person.getEmail());
+			try {
+				sendGet(ProfileData.Requests.REGISTER, params );
+			} catch (IOException e) {
+				logger.warning(e.getMessage());
+			}
+		}
+
 		public void get() {
 			Map<String, String> params = super.getParameters();
 			try {
-				params.put(ProfileData.Parameters.USER_ID.toString(), String.valueOf( user.getId()));
-				params.put(ProfileData.Parameters.SECURITY.toString(), String.valueOf( user.getSecurity() ));
 				sendGet(ProfileData.Requests.GET_PROFILE, params );
 			} catch (IOException e) {
 				logger.warning(e.getMessage());
@@ -208,8 +204,6 @@ public class AccountEntryPoint extends AbstractChuruataEntryPoint{
 			try {
 				if( person == null )
 					return;
-				params.put(ProfileData.Parameters.USER_ID.toString(), String.valueOf( user.getId()));
-				params.put(ProfileData.Parameters.SECURITY.toString(), String.valueOf( user.getSecurity() ));
 				Gson gson = new Gson();
 				String str = gson.toJson( person, ProfileData.class);
 				sendPut(ProfileData.Requests.UPDATE_PERSON, params, str );
@@ -222,13 +216,20 @@ public class AccountEntryPoint extends AbstractChuruataEntryPoint{
 		protected String onHandleResponse(ResponseEvent<ProfileData.Requests> event) throws IOException {
 			try {
 				SessionStore store = getSessionStore();
+				Gson gson = new Gson();
 				switch( event.getRequest()){
+				case REGISTER:
+					PersonData data = gson.fromJson(event.getResponse(), PersonData.class);
+					store.setPersonData(data);
+					String href = RegisterServiceServlet.Pages.toHref( RegisterServiceServlet.Pages.CONTACT.next());
+					Dispatcher.redirect(href, store.getToken());
+					break;
 				case UPDATE_PERSON:
 					Dispatcher.redirect(Entries.Pages.ACTIVE, store.getToken());
 					break;
-				case GET_PROFILE:					Gson gson = new Gson();
+				case GET_PROFILE:					
 					ProfileData profile = gson.fromJson(event.getResponse(), ProfileData.class);
-					editComposite.setInput(profile, true);
+					//editComposite.setInput(profile, true);
 					store.setProfile(profile);
 					break;
 				default:
@@ -248,5 +249,4 @@ public class AccountEntryPoint extends AbstractChuruataEntryPoint{
 		}
 	
 	}
-
 }

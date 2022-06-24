@@ -8,7 +8,6 @@ import java.util.Random;
 
 import javax.servlet.http.HttpSession;
 
-import org.churuata.digital.BasicApplication;
 import org.churuata.digital.session.SessionStore;
 import org.condast.commons.authentication.core.AuthenticationEvent;
 import org.condast.commons.authentication.core.IAuthenticationListener;
@@ -49,7 +48,7 @@ public class Dispatcher {
 			switch( event.getEvent()) {
 			case LOGIN:
 				if( domain == null )
-					createDomain(user);
+					domain = createDomain( user);
 				break;
 			case LOGOUT:
 				removeDomain(user.getId());
@@ -67,12 +66,10 @@ public class Dispatcher {
 	 * @param userId
 	 * @return
 	 */
-	public IDomainProvider<SessionStore> createDomain( String domain, long userId, long token, String path ) {
-		if( userId < 0 )
-			return null;
-		IDomainProvider<SessionStore> provider = this.domains.get(userId);
+	public IDomainProvider<SessionStore> createDomain( String domain, long token, String path ) {
+		IDomainProvider<SessionStore> provider = this.domains.get( token);
 		if( provider == null ) {
-			provider = new DomainProvider( userId, domain, token, path );
+			provider = new DomainProvider( domain, token, path );
 			this.domains.put(token, provider);
 		}
 		return provider;
@@ -103,7 +100,7 @@ public class Dispatcher {
 				continue;
 			ILoginUser user = store.getLoginUser();
 			if( user == null )
-				return null;
+				continue;
 			if( user.isCorrect(userId, security))
 				return domain;
 		}
@@ -119,7 +116,7 @@ public class Dispatcher {
 		}
 	}
 	
-	public static boolean redirect( BasicApplication.Pages page, long token ) {
+	public static boolean redirect( Entries.Pages page, long token ) {
 		return redirect( page.toPath(), token );
 	}
 
@@ -131,7 +128,7 @@ public class Dispatcher {
 		return RWTUtils.redirect( path );
 	}
 
-	public static boolean jump( BasicApplication.Pages page, long token ) {
+	public static boolean jump( Entries.Pages page, long token ) {
 		if( token < 0 )
 			return false;
 		HttpSession session = RWT.getUISession().getHttpSession();
@@ -150,7 +147,7 @@ public class Dispatcher {
 	public static String getPath( String login, String domain, long token, String path ) {
 		return login.toLowerCase() + "?" + IDomainProvider.Attributes.TOKEN.name().toLowerCase() + "=" + token +
 				 "&" +IDomainProvider.Attributes.DOMAIN.name().toLowerCase() + "=" + domain +
-				 "&" + BasicApplication.Pages.ACTIVE.name().toLowerCase() + "=" + path;
+				 "&" + Entries.Pages.ACTIVE.name().toLowerCase() + "=" + path;
 	}
 
 	/**
@@ -160,8 +157,10 @@ public class Dispatcher {
 	 * @param active
 	 * @return
 	 */
-	public static IDomainProvider<SessionStore> createDomain( ILoginUser user, long token, String active ) {
-		IDomainProvider<SessionStore> domain = dispatcher.createDomain( Dispatcher.S_CHURUATA, user.getId(), token, active);
+	public static IDomainProvider<SessionStore> createDomain( ILoginUser user ) {
+		Random random = new Random();
+		long token = Math.abs( random.nextLong() );
+		IDomainProvider<SessionStore> domain = dispatcher.createDomain( Dispatcher.S_CHURUATA, token, Entries.Pages.ACTIVE.name().toLowerCase());
 		domain.getData().setLoginUser(user);
 		return domain;
 	}
@@ -173,10 +172,10 @@ public class Dispatcher {
 	 * @param active
 	 * @return
 	 */
-	public static IDomainProvider<SessionStore> createDomain( ILoginUser user ) {	
+	public static IDomainProvider<SessionStore> createDomain() {	
 		Random random = new Random();
 		long token = Math.abs( random.nextLong() );
-		return createDomain( user , token, BasicApplication.Pages.ACTIVE.name().toLowerCase());
+		return dispatcher.createDomain( S_CHURUATA , token, Entries.Pages.ACTIVE.name().toLowerCase());
 	}
 
 	public static IDomainProvider<SessionStore> getDomainProvider( StartupParameters service ) {
@@ -207,9 +206,8 @@ public class Dispatcher {
 
 		private long userId;
 		
-		public DomainProvider( long userId, String domain, long token, String path ) {
+		public DomainProvider( String domain, long token, String path ) {
 			super( domain, path, token );
-			this.userId = userId;
 			super.setData(new SessionStore( token ));
 		}
 

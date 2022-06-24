@@ -17,11 +17,12 @@ public class ChuruataServlet extends HttpServlet {
 	public static final String S_CHURUATA = "churuata";
 
 	public static final String S_REGISTER_SERVICE = "Register Service";
+	public static final String S_REGISTER_SERVICE_PAGE = "register-service";
 	public static final String S_RESOURCE_FILE = "/resources/index.html";
 
 	private enum Pages{
 		LOGIN,
-		REGISTER;
+		REGISTER_SERVICE;
 		
 		public String getHref( ){
 			return "/" + S_CHURUATA + "/" + toString();
@@ -30,11 +31,12 @@ public class ChuruataServlet extends HttpServlet {
 		@Override
 		public String toString() {
 			return StringStyler.xmlStyleString(name());
-		}
-				
+		}				
 	}
 
-	public ChuruataServlet() {/* NOTHING */ }
+	public ChuruataServlet() {
+		super();
+	}
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -71,8 +73,9 @@ public class ChuruataServlet extends HttpServlet {
 			StringBuilder builder = new StringBuilder();
 			for( Pages page: Pages.values()) {
 				switch( page ) {	
-				case REGISTER:
-					builder.append(super.addLink(page.getHref(), S_REGISTER_SERVICE ));
+				case REGISTER_SERVICE:
+					String href = page.getHref() + "?select=register";
+					builder.append(super.addLink(href, S_REGISTER_SERVICE ));
 					break;
 				default:
 					builder.append(super.addLink(page.getHref(), StringStyler.prettyString( page.name())));
@@ -96,16 +99,6 @@ public class ChuruataServlet extends HttpServlet {
 			}
 			builder.append("'");
 			return builder.toString();
-		}
-
-		@Override
-		protected String onHandleLabel(String id, Attributes attr) {
-			return null;
-		}
-
-		@Override
-		protected String onCreateLink(String link, String url, String arguments) {
-			return null;
 		}
 	}
 }

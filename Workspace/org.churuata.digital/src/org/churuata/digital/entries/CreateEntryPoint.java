@@ -6,9 +6,9 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
-import org.churuata.digital.BasicApplication;
 import org.churuata.digital.core.AbstractChuruataEntryPoint;
 import org.churuata.digital.core.Dispatcher;
+import org.churuata.digital.core.Entries;
 import org.churuata.digital.core.data.OrganisationData;
 import org.churuata.digital.core.data.OrganisationData.Requests;
 import org.churuata.digital.core.rest.IRestPages;
@@ -142,11 +142,11 @@ public class CreateEntryPoint extends AbstractChuruataEntryPoint{
 		case SELECTED:
 			data = event.getData().getLocation();
 			store.setSelected( data);
-			Dispatcher.jump(BasicApplication.Pages.CREATE, store.getToken());
+			Dispatcher.jump(Entries.Pages.CREATE, store.getToken());
 			break;
 		case ADDED:
 			editComposite.getInput();
-			Dispatcher.jump(BasicApplication.Pages.SERVICES, store.getToken());
+			Dispatcher.jump(Entries.Pages.SERVICES, store.getToken());
 			break;
 		case COMPLETE:
 			data = event.getData().getLocation();
@@ -215,7 +215,7 @@ public class CreateEntryPoint extends AbstractChuruataEntryPoint{
 				switch( event.getRequest()){
 				case CREATE:
 					SessionStore store = getSessionStore();
-					Dispatcher.jump(BasicApplication.Pages.ACTIVE, store.getToken());
+					Dispatcher.jump(Entries.Pages.ACTIVE, store.getToken());
 					break;
 				default:
 					break;

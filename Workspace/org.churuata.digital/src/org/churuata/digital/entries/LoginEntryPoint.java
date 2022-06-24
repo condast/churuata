@@ -10,6 +10,7 @@ import org.churuata.digital.BasicApplication;
 import org.churuata.digital.core.AbstractChuruataEntryPoint;
 import org.churuata.digital.core.AuthenticationDispatcher;
 import org.churuata.digital.core.Dispatcher;
+import org.churuata.digital.core.Entries;
 import org.churuata.digital.core.rest.IRestPages;
 import org.churuata.digital.session.SessionStore;
 import org.condast.commons.authentication.core.LoginData;
@@ -84,7 +85,7 @@ public class LoginEntryPoint extends AbstractChuruataEntryPoint{
 	private void onEditEvent(EditEvent<LoginData> e) {
 		switch( e.getType()){
 		case CUSTOM:	
-			RWTUtils.redirect( BasicApplication.Pages.GET_EMAIL.toPath());
+			RWTUtils.redirect( Entries.Pages.GET_EMAIL.toPath());
 			break;
 		case COMPLETE:
 			try {

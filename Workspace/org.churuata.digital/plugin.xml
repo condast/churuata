@@ -37,8 +37,8 @@
    <extension
          point="org.eclipse.equinox.http.registry.servlets">
       <servlet
-            alias="/churuata/register"
-            class="org.churuata.digital.http.RegisterServlet"
+            alias="/churuata/register-service"
+            class="org.churuata.digital.http.RegisterServiceServlet"
             load-on-startup="true">
       </servlet>
    </extension>

@@ -21,19 +21,27 @@ public class ProfileData extends PersonData implements Serializable, Cloneable {
 		GET,
 		GET_PROFILE,
 		FIND,
+		REGISTER,
+		ADD_CONTACT_TYPE,
 		UPDATE_PERSON,
 		ADD_SERVICE,
 		REMOVE_SERVICE;
 	}
 
 	public enum Parameters{
-		USER_ID,
-		SECURITY,
-		NAME,
+		PERSON_ID,
 		DESCRIPTION,
+		EMAIL,
 		LATITUDE,
 		LONGITUDE,
-		TYPE;
+		NAME,
+		FIRST_NAME,
+		SURNAME,
+		PREFIX,
+		SECURITY,
+		TITLE,
+		TYPE,
+		USER_ID;
 
 		@Override
 		public String toString() {

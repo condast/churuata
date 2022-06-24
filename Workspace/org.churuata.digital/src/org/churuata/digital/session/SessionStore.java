@@ -4,6 +4,7 @@ import org.churuata.digital.core.data.OrganisationData;
 import org.churuata.digital.core.data.ProfileData;
 import org.condast.commons.authentication.session.DefaultSessionStore;
 import org.condast.commons.data.latlng.LatLng;
+import org.condast.commons.na.data.ContactPersonData;
 import org.condast.commons.na.data.PersonData;
 
 public class SessionStore extends DefaultSessionStore{
@@ -19,6 +20,8 @@ public class SessionStore extends DefaultSessionStore{
 	private ProfileData profile; 
 	
 	private PersonData personData;
+
+	private ContactPersonData contactPersonData;
 
 	public SessionStore() {
 		super( S_CHURUATA_ID);
@@ -72,5 +75,13 @@ public class SessionStore extends DefaultSessionStore{
 
 	public void setPersonData(PersonData personData) {
 		this.personData = personData;
+	}
+
+	public ContactPersonData getContactPersonData() {
+		return contactPersonData;
+	}
+
+	public void setContactPersonData(ContactPersonData contactPersonData) {
+		this.contactPersonData = contactPersonData;
 	}	
 }

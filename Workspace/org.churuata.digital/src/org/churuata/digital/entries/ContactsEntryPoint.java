@@ -1,20 +1,20 @@
 package org.churuata.digital.entries;
 
+import java.util.EnumSet;
 import java.util.concurrent.TimeUnit;
 
-import org.churuata.digital.BasicApplication;
 import org.churuata.digital.core.AbstractChuruataEntryPoint;
 import org.churuata.digital.core.Dispatcher;
-import org.churuata.digital.core.data.OrganisationData;
+import org.churuata.digital.core.Entries.Pages;
 import org.churuata.digital.session.SessionStore;
 import org.churuata.digital.ui.image.ChuruataImages;
-import org.churuata.digital.ui.views.ContactsComposite;
-import org.churuata.digital.ui.views.ServicesComposite;
 import org.condast.commons.authentication.http.IDomainProvider;
-import org.condast.commons.authentication.user.ILoginUser;
-import org.condast.commons.na.data.ContactData;
+import org.condast.commons.na.data.ContactPersonData;
+import org.condast.commons.na.model.IContact;
+import org.condast.commons.na.model.IContact.ContactTypes;
 import org.condast.commons.ui.controller.EditEvent;
 import org.condast.commons.ui.controller.IEditListener;
+import org.condast.commons.ui.na.contacts.ContactWidget;
 import org.condast.commons.ui.session.AbstractSessionHandler;
 import org.condast.commons.ui.session.SessionEvent;
 import org.eclipse.rap.rwt.RWT;
@@ -29,19 +29,17 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 
-
 public class ContactsEntryPoint extends AbstractChuruataEntryPoint {
 	private static final long serialVersionUID = 1L;
 
-
-	private ContactsComposite servicesComposite;
-	private Button btnAdd;
+	private ContactWidget contactWidget;
+	private Button btnOk;
 
 	private SessionHandler handler;
 	
-	private ContactData data = null;
+	private IContact data = null;
 
-	private IEditListener<ContactData> listener = e->onServiceEvent(e);
+	private IEditListener<IContact> listener = e->onContactEvent(e);
 
 	@Override
 	protected boolean prepare(Composite parent) {
@@ -53,17 +51,16 @@ public class ContactsEntryPoint extends AbstractChuruataEntryPoint {
 		if( store == null )
 			return false;
 		setData(store);
-		ILoginUser user = store.getLoginUser();
 		handler = new SessionHandler( parent.getDisplay());
-		return ( user != null );
+		return true;
 	}
 
 	@Override
     protected Composite createComposite(Composite parent) {
         parent.setLayout(new GridLayout( 1, false ));
-        servicesComposite = new ContactsComposite( parent, SWT.NONE);
- 		servicesComposite.setData( RWT.CUSTOM_VARIANT, S_CHURUATA );
- 		servicesComposite.setLayoutData( new GridData(SWT.FILL, SWT.FILL, true, false));
+        contactWidget = new ContactWidget( parent, SWT.NONE);
+ 		contactWidget.setData( RWT.CUSTOM_VARIANT, S_CHURUATA );
+ 		contactWidget.setLayoutData( new GridData(SWT.FILL, SWT.FILL, true, false));
 		Group group = new Group( parent, SWT.NONE );
 		group.setText("Add Churuata Service");
 		group.setLayout( new GridLayout(5, false ));
@@ -71,11 +68,11 @@ public class ContactsEntryPoint extends AbstractChuruataEntryPoint {
 
 		ChuruataImages images = ChuruataImages.getInstance();
 
-		btnAdd = new Button(group, SWT.NONE);
-		btnAdd.setEnabled(false);
-		btnAdd.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true));
-		btnAdd.setImage( images.getImage( ChuruataImages.Images.ADD));
-		btnAdd.addSelectionListener( new SelectionAdapter(){
+		btnOk = new Button(group, SWT.NONE);
+		btnOk.setEnabled(false);
+		btnOk.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true));
+		btnOk.setImage( images.getImage( ChuruataImages.Images.ADD));
+		btnOk.addSelectionListener( new SelectionAdapter(){
 			private static final long serialVersionUID = 1L;
 
 			@Override
@@ -84,9 +81,9 @@ public class ContactsEntryPoint extends AbstractChuruataEntryPoint {
 					if( data == null )
 						return;
 					SessionStore store = getSessionStore();
-					OrganisationData organisation = store.getOrganisation();
-					//organisation.addChuruataType(data);
-					Dispatcher.jump(BasicApplication.Pages.CREATE, store.getToken());
+					ContactPersonData person = store.getContactPersonData();
+					person.addContact( data );
+					Dispatcher.jump(Pages.REGISTER_SERVICE, store.getToken());
 				}
 				catch( Exception ex ){
 					ex.printStackTrace();
@@ -95,20 +92,24 @@ public class ContactsEntryPoint extends AbstractChuruataEntryPoint {
 			}
 		});
 
- 		return servicesComposite;
+ 		return contactWidget;
     }
 
 	@Override
 	protected boolean postProcess(Composite parent) {
-		this.servicesComposite.addEditListener(listener);
+		ContactWidget.createContactTypes( this.contactWidget, EnumSet.allOf(ContactTypes.class ));
+		this.contactWidget.addEditListener(listener);
 		return super.postProcess(parent);
 	}
 
-	protected void onServiceEvent( EditEvent<ContactData> event ) {
+	protected void onContactEvent( EditEvent<IContact> event ) {
 		switch( event.getType()) {
 		case COMPLETE:
+			SessionStore store = getSessionStore();
+			if( store.getContactPersonData() == null )
+				return;
 			data = event.getData();
-			btnAdd.setEnabled( data != null);
+			btnOk.setEnabled( data != null);
 			break;
 		default:
 			break;
@@ -128,7 +129,7 @@ public class ContactsEntryPoint extends AbstractChuruataEntryPoint {
 
 	@Override
 	public void close() {
-		this.servicesComposite.removeEditListener(listener);
+		this.contactWidget.removeEditListener(listener);
 		super.close();
 	}
 	

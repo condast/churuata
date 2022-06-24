@@ -2,7 +2,7 @@ package org.churuata.digital.entries;
 
 import java.util.concurrent.TimeUnit;
 
-import org.churuata.digital.BasicApplication.Pages;
+import org.churuata.digital.core.Entries;
 import org.churuata.digital.core.data.OrganisationData;
 import org.churuata.digital.session.SessionStore;
 import org.churuata.digital.ui.views.EditChuruataComposite;
@@ -75,7 +75,7 @@ public class EditEntryPoint extends AbstractRestEntryPoint<SessionStore>{
 		SessionStore store = getData();
 		switch( event.getType()) {
 		case COMPLETE:
-			RWTUtils.redirect(Pages.READY.toPath());
+			RWTUtils.redirect(Entries.Pages.READY.toPath());
 			break;
 		case CHANGED:
 			store.setSelected( data);

@@ -39,8 +39,10 @@ public class Person implements IContactPerson, Serializable, Cloneable {
 	private long userId;
 	
 	private String name;
-	private String title;
-	private String description;
+	private String prefix;
+	private String surName;
+	
+	private boolean verified;
 
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
 	private Collection<Contact> contacts;
@@ -50,18 +52,18 @@ public class Person implements IContactPerson, Serializable, Cloneable {
 	private Date createDate;
 
 	public Person( ){
+		this.verified = false;
 		this.contacts = new ArrayList<Contact>();
 		this.createDate = Calendar.getInstance().getTime();
 	}
 
-	public Person( long userId, String name, String title, String description, IContact contact ){
+	public Person( long userId, String name, String surname, String prefix, IContact contact ){
 		this();
 		this.userId = userId;
 		this.name = name;
-		this.title = title;
-		this.description = description;
+		this.prefix = surname;
+		this.surName = prefix;
 		this.contacts.add((Contact) contact);
-		this.createDate = Calendar.getInstance().getTime();
 	}
 
 	@Override
@@ -94,24 +96,30 @@ public class Person implements IContactPerson, Serializable, Cloneable {
 
 	@Override
 	public String getDescription() {
-		return description;
+		return surName;
 	}
 
 	public void setDescription(String description) {
-		this.description = description;
+		this.surName = description;
 	}
 
 	@Override
 	public String getTitle() {
-		return title;
+		return prefix;
 	}
 
 	public void setTitle(String title) {
-		this.title = title;
+		this.prefix = title;
+	}
+	
+	public boolean isVerified() {
+		return verified;
 	}
 
-	
-	
+	public void setVerified(boolean verified) {
+		this.verified = verified;
+	}
+
 	public Date getCreateDate() {
 		return createDate;
 	}
@@ -128,8 +136,9 @@ public class Person implements IContactPerson, Serializable, Cloneable {
 		}
 		
 		p.setName( this.name );
-		p.setTitle( this.title);
-		p.setDescription(this.description);
+		p.setTitle( this.prefix);
+		p.setDescription(this.surName);
+		p.setVerified(this.verified);
 		return p;
 	}
 	
@@ -191,49 +200,48 @@ public class Person implements IContactPerson, Serializable, Cloneable {
 
 	@Override
 	public String getFirstName() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.name;
 	}
 
 	@Override
 	public void setFirstName(String firstName) {
-		// TODO Auto-generated method stub
-		
+		this.name = firstName;
 	}
 
 	@Override
 	public void setCallingName(String callingName) {
-		// TODO Auto-generated method stub
-		
+		this.name = callingName;
 	}
 
 	@Override
 	public String getPrefix() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.prefix;
 	}
 
 	@Override
 	public void setPrefix(String prefix) {
-		// TODO Auto-generated method stub
-		
+		this.prefix = prefix;
 	}
 
 	@Override
 	public String getSurname() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.surName;
 	}
 
 	@Override
 	public void setSurname(String surName) {
-		// TODO Auto-generated method stub
-		
+		this.surName = surName;
 	}
 
 	@Override
 	public int compareTo(IName o) {
-		// TODO Auto-generated method stub
-		return 0;
+		int compare = this.name.compareTo(o.getFirstName());
+		if( compare != 0 )
+			return compare;
+		compare = this.surName.compareTo(o.getSurname());
+		if( compare != 0 )
+			return compare;
+		compare = this.prefix.compareTo(o.getPrefix());
+		return compare;
 	}
 }

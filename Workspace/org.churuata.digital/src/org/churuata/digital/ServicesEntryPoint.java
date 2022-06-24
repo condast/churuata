@@ -4,6 +4,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.churuata.digital.core.AbstractChuruataEntryPoint;
 import org.churuata.digital.core.Dispatcher;
+import org.churuata.digital.core.Entries;
 import org.churuata.digital.core.data.OrganisationData;
 import org.churuata.digital.core.location.IChuruataType;
 import org.churuata.digital.session.SessionStore;
@@ -87,7 +88,7 @@ public class ServicesEntryPoint extends AbstractChuruataEntryPoint {
 					SessionStore store = getSessionStore();
 					OrganisationData organisation = store.getOrganisation();
 					organisation.addChuruataType(data);
-					Dispatcher.jump(BasicApplication.Pages.CREATE, store.getToken());
+					Dispatcher.jump(Entries.Pages.CREATE, store.getToken());
 				}
 				catch( Exception ex ){
 					ex.printStackTrace();
