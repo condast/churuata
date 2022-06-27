@@ -1,15 +1,24 @@
 package org.churuata.digital.entries;
 
+import java.io.IOException;
 import java.util.EnumSet;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
 
 import org.churuata.digital.core.AbstractChuruataEntryPoint;
 import org.churuata.digital.core.Dispatcher;
 import org.churuata.digital.core.Entries.Pages;
+import org.churuata.digital.core.data.ProfileData;
+import org.churuata.digital.core.rest.IRestPages;
 import org.churuata.digital.session.SessionStore;
 import org.churuata.digital.ui.image.ChuruataImages;
 import org.condast.commons.authentication.http.IDomainProvider;
-import org.condast.commons.na.data.ContactPersonData;
+import org.condast.commons.config.Config;
+import org.condast.commons.messaging.http.AbstractHttpRequest;
+import org.condast.commons.messaging.http.ResponseEvent;
+import org.condast.commons.na.data.ContactData;
+import org.condast.commons.na.data.PersonData;
 import org.condast.commons.na.model.IContact;
 import org.condast.commons.na.model.IContact.ContactTypes;
 import org.condast.commons.ui.controller.EditEvent;
@@ -29,6 +38,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
+
 public class ContactsEntryPoint extends AbstractChuruataEntryPoint {
 	private static final long serialVersionUID = 1L;
 
@@ -40,6 +52,10 @@ public class ContactsEntryPoint extends AbstractChuruataEntryPoint {
 	private IContact data = null;
 
 	private IEditListener<IContact> listener = e->onContactEvent(e);
+
+	private WebController controller;
+	
+	private Logger logger = Logger.getLogger(this.getClass().getName());
 
 	@Override
 	protected boolean prepare(Composite parent) {
@@ -81,9 +97,8 @@ public class ContactsEntryPoint extends AbstractChuruataEntryPoint {
 					if( data == null )
 						return;
 					SessionStore store = getSessionStore();
-					ContactPersonData person = store.getContactPersonData();
-					person.addContact( data );
-					Dispatcher.jump( Pages.REGISTER, store.getToken());
+					PersonData person = store.getPersonData();
+					controller.addContact(data, person.getPersonId());
 				}
 				catch( Exception ex ){
 					ex.printStackTrace();
@@ -97,7 +112,11 @@ public class ContactsEntryPoint extends AbstractChuruataEntryPoint {
 
 	@Override
 	protected boolean postProcess(Composite parent) {
+		Config config = new Config();
+		String context = config.getServerContext();
+		controller = new WebController( context, IRestPages.Pages.CONTACT.toPath());
 		ContactWidget.createContactTypes( this.contactWidget, EnumSet.allOf(ContactTypes.class ));
+		this.contactWidget.select( ContactTypes.MOBILE.ordinal());
 		this.contactWidget.addEditListener(listener);
 		return super.postProcess(parent);
 	}
@@ -144,4 +163,54 @@ public class ContactsEntryPoint extends AbstractChuruataEntryPoint {
 			/* NOTHING */
 		}
 	}
+	
+	private class WebController extends AbstractHttpRequest<ProfileData.Requests>{
+		
+		public WebController(String context, String path) {
+			super();
+			super.setContextPath(context + path);
+		}
+
+		public void addContact( IContact contact, long personId ) {
+			Map<String, String> params = super.getParameters();
+			params.put(ContactData.Parameters.PERSON_ID.toString(), String.valueOf( personId));
+			params.put(ContactData.Parameters.CONTACT_TYPE.toString(), contact.getContactType().name());
+			params.put(ContactData.Parameters.VALUE.toString(), contact.getValue());
+			params.put(ContactData.Parameters.RESTRICTED.toString(), String.valueOf( contact.isRestricted()));
+			try {
+				sendGet(ProfileData.Requests.ADD_CONTACT_TYPE, params );
+			} catch (IOException e) {
+				logger.warning(e.getMessage());
+			}
+		}
+
+		@Override
+		protected String onHandleResponse(ResponseEvent<ProfileData.Requests> event) throws IOException {
+			try {
+				SessionStore store = getSessionStore();
+				Gson gson = new Gson();
+				switch( event.getRequest()){
+				case ADD_CONTACT_TYPE:
+					PersonData data = gson.fromJson(event.getResponse(), PersonData.class);
+					store.setPersonData(data);
+					Dispatcher.jump( Pages.REGISTER, store.getToken());
+					break;
+				default:
+					break;
+				}
+			} catch (JsonSyntaxException e) {
+				e.printStackTrace();
+			}
+			finally {
+			}
+			return null;
+		}
+
+		@Override
+		protected void onHandleResponseFail(HttpStatus status, ResponseEvent<ProfileData.Requests> event) throws IOException {
+			super.onHandleResponseFail(status, event);
+		}
+	
+	}
+
 }

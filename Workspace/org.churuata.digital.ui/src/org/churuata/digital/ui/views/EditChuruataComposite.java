@@ -8,7 +8,7 @@ import org.churuata.digital.core.location.ChuruataData;
 import org.churuata.digital.core.location.IChuruata;
 import org.churuata.digital.core.location.IChuruata.Requests;
 import org.churuata.digital.core.rest.IRestPages;
-import org.churuata.digital.core.location.IChuruataType;
+import org.churuata.digital.core.location.IChuruataService;
 import org.condast.commons.Utils;
 import org.condast.commons.authentication.user.ILoginUser;
 import org.condast.commons.messaging.http.AbstractHttpRequest;
@@ -261,8 +261,8 @@ public class EditChuruataComposite extends AbstractEntityComposite<OrganisationD
 				params.put(OrganisationData.Parameters.NAME.toString(), churuata.getName() );
 				params.put(OrganisationData.Parameters.DESCRIPTION.toString(), churuata.getDescription());
 				
-				IChuruataType ct = churuata.getTypes()[0];
-				params.put(OrganisationData.Parameters.TYPE.toString(), String.valueOf( ct.getType().name()));
+				IChuruataService ct = churuata.getTypes()[0];
+				params.put(OrganisationData.Parameters.TYPE.toString(), String.valueOf( ct.getService().name()));
 				params.put(OrganisationData.Parameters.LATITUDE.toString(), String.valueOf( churuata.getLocation().getLatitude()));
 				params.put(OrganisationData.Parameters.LONGITUDE.toString(), String.valueOf( churuata.getLocation().getLongitude()));
 				sendGet(IChuruata.Requests.REGISTER, params);

@@ -20,7 +20,7 @@ import javax.ws.rs.core.Response.Status;
 
 import org.churuata.digital.core.IPresentation;
 import org.churuata.digital.core.location.IChuruata;
-import org.churuata.digital.core.location.IChuruataType;
+import org.churuata.digital.core.location.IChuruataService;
 import org.churuata.digital.core.location.IMurmering;
 import org.churuata.rest.core.Dispatcher;
 import org.churuata.rest.model.Churuata;
@@ -112,14 +112,14 @@ public class CaminantesResource {
 			if( StringUtils.isEmpty(name) || ( token < 0 ) || StringUtils.isEmpty(type ))
 				return Response.status( Status.BAD_REQUEST).build();
 			String typeStr = StringStyler.styleToEnum(type);
-			if( !IChuruataType.Types.isValid( typeStr))
+			if( !IChuruataService.Services.isValid( typeStr))
 				return Response.status( Status.BAD_REQUEST).build();				
-			IChuruataType.Types ct = IChuruataType.Types.valueOf(typeStr);
+			IChuruataService.Services ct = IChuruataService.Services.valueOf(typeStr);
 
 			String contrStr = StringStyler.styleToEnum( contribution);
-			if( !IChuruataType.Contribution.isValid( contrStr))
+			if( !IChuruataService.Contribution.isValid( contrStr))
 				return Response.status( Status.BAD_REQUEST).build();
-			IChuruataType.Contribution contr = IChuruataType.Contribution.valueOf(contrStr);
+			IChuruataService.Contribution contr = IChuruataService.Contribution.valueOf(contrStr);
 
 			TransactionManager t = new TransactionManager( dispatcher );
 			ChuruataService service = new ChuruataService( dispatcher );
@@ -162,9 +162,9 @@ public class CaminantesResource {
 			if( StringUtils.isEmpty(name) || ( token < 0 ) || StringUtils.isEmpty(type ))
 				return Response.status( Status.BAD_REQUEST).build();
 			String typeStr = StringStyler.styleToEnum(type);
-			if( !IChuruataType.Types.isValid( typeStr))
+			if( !IChuruataService.Services.isValid( typeStr))
 				return Response.status( Status.BAD_REQUEST).build();				
-			IChuruataType.Types ct = IChuruataType.Types.valueOf(typeStr);
+			IChuruataService.Services ct = IChuruataService.Services.valueOf(typeStr);
 
 			TransactionManager t = new TransactionManager( dispatcher );
 			ChuruataService service = new ChuruataService( dispatcher );

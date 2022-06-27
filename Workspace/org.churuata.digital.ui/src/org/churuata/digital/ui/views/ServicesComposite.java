@@ -1,14 +1,18 @@
 package org.churuata.digital.ui.views;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
+import java.util.Set;
 
-import org.churuata.digital.core.location.ChuruataType;
-import org.churuata.digital.core.location.IChuruataType;
+import org.churuata.digital.core.data.ServiceData;
+import org.churuata.digital.core.location.IChuruataService;
 import org.condast.commons.strings.StringUtils;
 import org.condast.commons.ui.controller.AbstractEntityComposite;
 import org.condast.commons.ui.controller.EditEvent;
 import org.condast.commons.ui.controller.EditEvent.EditTypes;
 import org.condast.commons.ui.date.DateUtils;
+import org.condast.commons.ui.na.NALanguage;
 import org.condast.commons.ui.swt.AttributeFieldComposite;
 import org.condast.commons.ui.swt.InputField;
 import org.eclipse.rap.rwt.RWT;
@@ -25,7 +29,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 
-public class ServicesComposite extends AbstractEntityComposite<IChuruataType>
+public class ServicesComposite extends AbstractEntityComposite<IChuruataService>
 {
 	private static final long serialVersionUID = 7782765745284140623L;
 
@@ -53,16 +57,15 @@ public class ServicesComposite extends AbstractEntityComposite<IChuruataType>
 	private DateTime fromField;
 	private DateTime toField;
 	
-	
 	/**
 	 * Create the dialog.
 	 * @param parentShell
 	 */
 	public ServicesComposite( Composite parent, int style ){
 		super(parent, style );
-		this.comboTypes.setItems(IChuruataType.Types.getItems());
+		this.comboTypes.setItems(IChuruataService.Services.getItems());
 		this.comboTypes.select(1);
-		this.contributionTypes.setItems(IChuruataType.Contribution.getItems());
+		this.contributionTypes.setItems(IChuruataService.Contribution.getItems());
 		this.contributionTypes.select(0);
 		Calendar calendar = Calendar.getInstance();
 		DateUtils.setDate(fromField, calendar.getTime());
@@ -111,7 +114,7 @@ public class ServicesComposite extends AbstractEntityComposite<IChuruataType>
 			public void verifyText(VerifyEvent event) {
 				try {
 					if( isFilled())
-						notifyInputEdited( new EditEvent<IChuruataType>( this, EditTypes.COMPLETE, getInput()));
+						notifyInputEdited( new EditEvent<IChuruataService>( this, EditTypes.COMPLETE, getInput()));
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -132,7 +135,7 @@ public class ServicesComposite extends AbstractEntityComposite<IChuruataType>
 			public void verifyText(VerifyEvent event) {
 				onVerifyText(event, null);
 				if( isFilled())
-					notifyInputEdited( new EditEvent<IChuruataType>( this, EditTypes.COMPLETE, getInput()));
+					notifyInputEdited( new EditEvent<IChuruataService>( this, EditTypes.COMPLETE, getInput()));
 			}
 		});
 		GridData gridData_2 = new GridData();
@@ -163,7 +166,7 @@ public class ServicesComposite extends AbstractEntityComposite<IChuruataType>
 			public void verifyText(VerifyEvent event) {
 				onVerifyText(event, null);
 				if( isFilled())
-					notifyInputEdited( new EditEvent<IChuruataType>( this, EditTypes.COMPLETE, getInput()));
+					notifyInputEdited( new EditEvent<IChuruataService>( this, EditTypes.COMPLETE, getInput()));
 			}
 		});
 		
@@ -190,7 +193,7 @@ public class ServicesComposite extends AbstractEntityComposite<IChuruataType>
 			public void verifyText(VerifyEvent event) {
 				try {
 					if( isFilled())
-						notifyInputEdited( new EditEvent<IChuruataType>( this, EditTypes.COMPLETE, getInput()));
+						notifyInputEdited( new EditEvent<IChuruataService>( this, EditTypes.COMPLETE, getInput()));
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -209,10 +212,10 @@ public class ServicesComposite extends AbstractEntityComposite<IChuruataType>
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				DateTime dateField = (DateTime) e.widget;
-				IChuruataType input = getInput();
+				IChuruataService input = getInput();
 				input.setFrom(DateUtils.getDate(dateField));
 				if( isFilled())
-					notifyInputEdited( new EditEvent<IChuruataType>( this, EditTypes.COMPLETE, getInput()));
+					notifyInputEdited( new EditEvent<IChuruataService>( this, EditTypes.COMPLETE, getInput()));
 				super.widgetSelected(e);
 			}	
 		});
@@ -229,32 +232,59 @@ public class ServicesComposite extends AbstractEntityComposite<IChuruataType>
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				DateTime dateField = (DateTime) e.widget;
-				IChuruataType input = getInput();
+				IChuruataService input = getInput();
 				input.setTo(DateUtils.getDate(dateField));
 				if( isFilled())
-					notifyInputEdited( new EditEvent<IChuruataType>( this, EditTypes.COMPLETE, getInput()));
+					notifyInputEdited( new EditEvent<IChuruataService>( this, EditTypes.COMPLETE, getInput()));
 				super.widgetSelected(e);
 			}	
 		});
 
 	}
 
-	@Override
-	public void update(){
+	public String[] getItems(){
+		return this.comboTypes.getItems();
+	}
+	
+	public void setItems( Collection<IChuruataService.Services> types, String[] items ){
+		this.comboTypes.setItems(items);
+		this.comboTypes.select(0);
+	}
+
+	public void select(int ordinal) {
+		this.comboTypes.select(ordinal);	
 	}
 
 	@Override
-	protected IChuruataType onGetInput(IChuruataType input) {
+	protected IChuruataService onGetInput(IChuruataService input) {
+		if( input == null )
+			input = new ServiceData();
+		input.setFrom( DateUtils.getDate(fromField ));
+		input.setTo( DateUtils.getDate(toField));
+		input.setDescription( this.descriptionField.getText() );
+		input.setService( IChuruataService.Services.values()[ this.comboTypes.getSelectionIndex()]);
+		if( input instanceof ServiceData ) {
+			ServiceData sd = (ServiceData) input;
+			sd.setContribution( input.getContribution());
+		}
 		return input;
 	}
 
 	@Override
-	protected void onSetInput(IChuruataType input, boolean overwrite) {
-		//latlngLabel.setText(input.getLocation().toLocation());
-		//this.churuataTypesTable.setInput(input.getTypes());
+	protected void onSetInput(IChuruataService input, boolean overwrite) {
+		if( input == null )
+			return;
+		DateUtils.setDate(fromField, input.from());
+		DateUtils.setDate(toField, input.to());
+		this.descriptionField.setText(input.getDescription( ) );
+		this.comboTypes.select( input.getService().ordinal());
+		if( input instanceof ServiceData ) {
+			ServiceData sd = (ServiceData) input;
+			sd.setContribution( input.getContribution());
+		}
 	}
 
-	public void setInput( IChuruataType input ){
+	public void setInput( IChuruataService input ){
 		super.setInput( input, false );
 	}
 
@@ -270,13 +300,7 @@ public class ServicesComposite extends AbstractEntityComposite<IChuruataType>
 				ifc.refresh();
 			}
 			if( this.isFilled() ) {
-				IChuruataType.Types ct = IChuruataType.Types.values()[ this.comboTypes.getSelectionIndex()];
-				IChuruataType.Contribution cot = IChuruataType.Contribution.values()[ this.contributionTypes.getSelectionIndex()];
-				IChuruataType type = new ChuruataType( ct, this.descriptionField.getText(), cot );
-				type.setFrom( DateUtils.getDate( this.fromField ));
-				type.setTo( DateUtils.getDate( this.toField ));
-				setInput(type);
-				this.notifyInputEdited( new EditEvent<IChuruataType>( this, EditTypes.COMPLETE, getInput()));
+				this.notifyInputEdited( new EditEvent<IChuruataService>( this, EditTypes.COMPLETE, getInput()));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -293,5 +317,14 @@ public class ServicesComposite extends AbstractEntityComposite<IChuruataType>
 	@Override
 	public boolean checkRequiredFields() {
 		return false;
+	}
+
+
+	public static void createContactTypes( ServicesComposite widget, Set<IChuruataService.Services> selection){
+		Collection<String> contacts = new ArrayList<String>();
+		for( IChuruataService.Services type: selection ){
+			contacts.add( NALanguage.getInstance().getString( type ));
+		}
+		widget.setItems(selection, contacts.toArray( new String[ contacts.size() ]));
 	}
 }

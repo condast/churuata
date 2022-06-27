@@ -18,6 +18,6 @@ GET_EMAIL   | org.churuata.digital.entries.BasicEntryPoint       | Get Email;
 REGISTER         | org.churuata.digital.entries.register.RegisterEntryPoint       | Register a Service;
 ADD_CONTACT      | org.churuata.digital.entries.register.AddContactEntryPoint     | Add a Contact;
 ADD_ORGANISATION | org.churuata.digital.entries.register.AddOrganisationEntryPoint| Add an Organisation;
-ADD_SERVICES     | org.churuata.digital.entries.register.AddServicesEntryPoint    | Add a Service;
+ADD_SERVICES     | org.churuata.digital.entries.AddServicesEntryPoint    		  | Add a Service;
 SHOW_LEGAL       | org.churuata.digital.entries.register.ShowLegalEntryPoint      | Show Legal Disclaimer;
 CONFIRM_SERVICE  | org.churuata.digital.entries.register.ConfirmServiceEntryPoint | Confirm the Service;

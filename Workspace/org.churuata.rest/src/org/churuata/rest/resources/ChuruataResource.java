@@ -18,9 +18,9 @@ import javax.ws.rs.core.Response.Status;
 
 import org.churuata.digital.core.location.ChuruataData;
 import org.churuata.digital.core.location.IChuruata;
-import org.churuata.digital.core.location.IChuruataType;
-import org.churuata.digital.core.location.IChuruataType.Contribution;
-import org.churuata.digital.core.location.IChuruataType.Types;
+import org.churuata.digital.core.location.IChuruataService;
+import org.churuata.digital.core.location.IChuruataService.Contribution;
+import org.churuata.digital.core.location.IChuruataService.Services;
 import org.churuata.rest.core.AuthenticationDispatcher;
 import org.churuata.rest.core.Dispatcher;
 import org.churuata.rest.model.Churuata;
@@ -80,7 +80,7 @@ public class ChuruataResource {
 				t.open();
 				String typeStr = StringStyler.styleToEnum(type);
 				LatLng latlng = new LatLng( name, latitude, longitude);
-				churuata = service.create(user, name, description, latlng, Types.valueOf(typeStr));
+				churuata = service.create(user, name, description, latlng, Services.valueOf(typeStr));
 			}
 			finally {
 				t.close();
@@ -233,8 +233,8 @@ public class ChuruataResource {
 			for( IChuruata churuata: results ) {
 				if( LatLngUtils.isInRange( churuata.getLocation(), location, 1000)) {
 					for(int i=0; i<5; i++ ) {
-						int size = IChuruataType.Types.values().length;
-						IChuruataType.Types type = IChuruataType.Types.values()[ i%size];
+						int size = IChuruataService.Services.values().length;
+						IChuruataService.Services type = IChuruataService.Services.values()[ i%size];
 						String description = "We help";
 						switch( type) {
 						case COMMUNITY:
@@ -261,7 +261,7 @@ public class ChuruataResource {
 						default:
 							break;
 						}
-						IChuruataType ct = churuata.addType("contributor: " + i, type);
+						IChuruataService ct = churuata.addType("contributor: " + i, type);
 						ct.setDescription(description);
 					}
 					String str = gson.toJson( churuata, ChuruataData.class);
@@ -304,7 +304,7 @@ public class ChuruataResource {
 			ChuruataTypeService typeService = new ChuruataTypeService( dispatcher );
 			String typeStr = StringStyler.styleToEnum(type);
 			String contrStr = StringStyler.styleToEnum(contribution);
-			ChuruataType ctype = typeService.create(null, Types.valueOf(typeStr), description, Contribution.valueOf( contrStr ));
+			ChuruataType ctype = typeService.create(null, Services.valueOf(typeStr), description, Contribution.valueOf( contrStr ));
 			boolean success = churuata.addType( ctype);
 			result = Response.ok( success ).build();
 		}
@@ -339,7 +339,7 @@ public class ChuruataResource {
 			ChuruataService service = new ChuruataService( dispatcher );
 			Churuata churuata = service.find(id);
 			ChuruataTypeService typeService = new ChuruataTypeService( dispatcher );
-			IChuruataType ctype = churuata.removeType(typeId);
+			IChuruataService ctype = churuata.removeType(typeId);
 			if( ctype == null )
 				return Response.noContent().build();
 			boolean success = typeService.remove(typeId);

@@ -1,6 +1,6 @@
 package org.churuata.digital.organisation.services;
 
-import org.churuata.digital.core.location.IChuruataType;
+import org.churuata.digital.core.location.IChuruataService;
 import org.churuata.digital.organisation.core.Dispatcher;
 import org.churuata.digital.organisation.model.Service;
 import org.condast.commons.persistence.service.AbstractEntityService;
@@ -13,7 +13,7 @@ public class ServicesService extends AbstractEntityService<Service>{
 		super( Service.class, dispatcher );
 	}
 	
-	public Service createService( long id, IChuruataType.Types type, String value ) {
+	public Service createService( long id, IChuruataService.Services type, String value ) {
 		Service service = new Service( id, type, value );
 		super.create(service);
 		return service;

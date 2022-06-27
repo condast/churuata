@@ -15,12 +15,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.churuata.digital.core.location.IChuruataType;
+import org.churuata.digital.core.location.IChuruataService;
 import org.churuata.digital.core.model.IOrganisation;
 import org.condast.commons.authentication.user.ILoginUser;
 
 @Entity
-public class ChuruataType implements Comparable<ChuruataType>, IChuruataType{
+public class ChuruataType implements Comparable<ChuruataType>, IChuruataService{
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -67,23 +67,23 @@ public class ChuruataType implements Comparable<ChuruataType>, IChuruataType{
 		this.updateDate = Calendar.getInstance().getTime();
 	}
 
-	public ChuruataType( String contributor, Types type) {
+	public ChuruataType( String contributor, Services type) {
 		this( contributor, type, Contribution.LOG );
 	}
 
-	public ChuruataType( String contributor, Types type, String description) {
+	public ChuruataType( String contributor, Services type, String description) {
 		this( contributor, type, description, Contribution.LOG);
 	}
 
-	public ChuruataType( String contributor, Types type, Contribution contribution) {
+	public ChuruataType( String contributor, Services type, Contribution contribution) {
 		this( contributor, type, null, contribution);
 	}
 
-	public ChuruataType(ILoginUser user, Types type, String description, Contribution contribution) {
+	public ChuruataType(ILoginUser user, Services type, String description, Contribution contribution) {
 		this( user.getUserName(), type, description, contribution ); 
 	}
 	
-	public ChuruataType(String contributor, Types type, String description, Contribution contribution) {
+	public ChuruataType(String contributor, Services type, String description, Contribution contribution) {
 		super();
 		this.type = type.ordinal();
 		this.contribution = contribution.ordinal();
@@ -118,8 +118,14 @@ public class ChuruataType implements Comparable<ChuruataType>, IChuruataType{
 	}
 
 	@Override
-	public Types getType() {
-		return Types.values()[ type ];
+	public Services getService() {
+		return Services.values()[ type ];
+	}
+
+	
+	@Override
+	public void setService(Services type) {
+		this.contribution = type.ordinal();
 	}
 
 	@Override
@@ -165,7 +171,7 @@ public class ChuruataType implements Comparable<ChuruataType>, IChuruataType{
 
 	@Override
 	public int compareTo(ChuruataType o) {
-		Types tp = getType();
-		return tp.toString().compareTo(o.getType().toString());
+		Services tp = getService();
+		return tp.toString().compareTo(o.getService().toString());
 	}
 }

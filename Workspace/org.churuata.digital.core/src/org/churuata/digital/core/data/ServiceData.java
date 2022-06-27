@@ -1,49 +1,51 @@
-package org.churuata.digital.organisation.model;
+package org.churuata.digital.core.data;
 
 import java.util.Calendar;
 import java.util.Date;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-
 import org.churuata.digital.core.location.IChuruataService;
-import org.churuata.digital.core.model.IOrganisation;
 import org.condast.commons.Utils;
+import org.condast.commons.strings.StringStyler;
 
-@Entity
-public class Service implements IChuruataService {
+public class ServiceData implements IChuruataService {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	public enum Parameters{
+		PERSON_ID,
+		ORGANISATION_ID,
+		TYPE,
+		NAME,
+		DESCRIPTION,
+		FROM_DATE,
+		TO_DATE;
+
+		@Override
+		public String toString() {
+			return StringStyler.xmlStyleString( name());
+		}
+	}
+
 	private long id;
 	
 	private String serviceType;
-	private String value;
 	
 	private String description;
 	
-	private String contributor;
+	private String contribution;
 
-	@ManyToOne(cascade=CascadeType.PERSIST, fetch=FetchType.LAZY)
-	private Organisation organisation;
-
+	private OrganisationData organisation;
+	
 	private long fromDate;
 	
 	private long toDate;
 	
-	public Service() {
-		this( -1, IChuruataService.Services.UNKNOWN, null );
+	public ServiceData() {
+		this( -1, IChuruataService.Services.UNKNOWN );
 	}
 
-	public Service( long id, IChuruataService.Services type, String value ){
+	public ServiceData( long id, IChuruataService.Services type ){
 		this.id = id;
 		this.serviceType = type.name();
-		this.value = value;
+		this.contribution = Contribution.LOG.name();
 		Calendar calendar = Calendar.getInstance();
 		this.fromDate = calendar.getTimeInMillis();
 		calendar.add(Calendar.YEAR, 1);
@@ -55,8 +57,7 @@ public class Service implements IChuruataService {
 		return id;
 	}
 
-	@Override
-	public IOrganisation getOrganisation() {
+	public OrganisationData getOrganisation() {
 		return organisation;
 	}
 
@@ -77,18 +78,22 @@ public class Service implements IChuruataService {
 		return IChuruataService.Services.valueOf(this.serviceType);
 	}
 
-	public void setService( IChuruataService.Services service) {
-		this.serviceType = service.name();
+	public void setService( IChuruataService.Services type) {
+		this.serviceType = type.name();
 	}
 
 	@Override
 	public String getContributor() {
-		return this.contributor;
+		return this.contribution;
 	}
 
 	@Override
 	public Contribution getContribution() {
-		return Contribution.valueOf(contributor);
+		return Contribution.valueOf(contribution);
+	}
+	
+	public void setContribution( Contribution contribution) {
+		this.contribution = contribution.name();
 	}
 
 	@Override
@@ -101,14 +106,6 @@ public class Service implements IChuruataService {
 	@Override
 	public void setFrom(Date date) {
 		this.fromDate = date.getTime();
-	}
-
-	public void setFromDate(long fromDate) {
-		this.fromDate = fromDate;
-	}
-
-	public void setToDate(long toDate) {
-		this.toDate = toDate;
 	}
 
 	@Override
@@ -128,7 +125,7 @@ public class Service implements IChuruataService {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append( this.serviceType );
 		buffer.append(": ");
-		buffer.append( this.value );
+		buffer.append( this.contribution );
 		return buffer.toString();
 	}
 

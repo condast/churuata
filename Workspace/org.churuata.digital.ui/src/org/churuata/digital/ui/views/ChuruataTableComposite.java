@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import org.churuata.digital.core.data.OrganisationData;
-import org.churuata.digital.core.location.IChuruataType;
+import org.churuata.digital.core.location.IChuruataService;
 import org.condast.commons.Utils;
 import org.condast.commons.strings.StringStyler;
 import org.condast.commons.ui.controller.EditEvent;
@@ -22,7 +22,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 
-public class ChuruataTableComposite extends AbstractTableViewerWithDelete<IChuruataType>{
+public class ChuruataTableComposite extends AbstractTableViewerWithDelete<IChuruataService>{
 	private static final long serialVersionUID = 976428552549736382L;
 
 	public static final String S_TABLECOLUMN_ID = "ChuruataTableColumn";
@@ -46,7 +46,7 @@ public class ChuruataTableComposite extends AbstractTableViewerWithDelete<IChuru
 		}
 	}
 	
-	private Collection<IEditListener<IChuruataType>> listeners;
+	private Collection<IEditListener<IChuruataService>> listeners;
 
 	private Composite container;
 
@@ -61,16 +61,16 @@ public class ChuruataTableComposite extends AbstractTableViewerWithDelete<IChuru
 		listeners = new ArrayList<>();
 	}
 
-	public void addEditListener( IEditListener<IChuruataType> listener ) {
+	public void addEditListener( IEditListener<IChuruataService> listener ) {
 		this.listeners.add(listener);
 	}
 
-	public void removeEditListener( IEditListener<IChuruataType> listener ) {
+	public void removeEditListener( IEditListener<IChuruataService> listener ) {
 		this.listeners.remove(listener);
 	}
 
-	private void notifyEditListeners( EditEvent<IChuruataType> event ) {
-		for( IEditListener<IChuruataType> listener: this.listeners ) {
+	private void notifyEditListeners( EditEvent<IChuruataService> event ) {
+		for( IEditListener<IChuruataService> listener: this.listeners ) {
 			listener.notifyInputEdited(event);
 		}
 	}
@@ -87,21 +87,21 @@ public class ChuruataTableComposite extends AbstractTableViewerWithDelete<IChuru
 		viewer.setLabelProvider( new ChuruataLabelProvider() );
 	}
 
-	public IChuruataType[] getInput() {
-		Collection<IChuruataType> types = new ArrayList<>();
+	public IChuruataService[] getInput() {
+		Collection<IChuruataService> types = new ArrayList<>();
 		if( !Utils.assertNull(super.getInput())) {
 			for( Object tp: super.getInput() )
-				types.add((IChuruataType) tp);
+				types.add((IChuruataService) tp);
 		}
-		return types.toArray( new IChuruataType[ types.size()]);
+		return types.toArray( new IChuruataService[ types.size()]);
 	}
 	
 	protected void setInput( OrganisationData churuata) {
-		super.setInput( Arrays.asList( churuata.getTypes()));
+		super.setInput( Arrays.asList( churuata.getServices()));
 	}
 
 	@Override
-	protected void onRowDoubleClick(IChuruataType selection) {
+	protected void onRowDoubleClick(IChuruataService selection) {
 		try{
 			notifyEditListeners(new EditEvent<>( container, EditTypes.SELECTED, selection));
 		}
@@ -122,7 +122,7 @@ public class ChuruataTableComposite extends AbstractTableViewerWithDelete<IChuru
 	protected boolean onAddButtonSelected(SelectionEvent e) {
 		boolean result = false;
 		try{
-			notifyEditListeners(new EditEvent<IChuruataType>( container, EditTypes.ADDED));
+			notifyEditListeners(new EditEvent<IChuruataService>( container, EditTypes.ADDED));
 		}
 		catch( Exception ex ){
 			ex.printStackTrace();
@@ -131,10 +131,10 @@ public class ChuruataTableComposite extends AbstractTableViewerWithDelete<IChuru
 	}
 
 	@Override
-	protected boolean onDeleteButton( Collection<IChuruataType> deleted ) {
+	protected boolean onDeleteButton( Collection<IChuruataService> deleted ) {
 		Collection<Long> ids = new ArrayList<>();
 		boolean result = false;
-		for( IChuruataType vessel: deleted )
+		for( IChuruataService vessel: deleted )
 			ids.add(vessel.getId());
 		//try {
 			//Map<String, String> params = controller.getUserParams(user.getId(), user.getSecurity());
@@ -165,16 +165,16 @@ public class ChuruataTableComposite extends AbstractTableViewerWithDelete<IChuru
 		@SuppressWarnings("unchecked")
 		@Override
 		public String getColumnText(Object element, int columnIndex) {
-			StoreWithDelete store = (AbstractTableViewerWithDelete<IChuruataType>.StoreWithDelete) element;
+			StoreWithDelete store = (AbstractTableViewerWithDelete<IChuruataService>.StoreWithDelete) element;
 			String result = super.getColumnText(element, columnIndex);
 			if( result != null )
 				return result;
 			Columns column = Columns.values()[ columnIndex ];
-			IChuruataType p = (IChuruataType) store.getStore();
+			IChuruataService p = (IChuruataService) store.getStore();
 			try {
 				switch( column ) {
 				case SERVICES:
-					result = p.getType().toString();
+					result = p.getService().toString();
 					break;
 				case CONTRIBUTOR:
 					result = p.getContribution().toString();

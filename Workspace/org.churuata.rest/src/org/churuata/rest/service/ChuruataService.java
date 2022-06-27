@@ -5,7 +5,7 @@ import java.util.Collection;
 
 import javax.persistence.TypedQuery;
 
-import org.churuata.digital.core.location.IChuruataType;
+import org.churuata.digital.core.location.IChuruataService;
 import org.churuata.rest.model.Churuata;
 import org.churuata.rest.model.Location;
 import org.condast.commons.authentication.user.ILoginUser;
@@ -25,7 +25,7 @@ public class ChuruataService extends AbstractEntityService<Churuata>{
 		super( Churuata.class, service );
 	}
 
-	public Churuata create( ILoginUser user, String name, String description, LatLng latlng, IChuruataType.Types type ) {
+	public Churuata create( ILoginUser user, String name, String description, LatLng latlng, IChuruataService.Services type ) {
 		LocationService ls = new LocationService(super.getService());
 		Location location= ls.create(user, name, latlng);
 		Churuata churuata = new Churuata( user, name, location );

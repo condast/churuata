@@ -21,8 +21,8 @@ import javax.persistence.TemporalType;
 
 import org.churuata.digital.core.IPresentation;
 import org.churuata.digital.core.location.IChuruata;
-import org.churuata.digital.core.location.IChuruataType;
-import org.churuata.digital.core.location.IChuruataType.Contribution;
+import org.churuata.digital.core.location.IChuruataService;
+import org.churuata.digital.core.location.IChuruataService.Contribution;
 import org.churuata.digital.core.location.IMurmering;
 import org.condast.commons.Utils;
 import org.condast.commons.authentication.user.ILoginUser;
@@ -162,14 +162,14 @@ public class Churuata implements Comparable<Churuata>, IChuruata{
 	}
 
 	@Override
-	public void setTypes(Collection<IChuruataType> types) {
+	public void setTypes(Collection<IChuruataService> types) {
 		this.types.clear();
-		for( IChuruataType ct: types )
+		for( IChuruataService ct: types )
 			this.types.add( (ChuruataType) ct );
 	}
 
 	@Override
-	public boolean setType( IChuruataType type ) {
+	public boolean setType( IChuruataService type ) {
 		this.types.clear();
 		return this.types.add((ChuruataType) type);
 	}
@@ -221,26 +221,26 @@ public class Churuata implements Comparable<Churuata>, IChuruata{
 	}
 
 	@Override
-	public IChuruataType addType( String contributor, IChuruataType.Types type ) {
+	public IChuruataService addType( String contributor, IChuruataService.Services type ) {
 		ChuruataType ct = new ChuruataType( contributor, type );
 		this.types.add( ct);
 		return ct;
 	}
 
 	@Override
-	public IChuruataType addType( String contributor, IChuruataType.Types type, IChuruataType.Contribution contribution ) {
+	public IChuruataService addType( String contributor, IChuruataService.Services type, IChuruataService.Contribution contribution ) {
 		ChuruataType ct = new ChuruataType( contributor, type, contribution );
 		this.types.add( ct);
 		return ct;
 	}
 
 	@Override
-	public boolean removeType( IChuruataType type ) {
+	public boolean removeType( IChuruataService type ) {
 		return this.types.remove(type);
 	}
 
 	@Override
-	public IChuruataType removeType( long typeId ) {
+	public IChuruataService removeType( long typeId ) {
 		for( ChuruataType type: this.types ) {
 			if( type.getId() == typeId) {
 				this.types.remove(type);
@@ -251,10 +251,10 @@ public class Churuata implements Comparable<Churuata>, IChuruata{
 	}
 
 	@Override
-	public IChuruataType removeType( String contributor, IChuruataType.Types type ) {
+	public IChuruataService removeType( String contributor, IChuruataService.Services type ) {
 		Collection<ChuruataType> temp = new ArrayList<>( this.types);
 		for( ChuruataType ct: temp ) {
-			if( ct.getContributor().equals(contributor) && ct.getType().equals(type)) {
+			if( ct.getContributor().equals(contributor) && ct.getService().equals(type)) {
 				this.types.remove(ct);
 				return ct;
 			}
@@ -305,7 +305,7 @@ public class Churuata implements Comparable<Churuata>, IChuruata{
 	}
 
 	@Override
-	public IChuruataType[] getTypes() {
+	public IChuruataService[] getTypes() {
 		return types.toArray( new ChuruataType[ types.size()]);
 	}
 

@@ -14,11 +14,12 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.churuata.digital.core.data.OrganisationData;
-import org.churuata.digital.core.location.IChuruataType;
+import org.churuata.digital.core.location.IChuruataService;
 import org.churuata.digital.organisation.core.AuthenticationDispatcher;
 import org.churuata.digital.organisation.core.Dispatcher;
 import org.churuata.digital.organisation.model.Organisation;
 import org.churuata.digital.organisation.model.Person;
+import org.churuata.digital.organisation.model.Service;
 import org.churuata.digital.organisation.services.ContactService;
 import org.churuata.digital.organisation.services.OrganisationService;
 import org.churuata.digital.organisation.services.PersonService;
@@ -83,10 +84,11 @@ public class OrganisationResource{
 		OrganisationData od = gson.fromJson(data, OrganisationData.class);
 		OrganisationService os = new OrganisationService(); 
 		TransactionManager t = new TransactionManager( Dispatcher.getInstance() );
-		PersonService ps = new PersonService(); 
-		ContactService cs = new ContactService();
-		Organisation organisation = null;
 		try {
+			t.open();
+			PersonService ps = new PersonService(); 
+			ContactService cs = new ContactService();
+
 			Collection<Person> persons = ps.findForLogin(userId); 
 			IContactPerson person = null;
 			if( Utils.assertNull(persons)) {
@@ -94,11 +96,9 @@ public class OrganisationResource{
 				person = ps.create(user, contact);
 			}else
 				person = persons.iterator().next();
-			t.open();
-			organisation = os.create(person, od);
-			
-			OrganisationData pd = new OrganisationData(organisation);
-			String str = gson.toJson(pd, PersonData.class);
+			Organisation organisation = os.create(person, od);
+			od = new OrganisationData(organisation);
+			String str = gson.toJson(od, PersonData.class);
 			return Response.ok( str ).build();
 		}
 		catch( Exception ex ) {
@@ -109,7 +109,41 @@ public class OrganisationResource{
 			t.close();
 		}
 	}
+
+	@PUT
+	@Consumes(MediaType.TEXT_PLAIN)
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/register")
+	public Response register( @QueryParam("person-id") long personId, String data) {
+
+		if( StringUtils.isEmpty(data)) 
+			return Response.noContent().build();
 	
+		Gson gson = new Gson();
+		OrganisationData od = gson.fromJson(data, OrganisationData.class);
+		OrganisationService os = new OrganisationService(); 
+		TransactionManager t = new TransactionManager( Dispatcher.getInstance() );
+		try {
+			t.open();
+			PersonService ps = new PersonService(); 
+			Person person = ps.find( personId); 
+			if( person == null )
+				return Response.status( Status.NOT_FOUND).build();
+			
+			Organisation org = os.create(person, od);
+			od = new OrganisationData(org);
+			String str = gson.toJson(od, OrganisationData.class);
+			return Response.ok( str ).build();
+		}
+		catch( Exception ex ) {
+			ex.printStackTrace();
+			return Response.serverError().build();
+		}
+		finally {
+			t.close();
+		}
+	}
+
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/find")
@@ -141,26 +175,29 @@ public class OrganisationResource{
 	@GET
 	@Produces(MediaType.TEXT_PLAIN)
 	@Path("/add-service")
-	public Response addService( @QueryParam("user-id") long userId, @QueryParam("security") long security,
-			@QueryParam("organisation-id") long organisationId, @QueryParam("type") String type, @QueryParam("name") String name) {
-
-		AuthenticationDispatcher dispatcher=  AuthenticationDispatcher.getInstance();
-		if( !dispatcher.isLoggedIn(userId, security))
-			return Response.status( Status.UNAUTHORIZED).build();
+	public Response addService( @QueryParam("person-id") long personId,
+			@QueryParam("organisation-id") long organisationId, @QueryParam("type") String type, @QueryParam("name") String name,
+			@QueryParam("from") long from, @QueryParam("to") long to) {
 
 		if( StringUtils.isEmpty(name) || StringUtils.isEmpty( type )) 
 			return Response.notModified( ErrorMessages.NO_USERNAME_OR_EMAIL.name()).build();
-		IChuruataType.Types st = IChuruataType.Types.valueOf(type);
+		IChuruataService.Services st = IChuruataService.Services.valueOf(type);
 		
 		TransactionManager t = new TransactionManager( Dispatcher.getInstance() );
-		ServicesService cs = new ServicesService();
-		OrganisationService os = new OrganisationService(); 
 		try {
 			t.open();
+			PersonService ps = new PersonService();
+			IContactPerson person = ps.find(personId);
+			if( person == null )
+				return Response.status( Status.NOT_FOUND).build();
+			OrganisationService os = new OrganisationService(); 
+			ServicesService cs = new ServicesService();
 			Organisation organisation = os.find( organisationId );
 			if( organisation == null )
 				return Response.noContent().build();
-			IChuruataType service = cs.createService( organisation.getServicesSize(), st, name);
+			Service service = cs.createService( organisation.getServicesSize(), st, name);
+			service.setFromDate(from);
+			service.setToDate( to);
 			organisation.addService(service);
 			return Response.ok(service.getId()).build();
 		}
@@ -217,7 +254,7 @@ public class OrganisationResource{
 
 		if( StringUtils.isEmpty(name) || StringUtils.isEmpty( type )) 
 			return Response.notModified( ErrorMessages.NO_USERNAME_OR_EMAIL.name()).build();
-		IChuruataType.Types st = IChuruataType.Types.valueOf(type);
+		IChuruataService.Services st = IChuruataService.Services.valueOf(type);
 		
 		TransactionManager t = new TransactionManager( Dispatcher.getInstance() );
 		OrganisationService os = new OrganisationService(); 

@@ -52,6 +52,8 @@ public class ContactPersonResource{
 
 	private Logger logger = Logger.getLogger(this.getClass().getName());
 
+	private Dispatcher dispatcher = Dispatcher.getInstance();
+	
 	public ContactPersonResource() {
 		super();
 	}
@@ -78,7 +80,7 @@ public class ContactPersonResource{
 
 		logger.info( "Adding contact" + name + "(" + email + ")");
 
-		TransactionManager t = new TransactionManager( Dispatcher.getInstance() );
+		TransactionManager t = new TransactionManager( dispatcher );
 		IContactPerson person = null;
 		try {
 			t.open();
@@ -110,8 +112,8 @@ public class ContactPersonResource{
 			@QueryParam("description") String description, @QueryParam("email") String email) {
 		logger.info( "ATTEMPT Register " + name );
 
-		AuthenticationDispatcher dispatcher=  AuthenticationDispatcher.getInstance();
-		if( !dispatcher.isLoggedIn(userid, security))
+		AuthenticationDispatcher adispatcher=  AuthenticationDispatcher.getInstance();
+		if( !adispatcher.isLoggedIn(userid, security))
 			return Response.status( Status.UNAUTHORIZED).build();
 
 		if( StringUtils.isEmpty(name) || StringUtils.isEmpty( email )) 
@@ -131,7 +133,7 @@ public class ContactPersonResource{
 
 		logger.info( "Adding contact" + name + "(" + email + ")");
 
-		TransactionManager t = new TransactionManager( Dispatcher.getInstance() );
+		TransactionManager t = new TransactionManager( dispatcher );
 		IContactPerson person = null;
 		try {
 			t.open();
@@ -161,11 +163,11 @@ public class ContactPersonResource{
 	public Response getContact( @QueryParam("user-id") long userId, @QueryParam("security") long security) {
 		logger.info( "ATTEMPT Get " );
 
-		AuthenticationDispatcher dispatcher=  AuthenticationDispatcher.getInstance();
-		if( !dispatcher.isLoggedIn(userId, security))
+		AuthenticationDispatcher adispatcher=  AuthenticationDispatcher.getInstance();
+		if( !adispatcher.isLoggedIn(userId, security))
 			return Response.status( Status.UNAUTHORIZED).build();
 
-		TransactionManager t = new TransactionManager( Dispatcher.getInstance() );
+		TransactionManager t = new TransactionManager( dispatcher );
 		try {
 			t.open();
 			PersonService ps = new PersonService(); 
@@ -193,12 +195,12 @@ public class ContactPersonResource{
 	public Response getProfile( @QueryParam("user-id") long userId, @QueryParam("security") long security) {
 		logger.info( "ATTEMPT Get " );
 
-		AuthenticationDispatcher dispatcher=  AuthenticationDispatcher.getInstance();
-		if( !dispatcher.isLoggedIn(userId, security))
+		AuthenticationDispatcher adispatcher=  AuthenticationDispatcher.getInstance();
+		if( !adispatcher.isLoggedIn(userId, security))
 			return Response.status( Status.UNAUTHORIZED).build();
 
-		ILoginUser user = dispatcher.getLoginUser(userId, security);
-		TransactionManager t = new TransactionManager( Dispatcher.getInstance() );
+		ILoginUser user = adispatcher.getLoginUser(userId, security);
+		TransactionManager t = new TransactionManager( dispatcher );
 		IContactPerson person = null;
 		try {
 			t.open();
@@ -234,14 +236,14 @@ public class ContactPersonResource{
 	public Response updatePerson( @QueryParam("user-id") long userId, @QueryParam("security") long security, String data) {
 		logger.info( "ATTEMPT Get " );
 
-		AuthenticationDispatcher dispatcher=  AuthenticationDispatcher.getInstance();
-		if( !dispatcher.isLoggedIn(userId, security))
+		AuthenticationDispatcher adispatcher=  AuthenticationDispatcher.getInstance();
+		if( !adispatcher.isLoggedIn(userId, security))
 			return Response.status( Status.UNAUTHORIZED).build();
 
-		if( !dispatcher.isLoggedIn(userId, security))
+		if( !adispatcher.isLoggedIn(userId, security))
 			return Response.status( Status.UNAUTHORIZED ).build();
 		
-		TransactionManager t = new TransactionManager( Dispatcher.getInstance() );
+		TransactionManager t = new TransactionManager( dispatcher );
 		try {
 			t.open();
 			PersonService ps = new PersonService(); 
@@ -265,7 +267,7 @@ public class ContactPersonResource{
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/add-contact-type")
-	public Response addContacttype( @QueryParam("person-id") long personId, @QueryParam("type") String type,
+	public Response addContacttype( @QueryParam("person-id") long personId, @QueryParam("contact-type") String type,
 			@QueryParam("value") String value, @QueryParam("restricted") boolean restricted) {
 		logger.info( "ATTEMPT Add contact " + type );
 
@@ -276,7 +278,7 @@ public class ContactPersonResource{
 		if( !ContactTypes.verify(ct, value))
 			return Response.status( Status.BAD_REQUEST ).build();
 		
-		TransactionManager t = new TransactionManager( Dispatcher.getInstance() );
+		TransactionManager t = new TransactionManager( dispatcher );
 		IContactPerson person = null;
 		try {
 			t.open();

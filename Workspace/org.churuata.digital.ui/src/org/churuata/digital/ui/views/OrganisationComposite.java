@@ -1,14 +1,15 @@
 package org.churuata.digital.ui.views;
 
+import java.util.Arrays;
 import java.util.Calendar;
 
 import org.churuata.digital.core.data.OrganisationData;
+import org.condast.commons.Utils;
 import org.condast.commons.strings.StringUtils;
 import org.condast.commons.ui.controller.AbstractEntityComposite;
 import org.condast.commons.ui.controller.EditEvent;
 import org.condast.commons.ui.controller.EditEvent.EditTypes;
 import org.condast.commons.ui.date.DateUtils;
-import org.condast.commons.ui.swt.AttributeFieldComposite;
 import org.condast.commons.ui.swt.InputField;
 import org.eclipse.rap.rwt.RWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -17,7 +18,6 @@ import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DateTime;
 import org.eclipse.swt.SWT;
@@ -31,27 +31,24 @@ public class OrganisationComposite extends AbstractEntityComposite<OrganisationD
 	public static final String S_NAME = "Churuata";
 	public static final String REGEXP = ("[\\ ;:,]");
 
-	private static final String S_SERVICES = "Service: ";
-	private static final String S_CONTRIBUTION = "Contribution: ";
-	private static final String S_CHURUATA_INFORMATION_TIP = "The type of churuata";
+	public static final String S_ORGANISATION = "Churuata";
+
 	private static final String S_NAME_INFORMATION_TIP = "The Churuata name";
 	private static final String S_DESCRIPTION = "Description";
 	private static final String S_DESCRIPTOR_INFORMATION_TIP = "Describe the Churuata";
+	private static final String S_WEBSITE = "Website";
+	private static final String S_WEBSITE_INFORMATION_TIP = "Add the Web site";
 	private static final String S_FROM = "From: ";
 	private static final String S_TO = "To: ";
 	
-	private AttributeFieldComposite serviceField;
-	private Combo comboTypes;
-
 	private InputField churuataField;
 	private InputField descriptionField;
-
-	private AttributeFieldComposite contributionField;
-	private Combo contributionTypes;
+	private InputField websiteField;
 
 	private DateTime fromField;
 	private DateTime toField;
 	
+	private ServicesTableViewer viewer;
 	
 	/**
 	 * Create the dialog.
@@ -59,17 +56,12 @@ public class OrganisationComposite extends AbstractEntityComposite<OrganisationD
 	 */
 	public OrganisationComposite( Composite parent, int style ){
 		super(parent, style );
-		//this.comboTypes.setItems(OrganisationData.Types.getItems());
-		this.comboTypes.select(1);
-		//this.contributionTypes.setItems(OrganisationData.Contribution.getItems());
-		this.contributionTypes.select(0);
 		Calendar calendar = Calendar.getInstance();
 		DateUtils.setDate(fromField, calendar.getTime());
 		calendar.add(Calendar.YEAR, 1);
 		DateUtils.setDate(toField, calendar.getTime());
 	}
 	
-
 	/**
 	 * Create contents of the dialog.
 	 * @param parent
@@ -83,40 +75,10 @@ public class OrganisationComposite extends AbstractEntityComposite<OrganisationD
 		setData( RWT.CUSTOM_ITEM_HEIGHT, Integer.valueOf( 10 ));
 				
 		Group grpFillIn = new Group(container, SWT.NONE);
-		grpFillIn.setText("Churuata:");
+		grpFillIn.setText("Organisation:");
 		grpFillIn.setLayout(new GridLayout(2, false));
-		grpFillIn.setLayoutData( new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1 ));	
-		
-
-		this.serviceField = new AttributeFieldComposite( grpFillIn, SWT.NONE );
-		this.serviceField.setLabel( S_SERVICES + ": ");
-		this.serviceField.setLabelWidth(115);
-		this.serviceField.setIconSize(17);
-		this.serviceField.setInformationMessage( S_CHURUATA_INFORMATION_TIP);
-		
-		GridData gd_scope = new GridData(SWT.LEFT, SWT.CENTER, true, false, 2, 1);
-		gd_scope.widthHint = 295;
-		gd_scope.heightHint = 40;
-		this.serviceField.setLayoutData(gd_scope);
-
-		comboTypes = new Combo(this.serviceField, SWT.BORDER);
-		GridData gd_comboScope = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
-		gd_comboScope.widthHint = 149;
-		comboTypes.setLayoutData(gd_comboScope);
-		comboTypes.addVerifyListener(new VerifyListener() {
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public void verifyText(VerifyEvent event) {
-				try {
-					if( isFilled())
-						notifyInputEdited( new EditEvent<OrganisationData>( this, EditTypes.COMPLETE, getInput()));
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});		
-		
+		grpFillIn.setLayoutData( new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1 ));	
+				
 		churuataField = new InputField( grpFillIn, SWT.NONE );
 		churuataField.setBackgroundControl(1);
 		churuataField.setLabel( S_NAME + ": ");
@@ -134,26 +96,14 @@ public class OrganisationComposite extends AbstractEntityComposite<OrganisationD
 					notifyInputEdited( new EditEvent<OrganisationData>( this, EditTypes.COMPLETE, getInput()));
 			}
 		});
-		GridData gridData_2 = new GridData();
-		gridData_2.horizontalSpan = 2;
-		gridData_2.heightHint = 33;
-		gridData_2.widthHint = 182;
-		gridData_2.horizontalAlignment = GridData.FILL;
-		gridData_2.grabExcessHorizontalSpace = true;
-		churuataField.setLayoutData(gridData_2);	
+		churuataField.setLayoutData( new GridData( SWT.FILL, SWT.FILL, true, false,2,1 ));	
 		
 		descriptionField = new InputField(grpFillIn, SWT.NONE);
 		descriptionField.setLabel( S_DESCRIPTION + ": ");
 		descriptionField.setBackgroundControl(0);
 		descriptionField.setLabelWidth(85);
 		descriptionField.setInformationMessage(S_DESCRIPTOR_INFORMATION_TIP);
-		GridData gridData_3 = new GridData();
-		gridData_3.horizontalSpan = 2;
-		gridData_3.heightHint = 33;
-		gridData_3.widthHint = 182;
-		gridData_3.horizontalAlignment = GridData.FILL;
-		gridData_3.grabExcessHorizontalSpace = true;
-		descriptionField.setLayoutData(gridData_3);
+		descriptionField.setLayoutData(new GridData( SWT.FILL, SWT.FILL, true, false,2,1 ));
 		this.descriptionField.addVerifyListener( new VerifyListener()
 		{	
 			private static final long serialVersionUID = 1L;
@@ -165,51 +115,38 @@ public class OrganisationComposite extends AbstractEntityComposite<OrganisationD
 					notifyInputEdited( new EditEvent<OrganisationData>( this, EditTypes.COMPLETE, getInput()));
 			}
 		});
-		
-				
-		this.contributionField = new AttributeFieldComposite( grpFillIn, SWT.NONE );
-		this.contributionField.setLabel( S_CONTRIBUTION + ": ");
-		this.contributionField.setLabelWidth(115);
-		this.contributionField.setIconSize(17);
-		this.contributionField.setInformationMessage( S_CHURUATA_INFORMATION_TIP);
-		
-		GridData gd_contribution = new GridData(SWT.LEFT, SWT.CENTER, true, false, 2, 1);
-		gd_contribution.widthHint = 295;
-		gd_contribution.heightHint = 40;
-		this.contributionField.setLayoutData(gd_scope);
 
-		contributionTypes = new Combo(this.contributionField, SWT.BORDER);
-		GridData gd_contributionScope = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
-		gd_contributionScope.widthHint = 149;
-		contributionTypes.setLayoutData(gd_comboScope);
-		contributionTypes.addVerifyListener(new VerifyListener() {
+		websiteField = new InputField(grpFillIn, SWT.NONE);
+		websiteField.setLabel( S_WEBSITE + ": ");
+		websiteField.setBackgroundControl(0);
+		websiteField.setLabelWidth(85);
+		websiteField.setInformationMessage(S_WEBSITE_INFORMATION_TIP);
+		websiteField.setLayoutData(new GridData( SWT.FILL, SWT.FILL, true, false,2,1 ));
+		this.websiteField.addVerifyListener( new VerifyListener()
+		{	
 			private static final long serialVersionUID = 1L;
 
 			@Override
 			public void verifyText(VerifyEvent event) {
-				try {
-					if( isFilled())
-						notifyInputEdited( new EditEvent<OrganisationData>( this, EditTypes.COMPLETE, getInput()));
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+				onVerifyText(event, null);
+				if( isFilled())
+					notifyInputEdited( new EditEvent<OrganisationData>( this, EditTypes.COMPLETE, getInput()));
 			}
-		});		
-		
+		});
+
 		Label fromLabel = new Label( grpFillIn, SWT.NONE);
 		fromLabel.setLayoutData( new GridData( SWT.FILL, SWT.FILL, false, true));
 		fromLabel.setText( S_FROM);
 		
+		GridData gridData = new GridData( SWT.FILL, SWT.FILL, false, true);
+		gridData.widthHint = 112;
 		this.fromField = new DateTime( grpFillIn, SWT.BORDER);
-		this.fromField.setLayoutData( new GridData( SWT.FILL, SWT.FILL, false, true));
+		this.fromField.setLayoutData( gridData );
 		this.fromField.addSelectionListener( new SelectionAdapter() {
 			private static final long serialVersionUID = 1L;
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				DateTime dateField = (DateTime) e.widget;
-				OrganisationData input = getInput();
-				//input.setFrom(DateUtils.getDate(dateField));
 				if( isFilled())
 					notifyInputEdited( new EditEvent<OrganisationData>( this, EditTypes.COMPLETE, getInput()));
 				super.widgetSelected(e);
@@ -221,36 +158,54 @@ public class OrganisationComposite extends AbstractEntityComposite<OrganisationD
 		toLabel.setText( S_TO);
 		
 		this.toField = new DateTime( grpFillIn, SWT.BORDER);
-		this.toField.setLayoutData( new GridData( SWT.FILL, SWT.FILL, false, true));
+		this.toField.setLayoutData( gridData);
 		this.toField.addSelectionListener( new SelectionAdapter() {
 			private static final long serialVersionUID = 1L;
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				DateTime dateField = (DateTime) e.widget;
-				OrganisationData input = getInput();
-				//input.setTo(DateUtils.getDate(dateField));
 				if( isFilled())
 					notifyInputEdited( new EditEvent<OrganisationData>( this, EditTypes.COMPLETE, getInput()));
 				super.widgetSelected(e);
 			}	
 		});
 
-	}
+ 		viewer = new ServicesTableViewer( this, SWT.NONE );
+		viewer.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		viewer.addSelectionListener( new SelectionAdapter() {
+			private static final long serialVersionUID = 1L;
 
-	@Override
-	public void update(){
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				notifyInputEdited( new EditEvent<OrganisationData>( this, EditTypes.ADDED, getInput()));
+				super.widgetSelected(e);
+			}
+		});
 	}
 
 	@Override
 	protected OrganisationData onGetInput(OrganisationData input) {
+		if( input == null )
+			input = new OrganisationData();
+		input.setDescription(this.descriptionField.getText());
+		input.setName( this.churuataField.getText());
+		input.setWebsite(this.websiteField.getText());
+		input.setFrom( DateUtils.getDate( this.fromField ));
+		input.setTo( DateUtils.getDate( this.toField ));
+		if( Utils.assertNull( viewer.getInput()))
+			return input;
+		input.setChuruataServices( viewer.getInput());
 		return input;
 	}
 
 	@Override
 	protected void onSetInput(OrganisationData input, boolean overwrite) {
-		//latlngLabel.setText(input.getLocation().toLocation());
-		//this.churuataTypesTable.setInput(input.getTypes());
+		this.descriptionField.setText( input.getDescription());
+		this.churuataField.setText( input.getName());
+		this.websiteField.setText(input.getWebsite());
+		DateUtils.setDate(fromField, input.getFrom());
+		DateUtils.setDate(toField, input.getTo());
+		viewer.setInput( Arrays.asList( input.getServices()));
 	}
 
 	public void setInput( OrganisationData input ){
@@ -286,11 +241,17 @@ public class OrganisationComposite extends AbstractEntityComposite<OrganisationD
 		boolean filled = !StringUtils.isEmpty( churuataField.getText());
 		if( !filled )
 			return false;
-		return !StringUtils.isEmpty( this.descriptionField.getText());
+		filled = !StringUtils.isEmpty( this.websiteField.getText());
+		if( !filled )
+			return false;
+		filled = !StringUtils.isEmpty( this.descriptionField.getText());
+		if( !filled )
+			return false;
+		return !Utils.assertNull( this.viewer.getInput());
 	}
 
 	@Override
 	public boolean checkRequiredFields() {
-		return false;
+		return this.isFilled();
 	}
 }

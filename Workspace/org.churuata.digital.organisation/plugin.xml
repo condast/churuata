@@ -6,7 +6,7 @@
       <servlet
             alias="/churuatas/organisation"
             class="org.churuata.digital.organisation.RestServlet"
-            load-on-startup="true">
+            load-on-startup="false">
         <init-param name="javax.ws.rs.Application"
     			    value="org.churuata.digital.organisation.RestApplication">
 		</init-param>

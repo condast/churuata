@@ -1,17 +1,24 @@
-package org.churuata.digital;
+package org.churuata.digital.entries;
 
+import java.io.IOException;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
 
 import org.churuata.digital.core.AbstractChuruataEntryPoint;
 import org.churuata.digital.core.Dispatcher;
-import org.churuata.digital.core.Entries;
+import org.churuata.digital.core.Entries.Pages;
 import org.churuata.digital.core.data.OrganisationData;
-import org.churuata.digital.core.location.IChuruataType;
+import org.churuata.digital.core.data.ServiceData;
+import org.churuata.digital.core.location.IChuruataService;
+import org.churuata.digital.core.rest.IRestPages;
 import org.churuata.digital.session.SessionStore;
 import org.churuata.digital.ui.image.ChuruataImages;
 import org.churuata.digital.ui.views.ServicesComposite;
 import org.condast.commons.authentication.http.IDomainProvider;
-import org.condast.commons.authentication.user.ILoginUser;
+import org.condast.commons.config.Config;
+import org.condast.commons.messaging.http.AbstractHttpRequest;
+import org.condast.commons.messaging.http.ResponseEvent;
 import org.condast.commons.ui.controller.EditEvent;
 import org.condast.commons.ui.controller.IEditListener;
 import org.condast.commons.ui.session.AbstractSessionHandler;
@@ -28,6 +35,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 
 public class ServicesEntryPoint extends AbstractChuruataEntryPoint {
 	private static final long serialVersionUID = 1L;
@@ -40,10 +49,14 @@ public class ServicesEntryPoint extends AbstractChuruataEntryPoint {
 	private Button btnAdd;
 
 	private SessionHandler handler;
-	
-	private IChuruataType data = null;
 
-	private IEditListener<IChuruataType> listener = e->onServiceEvent(e);
+	private WebController controller;
+
+	private IChuruataService data = null;
+
+	private IEditListener<IChuruataService> listener = e->onServiceEvent(e);
+
+	private Logger logger = Logger.getLogger(this.getClass().getName());
 
 	@Override
 	protected boolean prepare(Composite parent) {
@@ -55,9 +68,8 @@ public class ServicesEntryPoint extends AbstractChuruataEntryPoint {
 		if( store == null )
 			return false;
 		setData(store);
-		ILoginUser user = store.getLoginUser();
 		handler = new SessionHandler( parent.getDisplay());
-		return ( user != null );
+		return true;
 	}
 
 	@Override
@@ -87,8 +99,7 @@ public class ServicesEntryPoint extends AbstractChuruataEntryPoint {
 						return;
 					SessionStore store = getSessionStore();
 					OrganisationData organisation = store.getOrganisation();
-					organisation.addChuruataType(data);
-					Dispatcher.jump(Entries.Pages.CREATE, store.getToken());
+					controller.addService( organisation.getId(), data);
 				}
 				catch( Exception ex ){
 					ex.printStackTrace();
@@ -102,11 +113,15 @@ public class ServicesEntryPoint extends AbstractChuruataEntryPoint {
 
 	@Override
 	protected boolean postProcess(Composite parent) {
+		Config config = new Config();
+		String context = config.getServerContext();
+		controller = new WebController();
+		controller.setInput(context, IRestPages.Pages.ORGANISATION.toPath());
 		this.servicesComposite.addEditListener(listener);
 		return super.postProcess(parent);
 	}
 
-	protected void onServiceEvent( EditEvent<IChuruataType> event ) {
+	protected void onServiceEvent( EditEvent<IChuruataService> event ) {
 		switch( event.getType()) {
 		case COMPLETE:
 			data = event.getData();
@@ -144,5 +159,69 @@ public class ServicesEntryPoint extends AbstractChuruataEntryPoint {
 		protected void onHandleSession(SessionEvent<SessionStore> sevent) {
 			/* NOTHING */
 		}
+	}
+	
+	private class WebController extends AbstractHttpRequest<OrganisationData.Requests>{
+		
+		private EditEvent.EditTypes type;
+		
+		public WebController() {
+			super();
+		}
+
+		public void setInput(String context, String path) {
+			super.setContextPath(context + path);
+		}
+
+		public void addService( long organisationId, IChuruataService service ) {
+			Map<String, String> params = super.getParameters();
+			params.put(ServiceData.Parameters.ORGANISATION_ID.toString(), String.valueOf( organisationId));
+			params.put(ServiceData.Parameters.NAME.toString(), service.getContribution().toString());
+			params.put(ServiceData.Parameters.TYPE.toString(),  service.getService().name());
+			params.put(ServiceData.Parameters.DESCRIPTION.toString(), service.getDescription());
+			params.put(ServiceData.Parameters.FROM_DATE.toString(),  String.valueOf( service.from().getTime()));
+			params.put(ServiceData.Parameters.TO_DATE.toString(),  String.valueOf( service.to().getTime()));
+			try {
+				sendGet(OrganisationData.Requests.ADD_SERVICE, params );
+			} catch (IOException e) {
+				logger.warning(e.getMessage());
+			}
+		}
+
+		@Override
+		protected String onHandleResponse(ResponseEvent<OrganisationData.Requests> event) throws IOException {
+			try {
+				SessionStore store = getSessionStore();
+				Gson gson = new Gson();
+				switch( event.getRequest()){
+				case CREATE:
+					OrganisationData data = gson.fromJson(event.getResponse(), OrganisationData.class);
+					store.setOrganisation(data);
+					switch( type ) {
+					case ADDED:
+						Dispatcher.jump( Pages.CONTACTS, store.getToken());
+						break;
+					case COMPLETE:
+						Dispatcher.jump( Pages.ORGANISATION, store.getToken());
+						break;
+					default:
+						break;
+					}
+					break;
+				default:
+					break;
+				}
+			} catch (JsonSyntaxException e) {
+				e.printStackTrace();
+			}
+			finally {
+			}
+			return null;
+		}
+
+		@Override
+		protected void onHandleResponseFail(HttpStatus status, ResponseEvent<OrganisationData.Requests> event) throws IOException {
+			super.onHandleResponseFail(status, event);
+		}	
 	}
 }

@@ -5,8 +5,8 @@ import java.util.Collection;
 import java.util.TreeSet;
 
 import org.churuata.digital.core.IPresentation;
-import org.churuata.digital.core.location.IChuruataType.Contribution;
-import org.churuata.digital.core.location.IChuruataType.Types;
+import org.churuata.digital.core.location.IChuruataService.Contribution;
+import org.churuata.digital.core.location.IChuruataService.Services;
 import org.condast.commons.authentication.user.ILoginUser;
 import org.condast.commons.data.latlng.LatLng;
 
@@ -24,7 +24,7 @@ public class ChuruataData implements Comparable<ChuruataData>, IChuruata{
 	private int leaves;
 	private int maxLeaves;
 	
-	private Collection<ChuruataType> types;
+	private Collection<ChuruataService> types;
 
 	//private Collection<IMurmering> murmerings;
 
@@ -58,7 +58,7 @@ public class ChuruataData implements Comparable<ChuruataData>, IChuruata{
 	}
 
 	@Override
-	public IChuruataType removeType(long typeId) {
+	public IChuruataService removeType(long typeId) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -79,9 +79,9 @@ public class ChuruataData implements Comparable<ChuruataData>, IChuruata{
 	}
 
 	@Override
-	public void setTypes(Collection<IChuruataType> types) {
-		for( IChuruataType tp: types) {
-			ChuruataType ct = new ChuruataType( tp.getType(), tp.getContributor(), tp.getContribution());
+	public void setTypes(Collection<IChuruataService> types) {
+		for( IChuruataService tp: types) {
+			ChuruataService ct = new ChuruataService( tp.getService(), tp.getContributor(), tp.getContribution());
 			ct.setFrom(tp.from());
 			ct.setTo(tp.to());
 			this.types.add(ct );
@@ -114,9 +114,9 @@ public class ChuruataData implements Comparable<ChuruataData>, IChuruata{
 	}
 
 	@Override
-	public boolean setType( IChuruataType type ) {
+	public boolean setType( IChuruataService type ) {
 		this.types.clear();
-		ChuruataType ct = new ChuruataType( type.getType(), type.getContributor(), type.getContribution());
+		ChuruataService ct = new ChuruataService( type.getService(), type.getContributor(), type.getContribution());
 		ct.setFrom(type.from());
 		ct.setTo(type.to());
 		this.types.add(ct );
@@ -124,13 +124,13 @@ public class ChuruataData implements Comparable<ChuruataData>, IChuruata{
 	}
 
 	@Override
-	public boolean removeType( IChuruataType type ) {
+	public boolean removeType( IChuruataService type ) {
 		return this.types.remove(type);
 	}
 
 	@Override
-	public IChuruataType[] getTypes() {
-		return types.toArray( new ChuruataType[ types.size()]);
+	public IChuruataService[] getTypes() {
+		return types.toArray( new ChuruataService[ types.size()]);
 	}
 
 	@Override
@@ -175,21 +175,21 @@ public class ChuruataData implements Comparable<ChuruataData>, IChuruata{
 	}
 
 	@Override
-	public IChuruataType addType(String contributor, Types type) {
-		ChuruataType ct =  new ChuruataType( type, contributor ); 
+	public IChuruataService addType(String contributor, Services type) {
+		ChuruataService ct =  new ChuruataService( type, contributor ); 
 		types.add(ct);
 		return ct;
 	}
 
 	@Override
-	public IChuruataType addType(String contributor, Types type, Contribution contribution) {
-		ChuruataType ct =  new ChuruataType( type, contributor, contribution ); 
+	public IChuruataService addType(String contributor, Services type, Contribution contribution) {
+		ChuruataService ct =  new ChuruataService( type, contributor, contribution ); 
 		types.add( ct);
 		return ct;
 	}
 
 	@Override
-	public IChuruataType removeType(String contributor, Types type) {
+	public IChuruataService removeType(String contributor, Services type) {
 		// TODO Auto-generated method stub
 		return null;
 	}

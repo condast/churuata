@@ -6,9 +6,9 @@ import org.churuata.digital.core.model.IOrganisation;
 import org.condast.commons.strings.StringStyler;
 import org.condast.js.commons.images.IDefaultMarkers.Markers;
 
-public interface IChuruataType {
+public interface IChuruataService {
 
-	public enum Types{
+	public enum Services{
 		UNKNOWN,
 		FOOD,
 		SHELTER,
@@ -30,7 +30,7 @@ public interface IChuruataType {
 			return items;
 		}
 		
-		public static Markers getMarker( Types type ) {
+		public static Markers getMarker( Services type ) {
 			Markers marker = Markers.BROWN;
 			switch( type ) {
 			case FOOD:
@@ -59,7 +59,7 @@ public interface IChuruataType {
 		}
 
 		public static boolean isValid(String typeStr) {
-			for( Types type: values() ) {
+			for( Services type: values() ) {
 				if( type.name().equals(typeStr))
 					return true;
 			}
@@ -100,7 +100,7 @@ public interface IChuruataType {
 
 	void setDescription(String description);
 
-	Types getType();
+	Services getService();
 
 	String getContributor();
 	
@@ -115,5 +115,7 @@ public interface IChuruataType {
 	public void setTo( Date date );
 
 	IOrganisation getOrganisation();
+
+	void setService(Services type);
 
 }

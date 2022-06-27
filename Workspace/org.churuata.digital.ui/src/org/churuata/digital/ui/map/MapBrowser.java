@@ -15,7 +15,7 @@ import org.churuata.digital.core.data.OrganisationData;
 import org.churuata.digital.core.location.ChuruataData;
 import org.churuata.digital.core.location.IChuruata;
 import org.churuata.digital.core.location.IChuruataCollection;
-import org.churuata.digital.core.location.IChuruataType;
+import org.churuata.digital.core.location.IChuruataService;
 import org.churuata.digital.core.location.IChuruata.Requests;
 import org.churuata.digital.core.rest.IRestPages;
 import org.condast.commons.Utils;
@@ -234,7 +234,7 @@ public class MapBrowser extends Browser {
 			return;
 		
 		for( IChuruata mt: churuatas ) {
-			Markers marker = IChuruataType.Types.getMarker( IChuruataType.Types.values()[ mt.getMaxLeaves()]);
+			Markers marker = IChuruataService.Services.getMarker( IChuruataService.Services.values()[ mt.getMaxLeaves()]);
 			icons.addMarker(mt.getLocation(), marker, mt.getLocation().getId().charAt(0));
 		}
 	}
@@ -269,7 +269,7 @@ public class MapBrowser extends Browser {
 		Markers marker = Markers.BROWN;
 		char chr = 'N';
 		String result = null;
-		IChuruataType[] types = churuata.getTypes();
+		IChuruataService[] types = churuata.getTypes();
 		if( Utils.assertNull(types)){
 			result = icons.addMarker(churuata.getLocation(), marker, chr);
 		}else if( types.length > 1) {
@@ -277,8 +277,8 @@ public class MapBrowser extends Browser {
 			chr = 'M';
 			result = icons.addMarker(churuata.getLocation(), marker, chr);				
 		}else {
-			marker = newEntry? Markers.PURPLE: IChuruataType.Types.getMarker(types[0].getType());
-			chr = types[0].getType().name().charAt(0);
+			marker = newEntry? Markers.PURPLE: IChuruataService.Services.getMarker(types[0].getService());
+			chr = types[0].getService().name().charAt(0);
 			result = icons.addMarker(churuata.getLocation(), marker, chr);				
 		}
 		return result;

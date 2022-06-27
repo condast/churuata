@@ -6,9 +6,9 @@ import java.util.Date;
 import org.churuata.digital.core.model.IOrganisation;
 
 @Deprecated
-public class ChuruataType implements IChuruataType, Comparable<IChuruataType>{
+public class ChuruataService implements IChuruataService, Comparable<IChuruataService>{
 
-	private Types type;
+	private Services type;
 	
 	private String description;
 	
@@ -20,23 +20,23 @@ public class ChuruataType implements IChuruataType, Comparable<IChuruataType>{
 	private long toDate;
 	
 	
-	public ChuruataType() {
+	public ChuruataService() {
 		super();
 	}
 
-	public ChuruataType(Types type) {
+	public ChuruataService(Services type) {
 		this( type, Contribution.LOG );
 	}
 
-	public ChuruataType(Types type, String description) {
+	public ChuruataService(Services type, String description) {
 		this( type, description, Contribution.LOG);
 	}
 
-	public ChuruataType(Types type, Contribution contribution) {
+	public ChuruataService(Services type, Contribution contribution) {
 		this( type, null, contribution);
 	}
 	
-	public ChuruataType(Types type, String description, Contribution contribution) {
+	public ChuruataService(Services type, String description, Contribution contribution) {
 		super();
 		this.type = type;
 		this.description = description;
@@ -71,7 +71,7 @@ public class ChuruataType implements IChuruataType, Comparable<IChuruataType>{
 	}
 
 	@Override
-	public Types getType() {
+	public Services getService() {
 		return type;
 	}
 	
@@ -110,7 +110,13 @@ public class ChuruataType implements IChuruataType, Comparable<IChuruataType>{
 	}
 
 	@Override
-	public int compareTo(IChuruataType o) {
-		return type.toString().compareTo(o.getType().toString());
+	public int compareTo(IChuruataService o) {
+		return type.toString().compareTo(o.getService().toString());
+	}
+
+	@Override
+	public void setService(Services type) {
+		// TODO Auto-generated method stub
+		
 	}
 }

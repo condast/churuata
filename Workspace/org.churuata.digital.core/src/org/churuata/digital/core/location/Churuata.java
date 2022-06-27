@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.TreeSet;
 
 import org.churuata.digital.core.IPresentation;
-import org.churuata.digital.core.location.IChuruataType.Types;
+import org.churuata.digital.core.location.IChuruataService.Services;
 import org.condast.commons.authentication.user.ILoginUser;
 import org.condast.commons.data.latlng.LatLng;
 
@@ -22,7 +22,7 @@ public class Churuata implements Comparable<Churuata>, IChuruata{
 	private int leaves;
 	private int maxLeaves;
 	
-	private Collection<IChuruataType> types;
+	private Collection<IChuruataService> types;
 
 	//private Collection<IMurmering> murmerings;
 
@@ -47,7 +47,7 @@ public class Churuata implements Comparable<Churuata>, IChuruata{
 	}
 
 	@Override
-	public IChuruataType removeType(long typeId) {
+	public IChuruataService removeType(long typeId) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -68,7 +68,7 @@ public class Churuata implements Comparable<Churuata>, IChuruata{
 	}
 
 	@Override
-	public void setTypes(Collection<IChuruataType> types) {
+	public void setTypes(Collection<IChuruataService> types) {
 		this.types = types;
 	}
 
@@ -98,19 +98,19 @@ public class Churuata implements Comparable<Churuata>, IChuruata{
 	}
 
 	@Override
-	public boolean setType( IChuruataType type ) {
+	public boolean setType( IChuruataService type ) {
 		this.types.clear();
 		return this.types.add(type);
 	}
 
 	@Override
-	public boolean removeType( IChuruataType type ) {
+	public boolean removeType( IChuruataService type ) {
 		return this.types.remove(type);
 	}
 
 	@Override
-	public IChuruataType[] getTypes() {
-		return types.toArray( new ChuruataType[ types.size()]);
+	public IChuruataService[] getTypes() {
+		return types.toArray( new ChuruataService[ types.size()]);
 	}
 
 	@Override
@@ -155,20 +155,20 @@ public class Churuata implements Comparable<Churuata>, IChuruata{
 	}
 
 	@Override
-	public IChuruataType addType( String contributor, IChuruataType.Types type ) {
-		ChuruataType ct = new ChuruataType( type, contributor );
+	public IChuruataService addType( String contributor, IChuruataService.Services type ) {
+		ChuruataService ct = new ChuruataService( type, contributor );
 		this.types.add( ct);
 		return ct;
 	}
 
 	@Override
-	public IChuruataType addType( String contributor, IChuruataType.Types type, IChuruataType.Contribution contribution ) {
-		ChuruataType ct = new ChuruataType( type, contributor, contribution );
+	public IChuruataService addType( String contributor, IChuruataService.Services type, IChuruataService.Contribution contribution ) {
+		ChuruataService ct = new ChuruataService( type, contributor, contribution );
 		this.types.add( ct);
 		return ct;
 	}
 	@Override
-	public IChuruataType removeType(String contributor, Types type) {
+	public IChuruataService removeType(String contributor, Services type) {
 		// TODO Auto-generated method stub
 		return null;
 	}

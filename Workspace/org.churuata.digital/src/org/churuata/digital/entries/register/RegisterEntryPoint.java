@@ -1,7 +1,6 @@
 package org.churuata.digital.entries.register;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
@@ -19,6 +18,7 @@ import org.condast.commons.messaging.http.AbstractHttpRequest;
 import org.condast.commons.messaging.http.ResponseEvent;
 import org.condast.commons.na.data.ContactPersonData;
 import org.condast.commons.na.data.PersonData;
+import org.condast.commons.na.model.IContact;
 import org.condast.commons.strings.StringUtils;
 import org.condast.commons.ui.controller.EditEvent;
 import org.condast.commons.ui.controller.IEditListener;
@@ -93,7 +93,11 @@ public class RegisterEntryPoint extends AbstractChuruataEntryPoint{
 					SessionStore store = getSessionStore();
 					if( store.getContactPersonData() == null )
 						return;
-					controller.register( store.getContactPersonData());
+					PersonData person = store.getPersonData();
+					if( person == null ) 				
+						controller.register( store.getContactPersonData());
+					else
+						Dispatcher.jump( Pages.ORGANISATION, store.getToken());						
 				}
 				catch( Exception ex ){
 					ex.printStackTrace();
@@ -112,7 +116,15 @@ public class RegisterEntryPoint extends AbstractChuruataEntryPoint{
 		controller = new WebController();
 		controller.setInput(context, IRestPages.Pages.CONTACT.toPath());
 		SessionStore store = getSessionStore();
+		PersonData personData = store.getPersonData();
 		ContactPersonData person = store.getContactPersonData();
+		if( personData != null ) {
+			person = new ContactPersonData( personData );
+			person.clearContacts();
+			for( IContact contact: personData.getContacts() )
+				person.addContact(contact);
+			store.setContactPersonData(person);
+		}
 		if( person != null )
 			personComposite.setInput(store.getContactPersonData(), true);
 		return true;
@@ -121,21 +133,16 @@ public class RegisterEntryPoint extends AbstractChuruataEntryPoint{
 	protected void onPersonEvent( EditEvent<ContactPersonData> event ) {
 		ContactPersonData data = null;
 		SessionStore store = super.getSessionStore();
+		controller.type = event.getType();
 		switch( event.getType()) {
-		case INITIALISED:
-			break;
-		case CHANGED:
-			data = event.getData();
-			//store.setProfile(data);
-			break;
-		case SELECTED:
-			data = event.getData();
-			//store.setProfile(data);
-			//Dispatcher.jump(BasicApplication.Pages.CREATE, store.getToken());
-			break;
 		case ADDED:
 			store.setContactPersonData( this.personComposite.getInput());
-			Dispatcher.jump(Entries.Pages.CONTACTS, store.getToken());
+			PersonData person = store.getPersonData();
+			if( person == null ) 
+				controller.register( store.getContactPersonData());
+			else
+				Dispatcher.jump( Pages.CONTACTS, store.getToken());
+				
 			break;
 		case COMPLETE:
 			data = event.getData();
@@ -156,9 +163,6 @@ public class RegisterEntryPoint extends AbstractChuruataEntryPoint{
 	protected void handleTimer() {
 		try {
 			super.handleTimer();
-			SessionStore store = getSessionStore();
-			if(( store == null ) || ( store.getLoginUser() == null ))
-				return;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -172,6 +176,8 @@ public class RegisterEntryPoint extends AbstractChuruataEntryPoint{
 	}
 	
 	private class WebController extends AbstractHttpRequest<ProfileData.Requests>{
+		
+		private EditEvent.EditTypes type;
 		
 		public WebController() {
 			super();
@@ -194,28 +200,6 @@ public class RegisterEntryPoint extends AbstractChuruataEntryPoint{
 			}
 		}
 
-		public void get() {
-			Map<String, String> params = super.getParameters();
-			try {
-				sendGet(ProfileData.Requests.GET_PROFILE, params );
-			} catch (IOException e) {
-				logger.warning(e.getMessage());
-			}
-		}
-
-		public void update( PersonData person ) {
-			Map<String, String> params = new HashMap<>();
-			try {
-				if( person == null )
-					return;
-				Gson gson = new Gson();
-				String str = gson.toJson( person, ProfileData.class);
-				sendPut(ProfileData.Requests.UPDATE_PERSON, params, str );
-			} catch (IOException e) {
-				logger.warning(e.getMessage());
-			}
-		}
-
 		@Override
 		protected String onHandleResponse(ResponseEvent<ProfileData.Requests> event) throws IOException {
 			try {
@@ -225,7 +209,16 @@ public class RegisterEntryPoint extends AbstractChuruataEntryPoint{
 				case REGISTER:
 					PersonData data = gson.fromJson(event.getResponse(), PersonData.class);
 					store.setPersonData(data);
-					Dispatcher.jump( Pages.ORGANISATION, store.getToken());
+					switch( type ) {
+					case ADDED:
+						Dispatcher.jump( Pages.CONTACTS, store.getToken());
+						break;
+					case COMPLETE:
+						Dispatcher.jump( Pages.ORGANISATION, store.getToken());
+						break;
+					default:
+						break;
+					}
 					break;
 				case UPDATE_PERSON:
 					Dispatcher.redirect(Entries.Pages.ACTIVE, store.getToken());

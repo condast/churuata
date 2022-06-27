@@ -61,8 +61,8 @@ public class Person implements IContactPerson, Serializable, Cloneable {
 		this();
 		this.userId = userId;
 		this.name = name;
-		this.prefix = surname;
-		this.surName = prefix;
+		this.prefix = prefix;
+		this.surName = surname;
 		this.contacts.add((Contact) contact);
 	}
 

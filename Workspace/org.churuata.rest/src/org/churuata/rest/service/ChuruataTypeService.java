@@ -4,7 +4,7 @@ import java.util.Collection;
 
 import javax.persistence.TypedQuery;
 
-import org.churuata.digital.core.location.IChuruataType;
+import org.churuata.digital.core.location.IChuruataService;
 import org.churuata.rest.model.ChuruataType;
 import org.condast.commons.data.latlng.LatLng;
 import org.condast.commons.persistence.service.AbstractEntityService;
@@ -22,7 +22,7 @@ public class ChuruataTypeService extends AbstractEntityService<ChuruataType>{
 		super( ChuruataType.class, service );
 	}
 
-	public ChuruataType create( String contributor, IChuruataType.Types type, String description, IChuruataType.Contribution contribution ) {
+	public ChuruataType create( String contributor, IChuruataService.Services type, String description, IChuruataService.Contribution contribution ) {
 		ChuruataType churuata = new ChuruataType( contributor, type, description, contribution );
 		super.create(churuata);
 		return churuata;

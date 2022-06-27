@@ -3,8 +3,8 @@ package org.churuata.digital.core.location;
 import java.util.Collection;
 
 import org.churuata.digital.core.IPresentation;
-import org.churuata.digital.core.location.IChuruataType.Contribution;
-import org.churuata.digital.core.location.IChuruataType.Types;
+import org.churuata.digital.core.location.IChuruataService.Contribution;
+import org.churuata.digital.core.location.IChuruataService.Services;
 import org.condast.commons.authentication.user.ILoginUser;
 import org.condast.commons.data.latlng.LatLng;
 
@@ -29,7 +29,7 @@ public interface IChuruata {
 
 	void setName(String name);
 
-	void setTypes(Collection<IChuruataType> types);
+	void setTypes(Collection<IChuruataService> types);
 
 	String getDescription();
 
@@ -37,20 +37,20 @@ public interface IChuruata {
 
 	LatLng getLocation();
 
-	boolean setType(IChuruataType type);
+	boolean setType(IChuruataService type);
 
-	IChuruataType addType( String contributor, IChuruataType.Types type);
+	IChuruataService addType( String contributor, IChuruataService.Services type);
 
 
-	IChuruataType addType(String contributor, Types type, Contribution contribution);
+	IChuruataService addType(String contributor, Services type, Contribution contribution);
 
-	boolean removeType(IChuruataType type);	
+	boolean removeType(IChuruataService type);	
 
-	IChuruataType removeType(long typeId);
+	IChuruataService removeType(long typeId);
 
-	IChuruataType removeType(String contributor, Types type);
+	IChuruataService removeType(String contributor, Services type);
 
-	IChuruataType[] getTypes();
+	IChuruataService[] getTypes();
 
 	boolean addMurmering( IMurmering murmering);
 

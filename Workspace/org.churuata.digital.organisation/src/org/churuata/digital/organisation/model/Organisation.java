@@ -19,7 +19,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.churuata.digital.core.location.IChuruataType;
+import org.churuata.digital.core.location.IChuruataService;
 import org.churuata.digital.core.model.IOrganisation;
 import org.condast.commons.data.latlng.LatLng;
 import org.condast.commons.na.model.IAddress;
@@ -52,6 +52,8 @@ public class Organisation implements IOrganisation, Serializable, Cloneable {
 	private String name;
 	
 	private String description;
+	
+	private String website;
 
 	@OneToMany( mappedBy="organisation", cascade = CascadeType.ALL, orphanRemoval = true)
 	private Collection<Service> services;
@@ -107,15 +109,22 @@ public class Organisation implements IOrganisation, Serializable, Cloneable {
 		return description;
 	}
 
-	
 	@Override
 	public IContactPerson getContact() {
 		return contact;
 	}
-
 	
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	@Override
+	public String getWebsite() {
+		return website;
+	}
+
+	public void setWebsite(String website) {
+		this.website = website;
 	}
 
 	@Override
@@ -128,7 +137,7 @@ public class Organisation implements IOrganisation, Serializable, Cloneable {
 	}
 
 	@Override
-	public IChuruataType[] getServiceTypes() {
+	public IChuruataService[] getServices() {
 		return this.services.toArray( new Service[ this.services.size()]);
 	}
 
@@ -138,25 +147,25 @@ public class Organisation implements IOrganisation, Serializable, Cloneable {
 	}
 
 	@Override
-	public void addService( IChuruataType type, String value) {
-		Service contact = new Service( this.services.size(), type.getType(), value );
+	public void addService( IChuruataService type, String value) {
+		Service contact = new Service( this.services.size(), type.getService(), value );
 		this.services.add( contact );
 	}
 
 	@Override
-	public int addService( IChuruataType contact) {
+	public int addService( IChuruataService contact) {
 		this.services.add(( Service )contact );
 		return this.services.size()-1;
 	}
 
 	@Override
-	public void removeService( IChuruataType contact) {
+	public void removeService( IChuruataService contact) {
 		this.services.remove( contact );
 	}
 
 	@Override
 	public void removeService( long serviceId) {
-		Collection<IChuruataType> temp = new ArrayList<>( this.services );
+		Collection<IChuruataService> temp = new ArrayList<>( this.services );
 		temp.forEach( s-> {
 			if( s.getId() == serviceId )
 				this.services.remove(s);
@@ -165,17 +174,17 @@ public class Organisation implements IOrganisation, Serializable, Cloneable {
 
 	@Override
 	public void removeService(String type, String value) {
-		Collection<IChuruataType> temp = new ArrayList<>( this.services );
+		Collection<IChuruataService> temp = new ArrayList<>( this.services );
 		temp.forEach( s-> {
-			if( s.getType().name().equals(type) && s.getDescription().equals(value))
+			if( s.getService().name().equals(type) && s.getDescription().equals(value))
 				this.services.remove(s);
 		});
 	}
 
 	@Override
-	public void setServices(IChuruataType[] services) {
+	public void setServices(IChuruataService[] services) {
 		this.services.clear();
-		for( IChuruataType contact: services )
+		for( IChuruataService contact: services )
 			addService( contact );
 	}
 

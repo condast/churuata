@@ -8,7 +8,7 @@ import java.util.logging.Logger;
 
 import org.churuata.digital.core.location.ChuruataData;
 import org.churuata.digital.core.location.IChuruata;
-import org.churuata.digital.core.location.IChuruataType;
+import org.churuata.digital.core.location.IChuruataService;
 import org.condast.commons.Utils;
 import org.condast.commons.data.latlng.LatLng;
 import org.condast.commons.data.latlng.LatLngUtils;
@@ -255,7 +255,7 @@ public class MapBrowser extends Browser {
 		Markers marker = Markers.BROWN;
 		char chr = 'N';
 		String result = null;
-		IChuruataType[] types = churuata.getTypes();
+		IChuruataService[] types = churuata.getTypes();
 		if( Utils.assertNull(types)){
 			result = icons.addMarker(churuata.getLocation(), marker, chr);
 		}else if( types.length > 1) {
@@ -263,8 +263,8 @@ public class MapBrowser extends Browser {
 			chr = 'M';
 			result = icons.addMarker(churuata.getLocation(), marker, chr);				
 		}else {
-			marker = newEntry? Markers.PURPLE: IChuruataType.Types.getMarker(types[0].getType());
-			chr = types[0].getType().name().charAt(0);
+			marker = newEntry? Markers.PURPLE: IChuruataService.Services.getMarker(types[0].getService());
+			chr = types[0].getService().name().charAt(0);
 			result = icons.addMarker(churuata.getLocation(), marker, chr);				
 		}
 		return result;
