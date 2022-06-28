@@ -9,7 +9,6 @@ import org.condast.commons.strings.StringUtils;
 import org.condast.commons.ui.controller.AbstractEntityComposite;
 import org.condast.commons.ui.controller.EditEvent;
 import org.condast.commons.ui.controller.EditEvent.EditTypes;
-import org.condast.commons.ui.date.DateUtils;
 import org.condast.commons.ui.swt.InputField;
 import org.eclipse.rap.rwt.RWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -19,10 +18,8 @@ import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.DateTime;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Label;
 
 public class OrganisationComposite extends AbstractEntityComposite<OrganisationData>
 {
@@ -38,15 +35,10 @@ public class OrganisationComposite extends AbstractEntityComposite<OrganisationD
 	private static final String S_DESCRIPTOR_INFORMATION_TIP = "Describe the Churuata";
 	private static final String S_WEBSITE = "Website";
 	private static final String S_WEBSITE_INFORMATION_TIP = "Add the Web site";
-	private static final String S_FROM = "From: ";
-	private static final String S_TO = "To: ";
 	
 	private InputField churuataField;
 	private InputField descriptionField;
 	private InputField websiteField;
-
-	private DateTime fromField;
-	private DateTime toField;
 	
 	private ServicesTableViewer viewer;
 	
@@ -57,9 +49,7 @@ public class OrganisationComposite extends AbstractEntityComposite<OrganisationD
 	public OrganisationComposite( Composite parent, int style ){
 		super(parent, style );
 		Calendar calendar = Calendar.getInstance();
-		DateUtils.setDate(fromField, calendar.getTime());
 		calendar.add(Calendar.YEAR, 1);
-		DateUtils.setDate(toField, calendar.getTime());
 	}
 	
 	/**
@@ -133,43 +123,7 @@ public class OrganisationComposite extends AbstractEntityComposite<OrganisationD
 					notifyInputEdited( new EditEvent<OrganisationData>( this, EditTypes.COMPLETE, getInput()));
 			}
 		});
-
-		Label fromLabel = new Label( grpFillIn, SWT.NONE);
-		fromLabel.setLayoutData( new GridData( SWT.FILL, SWT.FILL, false, true));
-		fromLabel.setText( S_FROM);
 		
-		GridData gridData = new GridData( SWT.FILL, SWT.FILL, false, true);
-		gridData.widthHint = 112;
-		this.fromField = new DateTime( grpFillIn, SWT.BORDER);
-		this.fromField.setLayoutData( gridData );
-		this.fromField.addSelectionListener( new SelectionAdapter() {
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if( isFilled())
-					notifyInputEdited( new EditEvent<OrganisationData>( this, EditTypes.COMPLETE, getInput()));
-				super.widgetSelected(e);
-			}	
-		});
-
-		Label toLabel = new Label( grpFillIn, SWT.NONE);
-		toLabel.setLayoutData(new GridData( SWT.FILL, SWT.FILL, false, true));
-		toLabel.setText( S_TO);
-		
-		this.toField = new DateTime( grpFillIn, SWT.BORDER);
-		this.toField.setLayoutData( gridData);
-		this.toField.addSelectionListener( new SelectionAdapter() {
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if( isFilled())
-					notifyInputEdited( new EditEvent<OrganisationData>( this, EditTypes.COMPLETE, getInput()));
-				super.widgetSelected(e);
-			}	
-		});
-
  		viewer = new ServicesTableViewer( this, SWT.NONE );
 		viewer.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		viewer.addSelectionListener( new SelectionAdapter() {
@@ -190,8 +144,6 @@ public class OrganisationComposite extends AbstractEntityComposite<OrganisationD
 		input.setDescription(this.descriptionField.getText());
 		input.setName( this.churuataField.getText());
 		input.setWebsite(this.websiteField.getText());
-		input.setFrom( DateUtils.getDate( this.fromField ));
-		input.setTo( DateUtils.getDate( this.toField ));
 		if( Utils.assertNull( viewer.getInput()))
 			return input;
 		input.setChuruataServices( viewer.getInput());
@@ -203,8 +155,6 @@ public class OrganisationComposite extends AbstractEntityComposite<OrganisationD
 		this.descriptionField.setText( input.getDescription());
 		this.churuataField.setText( input.getName());
 		this.websiteField.setText(input.getWebsite());
-		DateUtils.setDate(fromField, input.getFrom());
-		DateUtils.setDate(toField, input.getTo());
 		viewer.setInput( Arrays.asList( input.getServices()));
 	}
 

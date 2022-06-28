@@ -52,6 +52,15 @@ public class ServiceData implements IChuruataService {
 		this.toDate = calendar.getTimeInMillis();
 	}	
 	
+	public ServiceData(IChuruataService service) {
+		this.id = service.getId();
+		this.serviceType = service.getService().name();
+		IChuruataService.Contribution contribution = service.getContribution(); 
+		this.contribution = ( contribution == null )?Contribution.LOG.name(): contribution.name();
+		this.fromDate = service.from().getTime();
+		this.toDate = service.to().getTime();
+	}
+
 	@Override
 	public long getId() {
 		return id;

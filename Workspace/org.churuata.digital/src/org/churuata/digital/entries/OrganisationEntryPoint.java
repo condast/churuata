@@ -9,10 +9,12 @@ import org.churuata.digital.core.AbstractChuruataEntryPoint;
 import org.churuata.digital.core.Dispatcher;
 import org.churuata.digital.core.Entries.Pages;
 import org.churuata.digital.core.data.OrganisationData;
+import org.churuata.digital.core.data.ProfileData;
 import org.churuata.digital.core.rest.IRestPages;
 import org.churuata.digital.session.SessionStore;
 import org.churuata.digital.ui.image.ChuruataImages;
 import org.churuata.digital.ui.views.OrganisationComposite;
+import org.condast.commons.Utils;
 import org.condast.commons.authentication.http.IDomainProvider;
 import org.condast.commons.config.Config;
 import org.condast.commons.messaging.http.AbstractHttpRequest;
@@ -20,6 +22,7 @@ import org.condast.commons.messaging.http.ResponseEvent;
 import org.condast.commons.na.data.PersonData;
 import org.condast.commons.ui.controller.EditEvent;
 import org.condast.commons.ui.controller.IEditListener;
+import org.condast.commons.ui.player.PlayerImages;
 import org.condast.commons.ui.session.AbstractSessionHandler;
 import org.condast.commons.ui.session.SessionEvent;
 import org.eclipse.rap.rwt.RWT;
@@ -83,12 +86,10 @@ public class OrganisationEntryPoint extends AbstractChuruataEntryPoint {
 		group.setLayout( new GridLayout(5, false ));
 		group.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 
-		ChuruataImages images = ChuruataImages.getInstance();
-
 		btnNext = new Button(group, SWT.NONE);
 		btnNext.setEnabled(false);
 		btnNext.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true));
-		btnNext.setImage( images.getImage( ChuruataImages.Images.ADD));
+		btnNext.setImage( PlayerImages.getImage( PlayerImages.Images.NEXT));
 		btnNext.addSelectionListener( new SelectionAdapter(){
 			private static final long serialVersionUID = 1L;
 
@@ -98,7 +99,8 @@ public class OrganisationEntryPoint extends AbstractChuruataEntryPoint {
 					SessionStore store = getSessionStore();
 					if( store.getOrganisation() == null )
 						return;
-					jump( store.getOrganisation(), Pages.ORGANISATION );						
+					PersonData person = store.getPersonData();
+					jump(person.getId(), store.getOrganisation(), Pages.LOCATION );						
 				}
 				catch( Exception ex ){
 					ex.printStackTrace();
@@ -117,6 +119,12 @@ public class OrganisationEntryPoint extends AbstractChuruataEntryPoint {
 		controller = new WebController();
 		controller.setInput(context, IRestPages.Pages.ORGANISATION.toPath());
 		this.servicesComposite.addEditListener(listener);
+		SessionStore store = super.getSessionStore();
+		OrganisationData organisation = store.getOrganisation();
+		if( organisation != null ) {
+			this.servicesComposite.setInput(organisation, true);
+			btnNext.setEnabled(!Utils.assertNull(organisation.getServices() ));
+		}
 		return super.postProcess(parent);
 	}
 
@@ -124,13 +132,13 @@ public class OrganisationEntryPoint extends AbstractChuruataEntryPoint {
 		SessionStore store = super.getSessionStore();
 		PersonData person = store.getPersonData();
 
-		controller.type = event.getType();
 		OrganisationData organisation = event.getData();
 		organisation.setContact(person); 
 		switch( event.getType()) {
 		case ADDED:
 			store.setOrganisation( this.servicesComposite.getInput());
-			jump( organisation, Pages.SERVICES);
+			controller.page = Pages.SERVICES;
+			jump( person.getId(), organisation, Pages.SERVICES);
 				
 			break;
 		case COMPLETE:
@@ -143,13 +151,13 @@ public class OrganisationEntryPoint extends AbstractChuruataEntryPoint {
 		}
 	}
 
-	protected void jump( OrganisationData organisation, Pages page ) {
+	protected void jump( long personId, OrganisationData organisation, Pages page ) {
 		SessionStore store = super.getSessionStore();
-		if( organisation.getId() < 0 ) { 
-			controller.register(organisation);
+		if( organisation.getId() <= 0 ) { 
+			controller.register(personId, organisation);
 		}
 		else
-			Dispatcher.jump( Pages.SERVICES, store.getToken());		
+			Dispatcher.jump( page, store.getToken());		
 	}
 	
 	@Override
@@ -183,7 +191,7 @@ public class OrganisationEntryPoint extends AbstractChuruataEntryPoint {
 	
 	private class WebController extends AbstractHttpRequest<OrganisationData.Requests>{
 		
-		private EditEvent.EditTypes type;
+		private Pages page;
 		
 		public WebController() {
 			super();
@@ -193,13 +201,13 @@ public class OrganisationEntryPoint extends AbstractChuruataEntryPoint {
 			super.setContextPath(context + path);
 		}
 
-		public void register( OrganisationData organisation ) {
+		public void register( long personId, OrganisationData organisation ) {
 			Map<String, String> params = super.getParameters();
-			params.put(OrganisationData.Parameters.NAME.toString(), organisation.getName());
-			params.put(OrganisationData.Parameters.DESCRIPTION.toString(), organisation.getDescription());
-			params.put(OrganisationData.Parameters.WEBSITE.toString(), organisation.getWebsite());
+			params.put(ProfileData.Parameters.PERSON_ID.toString(), String.valueOf( personId ));
+			Gson gson = new Gson();
+			String data = gson.toJson(organisation, OrganisationData.class);
 			try {
-				sendGet(OrganisationData.Requests.REGISTER, params );
+				sendPut(OrganisationData.Requests.REGISTER, params, data );
 			} catch (IOException e) {
 				logger.warning(e.getMessage());
 			}
@@ -211,15 +219,15 @@ public class OrganisationEntryPoint extends AbstractChuruataEntryPoint {
 				SessionStore store = getSessionStore();
 				Gson gson = new Gson();
 				switch( event.getRequest()){
-				case CREATE:
+				case REGISTER:
 					OrganisationData data = gson.fromJson(event.getResponse(), OrganisationData.class);
 					store.setOrganisation(data);
-					switch( type ) {
-					case ADDED:
-						Dispatcher.jump( Pages.CONTACTS, store.getToken());
+					switch( page ) {
+					case ORGANISATION:
+						Dispatcher.jump( Pages.LOCATION, store.getToken());
 						break;
-					case COMPLETE:
-						Dispatcher.jump( Pages.ORGANISATION, store.getToken());
+					case SERVICES:
+						Dispatcher.jump( page, store.getToken());
 						break;
 					default:
 						break;

@@ -22,8 +22,6 @@ public interface IRestPages {
 		
 		public String toPath() {
 			switch( this ) {
-			case ORGANISATION:
-				return S_CHURUATA_CONTEXT_PATH_ORGANISATION + "/" + toString();
 			case CONTACT:
 				return S_CHURUATA_CONTEXT_PATH_ORGANISATION + "/" + toString();
 			default:

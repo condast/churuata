@@ -27,13 +27,11 @@ public class BasicApplication implements ApplicationConfiguration {
 	private static final String S_CHURUATA_THEME = "churuata.theme";
 	private static final String S_THEME_CSS = "themes/theme.css";
 
-	private static final String S_PAGE_RESOURCE = "/resources/pages.txt";
-
 	public void configure(Application application) {
 		application.addStyleSheet( S_CHURUATA_THEME, S_THEME_CSS );
 		application.setOperationMode( OperationMode.SWT_COMPATIBILITY );
 		SessionStore store = new SessionStore();
-		Entries entries = new Entries( this.getClass(), S_PAGE_RESOURCE);
+		Entries entries = Entries.getInstance();
 		for( Entries.Pages page: Entries.Pages.values()) {
 			IPageEntry entry = entries.getPageEntry(page);
 			if( entry == null )

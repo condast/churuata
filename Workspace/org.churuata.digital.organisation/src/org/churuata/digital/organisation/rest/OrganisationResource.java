@@ -51,7 +51,7 @@ public class OrganisationResource{
 	public static final String S_ERR_INVALID_USER    = "The provided credentials are invalid:";
 
 	private enum ErrorMessages{
-		NO_USERNAME_OR_EMAIL,
+		NO_NAME_OR_TYPE,
 		NO_USERNAME_OR_PASSWORD,
 		INVALID_USERNAME,
 		INVALID_PASSWORD,
@@ -111,7 +111,7 @@ public class OrganisationResource{
 	}
 
 	@PUT
-	@Consumes(MediaType.TEXT_PLAIN)
+	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/register")
 	public Response register( @QueryParam("person-id") long personId, String data) {
@@ -121,10 +121,10 @@ public class OrganisationResource{
 	
 		Gson gson = new Gson();
 		OrganisationData od = gson.fromJson(data, OrganisationData.class);
-		OrganisationService os = new OrganisationService(); 
 		TransactionManager t = new TransactionManager( Dispatcher.getInstance() );
 		try {
 			t.open();
+			OrganisationService os = new OrganisationService(); 
 			PersonService ps = new PersonService(); 
 			Person person = ps.find( personId); 
 			if( person == null )
@@ -173,14 +173,14 @@ public class OrganisationResource{
 	}
 
 	@GET
-	@Produces(MediaType.TEXT_PLAIN)
+	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/add-service")
 	public Response addService( @QueryParam("person-id") long personId,
 			@QueryParam("organisation-id") long organisationId, @QueryParam("type") String type, @QueryParam("name") String name,
-			@QueryParam("from") long from, @QueryParam("to") long to) {
+			@QueryParam("description") String description, @QueryParam("from") long from, @QueryParam("to") long to) {
 
 		if( StringUtils.isEmpty(name) || StringUtils.isEmpty( type )) 
-			return Response.notModified( ErrorMessages.NO_USERNAME_OR_EMAIL.name()).build();
+			return Response.notModified( ErrorMessages.NO_NAME_OR_TYPE.name()).build();
 		IChuruataService.Services st = IChuruataService.Services.valueOf(type);
 		
 		TransactionManager t = new TransactionManager( Dispatcher.getInstance() );
@@ -195,11 +195,14 @@ public class OrganisationResource{
 			Organisation organisation = os.find( organisationId );
 			if( organisation == null )
 				return Response.noContent().build();
-			Service service = cs.createService( organisation.getServicesSize(), st, name);
+			Service service = cs.createService( st, name);
+			service.setDescription(description);
 			service.setFromDate(from);
 			service.setToDate( to);
 			organisation.addService(service);
-			return Response.ok(service.getId()).build();
+			Gson gson = new Gson();
+			String str = gson.toJson( new OrganisationData( organisation ), OrganisationData.class);
+			return Response.ok( str ).build();
 		}
 		catch( Exception ex ) {
 			ex.printStackTrace();
@@ -253,7 +256,7 @@ public class OrganisationResource{
 			return Response.status( Status.UNAUTHORIZED).build();
 
 		if( StringUtils.isEmpty(name) || StringUtils.isEmpty( type )) 
-			return Response.notModified( ErrorMessages.NO_USERNAME_OR_EMAIL.name()).build();
+			return Response.notModified( ErrorMessages.NO_NAME_OR_TYPE.name()).build();
 		IChuruataService.Services st = IChuruataService.Services.valueOf(type);
 		
 		TransactionManager t = new TransactionManager( Dispatcher.getInstance() );

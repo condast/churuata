@@ -100,8 +100,12 @@ public class AuthenticationResource{
 
 			LoginData loginData = new LoginData( name, password, email );
 			long confirmation = dispatcher.addConfirmRegistration(loginData);	
-			Properties props = MailUtils.createProperties(getClass().getResourceAsStream(MailUtils.S_DEFAULT_MAIL_RESOURCE));
-			MailUtils.sendConfirmationdMail(getClass().getResourceAsStream(MailUtils.S_RESOURCE_CONFIRM), props, loginData, email, Dispatcher.S_CHURUATA, confirmation );
+			try {
+				Properties props = MailUtils.createProperties(getClass().getResourceAsStream(MailUtils.S_DEFAULT_MAIL_RESOURCE));
+				MailUtils.sendConfirmationdMail(getClass().getResourceAsStream(MailUtils.S_RESOURCE_CONFIRM), props, loginData, email, Dispatcher.S_CHURUATA, confirmation );
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 		catch( Exception ex ){
 			ex.printStackTrace();
@@ -176,9 +180,13 @@ public class AuthenticationResource{
 			user.setSecurity(AuthenticationUtils.generateSecurityCode(user));
 			dispatcher.addUser(user);
 
-			Properties props = MailUtils.createProperties(getClass().getResourceAsStream(MailUtils.S_DEFAULT_MAIL_RESOURCE));
-			InputStream in = this.getClass().getResourceAsStream(MailUtils.S_RESOURCE_CONFIRM_CODE);
-			MailUtils.sendConfirmCodeMail( in, props, user, Dispatcher.S_CHURUATA );
+			try {
+				Properties props = MailUtils.createProperties(getClass().getResourceAsStream(MailUtils.S_DEFAULT_MAIL_RESOURCE));
+				InputStream in = this.getClass().getResourceAsStream(MailUtils.S_RESOURCE_CONFIRM_CODE);
+				MailUtils.sendConfirmCodeMail( in, props, user, Dispatcher.S_CHURUATA );
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 
 			String str = AuthenticationUtils.createDictionaryString(user);
 			retval = Response.ok( str ).build();

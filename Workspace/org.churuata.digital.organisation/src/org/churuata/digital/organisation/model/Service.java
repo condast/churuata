@@ -14,6 +14,7 @@ import javax.persistence.ManyToOne;
 import org.churuata.digital.core.location.IChuruataService;
 import org.churuata.digital.core.model.IOrganisation;
 import org.condast.commons.Utils;
+import org.condast.commons.strings.StringUtils;
 
 @Entity
 public class Service implements IChuruataService {
@@ -36,14 +37,17 @@ public class Service implements IChuruataService {
 	
 	private long toDate;
 	
-	public Service() {
-		this( -1, IChuruataService.Services.UNKNOWN, null );
-	}
+	public Service() {}
 
+	public Service( IChuruataService.Services type, String value ){
+		this( -1, type, value );
+	}
+	
 	public Service( long id, IChuruataService.Services type, String value ){
 		this.id = id;
 		this.serviceType = type.name();
 		this.value = value;
+		this.contributor = Contribution.LOG.name();
 		Calendar calendar = Calendar.getInstance();
 		this.fromDate = calendar.getTimeInMillis();
 		calendar.add(Calendar.YEAR, 1);
@@ -88,7 +92,7 @@ public class Service implements IChuruataService {
 
 	@Override
 	public Contribution getContribution() {
-		return Contribution.valueOf(contributor);
+		return StringUtils.isEmpty(contributor)?Contribution.LOG: Contribution.valueOf(contributor);
 	}
 
 	@Override

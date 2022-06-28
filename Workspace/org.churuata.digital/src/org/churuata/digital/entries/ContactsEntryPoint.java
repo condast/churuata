@@ -98,7 +98,7 @@ public class ContactsEntryPoint extends AbstractChuruataEntryPoint {
 						return;
 					SessionStore store = getSessionStore();
 					PersonData person = store.getPersonData();
-					controller.addContact(data, person.getPersonId());
+					controller.addContact(data, person.getId());
 				}
 				catch( Exception ex ){
 					ex.printStackTrace();

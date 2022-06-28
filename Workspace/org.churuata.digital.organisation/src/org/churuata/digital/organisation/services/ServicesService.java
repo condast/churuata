@@ -1,5 +1,6 @@
 package org.churuata.digital.organisation.services;
 
+import org.churuata.digital.core.data.ServiceData;
 import org.churuata.digital.core.location.IChuruataService;
 import org.churuata.digital.organisation.core.Dispatcher;
 import org.churuata.digital.organisation.model.Service;
@@ -12,9 +13,19 @@ public class ServicesService extends AbstractEntityService<Service>{
 	public ServicesService() {
 		super( Service.class, dispatcher );
 	}
-	
-	public Service createService( long id, IChuruataService.Services type, String value ) {
-		Service service = new Service( id, type, value );
+
+	public Service createService( ServiceData data ) {
+		Service service = new Service( data.getService(), null);
+		service.setDescription(data.getDescription());
+		service.setFrom(data.from());
+		service.setTo(data.to());
+		super.create(service);
+		return service;
+	}
+
+	public Service createService( IChuruataService.Services type, String value ) {
+		Service service = new Service();
+		service.setService(type);
 		super.create(service);
 		return service;
 	}

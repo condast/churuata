@@ -99,7 +99,7 @@ public class ServicesEntryPoint extends AbstractChuruataEntryPoint {
 						return;
 					SessionStore store = getSessionStore();
 					OrganisationData organisation = store.getOrganisation();
-					controller.addService( organisation.getId(), data);
+					controller.addService( organisation, data);
 				}
 				catch( Exception ex ){
 					ex.printStackTrace();
@@ -163,8 +163,6 @@ public class ServicesEntryPoint extends AbstractChuruataEntryPoint {
 	
 	private class WebController extends AbstractHttpRequest<OrganisationData.Requests>{
 		
-		private EditEvent.EditTypes type;
-		
 		public WebController() {
 			super();
 		}
@@ -173,9 +171,10 @@ public class ServicesEntryPoint extends AbstractChuruataEntryPoint {
 			super.setContextPath(context + path);
 		}
 
-		public void addService( long organisationId, IChuruataService service ) {
+		public void addService( OrganisationData organisation, IChuruataService service ) {
 			Map<String, String> params = super.getParameters();
-			params.put(ServiceData.Parameters.ORGANISATION_ID.toString(), String.valueOf( organisationId));
+			params.put(ServiceData.Parameters.PERSON_ID.toString(), String.valueOf( organisation.getContact().getId()));
+			params.put(ServiceData.Parameters.ORGANISATION_ID.toString(), String.valueOf( organisation.getId()));
 			params.put(ServiceData.Parameters.NAME.toString(), service.getContribution().toString());
 			params.put(ServiceData.Parameters.TYPE.toString(),  service.getService().name());
 			params.put(ServiceData.Parameters.DESCRIPTION.toString(), service.getDescription());
@@ -194,19 +193,10 @@ public class ServicesEntryPoint extends AbstractChuruataEntryPoint {
 				SessionStore store = getSessionStore();
 				Gson gson = new Gson();
 				switch( event.getRequest()){
-				case CREATE:
+				case ADD_SERVICE:
 					OrganisationData data = gson.fromJson(event.getResponse(), OrganisationData.class);
 					store.setOrganisation(data);
-					switch( type ) {
-					case ADDED:
-						Dispatcher.jump( Pages.CONTACTS, store.getToken());
-						break;
-					case COMPLETE:
-						Dispatcher.jump( Pages.ORGANISATION, store.getToken());
-						break;
-					default:
-						break;
-					}
+					Dispatcher.jump( Pages.ORGANISATION, store.getToken());
 					break;
 				default:
 					break;

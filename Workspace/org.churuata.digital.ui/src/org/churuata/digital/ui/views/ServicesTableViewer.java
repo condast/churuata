@@ -58,7 +58,7 @@ public class ServicesTableViewer extends AbstractTableViewerWithDelete<IChuruata
 		}
 		String deleteStr = NALanguage.getInstance().getString( Buttons.DELETE );
 		super.createDeleteColumn( Columns.values().length, deleteStr, 10 );	
-		viewer.setLabelProvider( new ContactsLabelProvider() );
+		viewer.setLabelProvider( new ServicesLabelProvider() );
 	}
 	
 	public Button getAddButton() {
@@ -128,7 +128,7 @@ public class ServicesTableViewer extends AbstractTableViewerWithDelete<IChuruata
 		//setInput(ap);
 	}
 	
-	private class ContactsLabelProvider extends DeleteLabelProvider implements ITableLabelProvider{
+	private class ServicesLabelProvider extends DeleteLabelProvider implements ITableLabelProvider{
 		private static final long serialVersionUID = 1L;
 
 		@SuppressWarnings("unchecked")
@@ -142,7 +142,7 @@ public class ServicesTableViewer extends AbstractTableViewerWithDelete<IChuruata
 			IChuruataService service = swd.getStore();
 			switch( column){
 			case SERVICE:
-				retval = NALanguage.getInstance().getString( service.getService());
+				retval = ChuruataLanguage.getInstance().getString( service.getService());
 				break;
 			case CONTRIBUTOR:
 				retval = service.getContributor();

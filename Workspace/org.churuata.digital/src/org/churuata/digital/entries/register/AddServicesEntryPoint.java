@@ -97,7 +97,7 @@ public class AddServicesEntryPoint extends AbstractChuruataEntryPoint {
 						return;
 					SessionStore store = getSessionStore();
 					PersonData person = store.getPersonData();
-					controller.addService(data, person.getPersonId());
+					controller.addService(data, person.getId());
 				}
 				catch( Exception ex ){
 					ex.printStackTrace();

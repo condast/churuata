@@ -2,10 +2,8 @@ package org.churuata.digital.core.data;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
-import java.util.Date;
 
 import org.churuata.digital.core.location.IChuruataService;
 import org.churuata.digital.core.model.IOrganisation;
@@ -61,19 +59,15 @@ public class OrganisationData implements IOrganisation, Serializable, Cloneable 
 	
 	private String website;
 	
-	private Date from;
 	
-	private Date to;
-	
-	private Collection<IChuruataService> services;
+	private Collection<ServiceData> services;
 
 	
 	public OrganisationData() {
 		super();
 		Calendar calendar = Calendar.getInstance();
-		from = calendar.getTime();
 		calendar.add( Calendar.YEAR, 1);
-		to = calendar.getTime();
+		services = new ArrayList<>();
 	}
 
 	public OrganisationData( LatLng location ){
@@ -88,10 +82,14 @@ public class OrganisationData implements IOrganisation, Serializable, Cloneable 
 	}
 
 	public OrganisationData( IOrganisation organisation ){
+		this.organisationId = organisation.getId();
 		this.contact= new PersonData( organisation.getContact());
 		this.name = organisation.getName();
 		this.description = organisation.getDescription();
+		this.website = organisation.getWebsite();
 		services = new ArrayList<>();
+		for( IChuruataService service: organisation.getServices())
+			services.add( new ServiceData( service ));
 	}
 
 	public long getId() {
@@ -130,22 +128,6 @@ public class OrganisationData implements IOrganisation, Serializable, Cloneable 
 		this.website = website;
 	}
 
-	public Date getFrom() {
-		return from;
-	}
-
-	public void setFrom(Date from) {
-		this.from = from;
-	}
-
-	public Date getTo() {
-		return to;
-	}
-
-	public void setTo(Date to) {
-		this.to = to;
-	}
-
 	public IContactPerson getContact() {
 		return (IContactPerson) contact;
 	}
@@ -163,7 +145,7 @@ public class OrganisationData implements IOrganisation, Serializable, Cloneable 
 	}
 	
 	public int addService( IChuruataService type ) {
-		this.services.add(type);
+		this.services.add(new ServiceData( type ));
 		return this.services.size();
 	}
 
@@ -173,7 +155,8 @@ public class OrganisationData implements IOrganisation, Serializable, Cloneable 
 
 	public void setChuruataServices(IChuruataService[] input) {
 		this.services.clear();
-		this.services.addAll( Arrays.asList(input));
+		for( IChuruataService cs: input )
+			this.services.add( new ServiceData( cs ));
 	}
 
 	@Override

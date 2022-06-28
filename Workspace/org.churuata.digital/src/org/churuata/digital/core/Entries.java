@@ -14,6 +14,7 @@ import org.eclipse.rap.rwt.application.EntryPoint;
 public class Entries {
 
 	public static final String S_ENTRY_POITNT = "EntryPoint";
+	private static final String S_PAGE_RESOURCE = "/design/pages.txt";
 	
 	public enum Pages{
 		ACCOUNT,
@@ -24,6 +25,7 @@ public class Entries {
 		CREATE,
 		EDIT,
 		EDIT_PROFILE,
+		LOCATION,
 		LOGIN,
 		LOGOFF,
 		MAP,
@@ -67,6 +69,12 @@ public class Entries {
 	
 	private Class<?> clss;
 
+	private static Entries entry = new Entries();
+	
+	private Entries() {
+		this( Entries.class, Entries.class.getResourceAsStream( S_PAGE_RESOURCE));
+	}
+
 	public Entries( Class<?> clss, String path ) {
 		this( clss, clss.getResourceAsStream(path));
 	}
@@ -92,6 +100,10 @@ public class Entries {
 		}
 	}
 
+	public static Entries getInstance() {
+		return entry;
+	}
+	
 	public IPageEntry getPageEntry( Pages page ) {
 		return this.pages.get(page);
 	}

@@ -52,7 +52,7 @@ public class PersonService extends AbstractEntityService<Person>{
 	}
 	
 	public Person update( PersonData data ) {
-		Person person = find( data.getPersonId());
+		Person person = find( data.getId());
 		if( person == null )
 			return null;
 		person.setName(data.getName());
