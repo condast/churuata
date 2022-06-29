@@ -48,5 +48,9 @@
             alias="/churuata/web"
             base-name="/WEB-INF">
       </resource>
+      <resource
+            alias="/churuata-legal"
+            base-name="/legal">
+      </resource>
    </extension>
  </plugin>

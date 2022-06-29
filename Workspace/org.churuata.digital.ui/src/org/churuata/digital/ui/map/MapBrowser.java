@@ -193,8 +193,7 @@ public class MapBrowser extends Browser {
 					IconsView icons = new IconsView( mapController );
 					if( input != null )
 						input.setLocation(latlng);
-					icons.clearIcons();
-					
+					icons.clearIcons();		
 					createIcon(icons, input);
 					notifyEditListeners( new EditEvent<LatLng>( this, EditTypes.SELECTED, latlng ));
 				}
@@ -246,6 +245,9 @@ public class MapBrowser extends Browser {
 			return;
 		IconsView icons = new IconsView( mapController );
 		icons.clearIcons();
+		
+		createIcon(icons, input);
+
 		Collection<IChuruata> churuatas = new ArrayList<IChuruata>( controller.churuatas );
 		if( Utils.assertNull(churuatas))
 			return;
@@ -284,7 +286,10 @@ public class MapBrowser extends Browser {
 
 	protected static void createIcon( IconsView icons, OrganisationData data ) {
 		Markers marker = Markers.RED;
-		if(( data == null ) || (data.getLocation()==null) || ( Utils.assertNull(data.getServices()))) {
+		if(( data == null ) || (data.getLocation()==null))
+			return;
+		
+		if( Utils.assertNull(data.getServices())) {
 			icons.addMarker(data.getLocation(), marker, 'H');
 			return;
 		}

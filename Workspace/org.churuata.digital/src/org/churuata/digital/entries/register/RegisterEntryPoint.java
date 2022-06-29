@@ -2,10 +2,9 @@ package org.churuata.digital.entries.register;
 
 import java.io.IOException;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
-import org.churuata.digital.core.AbstractChuruataEntryPoint;
+import org.churuata.digital.core.AbstractWizardEntryPoint;
 import org.churuata.digital.core.Dispatcher;
 import org.churuata.digital.core.Entries;
 import org.churuata.digital.core.Entries.Pages;
@@ -14,7 +13,6 @@ import org.churuata.digital.core.data.ProfileData;
 import org.churuata.digital.core.rest.IRestPages;
 import org.churuata.digital.session.SessionStore;
 import org.condast.commons.authentication.http.IDomainProvider;
-import org.condast.commons.config.Config;
 import org.condast.commons.messaging.http.AbstractHttpRequest;
 import org.condast.commons.messaging.http.ResponseEvent;
 import org.condast.commons.na.data.ContactPersonData;
@@ -24,28 +22,23 @@ import org.condast.commons.strings.StringUtils;
 import org.condast.commons.ui.controller.EditEvent;
 import org.condast.commons.ui.controller.IEditListener;
 import org.condast.commons.ui.na.person.ContactPersonComposite;
-import org.condast.commons.ui.player.PlayerImages;
+import org.condast.commons.ui.session.SessionEvent;
 import org.eclipse.rap.rwt.RWT;
 import org.eclipse.rap.rwt.client.service.StartupParameters;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Group;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
-public class RegisterEntryPoint extends AbstractChuruataEntryPoint<OrganisationData>{
+public class RegisterEntryPoint extends AbstractWizardEntryPoint<ContactPersonComposite, OrganisationData>{
 	private static final long serialVersionUID = 1L;
 
 	public static final String S_ADD_ACCOUNT = "Add Account";
 
 	private ContactPersonComposite personComposite;
-	private Button btnNext;
 
 	private IEditListener<ContactPersonData> listener = e->onPersonEvent(e);
 
@@ -55,68 +48,53 @@ public class RegisterEntryPoint extends AbstractChuruataEntryPoint<OrganisationD
 
 	@Override
 	protected boolean prepare(Composite parent) {
+		boolean result = super.prepare(parent);
+		if( result )
+			return result;
 		StartupParameters service = RWT.getClient().getService( StartupParameters.class );
 		String tokenStr = service.getParameter(IDomainProvider.Attributes.TOKEN.toAttribute());
-		IDomainProvider<SessionStore<OrganisationData>> provider = null;
-		if( StringUtils.isEmpty(tokenStr)) {
-			provider = Dispatcher.createDomain();
-		}else
-			provider = Dispatcher.getDomainProvider(service);
-		if( provider == null )
+		if( !StringUtils.isEmpty(tokenStr))
 			return false;
-		setData(provider.getData());
+		IDomainProvider<SessionStore<OrganisationData>> provider = Dispatcher.createDomain();
+		setData( provider.getData());
 		return true;
 	}
 	
 	@Override
-	protected Composite createComposite(Composite parent) {
-		parent.setLayout( new GridLayout(1,false));
+	protected IDomainProvider<SessionStore<OrganisationData>> getDomainProvider(StartupParameters service) {
+		return Dispatcher.getDomainProvider(service);
+	}
+
+	
+	@Override
+	protected void onNextButtonPressed(OrganisationData data, SessionStore<OrganisationData> store) {
+		try{
+			if( store.getContactPersonData() == null )
+				return;
+			PersonData person = store.getPersonData();
+			if( person == null ) 				
+				controller.register( store.getContactPersonData());
+			else
+				Dispatcher.jump( Pages.ORGANISATION, store.getToken());						
+		}
+		catch( Exception ex ){
+			ex.printStackTrace();
+		}
+	}
+
+	@Override
+	protected ContactPersonComposite onCreateComposite(Composite parent, int style) {
 		personComposite = new ContactPersonComposite(parent, SWT.NONE );
 		personComposite.setData( RWT.CUSTOM_VARIANT, S_CHURUATA );
 		personComposite.setLayoutData( new GridData( SWT.FILL, SWT.FILL, true, true ));
 		personComposite.addEditListener( listener);
-
-		Group group = new Group( parent, SWT.NONE );
-		group.setText( S_ADD_ACCOUNT);
-		group.setLayout( new GridLayout(5, false ));
-		group.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
-
-		btnNext = new Button(group, SWT.NONE);
-		btnNext.setEnabled(false);
-		btnNext.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true));
-		btnNext.setImage( PlayerImages.getImage( PlayerImages.Images.NEXT));
-		btnNext.addSelectionListener( new SelectionAdapter(){
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				try{
-					SessionStore<OrganisationData> store = getSessionStore();
-					if( store.getContactPersonData() == null )
-						return;
-					PersonData person = store.getPersonData();
-					if( person == null ) 				
-						controller.register( store.getContactPersonData());
-					else
-						Dispatcher.jump( Pages.ORGANISATION, store.getToken());						
-				}
-				catch( Exception ex ){
-					ex.printStackTrace();
-				}
-				super.widgetSelected(e);
-			}
-		});
-
 		return personComposite;
 	}
 
 	@Override
-	protected boolean postProcess(Composite parent) {
-		Config config = new Config();
-		String context = config.getServerContext();
+	protected boolean onPostProcess(String context, OrganisationData data, SessionStore<OrganisationData> store) {
 		controller = new WebController();
 		controller.setInput(context, IRestPages.Pages.CONTACT.toPath());
-		SessionStore<OrganisationData> store = getSessionStore();
 		PersonData personData = store.getPersonData();
 		ContactPersonData person = store.getContactPersonData();
 		if( personData != null ) {
@@ -148,6 +126,7 @@ public class RegisterEntryPoint extends AbstractChuruataEntryPoint<OrganisationD
 		case COMPLETE:
 			data = event.getData();
 			store.setContactPersonData(data);
+			Button btnNext = super.getBtnNext();
 			btnNext.setEnabled(( data != null ));
 			break;
 		default:
@@ -156,24 +135,13 @@ public class RegisterEntryPoint extends AbstractChuruataEntryPoint<OrganisationD
 	}
 
 	@Override
-	protected void createTimer(boolean create, int nrOfThreads, TimeUnit unit, int startTime, int rate) {
-		super.createTimer(true, nrOfThreads, unit, startTime, rate);
-	}
-
-	@Override
-	protected void handleTimer() {
+	protected void onHandleTimer(SessionEvent<OrganisationData> event) {
 		try {
+			personComposite.refresh();
 			super.handleTimer();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	}
-
-	@Override
-	protected boolean handleSessionTimeout(boolean reload) {
-		SessionStore<OrganisationData> store = super.getSessionStore();
-		store.setLoginUser(null);
-		return super.handleSessionTimeout(reload);
 	}
 	
 	private class WebController extends AbstractHttpRequest<ProfileData.Requests>{

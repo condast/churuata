@@ -1,253 +1,292 @@
 package org.churuata.digital.entries.register;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
+import java.util.Locale;
 
-import org.churuata.digital.core.AbstractChuruataEntryPoint;
+import org.churuata.digital.core.AbstractWizardEntryPoint;
 import org.churuata.digital.core.Dispatcher;
-import org.churuata.digital.core.Entries;
+import org.churuata.digital.core.Entries.Pages;
 import org.churuata.digital.core.data.OrganisationData;
-import org.churuata.digital.core.data.ProfileData;
-import org.churuata.digital.core.rest.IRestPages;
 import org.churuata.digital.session.SessionStore;
 import org.churuata.digital.ui.image.ChuruataImages;
+import org.churuata.digital.ui.image.ChuruataImages.Images;
 import org.condast.commons.authentication.http.IDomainProvider;
-import org.condast.commons.authentication.user.ILoginUser;
-import org.condast.commons.config.Config;
-import org.condast.commons.messaging.http.AbstractHttpRequest;
-import org.condast.commons.messaging.http.ResponseEvent;
-import org.condast.commons.na.data.PersonData;
-import org.condast.commons.ui.controller.EditEvent;
-import org.condast.commons.ui.controller.IEditListener;
-import org.condast.commons.ui.na.person.PersonComposite;
+import org.condast.commons.legal.LegalUtils;
+import org.condast.commons.legal.LegalUtils.Version;
+import org.condast.commons.parser.AbstractResourceParser;
+import org.condast.commons.strings.StringStyler;
+import org.condast.commons.ui.session.SessionEvent;
+import org.condast.commons.ui.utils.RWTUtils;
 import org.eclipse.rap.rwt.RWT;
 import org.eclipse.rap.rwt.client.service.StartupParameters;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
-
-public class ShowLegalEntryPoint extends AbstractChuruataEntryPoint<OrganisationData>{
+public class ShowLegalEntryPoint extends AbstractWizardEntryPoint<Browser, OrganisationData>{
 	private static final long serialVersionUID = 1L;
 
-	public static final String S_PAGE = "page";
+	public static final String S_RESOURCE_FILE = "/resources/ChuruataRegistration.html";
 
-	public static final String S_CHURUATA = "churuata";
-	public static final String S_ADD_ACCOUNT = "Add Account";
+	public static final String S_CHURUATA_LEGAL = "churuata-legal";
+	public static final String S_PRIVACY = "/privacy";
+	public static final String S_TOS = "/terms-of-service";
 
-	private PersonComposite editComposite;
-	private Button btnAdd;
+	public static final String S_LEGAL_VERSION = "/version_1.0/";
+	public static final String S_LEGAL_TERMS_OF_SERVICE = "terms-of-service.html";
+	public static final String S_LEGAL_PRIVACY = "privacy.html";
 
-	private IEditListener<PersonData> listener = e->onPersonEvent(e);
+	private static final String S_AGREEMENT = "By checking this button you agree to our: ";
+	private static final String S_HREF = "<a href=\"";
+	private static final String S_AGREEMENT_1 = "\">Terms of Use</a>";
+	private static final String S_AND_OUR = " and our ";
+	private static final String S_AGREEMENT_2 = "\"> Privacy Policy</a>";
 
-	private WebController controller;
-	
-	private Logger logger = Logger.getLogger(this.getClass().getName());
+	public enum LegalAttributes{
+		NAME,
+		TEAM;
+		
+		@Override
+		public String toString() {
+			return StringStyler.prettyString( super.toString() );
+		}
+
+		public static boolean isValid( String str ) {
+			String test = StringStyler.styleToEnum(str);
+			for( LegalAttributes attr: values()) {
+				if( attr.name().equals(test))
+					return true;
+			}
+			return false;
+		}
+
+		public String toAttribute(){
+			return StringStyler.xmlStyleString(name());
+		}
+
+		public static LegalAttributes getAttribute( String str ){
+			return LegalAttributes.valueOf( StringStyler.styleToEnum(str));
+		}
+		
+	}
+	private Browser browser;
+	private Button agreementButton;
+	private Link linktos;
+	private Label lbl_andours;
+	private Link linkpriv;
+
+	private String licensePath;
+	private String privacyPath;
 
 	@Override
-	protected boolean prepare(Composite parent) {
-		StartupParameters service = RWT.getClient().getService( StartupParameters.class );
-		IDomainProvider<SessionStore<OrganisationData>> domain = Dispatcher.getDomainProvider( service );
-		if( domain == null )
-			return false;
-		SessionStore<OrganisationData> store = domain.getData();
-		if( store == null )
-			return false;
-		setData(store);
-		ILoginUser user = store.getLoginUser();
-		return ( user != null );
+	protected IDomainProvider<SessionStore<OrganisationData>> getDomainProvider(StartupParameters service) {
+		return Dispatcher.getDomainProvider(service);
 	}
 	
 	@Override
-	protected Composite createComposite(Composite parent) {
-		parent.setLayout( new GridLayout(1,false));
-		editComposite = new PersonComposite(parent, SWT.NONE );
-		editComposite.setData( RWT.CUSTOM_VARIANT, S_CHURUATA );
-		editComposite.setLayoutData( new GridData( SWT.FILL, SWT.FILL, true, true ));
-		editComposite.addEditListener( listener);
+	protected boolean prepare(Composite parent) {
+		super.prepare(parent);
+		return true;
+	}
 
-		Group group = new Group( parent, SWT.NONE );
-		group.setText( S_ADD_ACCOUNT);
-		group.setLayout( new GridLayout(5, false ));
-		group.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+	@Override
+	protected Browser onCreateComposite(Composite parent, int style) {
+		browser = new Browser( parent, style );
 
-		ChuruataImages images = ChuruataImages.getInstance();
-
-		btnAdd = new Button(group, SWT.NONE);
-		btnAdd.setEnabled(false);
-		btnAdd.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true));
-		btnAdd.setImage( images.getImage( ChuruataImages.Images.ADD));
-		btnAdd.addSelectionListener( new SelectionAdapter(){
+		Composite agreementComposite = new Composite( parent, SWT.NONE);
+		agreementComposite.setLayout( new GridLayout(4,false ));
+		agreementComposite.setLayoutData( new GridData( SWT.FILL, SWT.FILL, true, true));
+		agreementButton = new Button( agreementComposite, SWT.CHECK );
+		agreementButton.setText( S_AGREEMENT );
+		agreementButton.setLayoutData( new GridData( SWT.LEFT, SWT.FILL, false, false ));
+		agreementButton.addSelectionListener( new SelectionAdapter() {
 			private static final long serialVersionUID = 1L;
 
 			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				try{
-					SessionStore<OrganisationData> store = getSessionStore();
-					if( store.getPersonData() == null )
-						return;
-					controller.update( store.getPersonData());
-				}
-				catch( Exception ex ){
-					ex.printStackTrace();
+			public void widgetSelected(SelectionEvent e) {
+				Button button = getBtnNext();
+				button.setEnabled(agreementButton.getSelection());
+				super.widgetSelected(e);
+			}
+		});
+
+		linktos = new Link( agreementComposite, SWT.NONE );
+		linktos.setData( RWT.MARKUP_ENABLED, Boolean.TRUE );
+		linktos.setText( S_HREF + licensePath + S_AGREEMENT_1);
+		linktos.setLayoutData(new GridData( SWT.FILL, SWT.FILL, false, false ));
+		linktos.addSelectionListener( new SelectionAdapter() {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				try {
+					Link link = (Link) e.widget;
+					String path = (String) link.getData();
+					RWTUtils.redirect(path);
+				} catch (Exception e1) {
+					e1.printStackTrace();
 				}
 				super.widgetSelected(e);
 			}
 		});
 
-		return editComposite;
+		lbl_andours=  new Label( agreementComposite, SWT.NONE );
+		lbl_andours.setText( S_AND_OUR);
+		lbl_andours.setLayoutData(new GridData( SWT.FILL, SWT.FILL ,false, false));
+
+		linkpriv = new Link( agreementComposite, SWT.NONE );
+		linkpriv.setData( RWT.MARKUP_ENABLED, Boolean.TRUE );
+		linkpriv.setText( S_HREF + privacyPath + S_AGREEMENT_2);
+		linkpriv.setLayoutData(new GridData( SWT.FILL, SWT.FILL, false, false));
+		linkpriv.addSelectionListener( new SelectionAdapter() {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				try {
+					Link link = (Link) e.widget;
+					String path = (String) link.getData();
+					RWTUtils.redirect(path);
+				} catch (Exception e1) {
+					e1.printStackTrace();
+				}
+				super.widgetSelected(e);
+			}
+		});
+
+		return browser;
+	}
+
+	
+	@Override
+	protected Composite createComposite(Composite parent) {
+		// TODO Auto-generated method stub
+		return super.createComposite(parent);
+	}
+
+	public void setLicensePath(String licensePath) {
+		this.licensePath = licensePath;
+		linktos.setText( S_HREF + licensePath + ".html" + S_AGREEMENT_1);
+		linktos.setData(licensePath);
+	}
+
+	public void setPrivacyPath(String privacyPath) {
+		this.privacyPath = privacyPath;
+		linkpriv.setText( S_HREF + privacyPath + ".html" + S_AGREEMENT_2);
+		linkpriv.setData(privacyPath);
 	}
 
 	@Override
-	protected boolean postProcess(Composite parent) {
-		Config config = new Config();
-		String context = config.getServerContext();
+	protected void onNextButtonPressed(OrganisationData data, SessionStore<OrganisationData> store) {
+		store.setData(null);
+		Dispatcher.jump(Pages.REGISTER, store.getToken());
+	}
 
-		SessionStore<OrganisationData> store = getSessionStore();
-		ILoginUser user = store.getLoginUser();
-		ProfileData profile = store.getProfile();
-		if( profile == null ) {
-			profile = null;//new ProfileData( selected );
-			store.setProfile(profile); 
+	@Override
+	protected boolean onPostProcess(String context, OrganisationData data, SessionStore<OrganisationData> store) {
+		Button button = getBtnNext();
+		ChuruataImages images = ChuruataImages.getInstance();
+		button.setImage(images.getImage(Images.ADD));
+		
+		String root = context + S_CHURUATA_LEGAL;
+		Locale locale = Locale.getDefault();
+		String path = LegalUtils.createLegalPath(locale, Version.VERSION_1_0, root );
+		setPrivacyPath( path + S_PRIVACY);
+		setLicensePath( path + S_TOS);
+
+		//if( store.getData() == null )
+		//	return false;
+		FileParser parser = new FileParser( null, 0 );
+		String str =null;
+		try{
+			str = parser.parse( this.getClass().getResourceAsStream(S_RESOURCE_FILE) );
+			browser.setText(str);
 		}
-
-		controller = new WebController();
-		controller.setInput(context, IRestPages.Pages.CONTACT.toPath());
-		controller.user = user;
-		controller.get();
+		catch( Exception ex ) {
+			ex.printStackTrace();
+		}
 		return true;
 	}
 
-	protected void onPersonEvent( EditEvent<PersonData> event ) {
-		PersonData data = null;
-		SessionStore<OrganisationData> store = super.getSessionStore();
-		switch( event.getType()) {
-		case INITIALISED:
-			break;
-		case CHANGED:
-			data = event.getData();
-			//store.setProfile(data);
-			break;
-		case SELECTED:
-			data = event.getData();
-			//store.setProfile(data);
-			//Dispatcher.jump(BasicApplication.Pages.CREATE, store.getToken());
-			break;
-		case ADDED:
-			editComposite.getInput();
-			//Dispatcher.jump(BasicApplication.Pages.SERVICES, store.getToken());
-			break;
-		case COMPLETE:
-			data = event.getData();
-			store.setPersonData(data);
-			btnAdd.setEnabled(( data != null ));
-			break;
-		default:
-			break;
-		}
+	@Override
+	protected void onHandleTimer(SessionEvent<OrganisationData> event) {
+		// NOTHING
 	}
 
-	@Override
-	protected void createTimer(boolean create, int nrOfThreads, TimeUnit unit, int startTime, int rate) {
-		super.createTimer(true, nrOfThreads, unit, startTime, rate);
-	}
+	private class FileParser extends AbstractResourceParser{
 
-	@Override
-	protected void handleTimer() {
-		try {
-			super.handleTimer();
-			SessionStore<OrganisationData> store = getSessionStore();
-			if(( store == null ) || ( store.getLoginUser() == null ))
-				return;
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	@Override
-	protected boolean handleSessionTimeout(boolean reload) {
-		SessionStore<OrganisationData> store = super.getSessionStore();
-		store.setLoginUser(null);
-		return super.handleSessionTimeout(reload);
-	}
-	
-	private class WebController extends AbstractHttpRequest<ProfileData.Requests>{
+		private long token;
+		private OrganisationData organisation;
 		
-		private ILoginUser user;
-		
-		public WebController() {
+		public FileParser(OrganisationData organisation, long token) {
 			super();
-		}
-
-		public void setInput(String context, String path) {
-			super.setContextPath(context + path);
-		}
-
-		public void get() {
-			Map<String, String> params = super.getParameters();
-			try {
-				params.put(ProfileData.Parameters.USER_ID.toString(), String.valueOf( user.getId()));
-				params.put(ProfileData.Parameters.SECURITY.toString(), String.valueOf( user.getSecurity() ));
-				sendGet(ProfileData.Requests.GET_PROFILE, params );
-			} catch (IOException e) {
-				logger.warning(e.getMessage());
-			}
-		}
-
-		public void update( PersonData person ) {
-			Map<String, String> params = new HashMap<>();
-			try {
-				if( person == null )
-					return;
-				params.put(ProfileData.Parameters.USER_ID.toString(), String.valueOf( user.getId()));
-				params.put(ProfileData.Parameters.SECURITY.toString(), String.valueOf( user.getSecurity() ));
-				Gson gson = new Gson();
-				String str = gson.toJson( person, ProfileData.class);
-				sendPut(ProfileData.Requests.UPDATE_PERSON, params, str );
-			} catch (IOException e) {
-				logger.warning(e.getMessage());
-			}
+			this.organisation = organisation;
+			this.token = token;
 		}
 
 		@Override
-		protected String onHandleResponse(ResponseEvent<ProfileData.Requests> event) throws IOException {
-			try {
-				SessionStore<OrganisationData> store = getSessionStore();
-				switch( event.getRequest()){
-				case UPDATE_PERSON:
-					Dispatcher.redirect(Entries.Pages.ACTIVE, store.getToken());
-					break;
-				case GET_PROFILE:					Gson gson = new Gson();
-					ProfileData profile = gson.fromJson(event.getResponse(), ProfileData.class);
-					editComposite.setInput(profile, true);
-					store.setProfile(profile);
-					break;
-				default:
-					break;
-				}
-			} catch (JsonSyntaxException e) {
-				e.printStackTrace();
-			}
-			finally {
-			}
-			return null;
+		protected String getToken() {
+			return String.valueOf(token);
 		}
 
 		@Override
-		protected void onHandleResponseFail(HttpStatus status, ResponseEvent<ProfileData.Requests> event) throws IOException {
-			super.onHandleResponseFail(status, event);
+		protected String onHandleTitle(String subject, Attributes attr) {
+			String result = null;
+			switch( attr ){
+			case HTML:
+				result = "Churuata Digital";
+				break;
+			case PAGE:
+				result = "Churuata Digital";
+				break;
+			default:
+				break;
+			}
+			return result;
+		}
+
+		@Override
+		protected String onCreateList(String[] arguments) {
+			StringBuilder builder = new StringBuilder();
+			return builder.toString();
 		}
 	
+		@Override
+		protected String onCreateFrame(Attributes attr, String[] arguments) {
+			StringBuilder builder = new StringBuilder();
+			return builder.toString();
+		}
+
+		@Override
+		protected String onHandleLabel(String id, Attributes attr) {
+			String result = null;
+			if( !LegalAttributes.isValid(id))
+				return result;
+			//IContactPerson person = this.organisation.getContact();
+			switch( LegalAttributes.getAttribute(id)) {
+			case NAME:
+				result = "amalia";//person.getName();
+				break;
+			case TEAM:
+				result = "Churuata Team";
+				break;
+			default:
+				break;
+			}
+			return result;
+		}
+
+		@Override
+		protected String onCreateLink(String link, String page, String arguments) {
+			String result = "";
+			return result;
+		}
 	}
 
 }

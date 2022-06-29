@@ -133,8 +133,8 @@ public class RegisterServiceServlet extends HttpServlet {
 		@Override
 		protected String onCreateList(String[] arguments) {
 			StringBuilder builder = new StringBuilder();
-			String href = "/churuata";
 			for( Pages page: Pages.values()) {
+				String href = "/churuata";
 				switch( page ) {
 				case HOME:
 					break;
@@ -142,7 +142,8 @@ public class RegisterServiceServlet extends HttpServlet {
 					href += "/register?token=" + token + "&select=" + page.toString();
 					break;
 				}
-				builder.append(super.addLink(href, StringStyler.prettyString( page.name())));
+				boolean activePage = active.equals(page); 
+				builder.append(super.addLink(href, StringStyler.prettyString( page.name()), activePage));
 			}
 			return builder.toString();
 		}

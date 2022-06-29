@@ -89,7 +89,8 @@ public class ActiveServlet extends HttpServlet {
 			resp.setStatus( HttpStatus.UNAUTHORISED.getStatus());
 			return;
 		}
-		FileParser parser = new FileParser( token, user.getId() );
+		Pages active = Pages.PROFILE;
+		FileParser parser = new FileParser( active, user.getId(), token );
 		String str =null;
 		try{
 			str = parser.parse( this.getClass().getResourceAsStream(S_RESOURCE_FILE) );
@@ -106,11 +107,13 @@ public class ActiveServlet extends HttpServlet {
 		
 		private long userId;
 		private long token;
+		private Pages active;
 		
-		public FileParser(long token, long userId) {
+		public FileParser(Pages active, long token, long userId) {
 			super();
 			this.token = token;
 			this.userId = userId;
+			this.active = active;
 		}
 
 		@Override
@@ -149,7 +152,8 @@ public class ActiveServlet extends HttpServlet {
 					href.append("?token=" + token + "&select=" + page.toString());
 					break;
 				}
-				builder.append(super.addLink(href.toString(), StringStyler.prettyString( page.name())));
+				boolean activePage = active.equals(page); 
+				builder.append(super.addLink(href.toString(), StringStyler.prettyString( page.name()), activePage));
 			}
 			return builder.toString();
 		}

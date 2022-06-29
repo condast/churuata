@@ -31,8 +31,10 @@ public abstract class AbstractWizardEntryPoint<C extends Composite, D extends Ob
 	private D data = null;
 
 	protected abstract IDomainProvider<SessionStore<D>> getDomainProvider( StartupParameters service );
+	
 	@Override
 	protected boolean prepare(org.eclipse.swt.widgets.Composite parent) {
+		handler = new SessionHandler( parent.getDisplay());
 		StartupParameters service = RWT.getClient().getService( StartupParameters.class );
 		IDomainProvider<SessionStore<D>> domain = getDomainProvider( service );
 		if( domain == null )
@@ -41,7 +43,6 @@ public abstract class AbstractWizardEntryPoint<C extends Composite, D extends Ob
 		if( store == null )
 			return false;
 		setData(store);
-		handler = new SessionHandler( parent.getDisplay());
 		return true;
 	}
 
@@ -53,9 +54,11 @@ public abstract class AbstractWizardEntryPoint<C extends Composite, D extends Ob
 	protected org.eclipse.swt.widgets.Composite createComposite(org.eclipse.swt.widgets.Composite parent) {
         parent.setLayout(new GridLayout( 1, false ));
         composite = onCreateComposite( parent, SWT.NONE);
- 		composite.setData( RWT.CUSTOM_VARIANT, S_CHURUATA );
- 		composite.setLayoutData( new GridData(SWT.FILL, SWT.FILL, true, true));
-		Group group = new Group( parent, SWT.NONE );
+        if( composite != null ) {
+        	composite.setData( RWT.CUSTOM_VARIANT, S_CHURUATA );
+        	composite.setLayoutData( new GridData(SWT.FILL, SWT.FILL, true, true));
+        }
+        Group group = new Group( parent, SWT.NONE );
 		group.setText("Add Churuata Service");
 		group.setLayout( new GridLayout(5, false ));
 		group.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
@@ -112,7 +115,14 @@ public abstract class AbstractWizardEntryPoint<C extends Composite, D extends Ob
 		handler.addData( store.getData());
 		super.handleTimer();
 	}
-	
+
+	@Override
+	protected boolean handleSessionTimeout(boolean reload) {
+		SessionStore<D> store = super.getSessionStore();
+		store.setLoginUser(null);
+		return super.handleSessionTimeout(reload);
+	}
+
 	private class SessionHandler extends AbstractSessionHandler<D>{
 
 		protected SessionHandler(Display display) {

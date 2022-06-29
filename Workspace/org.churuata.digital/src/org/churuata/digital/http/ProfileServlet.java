@@ -160,7 +160,8 @@ public class ProfileServlet extends HttpServlet {
 					break;
 				}
 				href.append("?token=" + token + "&select=" + page.toString());
-				builder.append(super.addLink(href.toString(), StringStyler.prettyString( page.name())));
+				boolean activePage = active.equals(page); 
+				builder.append(super.addLink(href.toString(), StringStyler.prettyString( page.name()), activePage));
 			}
 			return builder.toString();
 		}

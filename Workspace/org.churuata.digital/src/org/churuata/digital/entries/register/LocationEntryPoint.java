@@ -55,7 +55,7 @@ public class LocationEntryPoint extends AbstractWizardEntryPoint<MapBrowser, Org
 
 	@Override
 	protected boolean onPostProcess(String context, OrganisationData data, SessionStore<OrganisationData> store) {
-		controller = new WebController( context, IRestPages.Pages.CONTACT.toPath());
+		controller = new WebController( context, IRestPages.Pages.ORGANISATION.toPath());
 		mapComposite.setInput(context);
 		mapComposite.setInput(store.getData());
 		mapComposite.locate();

@@ -3,6 +3,7 @@ package org.churuata.digital;
 import java.util.concurrent.TimeUnit;
 
 import org.churuata.digital.core.AuthenticationDispatcher;
+import org.churuata.digital.core.data.OrganisationData;
 import org.churuata.digital.session.SessionStore;
 import org.condast.commons.authentication.core.AuthenticationEvent;
 import org.condast.commons.authentication.http.IDomainProvider;
@@ -18,7 +19,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 
-public class LoginEntryPoint extends AbstractRestEntryPoint<SessionStore>{
+public class LoginEntryPoint extends AbstractRestEntryPoint<SessionStore<OrganisationData>>{
 	private static final long serialVersionUID = 1L;
 
 	private static final String S_CHURUATA_ACTIVE_HOME = "/churuata/active?token=";
@@ -48,7 +49,7 @@ public class LoginEntryPoint extends AbstractRestEntryPoint<SessionStore>{
 	}
 
 	private void onAuthenticationEvent( AuthenticationEvent event ) {
-		SessionStore store = getData();
+		SessionStore<OrganisationData> store = getData();
 		if( store == null )
 			return;
 		switch( event.getEvent()) {

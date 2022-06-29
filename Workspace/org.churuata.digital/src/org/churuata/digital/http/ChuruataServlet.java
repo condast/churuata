@@ -40,16 +40,25 @@ public class ChuruataServlet extends HttpServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		FileParser parser = new FileParser();
+		FileParser parser = new FileParser( Pages.LOGIN, -1);
 		String str = parser.parse( this.getClass().getResourceAsStream(S_RESOURCE_FILE) );
 		resp.getWriter().write( str );
 	}
 
 	private class FileParser extends AbstractResourceParser{
 
+		private long token;
+		private Pages active;
+		
+		public FileParser(Pages active, long token) {
+			super();
+			this.token = token;
+			this.active = active;
+		}
+
 		@Override
 		protected String getToken() {
-			return String.valueOf(-1);
+			return String.valueOf(token);
 		}
 
 		@Override
@@ -72,13 +81,14 @@ public class ChuruataServlet extends HttpServlet {
 		protected String onCreateList(String[] arguments) {
 			StringBuilder builder = new StringBuilder();
 			for( Pages page: Pages.values()) {
+				boolean activePage = active.equals(page); 
 				switch( page ) {	
 				case REGISTER_SERVICE:
 					String href = page.getHref() + "?select=register";
-					builder.append(super.addLink(href, S_REGISTER_SERVICE ));
+					builder.append(super.addLink(href, S_REGISTER_SERVICE, activePage ));
 					break;
 				default:
-					builder.append(super.addLink(page.getHref(), StringStyler.prettyString( page.name())));
+					builder.append(super.addLink(page.getHref(), StringStyler.prettyString( page.name()), activePage));
 					break;
 				}
 			}

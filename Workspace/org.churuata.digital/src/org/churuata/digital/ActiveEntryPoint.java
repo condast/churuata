@@ -2,6 +2,7 @@ package org.churuata.digital;
 
 import java.util.concurrent.TimeUnit;
 
+import org.churuata.digital.core.data.OrganisationData;
 import org.churuata.digital.session.SessionStore;
 import org.churuata.digital.ui.image.ChuruataImages;
 import org.churuata.digital.ui.map.MapBrowser;
@@ -23,7 +24,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 
-public class ActiveEntryPoint extends AbstractRestEntryPoint<SessionStore>{
+public class ActiveEntryPoint extends AbstractRestEntryPoint<SessionStore<OrganisationData>>{
 	private static final long serialVersionUID = 1L;
 
 	public static final String S_PAGE = "page";
@@ -143,7 +144,7 @@ public class ActiveEntryPoint extends AbstractRestEntryPoint<SessionStore>{
 	protected boolean postProcess(Composite parent) {
 		Config config = new Config();
 		mapComposite.setInput(config.getServerContext());
-		SessionStore store = super.getData();
+		SessionStore<OrganisationData> store = super.getData();
 		LatLng selected = store.getSelected();
 		this.btnCreate.setEnabled( selected != null );
 		this.btnEdit.setEnabled( selected != null );
@@ -152,7 +153,7 @@ public class ActiveEntryPoint extends AbstractRestEntryPoint<SessionStore>{
 	
 	protected void onLocationChanged( EditEvent<LatLng> event ) {
 		LatLng data = event.getData();
-		SessionStore store = super.getData();
+		SessionStore<OrganisationData> store = super.getData();
 		switch( event.getType()) {
 		case INITIALISED:
 			break;
@@ -176,7 +177,7 @@ public class ActiveEntryPoint extends AbstractRestEntryPoint<SessionStore>{
 		try {
 			super.handleTimer();
 			mapComposite.refresh();
-			SessionStore store = super.getData();
+			SessionStore<OrganisationData> store = super.getData();
 			if(( store == null ) || ( store.getLoginUser() == null ))
 				return;
 		} catch (Exception e) {
@@ -186,7 +187,7 @@ public class ActiveEntryPoint extends AbstractRestEntryPoint<SessionStore>{
 
 	@Override
 	protected void handleSessionTimeout(boolean reload) {
-		SessionStore store = super.getData();
+		SessionStore<OrganisationData> store = super.getData();
 		store.setLoginUser(null);
 		super.handleSessionTimeout(reload);
 	}
