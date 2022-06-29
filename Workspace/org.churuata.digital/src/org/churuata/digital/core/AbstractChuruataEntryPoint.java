@@ -19,7 +19,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 
-public abstract class AbstractChuruataEntryPoint extends AbstractEntryPoint implements IDataEntryPoint<SessionStore>, AutoCloseable{
+public abstract class AbstractChuruataEntryPoint<D extends Object> extends AbstractEntryPoint implements IDataEntryPoint<SessionStore<D>>, AutoCloseable{
 	private static final long serialVersionUID = 1L;
 
 	public static final String S_CHURUATA = "churuata";
@@ -36,7 +36,7 @@ public abstract class AbstractChuruataEntryPoint extends AbstractEntryPoint impl
 
 	private String message;
 
-	private SessionStore store;
+	private SessionStore<D> store;
 
 	private ScheduledExecutorService timer;
 	private int startTime, rate;
@@ -52,12 +52,12 @@ public abstract class AbstractChuruataEntryPoint extends AbstractEntryPoint impl
 		this.message = S_INVALID_PREPARATION;
 	}
 
-	protected SessionStore getSessionStore() {
+	protected SessionStore<D> getSessionStore() {
 		return store;
 	}
 
 	@Override
-	public void setData( SessionStore store) {
+	public void setData( SessionStore<D> store) {
 		this.store = store;
 		HttpSession session = RWT.getUISession().getHttpSession();
 		if( this.store != null )

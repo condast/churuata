@@ -17,7 +17,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 
-public class EditEntryPoint extends AbstractRestEntryPoint<SessionStore>{
+public class EditEntryPoint extends AbstractRestEntryPoint<SessionStore<OrganisationData>>{
 	private static final long serialVersionUID = 1L;
 
 	public static final String S_PAGE = "page";
@@ -39,7 +39,7 @@ public class EditEntryPoint extends AbstractRestEntryPoint<SessionStore>{
 
 	@Override
 	protected boolean prepare(Composite parent) {
-		SessionStore store = getData();
+		SessionStore<OrganisationData> store = getData();
 		if( store == null )
 			return false;
 		ILoginUser user = store.getLoginUser();
@@ -61,7 +61,7 @@ public class EditEntryPoint extends AbstractRestEntryPoint<SessionStore>{
 	protected boolean postProcess(Composite parent) {
 		Config config = new Config();
 		String context = config.getServerContext();
-		SessionStore store = getData();
+		SessionStore<OrganisationData> store = getData();
 
 		ILoginUser user = store.getLoginUser();
 		editComposite.setInput(context, user );
@@ -70,7 +70,7 @@ public class EditEntryPoint extends AbstractRestEntryPoint<SessionStore>{
 	
 	protected void onRegistrationCompleted( EditEvent<OrganisationData> event ) {
 		LatLng data = event.getData().getLocation();
-		SessionStore store = getData();
+		SessionStore<OrganisationData> store = getData();
 		switch( event.getType()) {
 		case COMPLETE:
 			RWTUtils.redirect(Entries.Pages.READY.toPath());
@@ -92,7 +92,7 @@ public class EditEntryPoint extends AbstractRestEntryPoint<SessionStore>{
 	protected void handleTimer() {
 		try {
 			super.handleTimer();
-			SessionStore store = getData();
+			SessionStore<OrganisationData> store = getData();
 			if(( store == null ) || ( store.getLoginUser() == null ))
 				return;
 		} catch (Exception e) {
@@ -102,7 +102,7 @@ public class EditEntryPoint extends AbstractRestEntryPoint<SessionStore>{
 
 	@Override
 	protected void handleSessionTimeout(boolean reload) {
-		SessionStore store = super.getData();
+		SessionStore<OrganisationData> store = super.getData();
 		store.setLoginUser(null);
 		super.handleSessionTimeout(reload);
 	}

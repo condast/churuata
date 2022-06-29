@@ -146,6 +146,43 @@ public class OrganisationResource{
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/set-location")
+	public Response setLocation( @QueryParam("person-id") long personId, @QueryParam("organisation-id") long organisationId, 
+			@QueryParam("latitude") double latitude, @QueryParam("longitude") double longitude) {
+
+		if(( latitude < 0 ) || ( longitude < 0)) 
+			return Response.status( Status.NOT_ACCEPTABLE).build();
+	
+		Gson gson = new Gson();
+		TransactionManager t = new TransactionManager( Dispatcher.getInstance() );
+		try {
+			t.open();
+			OrganisationService os = new OrganisationService(); 
+			PersonService ps = new PersonService(); 
+			Person person = ps.find( personId); 
+			if( person == null )
+				return Response.status( Status.NOT_FOUND).build();
+			
+			Organisation org = os.find(organisationId);
+			if( org == null )
+				return Response.status( Status.NOT_FOUND).build();
+			org.setLocation(latitude, longitude);		
+			os.update(org);
+			OrganisationData od = new OrganisationData(org);
+			String str = gson.toJson(od, OrganisationData.class);
+			return Response.ok( str ).build();
+		}
+		catch( Exception ex ) {
+			ex.printStackTrace();
+			return Response.serverError().build();
+		}
+		finally {
+			t.close();
+		}
+	}
+
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/find")
 	public Response createContact( @QueryParam("user-id") long userId, @QueryParam("security") long security, @QueryParam("organisation-id") long organisationId) {
 		logger.info( "ATTEMPT Get " );

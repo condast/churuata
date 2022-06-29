@@ -12,7 +12,6 @@ import org.churuata.digital.core.data.OrganisationData;
 import org.churuata.digital.core.data.ProfileData;
 import org.churuata.digital.core.rest.IRestPages;
 import org.churuata.digital.session.SessionStore;
-import org.churuata.digital.ui.image.ChuruataImages;
 import org.churuata.digital.ui.views.OrganisationComposite;
 import org.condast.commons.Utils;
 import org.condast.commons.authentication.http.IDomainProvider;
@@ -41,7 +40,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
 
-public class OrganisationEntryPoint extends AbstractChuruataEntryPoint {
+public class OrganisationEntryPoint extends AbstractChuruataEntryPoint<OrganisationData> {
 	private static final long serialVersionUID = 1L;
 
 	public static final String S_CHURUATA = "Churuata-Digital";
@@ -64,10 +63,10 @@ public class OrganisationEntryPoint extends AbstractChuruataEntryPoint {
 	@Override
 	protected boolean prepare(Composite parent) {
 		StartupParameters service = RWT.getClient().getService( StartupParameters.class );
-		IDomainProvider<SessionStore> domain = Dispatcher.getDomainProvider( service );
+		IDomainProvider<SessionStore<OrganisationData>> domain = Dispatcher.getDomainProvider( service );
 		if( domain == null )
 			return false;
-		SessionStore store = domain.getData();
+		SessionStore<OrganisationData> store = domain.getData();
 		if(( store == null ) || ( store.getPersonData()  == null ))
 			return false;
 		setData(store);
@@ -96,11 +95,11 @@ public class OrganisationEntryPoint extends AbstractChuruataEntryPoint {
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
 				try{
-					SessionStore store = getSessionStore();
-					if( store.getOrganisation() == null )
+					SessionStore<OrganisationData> store = getSessionStore();
+					if( store.getData() == null )
 						return;
 					PersonData person = store.getPersonData();
-					jump(person.getId(), store.getOrganisation(), Pages.LOCATION );						
+					jump(person.getId(), store.getData(), Pages.LOCATION );						
 				}
 				catch( Exception ex ){
 					ex.printStackTrace();
@@ -119,8 +118,8 @@ public class OrganisationEntryPoint extends AbstractChuruataEntryPoint {
 		controller = new WebController();
 		controller.setInput(context, IRestPages.Pages.ORGANISATION.toPath());
 		this.servicesComposite.addEditListener(listener);
-		SessionStore store = super.getSessionStore();
-		OrganisationData organisation = store.getOrganisation();
+		SessionStore<OrganisationData> store = super.getSessionStore();
+		OrganisationData organisation = store.getData();
 		if( organisation != null ) {
 			this.servicesComposite.setInput(organisation, true);
 			btnNext.setEnabled(!Utils.assertNull(organisation.getServices() ));
@@ -129,21 +128,21 @@ public class OrganisationEntryPoint extends AbstractChuruataEntryPoint {
 	}
 
 	protected void onServiceEvent( EditEvent<OrganisationData> event ) {
-		SessionStore store = super.getSessionStore();
+		SessionStore<OrganisationData> store = super.getSessionStore();
 		PersonData person = store.getPersonData();
 
 		OrganisationData organisation = event.getData();
 		organisation.setContact(person); 
 		switch( event.getType()) {
 		case ADDED:
-			store.setOrganisation( this.servicesComposite.getInput());
+			store.setData( this.servicesComposite.getInput());
 			controller.page = Pages.SERVICES;
 			jump( person.getId(), organisation, Pages.SERVICES);
 				
 			break;
 		case COMPLETE:
 			data = event.getData();
-			store.setOrganisation(event.getData());
+			store.setData(event.getData());
 			btnNext.setEnabled(( data != null ));
 			break;
 		default:
@@ -152,7 +151,7 @@ public class OrganisationEntryPoint extends AbstractChuruataEntryPoint {
 	}
 
 	protected void jump( long personId, OrganisationData organisation, Pages page ) {
-		SessionStore store = super.getSessionStore();
+		SessionStore<OrganisationData> store = super.getSessionStore();
 		if( organisation.getId() <= 0 ) { 
 			controller.register(personId, organisation);
 		}
@@ -177,14 +176,14 @@ public class OrganisationEntryPoint extends AbstractChuruataEntryPoint {
 		super.close();
 	}
 	
-	private class SessionHandler extends AbstractSessionHandler<SessionStore>{
+	private class SessionHandler extends AbstractSessionHandler<SessionStore<OrganisationData>>{
 
 		protected SessionHandler(Display display) {
 			super(display);
 		}
 
 		@Override
-		protected void onHandleSession(SessionEvent<SessionStore> sevent) {
+		protected void onHandleSession(SessionEvent<SessionStore<OrganisationData>> sevent) {
 			/* NOTHING */
 		}
 	}
@@ -216,12 +215,12 @@ public class OrganisationEntryPoint extends AbstractChuruataEntryPoint {
 		@Override
 		protected String onHandleResponse(ResponseEvent<OrganisationData.Requests> event) throws IOException {
 			try {
-				SessionStore store = getSessionStore();
+				SessionStore<OrganisationData> store = getSessionStore();
 				Gson gson = new Gson();
 				switch( event.getRequest()){
 				case REGISTER:
 					OrganisationData data = gson.fromJson(event.getResponse(), OrganisationData.class);
-					store.setOrganisation(data);
+					store.setData(data);
 					switch( page ) {
 					case ORGANISATION:
 						Dispatcher.jump( Pages.LOCATION, store.getToken());

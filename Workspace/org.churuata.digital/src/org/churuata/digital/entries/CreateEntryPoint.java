@@ -37,7 +37,7 @@ import org.eclipse.swt.widgets.Group;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
-public class CreateEntryPoint extends AbstractChuruataEntryPoint{
+public class CreateEntryPoint extends AbstractChuruataEntryPoint<OrganisationData>{
 	private static final long serialVersionUID = 1L;
 
 	public static final String S_PAGE = "page";
@@ -56,10 +56,10 @@ public class CreateEntryPoint extends AbstractChuruataEntryPoint{
 	@Override
 	protected boolean prepare(Composite parent) {
 		StartupParameters service = RWT.getClient().getService( StartupParameters.class );
-		IDomainProvider<SessionStore> domain = Dispatcher.getDomainProvider( service );
+		IDomainProvider<SessionStore<OrganisationData>> domain = Dispatcher.getDomainProvider( service );
 		if( domain == null )
 			return false;
-		SessionStore store = domain.getData();
+		SessionStore<OrganisationData> store = domain.getData();
 		if( store == null )
 			return false;
 		setData(store);
@@ -92,10 +92,10 @@ public class CreateEntryPoint extends AbstractChuruataEntryPoint{
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
 				try{
-					SessionStore store = getSessionStore();
-					if( store.getOrganisation() == null )
+					SessionStore<OrganisationData> store = getSessionStore();
+					if( store.getData() == null )
 						return;
-					controller.create( store.getOrganisation());
+					controller.create( store.getData());
 				}
 				catch( Exception ex ){
 					ex.printStackTrace();
@@ -112,14 +112,14 @@ public class CreateEntryPoint extends AbstractChuruataEntryPoint{
 		Config config = new Config();
 		String context = config.getServerContext();
 
-		SessionStore store = getSessionStore();
+		SessionStore<OrganisationData> store = getSessionStore();
 		ILoginUser user = store.getLoginUser();
 		editComposite.setInput(context, user);
 		LatLng selected = store.getSelected();
-		OrganisationData organisation = store.getOrganisation();
+		OrganisationData organisation = store.getData();
 		if( organisation == null ) {
 			organisation = new OrganisationData( selected );
-			store.setOrganisation(organisation); 
+			store.setData(organisation); 
 		}
 		editComposite.setInput( organisation );
 
@@ -131,7 +131,7 @@ public class CreateEntryPoint extends AbstractChuruataEntryPoint{
 
 	protected void onOrganisationEvent( EditEvent<OrganisationData> event ) {
 		LatLng data = null;
-		SessionStore store = super.getSessionStore();
+		SessionStore<OrganisationData> store = super.getSessionStore();
 		switch( event.getType()) {
 		case INITIALISED:
 			break;
@@ -167,7 +167,7 @@ public class CreateEntryPoint extends AbstractChuruataEntryPoint{
 	protected void handleTimer() {
 		try {
 			super.handleTimer();
-			SessionStore store = getSessionStore();
+			SessionStore<OrganisationData> store = getSessionStore();
 			if(( store == null ) || ( store.getLoginUser() == null ))
 				return;
 		} catch (Exception e) {
@@ -177,7 +177,7 @@ public class CreateEntryPoint extends AbstractChuruataEntryPoint{
 
 	@Override
 	protected boolean handleSessionTimeout(boolean reload) {
-		SessionStore store = super.getSessionStore();
+		SessionStore<OrganisationData> store = super.getSessionStore();
 		store.setLoginUser(null);
 		return super.handleSessionTimeout(reload);
 	}
@@ -214,7 +214,7 @@ public class CreateEntryPoint extends AbstractChuruataEntryPoint{
 			try {
 				switch( event.getRequest()){
 				case CREATE:
-					SessionStore store = getSessionStore();
+					SessionStore<OrganisationData> store = getSessionStore();
 					Dispatcher.jump(Entries.Pages.ACTIVE, store.getToken());
 					break;
 				default:

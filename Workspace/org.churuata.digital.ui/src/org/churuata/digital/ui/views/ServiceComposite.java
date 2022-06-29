@@ -29,7 +29,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 
-public class ServicesComposite extends AbstractEntityComposite<IChuruataService>
+public class ServiceComposite extends AbstractEntityComposite<IChuruataService>
 {
 	private static final long serialVersionUID = 7782765745284140623L;
 
@@ -61,7 +61,7 @@ public class ServicesComposite extends AbstractEntityComposite<IChuruataService>
 	 * Create the dialog.
 	 * @param parentShell
 	 */
-	public ServicesComposite( Composite parent, int style ){
+	public ServiceComposite( Composite parent, int style ){
 		super(parent, style );
 		this.comboTypes.setItems(IChuruataService.Services.getItems());
 		this.comboTypes.select(1);
@@ -79,9 +79,9 @@ public class ServicesComposite extends AbstractEntityComposite<IChuruataService>
 	 * @param parent
 	 */
 	@Override
-	protected void createComposite(Composite parent, int style )
+	protected void createComposite( Composite parent, int style )
 	{
-		Composite container = this;
+		ServiceComposite container = this;
 		this.setLayout( new GridLayout(1, false));
 
 		setData( RWT.CUSTOM_ITEM_HEIGHT, Integer.valueOf( 10 ));
@@ -320,7 +320,7 @@ public class ServicesComposite extends AbstractEntityComposite<IChuruataService>
 	}
 
 
-	public static void createContactTypes( ServicesComposite widget, Set<IChuruataService.Services> selection){
+	public static void createContactTypes( ServiceComposite widget, Set<IChuruataService.Services> selection){
 		Collection<String> contacts = new ArrayList<String>();
 		for( IChuruataService.Services type: selection ){
 			contacts.add( NALanguage.getInstance().getString( type ));

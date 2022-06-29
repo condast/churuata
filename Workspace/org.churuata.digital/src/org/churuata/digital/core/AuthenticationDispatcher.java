@@ -6,6 +6,7 @@ import org.condast.commons.authentication.core.AbstractLoginClient;
 import org.condast.commons.authentication.core.AuthenticationEvent;
 import org.condast.commons.authentication.core.IAuthenticationListener;
 import org.condast.commons.authentication.core.ILoginProvider;
+import org.condast.commons.authentication.user.IAdmin;
 import org.condast.commons.authentication.user.ILoginUser;
 
 public class AuthenticationDispatcher extends AbstractLoginClient{
@@ -80,6 +81,12 @@ public class AuthenticationDispatcher extends AbstractLoginClient{
 		if( dispatcher.hasLoginUser(user))
 			return;
 		dispatcher.addUser(user);
+	}
+
+	@Override
+	public IAdmin getAdmin(ILoginUser user) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

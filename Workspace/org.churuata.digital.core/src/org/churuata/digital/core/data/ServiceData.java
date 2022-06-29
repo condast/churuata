@@ -16,7 +16,7 @@ public class ServiceData implements IChuruataService {
 		NAME,
 		DESCRIPTION,
 		FROM_DATE,
-		TO_DATE;
+		TO_DATE, LATITUDE, LONGITUDE;
 
 		@Override
 		public String toString() {

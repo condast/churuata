@@ -94,6 +94,8 @@ public class MapBrowser extends Browser {
 	
 	private FieldData fieldData;
 	
+	private OrganisationData input;
+	
 	private IEvaluationListener<Object> listener = e->onNotifyEvaluation(e);
 
 	private Logger logger = Logger.getLogger( this.getClass().getName() );
@@ -188,6 +190,12 @@ public class MapBrowser extends Browser {
 				}else {
 					Object[] coords = (Object[]) event.getData()[2];
 					LatLng latlng = new LatLng(( Double) coords[1], (Double)coords[0]);				
+					IconsView icons = new IconsView( mapController );
+					if( input != null )
+						input.setLocation(latlng);
+					icons.clearIcons();
+					
+					createIcon(icons, input);
 					notifyEditListeners( new EditEvent<LatLng>( this, EditTypes.SELECTED, latlng ));
 				}
 			}
@@ -208,6 +216,15 @@ public class MapBrowser extends Browser {
 		geo.setFieldData(fieldData);
 		geo.jump();
 		onNavigation();
+	}
+
+	
+	public OrganisationData getInput() {
+		return input;
+	}
+
+	public void setInput(OrganisationData input) {
+		this.input = input;
 	}
 
 	private void onNavigation() {
@@ -263,6 +280,42 @@ public class MapBrowser extends Browser {
 		for( IChuruata churuata: churuatas.getChuruatas()) {
 			createMarker(icons, churuata, false);
 		}		
+	}
+
+	protected static void createIcon( IconsView icons, OrganisationData data ) {
+		Markers marker = Markers.RED;
+		if(( data == null ) || (data.getLocation()==null) || ( Utils.assertNull(data.getServices()))) {
+			icons.addMarker(data.getLocation(), marker, 'H');
+			return;
+		}
+		IChuruataService service = data.getServices()[0];
+		switch( service.getService()) {
+		case FOOD:
+			marker = Markers.GREEN;
+			break;
+		case COMMUNITY:
+			marker = Markers.PINK;
+			break;
+		case EDUCATION:
+			marker = Markers.YELLOW;
+			break;
+		case FAMILY:
+			marker = Markers.ORANGE;
+			break;
+		case LEGAL:
+			marker = Markers.PALEBLUE;
+			break;
+		case MEDICINE:
+			marker = Markers.DARKGREEN;
+			break;
+		case SHELTER:
+			marker = Markers.BROWN;
+			break;
+		default:
+			break;
+		}
+		char chr = service.getService().name().charAt(0);
+		icons.addMarker(data.getLocation(), marker, chr);
 	}
 
 	public static String createMarker( IconsView icons, IChuruata churuata, boolean newEntry ) {

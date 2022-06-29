@@ -9,6 +9,7 @@ import java.util.logging.Logger;
 import org.churuata.digital.core.AbstractChuruataEntryPoint;
 import org.churuata.digital.core.Dispatcher;
 import org.churuata.digital.core.Entries.Pages;
+import org.churuata.digital.core.data.OrganisationData;
 import org.churuata.digital.core.data.ProfileData;
 import org.churuata.digital.core.rest.IRestPages;
 import org.churuata.digital.session.SessionStore;
@@ -41,7 +42,7 @@ import org.eclipse.swt.widgets.Group;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
-public class ContactsEntryPoint extends AbstractChuruataEntryPoint {
+public class ContactsEntryPoint extends AbstractChuruataEntryPoint<OrganisationData> {
 	private static final long serialVersionUID = 1L;
 
 	private ContactWidget contactWidget;
@@ -60,10 +61,10 @@ public class ContactsEntryPoint extends AbstractChuruataEntryPoint {
 	@Override
 	protected boolean prepare(Composite parent) {
 		StartupParameters service = RWT.getClient().getService( StartupParameters.class );
-		IDomainProvider<SessionStore> domain = Dispatcher.getDomainProvider( service );
+		IDomainProvider<SessionStore<OrganisationData>> domain = Dispatcher.getDomainProvider( service );
 		if( domain == null )
 			return false;
-		SessionStore store = domain.getData();
+		SessionStore<OrganisationData> store = domain.getData();
 		if( store == null )
 			return false;
 		setData(store);
@@ -96,7 +97,7 @@ public class ContactsEntryPoint extends AbstractChuruataEntryPoint {
 				try{
 					if( data == null )
 						return;
-					SessionStore store = getSessionStore();
+					SessionStore<OrganisationData> store = getSessionStore();
 					PersonData person = store.getPersonData();
 					controller.addContact(data, person.getId());
 				}
@@ -124,7 +125,7 @@ public class ContactsEntryPoint extends AbstractChuruataEntryPoint {
 	protected void onContactEvent( EditEvent<IContact> event ) {
 		switch( event.getType()) {
 		case COMPLETE:
-			SessionStore store = getSessionStore();
+			SessionStore<OrganisationData> store = getSessionStore();
 			if( store.getContactPersonData() == null )
 				return;
 			data = event.getData();
@@ -152,14 +153,14 @@ public class ContactsEntryPoint extends AbstractChuruataEntryPoint {
 		super.close();
 	}
 	
-	private class SessionHandler extends AbstractSessionHandler<SessionStore>{
+	private class SessionHandler extends AbstractSessionHandler<SessionStore<OrganisationData>>{
 
 		protected SessionHandler(Display display) {
 			super(display);
 		}
 
 		@Override
-		protected void onHandleSession(SessionEvent<SessionStore> sevent) {
+		protected void onHandleSession(SessionEvent<SessionStore<OrganisationData>> sevent) {
 			/* NOTHING */
 		}
 	}
@@ -187,7 +188,7 @@ public class ContactsEntryPoint extends AbstractChuruataEntryPoint {
 		@Override
 		protected String onHandleResponse(ResponseEvent<ProfileData.Requests> event) throws IOException {
 			try {
-				SessionStore store = getSessionStore();
+				SessionStore<OrganisationData> store = getSessionStore();
 				Gson gson = new Gson();
 				switch( event.getRequest()){
 				case ADD_CONTACT_TYPE:

@@ -13,6 +13,7 @@ import org.condast.commons.authentication.core.AuthenticationEvent;
 import org.condast.commons.authentication.core.IAuthenticationListener;
 import org.condast.commons.authentication.core.IAuthenticationListener.AuthenticationEvents;
 import org.condast.commons.authentication.core.LoginData;
+import org.condast.commons.authentication.user.IAdmin;
 import org.condast.commons.authentication.user.ILoginUser;
 import org.condast.commons.persistence.service.AbstractPersistencyService;
 import org.condast.commons.persistence.service.IPersistenceService;
@@ -43,6 +44,11 @@ public class Dispatcher extends AbstractPersistencyService implements IPersisten
 
 	public static Dispatcher getInstance(){
 		return service;
+	}
+
+	public IAdmin getAdmin(ILoginUser user) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	public void addAuthenticationListener( IAuthenticationListener listener ) {

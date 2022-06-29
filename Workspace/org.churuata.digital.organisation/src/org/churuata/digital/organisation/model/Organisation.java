@@ -95,6 +95,11 @@ public class Organisation implements IOrganisation, Serializable, Cloneable {
 		return new LatLng( this.name, this.description, latitude, longitude );
 	}
 
+	public void setLocation( double latitude, double longitude ) {
+		this.latitude = latitude;
+		this.longitude = longitude;
+	}
+
 	@Override
 	public String getName() {
 		return name;
@@ -126,7 +131,7 @@ public class Organisation implements IOrganisation, Serializable, Cloneable {
 	public void setWebsite(String website) {
 		this.website = website;
 	}
-
+		
 	@Override
 	public IAddress getAddress() {
 		return address;

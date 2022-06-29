@@ -26,7 +26,8 @@ public class OrganisationData implements IOrganisation, Serializable, Cloneable 
 		REGISTER,
 		FIND,
 		ADD_SERVICE,
-		REMOVE_SERVICE;
+		REMOVE_SERVICE, 
+		SET_LOCATION;
 	}
 
 	public enum Parameters{

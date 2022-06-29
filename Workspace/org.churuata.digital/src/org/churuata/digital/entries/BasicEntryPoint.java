@@ -6,7 +6,7 @@ import javax.servlet.http.HttpSession;
 
 import org.churuata.digital.core.Dispatcher;
 import org.churuata.digital.core.Entries;
-import org.churuata.digital.session.SessionStore;
+import org.churuata.digital.core.data.OrganisationData;
 import org.churuata.digital.ui.map.MapBrowser;
 import org.condast.commons.authentication.http.IDomainProvider;
 import org.condast.commons.config.Config;
@@ -23,7 +23,7 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 
 
-public class BasicEntryPoint extends AbstractRestEntryPoint<SessionStore> {
+public class BasicEntryPoint extends AbstractRestEntryPoint<OrganisationData> {
 	private static final long serialVersionUID = 1L;
 
 	public static final String S_CHURUATA = "Churuata-Digital";

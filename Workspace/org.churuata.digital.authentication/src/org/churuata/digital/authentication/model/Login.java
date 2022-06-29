@@ -1,5 +1,6 @@
 package org.churuata.digital.authentication.model;
 
+import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Random;
@@ -18,7 +19,8 @@ import org.condast.commons.data.latlng.LatLng;
 import org.condast.commons.date.DateUtils;
 
 @Entity
-public class Login implements ILoginUser {
+public class Login implements ILoginUser, Serializable {
+	private static final long serialVersionUID = -7591985813259583180L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)

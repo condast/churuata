@@ -9,6 +9,7 @@ import org.churuata.digital.core.AbstractChuruataEntryPoint;
 import org.churuata.digital.core.Dispatcher;
 import org.churuata.digital.core.Entries;
 import org.churuata.digital.core.Entries.Pages;
+import org.churuata.digital.core.data.OrganisationData;
 import org.churuata.digital.core.data.ProfileData;
 import org.churuata.digital.core.rest.IRestPages;
 import org.churuata.digital.session.SessionStore;
@@ -38,7 +39,7 @@ import org.eclipse.swt.widgets.Group;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
-public class RegisterEntryPoint extends AbstractChuruataEntryPoint{
+public class RegisterEntryPoint extends AbstractChuruataEntryPoint<OrganisationData>{
 	private static final long serialVersionUID = 1L;
 
 	public static final String S_ADD_ACCOUNT = "Add Account";
@@ -56,7 +57,7 @@ public class RegisterEntryPoint extends AbstractChuruataEntryPoint{
 	protected boolean prepare(Composite parent) {
 		StartupParameters service = RWT.getClient().getService( StartupParameters.class );
 		String tokenStr = service.getParameter(IDomainProvider.Attributes.TOKEN.toAttribute());
-		IDomainProvider<SessionStore> provider = null;
+		IDomainProvider<SessionStore<OrganisationData>> provider = null;
 		if( StringUtils.isEmpty(tokenStr)) {
 			provider = Dispatcher.createDomain();
 		}else
@@ -90,7 +91,7 @@ public class RegisterEntryPoint extends AbstractChuruataEntryPoint{
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
 				try{
-					SessionStore store = getSessionStore();
+					SessionStore<OrganisationData> store = getSessionStore();
 					if( store.getContactPersonData() == null )
 						return;
 					PersonData person = store.getPersonData();
@@ -115,7 +116,7 @@ public class RegisterEntryPoint extends AbstractChuruataEntryPoint{
 		String context = config.getServerContext();
 		controller = new WebController();
 		controller.setInput(context, IRestPages.Pages.CONTACT.toPath());
-		SessionStore store = getSessionStore();
+		SessionStore<OrganisationData> store = getSessionStore();
 		PersonData personData = store.getPersonData();
 		ContactPersonData person = store.getContactPersonData();
 		if( personData != null ) {
@@ -132,7 +133,7 @@ public class RegisterEntryPoint extends AbstractChuruataEntryPoint{
 
 	protected void onPersonEvent( EditEvent<ContactPersonData> event ) {
 		ContactPersonData data = null;
-		SessionStore store = super.getSessionStore();
+		SessionStore<OrganisationData> store = super.getSessionStore();
 		controller.type = event.getType();
 		switch( event.getType()) {
 		case ADDED:
@@ -170,7 +171,7 @@ public class RegisterEntryPoint extends AbstractChuruataEntryPoint{
 
 	@Override
 	protected boolean handleSessionTimeout(boolean reload) {
-		SessionStore store = super.getSessionStore();
+		SessionStore<OrganisationData> store = super.getSessionStore();
 		store.setLoginUser(null);
 		return super.handleSessionTimeout(reload);
 	}
@@ -203,7 +204,7 @@ public class RegisterEntryPoint extends AbstractChuruataEntryPoint{
 		@Override
 		protected String onHandleResponse(ResponseEvent<ProfileData.Requests> event) throws IOException {
 			try {
-				SessionStore store = getSessionStore();
+				SessionStore<OrganisationData> store = getSessionStore();
 				Gson gson = new Gson();
 				switch( event.getRequest()){
 				case REGISTER:

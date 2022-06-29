@@ -7,6 +7,7 @@ import org.churuata.digital.authentication.core.Dispatcher;
 import org.churuata.digital.authentication.services.LoginService;
 import org.condast.commons.authentication.core.IAuthenticationListener;
 import org.condast.commons.authentication.core.ILoginProvider;
+import org.condast.commons.authentication.user.IAdmin;
 import org.condast.commons.authentication.user.ILoginUser;
 import org.osgi.service.component.annotations.Component;
 
@@ -16,6 +17,12 @@ public class LoginUserProvider implements ILoginProvider {
 
 	private Dispatcher dispatcher = Dispatcher.getInstance();
 	
+	
+	@Override
+	public IAdmin getAdmin(ILoginUser user) {
+		return dispatcher.getAdmin( user);
+	}
+
 	@Override
 	public boolean isRegistered( long loginId) {
 		return dispatcher.isRegistered( loginId );
@@ -31,7 +38,6 @@ public class LoginUserProvider implements ILoginProvider {
 		return dispatcher.getLoginUser( loginId, token );
 	}
 	
-	@SuppressWarnings("resource")
 	@Override
 	public Map<Long, String> getUserNames( Collection<Long> userIds ){
 		LoginService service = new LoginService( dispatcher );
