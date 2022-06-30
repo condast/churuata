@@ -113,7 +113,7 @@ public class ContactsEntryPoint extends AbstractChuruataEntryPoint<OrganisationD
 
 	@Override
 	protected boolean postProcess(Composite parent) {
-		Config config = new Config();
+		Config config = Config.getInstance();
 		String context = config.getServerContext();
 		controller = new WebController( context, IRestPages.Pages.CONTACT.toPath());
 		ContactWidget.createContactTypes( this.contactWidget, EnumSet.allOf(ContactTypes.class ));

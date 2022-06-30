@@ -60,19 +60,27 @@ public class OrganisationData implements IOrganisation, Serializable, Cloneable 
 	
 	private String website;
 	
+	private OrganisationTypes type;
+	
+	private boolean verified;
+	
+	private int score;
 	
 	private Collection<ServiceData> services;
-
 	
 	public OrganisationData() {
 		super();
 		Calendar calendar = Calendar.getInstance();
 		calendar.add( Calendar.YEAR, 1);
 		services = new ArrayList<>();
+		this.verified = false;
+		this.score = 0;
 	}
 
 	public OrganisationData( LatLng location ){
 		this.location = location;
+		this.verified = false;
+		this.score = 0;
 		services = new ArrayList<>();
 	}
 
@@ -80,6 +88,8 @@ public class OrganisationData implements IOrganisation, Serializable, Cloneable 
 		this( location );
 		this.name = name;
 		this.description = description;
+		this.verified = false;
+		this.score = 0;
 	}
 
 	public OrganisationData( IOrganisation organisation ){
@@ -88,6 +98,9 @@ public class OrganisationData implements IOrganisation, Serializable, Cloneable 
 		this.name = organisation.getName();
 		this.description = organisation.getDescription();
 		this.website = organisation.getWebsite();
+		this.type = organisation.getType();
+		this.verified = organisation.isVerified();
+		this.score = organisation.getScore();
 		services = new ArrayList<>();
 		for( IChuruataService service: organisation.getServices())
 			services.add( new ServiceData( service ));
@@ -135,6 +148,33 @@ public class OrganisationData implements IOrganisation, Serializable, Cloneable 
 
 	public void setContact(PersonData contact) {
 		this.contact = contact;
+	}
+
+	@Override
+	public OrganisationTypes getType() {
+		return type;
+	}
+
+	public void setType(OrganisationTypes type) {
+		this.type = type;
+	}
+
+	@Override
+	public boolean isVerified() {
+		return verified;
+	}
+
+	public void setVerified(boolean verified) {
+		this.verified = verified;
+	}
+
+	@Override
+	public int getScore() {
+		return score;
+	}
+
+	public void setScore(int score) {
+		this.score = score;
 	}
 
 	public IAddress getAddress() {

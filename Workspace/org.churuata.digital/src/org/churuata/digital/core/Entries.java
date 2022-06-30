@@ -39,7 +39,10 @@ public class Entries {
 		ADD_ORGANISATION,
 		ADD_SERVICES,
 		SHOW_LEGAL,
-		CONFIRM_SERVICE;
+		CONFIRM_SERVICE,
+		ADMIN,
+		USERS,
+		ACCEPTANCE;
 	
 		@Override
 		public String toString() {

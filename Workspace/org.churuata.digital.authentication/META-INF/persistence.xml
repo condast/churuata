@@ -28,7 +28,11 @@
 			<property
 				name="javax.persistence.schema-generation.database.action"
 				value="create" />
-
+			<!-- 
+			<property 
+				name="javax.persistence.sql-load-script-source"
+				value="META-INF/sql/data.sql" />
+			-->
 			<!-- Logging -->
 			<!-- <property name="eclipselink.logging.level" value="FINE"/> -->
 			<property name="eclipselink.logging.timestamp" value="false" />

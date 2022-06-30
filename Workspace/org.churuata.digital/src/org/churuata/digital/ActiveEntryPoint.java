@@ -142,7 +142,7 @@ public class ActiveEntryPoint extends AbstractRestEntryPoint<SessionStore<Organi
 
 	@Override
 	protected boolean postProcess(Composite parent) {
-		Config config = new Config();
+		Config config = Config.getInstance();
 		mapComposite.setInput(config.getServerContext());
 		SessionStore<OrganisationData> store = super.getData();
 		LatLng selected = store.getSelected();

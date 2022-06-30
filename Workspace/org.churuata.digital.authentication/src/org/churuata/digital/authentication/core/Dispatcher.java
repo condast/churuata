@@ -8,6 +8,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.churuata.digital.authentication.services.AdminService;
 import org.churuata.digital.authentication.services.LoginService;
 import org.condast.commons.authentication.core.AuthenticationEvent;
 import org.condast.commons.authentication.core.IAuthenticationListener;
@@ -17,6 +18,7 @@ import org.condast.commons.authentication.user.IAdmin;
 import org.condast.commons.authentication.user.ILoginUser;
 import org.condast.commons.persistence.service.AbstractPersistencyService;
 import org.condast.commons.persistence.service.IPersistenceService;
+import org.condast.commons.persistence.service.TransactionManager;
 import org.condast.commons.strings.StringUtils;
 
 public class Dispatcher extends AbstractPersistencyService implements IPersistenceService{
@@ -47,7 +49,19 @@ public class Dispatcher extends AbstractPersistencyService implements IPersisten
 	}
 
 	public IAdmin getAdmin(ILoginUser user) {
-		// TODO Auto-generated method stub
+		TransactionManager manager = new TransactionManager( this );
+		try {
+			manager.open();
+			AdminService service = new AdminService(this);
+			IAdmin admin = service.find(user);
+			return admin;
+		}
+		catch( Exception ex ) {
+			ex.printStackTrace();
+		}
+		finally {
+			manager.close();
+		}
 		return null;
 	}
 

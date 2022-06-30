@@ -5,7 +5,6 @@ import java.util.Date;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -30,7 +29,7 @@ public class Service implements IChuruataService {
 	
 	private String contributor;
 
-	@ManyToOne(cascade=CascadeType.PERSIST, fetch=FetchType.LAZY)
+	@ManyToOne(cascade=CascadeType.PERSIST)
 	private Organisation organisation;
 
 	private long fromDate;

@@ -113,7 +113,7 @@ public class ServicesEntryPoint extends AbstractChuruataEntryPoint<OrganisationD
 
 	@Override
 	protected boolean postProcess(Composite parent) {
-		Config config = new Config();
+		Config config = Config.getInstance();
 		String context = config.getServerContext();
 		controller = new WebController();
 		controller.setInput(context, IRestPages.Pages.ORGANISATION.toPath());

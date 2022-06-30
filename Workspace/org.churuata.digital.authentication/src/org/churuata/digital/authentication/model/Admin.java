@@ -15,7 +15,6 @@ import javax.persistence.TemporalType;
 
 import org.condast.commons.authentication.user.IAdmin;
 import org.condast.commons.authentication.user.ILoginUser;
-import org.condast.commons.strings.StringUtils;
 
 @Entity
 public class Admin implements IAdmin, Serializable {
@@ -27,11 +26,11 @@ public class Admin implements IAdmin, Serializable {
 	
 	@Basic(optional = false)
 	@Column( nullable=false)
-	private Login login;
+	private long loginId;
 	
 	@Basic(optional = true)
 	@Column( nullable=false)
-	private String role;
+	private Roles role;
 	
 	@Basic(optional = false)
 	@Column( nullable=false)
@@ -43,6 +42,7 @@ public class Admin implements IAdmin, Serializable {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date updateDate;
 
+	private transient ILoginUser login;
 	
 	public Admin() {
 		this.createDate = Calendar.getInstance().getTime();
@@ -51,13 +51,19 @@ public class Admin implements IAdmin, Serializable {
 
 	public Admin( ILoginUser user, Roles role) {
 		this();
-		this.role = role.name();
+		this.role = role;
+		this.loginId = this.login.getId();
 		this.login = (Login) user;
 	}
 
 	@Override
 	public long getId() {
 		return id;
+	}
+
+	@Override
+	public long getLoginId() {
+		return this.loginId;
 	}
 	
 	/* (non-Javadoc)
@@ -68,12 +74,16 @@ public class Admin implements IAdmin, Serializable {
 		return login;
 	}
 
+	public void setLogin(ILoginUser login) {
+		this.login = login;
+	}
+
 	public Roles getRole() {
-		return StringUtils.isEmpty(role)?Roles.GUEST: Roles.valueOf(role);
+		return (role==null)?Roles.GUEST: role;
 	}
 
 	public void setRole( Roles role) {
-		this.role = role.name();
+		this.role = role;
 	}
 
 	@Override

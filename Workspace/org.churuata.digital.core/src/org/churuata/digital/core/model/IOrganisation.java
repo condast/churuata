@@ -4,9 +4,32 @@ import org.churuata.digital.core.location.IChuruataService;
 import org.condast.commons.data.latlng.LatLng;
 import org.condast.commons.na.model.IAddress;
 import org.condast.commons.na.model.IContactPerson;
+import org.condast.commons.strings.StringStyler;
 
 public interface IOrganisation {
 
+	public enum OrganisationTypes{
+		UNKNOWN(0),
+		PRIVATE(1),
+		GOVERNMENT(2),
+		INTERNATIONAL(3);
+		
+		private int index;
+
+		private OrganisationTypes(int index) {
+			this.index = index;
+		}
+
+		public int getIndex() {
+			return index;
+		}
+		
+		@Override
+		public String toString() {
+			return StringStyler.prettyString( name());
+		}	
+	}
+	
 	long getId();
 	
 	LatLng getLocation();
@@ -18,6 +41,12 @@ public interface IOrganisation {
 	public IAddress getAddress();
 	
 	public IContactPerson getContact();
+	
+	public OrganisationTypes getType();
+	
+	public boolean isVerified();
+	
+	public int getScore();
 
 	void setServices(IChuruataService[] services);
 

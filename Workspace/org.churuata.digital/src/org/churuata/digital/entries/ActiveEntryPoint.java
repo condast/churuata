@@ -156,7 +156,7 @@ public class ActiveEntryPoint extends AbstractChuruataEntryPoint<OrganisationDat
 
 	@Override
 	protected boolean postProcess(Composite parent) {
-		Config config = new Config();
+		Config config = Config.getInstance();
 		mapComposite.setInput(config.getServerContext());
 
 		mapComposite.locate();

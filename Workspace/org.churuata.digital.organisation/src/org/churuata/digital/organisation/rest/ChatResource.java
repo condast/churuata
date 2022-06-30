@@ -1,6 +1,7 @@
 package org.churuata.digital.organisation.rest;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -21,30 +22,58 @@ import org.condast.commons.strings.StringUtils;
 @Path("/chat")
 public class ChatResource{
 
-	public static final String S_ERR_UNKNOWN_REQUEST = "An invalid request was rertrieved: ";
+	public static final String S_ERR_UNKNOWN_REQUEST = "An invalid request was retrieved: ";
 	public static final String S_ERR_INVALID_USER    = "The provided credentials are invalid:";
 
 	public ChatResource() {
 		super();
 	}
 
+	@GET
+	@Consumes(MediaType.TEXT_PLAIN)
+	@Produces(MediaType.TEXT_PLAIN)
+	@Path("/short")
+	public Response shortRequest( @QueryParam("organisation-id") long organisationId, @QueryParam("name") String name, @QueryParam("question") String question) {
+
+		if( StringUtils.isEmpty(question)) 
+			return Response.noContent().build();
+	
+		TransactionManager t = new TransactionManager( Dispatcher.getInstance() );
+		try {
+			t.open();
+			OrganisationService os = new OrganisationService(); 
+			Organisation organisation = os.find( organisationId);
+			//if( organisation == null )
+			///	return Response.status( Status.NOT_FOUND).build();
+					
+			String str = ChatUtils.createChatMessage(organisation, name);
+			return Response.ok( str ).build();
+		}
+		catch( Exception ex ) {
+			ex.printStackTrace();
+			return Response.serverError().build();
+		}
+		finally {
+			t.close();
+		}
+	}
+
 	@POST
 	@Consumes(MediaType.TEXT_PLAIN)
 	@Produces(MediaType.TEXT_PLAIN)
 	@Path("/ask")
-	public Response create( @QueryParam("organisation-id") long organisationId, @QueryParam("name") String name, String data) {
+	public Response ask( @QueryParam("organisation-id") long organisationId, @QueryParam("name") String name, String data) {
 
 		if( StringUtils.isEmpty(data)) 
 			return Response.noContent().build();
 	
 		TransactionManager t = new TransactionManager( Dispatcher.getInstance() );
-		OrganisationService os = new OrganisationService(); 
-		Organisation organisation = null;
 		try {
 			t.open();
-			organisation = os.find( organisationId);
-			if( organisation == null )
-				return Response.status( Status.NOT_FOUND).build();
+			OrganisationService os = new OrganisationService(); 
+			Organisation organisation = os.find( organisationId);
+			//if( organisation == null )
+			//	return Response.status( Status.NOT_FOUND).build();
 					
 			String str = ChatUtils.createChatMessage(organisation, name);
 			return Response.ok( str ).build();

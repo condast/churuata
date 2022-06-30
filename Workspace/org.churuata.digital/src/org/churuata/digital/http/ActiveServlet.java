@@ -13,6 +13,7 @@ import org.churuata.digital.core.Dispatcher;
 import org.churuata.digital.core.data.OrganisationData;
 import org.churuata.digital.session.SessionStore;
 import org.condast.commons.authentication.http.IDomainProvider;
+import org.condast.commons.authentication.user.IAdmin;
 import org.condast.commons.authentication.user.ILoginUser;
 import org.condast.commons.messaging.http.IHttpRequest.HttpStatus;
 import org.condast.commons.strings.StringStyler;
@@ -30,7 +31,8 @@ public class ActiveServlet extends HttpServlet {
 
 	private enum Pages{
 		LOGOFF,
-		PROFILE;
+		PROFILE,
+		ADMIN;
 
 		@Override
 		public String toString() {
@@ -90,7 +92,7 @@ public class ActiveServlet extends HttpServlet {
 			return;
 		}
 		Pages active = Pages.PROFILE;
-		FileParser parser = new FileParser( active, user.getId(), token );
+		FileParser parser = new FileParser( active, token, user );
 		String str =null;
 		try{
 			str = parser.parse( this.getClass().getResourceAsStream(S_RESOURCE_FILE) );
@@ -105,14 +107,14 @@ public class ActiveServlet extends HttpServlet {
 
 		AuthenticationDispatcher dispatcher = AuthenticationDispatcher.getInstance();
 		
-		private long userId;
+		private ILoginUser user;
 		private long token;
 		private Pages active;
 		
-		public FileParser(Pages active, long token, long userId) {
+		public FileParser(Pages active, long token, ILoginUser user) {
 			super();
 			this.token = token;
-			this.userId = userId;
+			this.user = user;
 			this.active = active;
 		}
 
@@ -139,29 +141,39 @@ public class ActiveServlet extends HttpServlet {
 
 		@Override
 		protected String onCreateList(String[] arguments) {
+			IAdmin admin = dispatcher.getAdmin(user);
 			StringBuilder builder = new StringBuilder();
 			for( Pages page: Pages.values()) {
 				StringBuilder href = new StringBuilder();
 				href.append("/churuata/");
+				boolean activePage = active.equals(page); 
 				switch( page ) {
+				case ADMIN:
+					if( admin == null )
+						break;
+					href.append( page.toString());
+					href.append("?token=" + token + "&select=" + page.toString());
+					builder.append(super.addLink(href.toString(), StringStyler.prettyString( page.name()), activePage));
+
+					break;
 				case LOGOFF:
 					href.append(page.toString());
+					builder.append(super.addLink(href.toString(), StringStyler.prettyString( page.name()), activePage));
 					break;
 				default:
-					href.append("profile");
+					href.append( page.toString());
 					href.append("?token=" + token + "&select=" + page.toString());
+					builder.append(super.addLink(href.toString(), StringStyler.prettyString( page.name()), activePage));
 					break;
 				}
-				boolean activePage = active.equals(page); 
-				builder.append(super.addLink(href.toString(), StringStyler.prettyString( page.name()), activePage));
 			}
 			return builder.toString();
 		}
-	
+
 		@Override
 		protected String onCreateFrame(Attributes attr, String[] arguments) {
 			StringBuilder builder = new StringBuilder();
-			builder.append("/churuata/ready?token=" + token + "&user-id=" + userId + "'");
+			builder.append("/churuata/ready?token=" + token + "&user-id=" + user.getId() + "'");
 			return builder.toString();
 		}
 
@@ -184,7 +196,7 @@ public class ActiveServlet extends HttpServlet {
 				return result;
 			switch( IDomainProvider.Attributes.getAttribute(id)) {
 			case USER_ID:
-				result = "user-id=" + userId;
+				result = "user-id=" + user.getId();
 				break;
 			case TOKEN:
 				result = "token=" + token;

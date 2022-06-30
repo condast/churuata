@@ -51,7 +51,7 @@ public class LoginEntryPoint extends AbstractChuruataEntryPoint<OrganisationData
 	
 	@Override
 	protected Composite createComposite(Composite parent) {
-		Config config = new Config();
+		Config config = Config.getInstance();
 		group = new AuthenticationGroup(parent, SWT.NONE);
 		group.setData( RWT.CUSTOM_VARIANT, BasicApplication.S_CHURUATA_VARIANT );
 		String path = LegalUtils.createLegalPath(config.getServerContext(), S_CHURUATA, "privacy");
@@ -66,7 +66,7 @@ public class LoginEntryPoint extends AbstractChuruataEntryPoint<OrganisationData
 	protected boolean prepare(Composite parent) {
 		handler = new SessionHandler( parent.getDisplay());
 		setData(null);
-		Config config = new Config();
+		Config config = Config.getInstance();
 		String context = config.getServerContext();
 		controller = new AuthenticationController( context + IRestPages.Pages.AUTH.toPath());
 		return true;

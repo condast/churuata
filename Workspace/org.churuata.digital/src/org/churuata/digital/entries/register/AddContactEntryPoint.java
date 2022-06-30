@@ -110,7 +110,7 @@ public class AddContactEntryPoint extends AbstractChuruataEntryPoint<Organisatio
 
 	@Override
 	protected boolean postProcess(Composite parent) {
-		Config config = new Config();
+		Config config = Config.getInstance();
 		String context = config.getServerContext();
 
 		SessionStore<OrganisationData> store = getSessionStore();

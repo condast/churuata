@@ -2,9 +2,6 @@ package org.churuata.rest.core;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Map;
-
-import javax.persistence.EntityManager;
 
 import org.churuata.digital.core.location.ChuruataData;
 import org.condast.commons.data.plane.FieldData;

@@ -112,7 +112,7 @@ public class AddServicesEntryPoint extends AbstractChuruataEntryPoint<Organisati
 
 	@Override
 	protected boolean postProcess(Composite parent) {
-		Config config = new Config();
+		Config config = Config.getInstance();
 		String context = config.getServerContext();
 		controller = new WebController( context, IRestPages.Pages.CONTACT.toPath());
 		ServiceComposite.createContactTypes( this.servicesComposite, EnumSet.allOf( IChuruataService.Services.class ));

@@ -22,3 +22,8 @@ ADD_SERVICES     | org.churuata.digital.entries.AddServicesEntryPoint    		  | A
 LOCATION         | org.churuata.digital.entries.register.LocationEntryPoint       | Enter the Location;
 SHOW_LEGAL       | org.churuata.digital.entries.register.ShowLegalEntryPoint      | Show Legal Disclaimer;
 CONFIRM_SERVICE  | org.churuata.digital.entries.register.ConfirmServiceEntryPoint | Confirm the Service;
+
+#Admin
+ADMIN            | org.churuata.digital.entries.admin.AdminEntryPoint       | Administration;
+USERS            | org.churuata.digital.entries.admin.UsersEntryPoint       | User Management;
+ACCEPTANCE       | org.churuata.digital.entries.admin.AcceptanceEntryPoint  | Acceptance;

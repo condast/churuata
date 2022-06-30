@@ -19,6 +19,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.churuata.digital.core.data.OrganisationData;
 import org.churuata.digital.core.location.IChuruataService;
 import org.churuata.digital.core.model.IOrganisation;
 import org.condast.commons.data.latlng.LatLng;
@@ -54,6 +55,12 @@ public class Organisation implements IOrganisation, Serializable, Cloneable {
 	private String description;
 	
 	private String website;
+	
+	private OrganisationTypes type;
+	
+	private boolean verified;
+	
+	private int score;
 
 	@OneToMany( mappedBy="organisation", cascade = CascadeType.ALL, orphanRemoval = true)
 	private Collection<Service> services;
@@ -62,6 +69,10 @@ public class Organisation implements IOrganisation, Serializable, Cloneable {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createDate;
 
+	@Column( nullable=false)
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date updateDate;
+
 	public Organisation( ){
 		this.createDate = Calendar.getInstance().getTime();
 	}
@@ -69,7 +80,11 @@ public class Organisation implements IOrganisation, Serializable, Cloneable {
 	public Organisation( String name, String description ){
 		this.name = name;
 		this.description = description;
+		this.verified = false;
+		this.score = 0;
+		this.type = OrganisationTypes.UNKNOWN;
 		this.createDate = Calendar.getInstance().getTime();
+		this.updateDate = Calendar.getInstance().getTime();
 	}
 
 	public Organisation( IContactPerson contact, String name, String description ){
@@ -77,8 +92,27 @@ public class Organisation implements IOrganisation, Serializable, Cloneable {
 		this.contact= (Person) contact;
 		this.name = name;
 		this.description = description;
+		this.verified = false;
+		this.score = 0;
+		this.type = OrganisationTypes.UNKNOWN;
 		this.services = new ArrayList<Service>();
 		this.createDate = Calendar.getInstance().getTime();
+		this.updateDate = Calendar.getInstance().getTime();
+	}
+
+	public Organisation( OrganisationData data ){
+		this();
+		this.contact= (Person) data.getContact();
+		this.name = data.getName();
+		this.description = data.getDescription();
+		this.services = new ArrayList<Service>();
+		this.type = data.getType();
+		this.verified = data.isVerified();
+		this.score = data.getScore();
+		for( IChuruataService service: data.getServices())
+			this.services.add((Service) service);
+		this.createDate = Calendar.getInstance().getTime();
+		this.updateDate = Calendar.getInstance().getTime();
 	}
 
 	@Override
@@ -131,7 +165,34 @@ public class Organisation implements IOrganisation, Serializable, Cloneable {
 	public void setWebsite(String website) {
 		this.website = website;
 	}
-		
+	
+	@Override
+	public OrganisationTypes getType() {
+		return type;
+	}
+
+	public void setType(OrganisationTypes type) {
+		this.type = type;
+	}
+
+	@Override
+	public boolean isVerified() {
+		return verified;
+	}
+
+	public void setVerified(boolean verified) {
+		this.verified = verified;
+	}
+
+	@Override
+	public int getScore() {
+		return score;
+	}
+
+	public void setScore(int score) {
+		this.score = score;
+	}
+
 	@Override
 	public IAddress getAddress() {
 		return address;
