@@ -196,7 +196,7 @@ public class ActiveEntryPoint extends AbstractChuruataEntryPoint<OrganisationDat
 	protected void handleTimer() {
 		try {
 			super.handleTimer();
-			mapComposite.refresh();
+			mapComposite.refresh(null);
 			SessionStore<OrganisationData> store = super.getSessionStore();
 			if(( store == null ) || ( store.getLoginUser() == null ))
 				return;

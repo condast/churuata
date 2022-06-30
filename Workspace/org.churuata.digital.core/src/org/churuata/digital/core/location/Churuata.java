@@ -52,7 +52,6 @@ public class Churuata implements Comparable<Churuata>, IChuruata{
 		return null;
 	}
 
-	@Override
 	public ILoginUser getOwner() {
 		return owner;
 	}
@@ -62,12 +61,10 @@ public class Churuata implements Comparable<Churuata>, IChuruata{
 		return name;
 	}
 
-	@Override
 	public void setName(String name) {
 		this.name = name;
 	}
 
-	@Override
 	public void setTypes(Collection<IChuruataService> types) {
 		this.types = types;
 	}
@@ -77,7 +74,6 @@ public class Churuata implements Comparable<Churuata>, IChuruata{
 		return description;
 	}
 
-	@Override
 	public void setDescription(String description) {
 		this.description = description;
 	}
@@ -92,12 +88,10 @@ public class Churuata implements Comparable<Churuata>, IChuruata{
 		return url;
 	}
 
-	@Override
 	public void setHomepage(String url) {
 		this.url = url;
 	}
 
-	@Override
 	public boolean setType( IChuruataService type ) {
 		this.types.clear();
 		return this.types.add(type);
@@ -134,7 +128,6 @@ public class Churuata implements Comparable<Churuata>, IChuruata{
 		return this.maxlogs;
 	}
 
-	@Override
 	public void setMaxLogs(int maxlogs) {
 		this.maxlogs = maxlogs;
 	}
@@ -149,7 +142,6 @@ public class Churuata implements Comparable<Churuata>, IChuruata{
 		return this.maxLeaves;
 	}
 
-	@Override
 	public void setMaxLeaves(int maxLeaves) {
 		this.maxLeaves = maxLeaves;
 	}

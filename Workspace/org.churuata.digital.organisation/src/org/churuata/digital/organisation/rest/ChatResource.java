@@ -8,7 +8,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 
 import org.churuata.digital.core.utils.ChatUtils;
 import org.churuata.digital.organisation.core.Dispatcher;

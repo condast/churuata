@@ -211,7 +211,6 @@ public class RegisterEntryPoint extends AbstractWizardEntryPoint<ContactPersonCo
 		@Override
 		protected void onHandleResponseFail(HttpStatus status, ResponseEvent<ProfileData.Requests> event) throws IOException {
 			super.onHandleResponseFail(status, event);
-		}
-	
+		}	
 	}
 }

@@ -68,18 +68,14 @@ public class AuthenticationResource{
 	@Path("/register")
 	public Response register( @QueryParam("name") String name, @QueryParam("password") String password, @QueryParam("email") String email) {
 		logger.info( "ATTEMPT Register " + name );
-		Response retval = Response.noContent().build();
-		if( StringUtils.isEmpty(name) || StringUtils.isEmpty( email )) {
-			retval = Response.notModified( ErrorMessages.NO_USERNAME_OR_EMAIL.name()).build();
-			return retval;
-		}else if( !IVerification.VerificationTypes.verify(VerificationTypes.EMAIL, email)){
-			retval = Response.notModified( ErrorMessages.NO_USERNAME_OR_EMAIL.name()).build();
-			return retval;
-		}else if( StringUtils.isEmpty( name )) {
+		if( StringUtils.isEmpty(name) || StringUtils.isEmpty( email )) 
+			return Response.notModified( ErrorMessages.NO_USERNAME_OR_EMAIL.name()).build();
+		else if( !IVerification.VerificationTypes.verify(VerificationTypes.EMAIL, email))
+			return Response.notModified( ErrorMessages.NO_USERNAME_OR_EMAIL.name()).build();
+		else if( StringUtils.isEmpty( name ))
 			name = email.split("[@]")[0];
-		}else if( StringUtils.isEmpty( password )) {
+		else if( StringUtils.isEmpty( password ))
 			return Response.status( Status.BAD_REQUEST).build();
-		}
 
 		logger.info( "Registering " + name + "(" + email + ")");
 		Dispatcher dispatcher=  Dispatcher.getInstance();
@@ -96,7 +92,6 @@ public class AuthenticationResource{
 			user.setSecurity(AuthenticationUtils.generateSecurityCode(user));
 			dispatcher.addUser(user);
 			String str = AuthenticationUtils.createDictionaryString(user);
-			retval = Response.ok( str ).build();
 
 			LoginData loginData = new LoginData( name, password, email );
 			long confirmation = dispatcher.addConfirmRegistration(loginData);	
@@ -106,6 +101,7 @@ public class AuthenticationResource{
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
+			return Response.ok( str ).build();
 		}
 		catch( Exception ex ){
 			ex.printStackTrace();
@@ -114,7 +110,6 @@ public class AuthenticationResource{
 		finally {
 			t.close();
 		}
-		return retval;
 	}
 
 	@GET
@@ -122,11 +117,9 @@ public class AuthenticationResource{
 	@Path("/confirm-registration")
 	public Response confirmRegistration( @QueryParam("confirm") long confirmation) {
 		logger.info( "ATTEMPT Confirmation " + confirmation );
-		Response retval = Response.noContent().build();
-		if( confirmation < 0 ) {
-			retval = Response.status( Status.BAD_REQUEST).build();
-			return retval;
-		}
+		if( confirmation < 0 )
+			return Response.status( Status.BAD_REQUEST).build();
+		
 		Dispatcher dispatcher=  Dispatcher.getInstance();
 		LoginData loginData = dispatcher.getStoredUser(confirmation);
 		if( loginData == null )
@@ -141,7 +134,7 @@ public class AuthenticationResource{
 			user.setRegistered(true);
 			dispatcher.addUser(user);
 			String str = AuthenticationUtils.createDictionaryString(user);
-			retval = Response.ok( str ).build();
+			return Response.ok( str ).build();
 		}
 		catch( Exception ex ){
 			ex.printStackTrace();
@@ -150,7 +143,6 @@ public class AuthenticationResource{
 		finally {
 			t.close();
 		}
-		return retval;
 	}
 
 	@GET
@@ -159,16 +151,13 @@ public class AuthenticationResource{
 	public Response login( @QueryParam("name") String name, @QueryParam("password") String password ) {
 		Dispatcher dispatcher=  Dispatcher.getInstance();
 		TransactionManager t = new TransactionManager( dispatcher );
-		Response retval = Response.noContent().build();
 		try{
 			t.open();
 			logger.info( "ATTEMPT Login " + name );
-			if( StringUtils.isEmpty(name) || StringUtils.isEmpty(password )) {
-				retval = Response.notModified( ErrorMessages.NO_USERNAME_OR_PASSWORD.name()).build();
-				return retval;
-			}else if( StringUtils.isEmpty( password )) {
+			if( StringUtils.isEmpty(name) || StringUtils.isEmpty(password ))
+				return Response.notModified( ErrorMessages.NO_USERNAME_OR_PASSWORD.name()).build();
+			else if( StringUtils.isEmpty( password ))
 				return Response.status( Status.BAD_REQUEST).build();
-			}
 
 			logger.info( "Login " + name );
 
@@ -189,7 +178,7 @@ public class AuthenticationResource{
 			}
 
 			String str = AuthenticationUtils.createDictionaryString(user);
-			retval = Response.ok( str ).build();
+			return Response.ok( str ).build();
 		}
 		catch( Exception ex ){
 			ex.printStackTrace();
@@ -198,22 +187,19 @@ public class AuthenticationResource{
 		finally{
 			t.close();
 		}
-		return retval;
 	}
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/login-by-id")
-	public Response loginByUserId( @QueryParam("user-id") long userId, @QueryParam("password") String password ) {
+	public Response loginByUserId( @QueryParam("user-id") long userId, @QueryParam("security") long security ) {
 		Dispatcher dispatcher=  Dispatcher.getInstance();
 		TransactionManager t = new TransactionManager( dispatcher );
 		try{
-			logger.info( "ATTEMPT Login: " + userId );
-			if(StringUtils.isEmpty(password )) {
-				return Response.notModified( ErrorMessages.INVALID_PASSWORD.name()).build();
-			}else if( StringUtils.isEmpty( password )) {
-				return Response.status( Status.BAD_REQUEST).build();
-			}
+			Dispatcher adispatcher=  Dispatcher.getInstance();
+			if( !adispatcher.isLoggedIn(userId, security))
+				return Response.status( Status.UNAUTHORIZED).build();
+
 
 			logger.info( "Login: " + userId );
 
@@ -281,7 +267,6 @@ public class AuthenticationResource{
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/confirm")
 	public Response confirm( @QueryParam("confirm") long code ) {
-		Response retval = Response.noContent().build();
 		try{
 			Dispatcher dispatcher=  Dispatcher.getInstance();
 			ILoginUser user = dispatcher.getUserFromSecurity(code);
@@ -289,13 +274,12 @@ public class AuthenticationResource{
 				return Response.noContent().build();
 			user.setConfirmed(true);
 			String str = AuthenticationUtils.createDictionaryString(user);
-			retval = Response.ok( str ).build();
+			return Response.ok( str ).build();
 		}
 		catch( Exception ex ){
 			ex.printStackTrace();
 			return Response.serverError().build();
 		}
-		return retval;
 	}
 
 	@POST
@@ -426,7 +410,6 @@ public class AuthenticationResource{
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/getall")
 	public Response getAll( @QueryParam("name") String userName, @QueryParam("security") long security ) {
-		Response retval = null;
 		try{
 			//if(!AuthenticationUtils.isAdmin(userName, token)) {
 			//	retval = Response.status( Status.UNAUTHORIZED).build();
@@ -437,13 +420,12 @@ public class AuthenticationResource{
 			Collection<Login> Logins = service.findAll();
 			Gson gson = new Gson();
 			String str = gson.toJson(Logins.toArray( new Login[Logins.size()] ), Login[].class);
-			retval = Response.ok( str).build();
+			return Response.ok( str).build();
 		}
 		catch( Exception ex ){
 			ex.printStackTrace();
 			return Response.serverError().build();
 		}
-		return retval;
 	}
 
 

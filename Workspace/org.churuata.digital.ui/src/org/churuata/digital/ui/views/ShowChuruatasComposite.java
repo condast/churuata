@@ -236,12 +236,12 @@ public class ShowChuruatasComposite extends AbstractEntityComposite<IChuruata>
 		if( input == null )
 			return;
 		String text = this.nameField.getText();
-		if( !StringUtils.isEmpty(text ))
-			input.setName( this.nameField.getText());
-		text = this.descriptionField.getText();
-		if( !StringUtils.isEmpty(text ))
-			input.setDescription( this.descriptionField.getText());
-		input.setType( new ChuruataService( ChuruataService.Services.values()[ this.comboTypes.getSelectionIndex()] ));
+		//if( !StringUtils.isEmpty(text ))
+		//	input.setName( this.nameField.getText());
+		//text = this.descriptionField.getText();
+		//if( !StringUtils.isEmpty(text ))
+		//	input.setDescription( this.descriptionField.getText());
+		//input.setType( new ChuruataService( ChuruataService.Services.values()[ this.comboTypes.getSelectionIndex()] ));
 	}
 
 	@Override
@@ -273,9 +273,9 @@ public class ShowChuruatasComposite extends AbstractEntityComposite<IChuruata>
 			break;
 		case DELETE:
 			IChuruata churuata = getInput();
-			churuata.setName( this.nameField.getText());
-			churuata.setDescription(this.descriptionField.getText());
-			churuata.setType( new ChuruataService( IChuruataService.Services.values()[ this.comboTypes.getSelectionIndex()] ));
+			//churuata.setName( this.nameField.getText());
+			//churuata.setDescription(this.descriptionField.getText());
+			//churuata.setType( new ChuruataService( IChuruataService.Services.values()[ this.comboTypes.getSelectionIndex()] ));
 			break;
 		default:
 			break;

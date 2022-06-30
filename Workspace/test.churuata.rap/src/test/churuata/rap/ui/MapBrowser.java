@@ -295,7 +295,7 @@ public class MapBrowser extends Browser {
 				LatLng location = LatLngUtils.transform( field.getCentre(), x, y);
 				location.setId( id);
 				ChuruataData cd = new ChuruataData( location ); 
-				cd.setName("Organisation " + i);
+				//cd.setName("Organisation " + i);
 				churuatas.add( cd);
 			}
 			handler.addData("update");		

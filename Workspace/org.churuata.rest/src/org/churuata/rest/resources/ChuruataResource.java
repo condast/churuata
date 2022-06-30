@@ -135,7 +135,7 @@ public class ChuruataResource {
 					LatLng location = LatLngUtils.transform( field.getCentre(), x, y);
 					location.setId( id);
 					ChuruataData cd = new ChuruataData( location ); 
-					cd.setName("Organisation " + i);
+					//cd.setName("Organisation " + i);
 					results.add( cd);
 				}
 			}
@@ -187,10 +187,10 @@ public class ChuruataResource {
 				return Response.noContent().build();
 			
 			logger.info( "Create " + churuata.getName() );
-			if( logs > 0 )
-				churuata.setMaxLogs(logs);
-			if( leaves > 0 )
-				churuata.setMaxLeaves(leaves);
+			//if( logs > 0 )
+			//	churuata.setMaxLogs(logs);
+			//if( leaves > 0 )
+			//	churuata.setMaxLeaves(leaves);
 			
 			result = Response.ok().build();
 		}

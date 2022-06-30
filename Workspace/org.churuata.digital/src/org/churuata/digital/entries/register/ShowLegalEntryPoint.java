@@ -4,14 +4,16 @@ import java.util.Locale;
 
 import org.churuata.digital.core.AbstractWizardEntryPoint;
 import org.churuata.digital.core.Dispatcher;
-import org.churuata.digital.core.Entries.Pages;
+import org.churuata.digital.core.Entries;
 import org.churuata.digital.core.data.OrganisationData;
 import org.churuata.digital.session.SessionStore;
 import org.churuata.digital.ui.image.ChuruataImages;
 import org.churuata.digital.ui.image.ChuruataImages.Images;
 import org.condast.commons.authentication.http.IDomainProvider;
+import org.condast.commons.config.Config;
 import org.condast.commons.legal.LegalUtils;
 import org.condast.commons.legal.LegalUtils.Version;
+import org.condast.commons.na.model.IContactPerson;
 import org.condast.commons.parser.AbstractResourceParser;
 import org.condast.commons.strings.StringStyler;
 import org.condast.commons.ui.session.SessionEvent;
@@ -163,13 +165,6 @@ public class ShowLegalEntryPoint extends AbstractWizardEntryPoint<Browser, Organ
 		return browser;
 	}
 
-	
-	@Override
-	protected Composite createComposite(Composite parent) {
-		// TODO Auto-generated method stub
-		return super.createComposite(parent);
-	}
-
 	public void setLicensePath(String licensePath) {
 		this.licensePath = licensePath;
 		linktos.setText( S_HREF + licensePath + ".html" + S_AGREEMENT_1);
@@ -185,7 +180,9 @@ public class ShowLegalEntryPoint extends AbstractWizardEntryPoint<Browser, Organ
 	@Override
 	protected void onNextButtonPressed(OrganisationData data, SessionStore<OrganisationData> store) {
 		store.setData(null);
-		Dispatcher.jump(Pages.REGISTER, store.getToken());
+		Config config = Config.getInstance();
+		String path = config.getServerContext() + Entries.S_HOME;
+		RWTUtils.jump( path );
 	}
 
 	@Override
@@ -268,10 +265,10 @@ public class ShowLegalEntryPoint extends AbstractWizardEntryPoint<Browser, Organ
 			String result = null;
 			if( !LegalAttributes.isValid(id))
 				return result;
-			//IContactPerson person = this.organisation.getContact();
+			IContactPerson person = this.organisation.getContact();
 			switch( LegalAttributes.getAttribute(id)) {
 			case NAME:
-				result = "amalia";//person.getName();
+				result = person.getName();
 				break;
 			case TEAM:
 				result = "Churuata Team";

@@ -23,7 +23,6 @@ public class Service implements IChuruataService {
 	private long id;
 	
 	private String serviceType;
-	private String value;
 	
 	private String description;
 	
@@ -38,14 +37,14 @@ public class Service implements IChuruataService {
 	
 	public Service() {}
 
-	public Service( IChuruataService.Services type, String value ){
-		this( -1, type, value );
+	public Service( IChuruataService.Services type, String description ){
+		this( -1, type, description );
 	}
 	
-	public Service( long id, IChuruataService.Services type, String value ){
+	public Service( long id, IChuruataService.Services type, String description ){
 		this.id = id;
 		this.serviceType = type.name();
-		this.value = value;
+		this.description = description;
 		this.contributor = Contribution.LOG.name();
 		Calendar calendar = Calendar.getInstance();
 		this.fromDate = calendar.getTimeInMillis();
@@ -131,7 +130,7 @@ public class Service implements IChuruataService {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append( this.serviceType );
 		buffer.append(": ");
-		buffer.append( this.value );
+		buffer.append( this.description );
 		return buffer.toString();
 	}
 

@@ -3,11 +3,10 @@ package org.churuata.digital.ui.admin;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.churuata.digital.core.data.OrganisationData;
 import org.churuata.digital.ui.ChuruataLanguage;
-import org.churuata.digital.ui.image.ChuruataImages;
-import org.churuata.digital.ui.image.ChuruataImages.Images;
 import org.condast.commons.Utils;
+import org.condast.commons.authentication.user.IAdmin;
+import org.condast.commons.authentication.user.ILoginUser;
 import org.condast.commons.ui.controller.EditEvent.EditTypes;
 import org.condast.commons.ui.na.NALanguage;
 import org.condast.commons.ui.table.AbstractTableViewerWithDelete;
@@ -22,15 +21,14 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 
-public class AcceptOrganisationTableViewer extends AbstractTableViewerWithDelete<OrganisationData>{
+public class AdminTableViewer extends AbstractTableViewerWithDelete<IAdmin>{
 	private static final long serialVersionUID = 1L;
 
 	private enum Columns{
 		NAME,
-		WEBSITE, 
-		DESCRIPTION,
-		VERIFIED,
-		TRUST;
+		FULL_NAME,
+		EMAIL,
+		ROLE;
 
 		@Override
 		public String toString() {
@@ -39,8 +37,8 @@ public class AcceptOrganisationTableViewer extends AbstractTableViewerWithDelete
 
 		public static int getWeight( Columns column ){
 			switch( column ){
-			case WEBSITE:
 			case NAME:
+			case ROLE:
 				return 30;
 			default:
 				return 10;
@@ -48,8 +46,10 @@ public class AcceptOrganisationTableViewer extends AbstractTableViewerWithDelete
 		}
 	}
 
-	public AcceptOrganisationTableViewer(Composite parent,int style ) {
-		super(parent,style, false );
+	private Button addbutton;
+
+	public AdminTableViewer(Composite parent,int style ) {
+		super(parent,style, true );
 	}
 
 	@Override
@@ -64,27 +64,39 @@ public class AcceptOrganisationTableViewer extends AbstractTableViewerWithDelete
 		viewer.setLabelProvider( new ServicesLabelProvider() );
 	}
 	
-	public OrganisationData[] getInput(){
-		Collection<OrganisationData> contacts = new ArrayList<OrganisationData>();
+	public Button getAddButton() {
+		return addbutton;
+	}
+
+	public IAdmin[] getInput(){
+		Collection<IAdmin> contacts = new ArrayList<IAdmin>();
 		if( Utils.assertNull( super.getInput() ))
 			return null;
 		for( Object obj: super.getInput() ){
-			contacts.add( (OrganisationData) obj );				
+			contacts.add( (IAdmin) obj );				
 		}
-		return contacts.toArray( new OrganisationData[ contacts.size() ]);
+		return contacts.toArray( new IAdmin[ contacts.size() ]);
 	}
 	
-	public void setInput( Collection<OrganisationData> contacts ){
+	public void setInput( Collection<IAdmin> contacts ){
 		super.setInput( contacts );
 	}
 	
 	@Override
-	protected void onRowDoubleClick(OrganisationData selection) {
+	protected void onRowDoubleClick(IAdmin selection) {
 		/* NOTHING */
 	}
 
 	@Override
 	protected void onButtonCreated(Buttons type, Button button) {
+		switch( type ) {
+		case ADD:
+			this.addbutton = button;
+			this.addbutton.setEnabled(false);
+			break;
+		default:
+			break;
+		}
 		GridData gd_button = new GridData(32, 32);
 		gd_button.horizontalAlignment = SWT.RIGHT;
 		button.setLayoutData(gd_button);
@@ -105,7 +117,7 @@ public class AcceptOrganisationTableViewer extends AbstractTableViewerWithDelete
 	}
 	
 	@Override
-	protected boolean onDeleteButton( Collection<OrganisationData> deleted ) {
+	protected boolean onDeleteButton( Collection<IAdmin> deleted ) {
 		return true;
 	}
 
@@ -129,20 +141,18 @@ public class AcceptOrganisationTableViewer extends AbstractTableViewerWithDelete
 			if( retval != null )
 				return retval;
 			Columns column = Columns.values()[ columnIndex ];
-			IStoreWithDelete<OrganisationData> swd = (IStoreWithDelete<OrganisationData>) element;
-			OrganisationData organisation = swd.getStore();
+			IStoreWithDelete<IAdmin> swd = (IStoreWithDelete<IAdmin>) element;
+			IAdmin admin = swd.getStore();
+			ILoginUser user = admin.getUser();
 			switch( column){
 			case NAME:
-				retval = ChuruataLanguage.getInstance().getString( organisation.getName());
+				retval = user.getUserName();
 				break;
-			case WEBSITE:
-				retval = organisation.getWebsite();
+			case EMAIL:
+				retval = user.getEmail();
 				break;
-			case DESCRIPTION:
-				retval = organisation.getDescription();
-				break;
-			case TRUST:
-				retval =  String.valueOf( organisation.getScore() );
+			case ROLE:
+				retval = ChuruataLanguage.getInstance().getString( admin.getRole().toString());
 				break;
 			default:
 				break;				
@@ -154,24 +164,12 @@ public class AcceptOrganisationTableViewer extends AbstractTableViewerWithDelete
 		@SuppressWarnings("unchecked")
 		@Override
 		public Image getColumnImage(Object arg0, int columnIndex) {
-			Image image = super.getColumnImage(arg0, columnIndex);
 			if( columnIndex == getDeleteColumnindex() ){
-				IStoreWithDelete<OrganisationData> swd = (IStoreWithDelete<OrganisationData>) arg0;
+				IStoreWithDelete<IAdmin> swd = (IStoreWithDelete<IAdmin>) arg0;
 				if( swd.getCount() == 1 )
 					return null;
 			}
-			Columns column = Columns.values()[ columnIndex ];
-			IStoreWithDelete<OrganisationData> swd = (IStoreWithDelete<OrganisationData>) arg0;
-			OrganisationData organisation = swd.getStore();
-			ChuruataImages images = ChuruataImages.getInstance();
-			switch( column){
-			case VERIFIED:
-				image = organisation.isVerified()? images.getImage( Images.CHECK): image;
-				break;
-			default:
-				break;				
-			}
-			return image;
+			return super.getColumnImage(arg0, columnIndex);
 		}
 	}
 }

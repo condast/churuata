@@ -14,7 +14,6 @@ import java.util.logging.Logger;
 import org.churuata.digital.core.data.OrganisationData;
 import org.churuata.digital.core.location.ChuruataData;
 import org.churuata.digital.core.location.IChuruata;
-import org.churuata.digital.core.location.IChuruataCollection;
 import org.churuata.digital.core.location.IChuruataService;
 import org.churuata.digital.core.location.IChuruata.Requests;
 import org.churuata.digital.core.rest.IRestPages;
@@ -66,7 +65,7 @@ public class MapBrowser extends Browser {
 
 	private OpenLayerController mapController;
 	
-	private IChuruataCollection churuatas;
+	private Collection<OrganisationData> organisations;
 
 	private Collection<IEditListener<LatLng>> listeners;
 	
@@ -108,6 +107,7 @@ public class MapBrowser extends Browser {
 		this.mapController = new OpenLayerController( this, location, 11 );
 		this.mapController.addEvaluationListener( listener);
 		this.listeners = new ArrayList<>();
+		this.organisations = new ArrayList<>();
 		controller = new WebController();
 		this.handler = new SessionHandler(getDisplay());
 	}
@@ -156,6 +156,7 @@ public class MapBrowser extends Browser {
 					geo.setFieldData(fieldData);
 					geo.jump();
 					logger.info("Jumped to geo location");
+					notifyEditListeners( new EditEvent<LatLng>( this, EditTypes.SELECTED, home ));
 					return;
 				}
 			}
@@ -164,14 +165,6 @@ public class MapBrowser extends Browser {
 				Object[] loc = ( Object[])event.getData()[2];
 				home = new LatLng((String) event.getData()[1], (double)loc[1], (double)loc[0] );
 				notifyEditListeners( new EditEvent<LatLng>( this, EditTypes.CHANGED, home ));
-
-				if( churuatas == null )
-					return;
-				IconsView icons = new IconsView( mapController );
-				IChuruata churuata = new ChuruataData(home);
-				churuatas.addChuruata(churuata);
-				createMarker(icons, churuata, true);
-				updateMarkers(icons);
 				//RWTUtils.redirect( S_UNITY_START_PAGE );
 			}
 			if( IEvaluationListener.EventTypes.SELECTED.equals( event.getEventType())) {
@@ -233,7 +226,7 @@ public class MapBrowser extends Browser {
 			logger.info("Requesting geo location");
 			//NavigationView navigation = new NavigationView(mapController);
 			//navigation.getLocation();
-			handler.addData("update");
+			handler.addData(null);
 			//Only needed to enforce a refresh
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -244,9 +237,10 @@ public class MapBrowser extends Browser {
 		if( mapController.isExecuting())
 			return;
 		IconsView icons = new IconsView( mapController );
-		icons.clearIcons();
+		//icons.clearIcons();
 		
 		createIcon(icons, input);
+		updateMarkers(icons);
 
 		Collection<IChuruata> churuatas = new ArrayList<IChuruata>( controller.churuatas );
 		if( Utils.assertNull(churuatas))
@@ -258,11 +252,12 @@ public class MapBrowser extends Browser {
 		}
 	}
 
-	public void refresh() {
+	public void refresh( OrganisationData[] input) {
 		try {
-			this.controller.show();
-			onNavigation();
-			handler.addData("update");
+			//updateMap();
+			//this.controller.show();
+			//onNavigation();
+			//handler.addData(input);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}		
@@ -276,11 +271,10 @@ public class MapBrowser extends Browser {
 	}
 
 	public void updateMarkers( IconsView icons) {
-		icons.clearIcons();
-		if( this.churuatas == null )
+		if( Utils.assertNull( this.organisations ))
 			return;
-		for( IChuruata churuata: churuatas.getChuruatas()) {
-			createMarker(icons, churuata, false);
+		for( OrganisationData churuata: this.organisations) {
+			createIcon(icons, churuata);
 		}		
 	}
 
@@ -388,29 +382,29 @@ public class MapBrowser extends Browser {
 			} catch (JsonSyntaxException e) {
 				e.printStackTrace();
 			}
-			finally {
-				updateMap();
-			}
 			return null;
 		}
 
 		@Override
 		protected void onHandleResponseFail(HttpStatus status, ResponseEvent<Requests> event)
 				throws IOException {
-			// TODO Auto-generated method stub
 			logger.info("Failed: " + event.getRequest());
 			super.onHandleResponseFail(status, event);
 		}		
 	}
 	
-	private class SessionHandler extends AbstractSessionHandler<String>{
+	private class SessionHandler extends AbstractSessionHandler<OrganisationData[]>{
 
 		protected SessionHandler(Display display) {
 			super(display);
 		}
 
 		@Override
-		protected void onHandleSession(SessionEvent<String> sevent) {
+		protected void onHandleSession(SessionEvent<OrganisationData[]> sevent) {
+			if( sevent.getData() != null ) {
+				organisations.clear();
+				organisations.addAll( Arrays.asList(sevent.getData()));
+			}
 			updateMap();		
 		}	
 	}

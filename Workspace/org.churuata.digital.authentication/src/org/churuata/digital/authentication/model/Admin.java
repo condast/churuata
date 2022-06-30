@@ -15,6 +15,7 @@ import javax.persistence.TemporalType;
 
 import org.condast.commons.authentication.user.IAdmin;
 import org.condast.commons.authentication.user.ILoginUser;
+import org.condast.commons.strings.StringUtils;
 
 @Entity
 public class Admin implements IAdmin, Serializable {
@@ -30,7 +31,7 @@ public class Admin implements IAdmin, Serializable {
 	
 	@Basic(optional = true)
 	@Column( nullable=false)
-	private Roles role;
+	private String role;
 	
 	@Basic(optional = false)
 	@Column( nullable=false)
@@ -51,7 +52,7 @@ public class Admin implements IAdmin, Serializable {
 
 	public Admin( ILoginUser user, Roles role) {
 		this();
-		this.role = role;
+		this.role = role.name();
 		this.loginId = this.login.getId();
 		this.login = (Login) user;
 	}
@@ -79,11 +80,11 @@ public class Admin implements IAdmin, Serializable {
 	}
 
 	public Roles getRole() {
-		return (role==null)?Roles.GUEST: role;
+		return StringUtils.isEmpty(role)?Roles.GUEST: Roles.valueOf(role);
 	}
 
 	public void setRole( Roles role) {
-		this.role = role;
+		this.role = role.name();
 	}
 
 	@Override

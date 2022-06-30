@@ -1,6 +1,7 @@
 package org.churuata.digital.authentication.services;
 
 import java.util.Collection;
+import java.util.List;
 
 import javax.persistence.TypedQuery;
 
@@ -50,4 +51,13 @@ public class AdminService extends AbstractEntityService<Admin>{
 		return users.toArray( new IAdmin[ users.size()]);
 	}
 
+	public List<Admin> findAll() {
+		List<Admin> admins = super.findAll();
+		LoginService ls = new LoginService( super.getService());
+		admins.forEach( a -> { 
+			ILoginUser login = ls.find(a.getLoginId());
+			a.setLogin(login);
+		});
+		return admins;
+	}
 }

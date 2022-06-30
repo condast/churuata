@@ -12,6 +12,7 @@ import org.churuata.digital.core.data.OrganisationData;
 import org.churuata.digital.core.data.ProfileData;
 import org.churuata.digital.core.rest.IRestPages;
 import org.churuata.digital.session.SessionStore;
+import org.churuata.digital.ui.admin.AcceptOrganisationTableViewer;
 import org.condast.commons.authentication.http.IDomainProvider;
 import org.condast.commons.messaging.http.AbstractHttpRequest;
 import org.condast.commons.messaging.http.ResponseEvent;
@@ -21,7 +22,6 @@ import org.condast.commons.na.model.IContact;
 import org.condast.commons.strings.StringUtils;
 import org.condast.commons.ui.controller.EditEvent;
 import org.condast.commons.ui.controller.IEditListener;
-import org.condast.commons.ui.na.person.ContactPersonComposite;
 import org.condast.commons.ui.session.SessionEvent;
 import org.eclipse.rap.rwt.RWT;
 import org.eclipse.rap.rwt.client.service.StartupParameters;
@@ -33,14 +33,14 @@ import org.eclipse.swt.widgets.Composite;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
-public class AcceptanceEntryPoint extends AbstractWizardEntryPoint<ContactPersonComposite, OrganisationData>{
+public class AcceptanceEntryPoint extends AbstractWizardEntryPoint<AcceptOrganisationTableViewer, OrganisationData>{
 	private static final long serialVersionUID = 1L;
 
 	public static final String S_ADD_ACCOUNT = "Add Account";
 
-	private ContactPersonComposite personComposite;
+	private AcceptOrganisationTableViewer acceptTableViewer;
 
-	private IEditListener<ContactPersonData> listener = e->onPersonEvent(e);
+	private IEditListener<OrganisationData> listener = e->onOrganisationEvent(e);
 
 	private WebController controller;
 	
@@ -83,12 +83,11 @@ public class AcceptanceEntryPoint extends AbstractWizardEntryPoint<ContactPerson
 	}
 
 	@Override
-	protected ContactPersonComposite onCreateComposite(Composite parent, int style) {
-		personComposite = new ContactPersonComposite(parent, SWT.NONE );
-		personComposite.setData( RWT.CUSTOM_VARIANT, S_CHURUATA );
-		personComposite.setLayoutData( new GridData( SWT.FILL, SWT.FILL, true, true ));
-		personComposite.addEditListener( listener);
-		return personComposite;
+	protected AcceptOrganisationTableViewer onCreateComposite(Composite parent, int style) {
+		acceptTableViewer = new AcceptOrganisationTableViewer(parent, SWT.NONE );
+		acceptTableViewer.setData( RWT.CUSTOM_VARIANT, S_CHURUATA );
+		acceptTableViewer.setLayoutData( new GridData( SWT.FILL, SWT.FILL, true, true ));
+		return acceptTableViewer;
 	}
 
 	@Override
@@ -104,18 +103,18 @@ public class AcceptanceEntryPoint extends AbstractWizardEntryPoint<ContactPerson
 				person.addContact(contact);
 			store.setContactPersonData(person);
 		}
-		if( person != null )
-			personComposite.setInput(store.getContactPersonData(), true);
+		//if( person != null )
+			//acceptTableViewer.setInput(store.getData(), true);
 		return true;
 	}
 
-	protected void onPersonEvent( EditEvent<ContactPersonData> event ) {
+	protected void onOrganisationEvent( EditEvent<OrganisationData> event ) {
 		ContactPersonData data = null;
 		SessionStore<OrganisationData> store = super.getSessionStore();
 		controller.type = event.getType();
 		switch( event.getType()) {
 		case ADDED:
-			store.setContactPersonData( this.personComposite.getInput());
+			//store.setContactPersonData( this.acceptTableViewer.getInput());
 			PersonData person = store.getPersonData();
 			if( person == null ) 
 				controller.register( store.getContactPersonData());
@@ -124,7 +123,7 @@ public class AcceptanceEntryPoint extends AbstractWizardEntryPoint<ContactPerson
 				
 			break;
 		case COMPLETE:
-			data = event.getData();
+			//data = event.getData();
 			store.setContactPersonData(data);
 			Button btnNext = super.getBtnNext();
 			btnNext.setEnabled(( data != null ));
@@ -137,7 +136,7 @@ public class AcceptanceEntryPoint extends AbstractWizardEntryPoint<ContactPerson
 	@Override
 	protected void onHandleTimer(SessionEvent<OrganisationData> event) {
 		try {
-			personComposite.refresh();
+			//acceptTableViewer.refresh();
 			super.handleTimer();
 		} catch (Exception e) {
 			e.printStackTrace();

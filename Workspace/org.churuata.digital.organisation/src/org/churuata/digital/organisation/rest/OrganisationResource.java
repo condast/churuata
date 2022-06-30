@@ -1,6 +1,9 @@
 package org.churuata.digital.organisation.rest;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.logging.Logger;
 
 import javax.ws.rs.Consumes;
@@ -15,8 +18,10 @@ import javax.ws.rs.core.Response.Status;
 
 import org.churuata.digital.core.data.OrganisationData;
 import org.churuata.digital.core.location.IChuruataService;
+import org.churuata.digital.core.model.IOrganisation;
 import org.churuata.digital.organisation.core.AuthenticationDispatcher;
 import org.churuata.digital.organisation.core.Dispatcher;
+import org.churuata.digital.organisation.core.LocationComparator;
 import org.churuata.digital.organisation.model.Organisation;
 import org.churuata.digital.organisation.model.Person;
 import org.churuata.digital.organisation.model.Service;
@@ -211,6 +216,34 @@ public class OrganisationResource{
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/find-in-range")
+	public Response findAll( @QueryParam("latitude") double latitude, @QueryParam("longitude") double longitude, @QueryParam("range") int range ) {
+		logger.info( "ATTEMPT Get " );
+
+		TransactionManager t = new TransactionManager( Dispatcher.getInstance() );
+		try {
+			t.open();
+			OrganisationService os = new OrganisationService(); 
+			List<Organisation> orgs = os.findAll();// os.getAll(latitude, longitude, range );
+			Collections.sort(orgs, new LocationComparator<IOrganisation>( latitude, longitude));
+			
+			Collection<OrganisationData> results = new ArrayList<>();
+			orgs.forEach( o->{ results.add( new OrganisationData( o )); });
+			Gson gson = new Gson();
+			String str = gson.toJson( results.toArray( new OrganisationData[ results.size()]), OrganisationData[].class);
+			return Response.ok( str ).build();
+		}
+		catch( Exception ex ) {
+			ex.printStackTrace();
+			return Response.serverError().build();
+		}
+		finally {
+			t.close();
+		}
+	}
+
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/add-service")
 	public Response addService( @QueryParam("person-id") long personId,
 			@QueryParam("organisation-id") long organisationId, @QueryParam("type") String type, @QueryParam("name") String name,
@@ -237,6 +270,7 @@ public class OrganisationResource{
 			service.setFromDate(from);
 			service.setToDate( to);
 			organisation.addService(service);
+			os.update(organisation);
 			Gson gson = new Gson();
 			String str = gson.toJson( new OrganisationData( organisation ), OrganisationData.class);
 			return Response.ok( str ).build();

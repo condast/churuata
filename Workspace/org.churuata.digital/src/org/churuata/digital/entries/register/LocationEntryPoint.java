@@ -71,6 +71,7 @@ public class LocationEntryPoint extends AbstractWizardEntryPoint<MapBrowser, Org
 			btnNext.setEnabled(true);
 			SessionStore<OrganisationData> store = getSessionStore();
 			OrganisationData data = store.getData();
+			data.setLocation(e.getData());
 			controller.update(data);
 			break;
 		default:
@@ -88,7 +89,7 @@ public class LocationEntryPoint extends AbstractWizardEntryPoint<MapBrowser, Org
 	@Override
 	protected void onHandleTimer(SessionEvent<OrganisationData> event) {
 		try {
-			mapComposite.refresh();
+			mapComposite.refresh(null);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -111,8 +112,8 @@ public class LocationEntryPoint extends AbstractWizardEntryPoint<MapBrowser, Org
 			Map<String, String> params = super.getParameters();
 			params.put(ServiceData.Parameters.PERSON_ID.toString(), String.valueOf(data.getContact().getId()));
 			params.put(ServiceData.Parameters.ORGANISATION_ID.toString(), String.valueOf( data.getId()));
-			params.put(ServiceData.Parameters.LATITUDE.toString(), String.valueOf(data.getContact().getId()));
-			params.put(ServiceData.Parameters.LONGITUDE.toString(), String.valueOf( data.getId()));
+			params.put(ServiceData.Parameters.LATITUDE.toString(), String.valueOf(data.getLocation().getLatitude()));
+			params.put(ServiceData.Parameters.LONGITUDE.toString(), String.valueOf( data.getLocation().getLongitude()));
 			try {
 				super.sendGet(OrganisationData.Requests.SET_LOCATION, params);
 			} catch (IOException e) {

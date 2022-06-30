@@ -13,6 +13,8 @@ import org.eclipse.rap.rwt.application.EntryPoint;
 
 public class Entries {
 
+	public static final String S_HOME = "churuata";
+
 	public static final String S_ENTRY_POITNT = "EntryPoint";
 	private static final String S_PAGE_RESOURCE = "/design/pages.txt";
 	

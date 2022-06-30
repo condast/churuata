@@ -30,7 +30,7 @@ public class ChuruataService extends AbstractEntityService<Churuata>{
 		Location location= ls.create(user, name, latlng);
 		Churuata churuata = new Churuata( user, name, location );
 		churuata.addType( user.getUserName(), type );
-		churuata.setDescription(description);
+		//churuata.setDescription(description);
 		churuata.setCreateDate(Calendar.getInstance().getTime());
 		churuata.setUpdateDate(Calendar.getInstance().getTime());
 		super.create(churuata);

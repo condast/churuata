@@ -25,6 +25,7 @@ public class OrganisationData implements IOrganisation, Serializable, Cloneable 
 		CREATE,
 		REGISTER,
 		FIND,
+		FIND_IN_RANGE,
 		ADD_SERVICE,
 		REMOVE_SERVICE, 
 		SET_LOCATION;
@@ -37,6 +38,7 @@ public class OrganisationData implements IOrganisation, Serializable, Cloneable 
 		DESCRIPTION,
 		LATITUDE,
 		LONGITUDE,
+		RANGE,
 		TYPE, 
 		WEBSITE;
 
@@ -94,6 +96,7 @@ public class OrganisationData implements IOrganisation, Serializable, Cloneable 
 
 	public OrganisationData( IOrganisation organisation ){
 		this.organisationId = organisation.getId();
+		this.location = organisation.getLocation();
 		this.contact= new PersonData( organisation.getContact());
 		this.name = organisation.getName();
 		this.description = organisation.getDescription();

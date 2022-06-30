@@ -176,7 +176,7 @@ public class ActiveEntryPoint extends AbstractRestEntryPoint<SessionStore<Organi
 	protected void handleTimer() {
 		try {
 			super.handleTimer();
-			mapComposite.refresh();
+			mapComposite.refresh(null);
 			SessionStore<OrganisationData> store = super.getData();
 			if(( store == null ) || ( store.getLoginUser() == null ))
 				return;
