@@ -57,7 +57,6 @@ public class Service implements IChuruataService {
 		return id;
 	}
 
-	@Override
 	public IOrganisation getOrganisation() {
 		return organisation;
 	}

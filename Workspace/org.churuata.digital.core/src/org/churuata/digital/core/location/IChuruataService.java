@@ -2,7 +2,6 @@ package org.churuata.digital.core.location;
 
 import java.util.Date;
 
-import org.churuata.digital.core.model.IOrganisation;
 import org.condast.commons.strings.StringStyler;
 import org.condast.js.commons.images.IDefaultMarkers.Markers;
 
@@ -113,8 +112,6 @@ public interface IChuruataService {
 	public Date to();
 	
 	public void setTo( Date date );
-
-	IOrganisation getOrganisation();
 
 	void setService(Services type);
 

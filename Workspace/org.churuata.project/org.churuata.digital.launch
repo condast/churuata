@@ -106,6 +106,7 @@
     </setAttribute>
     <setAttribute key="selected_workspace_bundles">
         <setEntry value="nl.martijndwars.webpush@default:default"/>
+        <setEntry value="org.churuata.caminantes@default:default"/>
         <setEntry value="org.churuata.digital.authentication@default:default"/>
         <setEntry value="org.churuata.digital.core@default:default"/>
         <setEntry value="org.churuata.digital.organisation@default:default"/>

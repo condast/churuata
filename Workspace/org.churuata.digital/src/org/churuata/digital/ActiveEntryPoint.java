@@ -5,7 +5,7 @@ import java.util.concurrent.TimeUnit;
 import org.churuata.digital.core.data.OrganisationData;
 import org.churuata.digital.session.SessionStore;
 import org.churuata.digital.ui.image.ChuruataImages;
-import org.churuata.digital.ui.map.MapBrowser;
+import org.churuata.digital.ui.map.OrganisationMapBrowser;
 import org.condast.commons.authentication.http.IDomainProvider;
 import org.condast.commons.config.Config;
 import org.condast.commons.data.latlng.LatLng;
@@ -35,7 +35,7 @@ public class ActiveEntryPoint extends AbstractRestEntryPoint<SessionStore<Organi
 
 	public static final String S_ERR_NO_VESSEL = "No Vessel has been found.";
 
-	private MapBrowser mapComposite;
+	private OrganisationMapBrowser mapComposite;
 	private Button btnLocate;
 	private Button btnCreate;
 	private Button btnEdit;
@@ -69,7 +69,7 @@ public class ActiveEntryPoint extends AbstractRestEntryPoint<SessionStore<Organi
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
 		parent.setLayout(layout);
-		mapComposite = new MapBrowser(parent, SWT.NONE );
+		mapComposite = new OrganisationMapBrowser(parent, SWT.NONE );
 		mapComposite.setData( RWT.CUSTOM_VARIANT, S_CHURUATA );
 		mapComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		mapComposite.addEditListener( e->onLocationChanged(e));
@@ -176,7 +176,7 @@ public class ActiveEntryPoint extends AbstractRestEntryPoint<SessionStore<Organi
 	protected void handleTimer() {
 		try {
 			super.handleTimer();
-			mapComposite.refresh(null);
+			//mapComposite.setInput(null);
 			SessionStore<OrganisationData> store = super.getData();
 			if(( store == null ) || ( store.getLoginUser() == null ))
 				return;

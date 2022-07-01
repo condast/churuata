@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 import javax.servlet.http.HttpSession;
 
 import org.churuata.digital.core.data.OrganisationData;
+import org.churuata.digital.core.data.simple.SimpleOrganisationData;
 import org.churuata.digital.core.rest.IRestPages;
 import org.churuata.digital.ui.map.MapBrowser;
 import org.condast.commons.config.Config;
@@ -90,7 +91,7 @@ public class BasicEntryPoint extends AbstractRestEntryPoint<OrganisationData> {
 	@Override
 	protected void handleTimer() {
 		try {
-			mapComposite.refresh( controller.data);
+			//mapComposite.refresh( controller.data);
 			if( location != null )
 				controller.locate( location, DEFAULT_RANGE);
 
@@ -108,7 +109,7 @@ public class BasicEntryPoint extends AbstractRestEntryPoint<OrganisationData> {
 	
 	private class WebController extends AbstractHttpRequest<OrganisationData.Requests>{
 		
-		OrganisationData[] data;
+		SimpleOrganisationData[] data;
 		
 		public WebController() {
 			super();
@@ -136,7 +137,8 @@ public class BasicEntryPoint extends AbstractRestEntryPoint<OrganisationData> {
 				Gson gson = new Gson();
 				switch( event.getRequest()){
 				case FIND_IN_RANGE:
-					data = gson.fromJson(event.getResponse(), OrganisationData[].class);
+					data = gson.fromJson(event.getResponse(), SimpleOrganisationData[].class);
+					mapComposite.setInput(data);
 					break;
 				default:
 					break;

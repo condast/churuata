@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         id="mapFilter"
+         point="org.eclipse.equinox.http.registry.filters">
+      <filter
+            alias="/"
+            class="org.churuata.caminantes.http.MapFilter"
+            load-on-startup="true">
+      </filter>
+   </extension>
+   <extension
+         point="org.eclipse.equinox.http.registry.servlets">
+      <servlet
+            alias="/caminantes"
+            class="org.churuata.caminantes.http.ChuruataServlet"
+            load-on-startup="true">
+      </servlet>
+   </extension>
+   <extension
+         point="org.eclipse.equinox.http.registry.resources">
+      <resource
+            alias="/caminantes/web"
+            base-name="/WEB-INF">
+      </resource>
+   </extension>
+ </plugin>

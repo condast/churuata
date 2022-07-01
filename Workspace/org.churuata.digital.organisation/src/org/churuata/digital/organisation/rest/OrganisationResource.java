@@ -17,6 +17,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.churuata.digital.core.data.OrganisationData;
+import org.churuata.digital.core.data.simple.SimpleOrganisationData;
 import org.churuata.digital.core.location.IChuruataService;
 import org.churuata.digital.core.model.IOrganisation;
 import org.churuata.digital.organisation.core.AuthenticationDispatcher;
@@ -87,10 +88,10 @@ public class OrganisationResource{
 		ILoginUser user = dispatcher.getLoginUser(userId, security);
 		Gson gson = new Gson();
 		OrganisationData od = gson.fromJson(data, OrganisationData.class);
-		OrganisationService os = new OrganisationService(); 
 		TransactionManager t = new TransactionManager( Dispatcher.getInstance() );
 		try {
 			t.open();
+			OrganisationService os = new OrganisationService(); 
 			PersonService ps = new PersonService(); 
 			ContactService cs = new ContactService();
 
@@ -197,9 +198,9 @@ public class OrganisationResource{
 			return Response.status( Status.UNAUTHORIZED).build();
 
 		TransactionManager t = new TransactionManager( Dispatcher.getInstance() );
-		OrganisationService os = new OrganisationService(); 
 		try {
 			t.open();
+			OrganisationService os = new OrganisationService(); 
 			Organisation organisation = os.find( organisationId );
 			Gson gson = new Gson();
 			String str = gson.toJson( new OrganisationData( organisation ), OrganisationData.class);
@@ -226,11 +227,13 @@ public class OrganisationResource{
 			OrganisationService os = new OrganisationService(); 
 			List<Organisation> orgs = os.findAll();// os.getAll(latitude, longitude, range );
 			Collections.sort(orgs, new LocationComparator<IOrganisation>( latitude, longitude));
+			if( Utils.assertNull(orgs))
+				return Response.noContent().build();
 			
-			Collection<OrganisationData> results = new ArrayList<>();
-			orgs.forEach( o->{ results.add( new OrganisationData( o )); });
+			Collection<SimpleOrganisationData> results = new ArrayList<>();
+			orgs.forEach( o->{ results.add( new SimpleOrganisationData( o )); });
 			Gson gson = new Gson();
-			String str = gson.toJson( results.toArray( new OrganisationData[ results.size()]), OrganisationData[].class);
+			String str = gson.toJson( results.toArray( new SimpleOrganisationData[ results.size()]), SimpleOrganisationData[].class);
 			return Response.ok( str ).build();
 		}
 		catch( Exception ex ) {
@@ -298,9 +301,9 @@ public class OrganisationResource{
 			return Response.status( Status.BAD_REQUEST ).build();
 		
 		TransactionManager t = new TransactionManager( Dispatcher.getInstance() );
-		OrganisationService os = new OrganisationService(); 
 		try {
 			t.open();
+			OrganisationService os = new OrganisationService(); 
 			Organisation organisation = os.find( organisationId );
 			if( organisation == null )
 				return Response.noContent().build();
@@ -331,9 +334,9 @@ public class OrganisationResource{
 		IChuruataService.Services st = IChuruataService.Services.valueOf(type);
 		
 		TransactionManager t = new TransactionManager( Dispatcher.getInstance() );
-		OrganisationService os = new OrganisationService(); 
 		try {
 			t.open();
+			OrganisationService os = new OrganisationService(); 
 			Organisation organisation = os.find( organisationId );
 			if( organisation == null )
 				return Response.noContent().build();

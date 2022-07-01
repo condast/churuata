@@ -31,8 +31,6 @@ public class ServiceData implements IChuruataService {
 	private String description;
 	
 	private String contribution;
-
-	private OrganisationData organisation;
 	
 	private long fromDate;
 	
@@ -64,10 +62,6 @@ public class ServiceData implements IChuruataService {
 	@Override
 	public long getId() {
 		return id;
-	}
-
-	public OrganisationData getOrganisation() {
-		return organisation;
 	}
 
 	@Override

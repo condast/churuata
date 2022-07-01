@@ -15,6 +15,7 @@ Import-Package: org.condast.commons,
  org.condast.js.commons.images
 Export-Package: org.churuata.digital.core,
  org.churuata.digital.core.data,
+ org.churuata.digital.core.data.simple,
  org.churuata.digital.core.location,
  org.churuata.digital.core.model,
  org.churuata.digital.core.rest,

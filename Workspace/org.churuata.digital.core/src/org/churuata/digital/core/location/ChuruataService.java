@@ -55,12 +55,6 @@ public class ChuruataService implements IChuruataService, Comparable<IChuruataSe
 	}
 
 	@Override
-	public IOrganisation getOrganisation() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public String getDescription() {
 		return description;
 	}

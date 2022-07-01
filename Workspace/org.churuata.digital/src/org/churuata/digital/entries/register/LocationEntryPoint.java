@@ -9,9 +9,10 @@ import org.churuata.digital.core.Dispatcher;
 import org.churuata.digital.core.Entries.Pages;
 import org.churuata.digital.core.data.OrganisationData;
 import org.churuata.digital.core.data.ServiceData;
+import org.churuata.digital.core.data.simple.SimpleOrganisationData;
 import org.churuata.digital.core.rest.IRestPages;
 import org.churuata.digital.session.SessionStore;
-import org.churuata.digital.ui.map.MapBrowser;
+import org.churuata.digital.ui.map.OrganisationMapBrowser;
 import org.condast.commons.authentication.http.IDomainProvider;
 import org.condast.commons.data.latlng.LatLng;
 import org.condast.commons.messaging.http.AbstractHttpRequest;
@@ -29,10 +30,10 @@ import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
 
-public class LocationEntryPoint extends AbstractWizardEntryPoint<MapBrowser, OrganisationData> {
+public class LocationEntryPoint extends AbstractWizardEntryPoint<OrganisationMapBrowser, OrganisationData> {
 	private static final long serialVersionUID = 1L;
 
-	private MapBrowser mapComposite;
+	private OrganisationMapBrowser mapComposite;
 
 	private IEditListener<LatLng> listener = e->onEditEvent( e );
 
@@ -46,8 +47,8 @@ public class LocationEntryPoint extends AbstractWizardEntryPoint<MapBrowser, Org
 	}
 	
 	@Override
-	protected MapBrowser onCreateComposite(Composite parent, int style) {
-        mapComposite = new MapBrowser( parent, SWT.NONE);
+	protected OrganisationMapBrowser onCreateComposite(Composite parent, int style) {
+        mapComposite = new OrganisationMapBrowser( parent, SWT.NONE);
  		mapComposite.setData( RWT.CUSTOM_VARIANT, S_CHURUATA );
 		mapComposite.addEditListener(listener);
  		return mapComposite;
@@ -57,7 +58,7 @@ public class LocationEntryPoint extends AbstractWizardEntryPoint<MapBrowser, Org
 	protected boolean onPostProcess(String context, OrganisationData data, SessionStore<OrganisationData> store) {
 		controller = new WebController( context, IRestPages.Pages.ORGANISATION.toPath());
 		mapComposite.setInput(context);
-		mapComposite.setInput(store.getData());
+		mapComposite.setInput(new SimpleOrganisationData( store.getData()));
 		mapComposite.locate();
 		return true;
 	}
@@ -89,7 +90,7 @@ public class LocationEntryPoint extends AbstractWizardEntryPoint<MapBrowser, Org
 	@Override
 	protected void onHandleTimer(SessionEvent<OrganisationData> event) {
 		try {
-			mapComposite.refresh(null);
+			//mapComposite.refresh(null);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
