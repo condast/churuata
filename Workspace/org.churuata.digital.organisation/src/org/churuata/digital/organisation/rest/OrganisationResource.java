@@ -36,6 +36,7 @@ import org.condast.commons.na.data.PersonData;
 import org.condast.commons.na.model.IContact;
 import org.condast.commons.na.model.IContactPerson;
 import org.condast.commons.persistence.service.TransactionManager;
+import org.condast.commons.strings.StringStyler;
 import org.condast.commons.strings.StringUtils;
 import com.google.gson.Gson;
 
@@ -57,13 +58,7 @@ public class OrganisationResource{
 	public static final String S_ERR_INVALID_USER    = "The provided credentials are invalid:";
 
 	private enum ErrorMessages{
-		NO_NAME_OR_TYPE,
-		NO_USERNAME_OR_PASSWORD,
-		INVALID_USERNAME,
-		INVALID_PASSWORD,
-		USERNAME_ALREADY_EXISTS, 
-		INVALID_EMAIL, 
-		INVALID_REGISTRATION, PASSWORD_DOES_NOT_MATCH_CONFIRMATION;
+		NO_NAME_OR_TYPE;
 	}
 
 	private Logger logger = Logger.getLogger(this.getClass().getName());
@@ -190,7 +185,7 @@ public class OrganisationResource{
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/find")
-	public Response createContact( @QueryParam("user-id") long userId, @QueryParam("security") long security, @QueryParam("organisation-id") long organisationId) {
+	public Response find( @QueryParam("user-id") long userId, @QueryParam("security") long security, @QueryParam("organisation-id") long organisationId) {
 		logger.info( "ATTEMPT Get " );
 
 		AuthenticationDispatcher dispatcher=  AuthenticationDispatcher.getInstance();
@@ -204,6 +199,37 @@ public class OrganisationResource{
 			Organisation organisation = os.find( organisationId );
 			Gson gson = new Gson();
 			String str = gson.toJson( new OrganisationData( organisation ), OrganisationData.class);
+			return Response.ok( str ).build();
+		}
+		catch( Exception ex ) {
+			ex.printStackTrace();
+			return Response.serverError().build();
+		}
+		finally {
+			t.close();
+		}
+	}
+
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/get-all")
+	public Response getAll( @QueryParam("user-id") long userId, @QueryParam("security") long security, @QueryParam("verified") String verification) {
+		logger.info( "ATTEMPT Get " );
+
+		AuthenticationDispatcher dispatcher=  AuthenticationDispatcher.getInstance();
+		if( !dispatcher.isLoggedIn(userId, security))
+			return Response.status( Status.UNAUTHORIZED).build();
+
+		IOrganisation.Verification verify = StringUtils.isEmpty(verification)? IOrganisation.Verification.ALL:
+			IOrganisation.Verification.valueOf( String.valueOf( StringStyler.styleToEnum(verification)));
+		
+		TransactionManager t = new TransactionManager( Dispatcher.getInstance() );
+		try {
+			t.open();
+			OrganisationService os = new OrganisationService(); 
+			OrganisationData[] organisations = OrganisationService.toOrganisationData( os.findAll( verify ));
+			Gson gson = new Gson();
+			String str = gson.toJson( organisations, OrganisationData[].class);
 			return Response.ok( str ).build();
 		}
 		catch( Exception ex ) {

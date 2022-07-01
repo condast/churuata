@@ -3,6 +3,7 @@ package org.churuata.digital.authentication;
 import javax.servlet.Servlet;
 import javax.ws.rs.ApplicationPath;
 
+import org.churuata.digital.authentication.rest.AdminResource;
 import org.churuata.digital.authentication.rest.AuthenticationResource;
 import org.condast.commons.messaging.http.AbstractServletWrapper;
 import org.glassfish.jersey.server.ResourceConfig;
@@ -31,6 +32,7 @@ public class RestServlet extends AbstractServletWrapper {
 		private RestApplication() {
 			try {
 				register( AuthenticationResource.class );
+				register( AdminResource.class );
 			}
 			catch( Exception ex ) {
 				ex.printStackTrace();

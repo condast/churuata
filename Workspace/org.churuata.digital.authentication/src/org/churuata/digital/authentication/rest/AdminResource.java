@@ -1,6 +1,5 @@
 package org.churuata.digital.authentication.rest;
 
-import java.util.List;
 import java.util.logging.Logger;
 
 import javax.ws.rs.GET;
@@ -12,10 +11,14 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.churuata.digital.authentication.core.Dispatcher;
-import org.churuata.digital.authentication.model.Admin;
 import org.churuata.digital.authentication.services.AdminService;
+import org.condast.commons.authentication.core.AdminData;
 import org.condast.commons.authentication.user.IAdmin;
+import org.condast.commons.authentication.user.IAdmin.Roles;
 import org.condast.commons.persistence.service.TransactionManager;
+import org.condast.commons.strings.StringStyler;
+import org.condast.commons.strings.StringUtils;
+
 import com.google.gson.Gson;
 
 
@@ -44,22 +47,22 @@ public class AdminResource{
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/get-all")
-	public Response getall( @QueryParam("user-id") long userId, @QueryParam("security") long security ) {
+	public Response getall( @QueryParam("user-id") long userId, @QueryParam("security") long security, @QueryParam("role") String rolestr ) {
 		Dispatcher adispatcher=  Dispatcher.getInstance();
 		if( !adispatcher.isLoggedIn(userId, security))
 			return Response.status( Status.UNAUTHORIZED).build();
 
-
+		IAdmin.Roles role = StringUtils.isEmpty(rolestr)?Roles.UNKNOWN: Roles.valueOf(StringStyler.styleToEnum(rolestr));
 		logger.info( "Login " + userId );
 		Dispatcher dispatcher=  Dispatcher.getInstance();
 		TransactionManager t = new TransactionManager( dispatcher );
 		try{
 			t.open();
 			AdminService as = new AdminService( dispatcher );
-			List<Admin> admins =  as.findAll();
+			AdminData[] admins = AdminService.toAdminData( as.getAll( role ) );
 			Gson gson = new Gson();
 			
-			String str = gson.toJson( admins.toArray( new IAdmin[ admins.size() ] ));
+			String str = gson.toJson( admins, AdminData[].class );
 			return Response.ok( str ).build();
 		}
 		catch( Exception ex ){

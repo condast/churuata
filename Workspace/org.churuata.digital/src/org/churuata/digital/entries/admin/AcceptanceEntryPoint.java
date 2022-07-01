@@ -1,25 +1,25 @@
 package org.churuata.digital.entries.admin;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.logging.Logger;
 
 import org.churuata.digital.core.AbstractWizardEntryPoint;
 import org.churuata.digital.core.Dispatcher;
-import org.churuata.digital.core.Entries;
 import org.churuata.digital.core.Entries.Pages;
 import org.churuata.digital.core.data.OrganisationData;
-import org.churuata.digital.core.data.ProfileData;
+import org.churuata.digital.core.model.IOrganisation;
 import org.churuata.digital.core.rest.IRestPages;
 import org.churuata.digital.session.SessionStore;
-import org.churuata.digital.ui.admin.AcceptOrganisationTableViewer;
+import org.churuata.digital.ui.organisation.AcceptOrganisationTableViewer;
+import org.condast.commons.authentication.core.LoginData;
 import org.condast.commons.authentication.http.IDomainProvider;
+import org.condast.commons.authentication.user.ILoginUser;
 import org.condast.commons.messaging.http.AbstractHttpRequest;
 import org.condast.commons.messaging.http.ResponseEvent;
 import org.condast.commons.na.data.ContactPersonData;
 import org.condast.commons.na.data.PersonData;
-import org.condast.commons.na.model.IContact;
-import org.condast.commons.strings.StringUtils;
 import org.condast.commons.ui.controller.EditEvent;
 import org.condast.commons.ui.controller.IEditListener;
 import org.condast.commons.ui.session.SessionEvent;
@@ -47,35 +47,20 @@ public class AcceptanceEntryPoint extends AbstractWizardEntryPoint<AcceptOrganis
 	private Logger logger = Logger.getLogger(this.getClass().getName());
 
 	@Override
-	protected boolean prepare(Composite parent) {
-		boolean result = super.prepare(parent);
-		if( result )
-			return result;
-		StartupParameters service = RWT.getClient().getService( StartupParameters.class );
-		String tokenStr = service.getParameter(IDomainProvider.Attributes.TOKEN.toAttribute());
-		if( !StringUtils.isEmpty(tokenStr))
-			return false;
-		IDomainProvider<SessionStore<OrganisationData>> provider = Dispatcher.createDomain();
-		setData( provider.getData());
-		return true;
-	}
-	
-	@Override
 	protected IDomainProvider<SessionStore<OrganisationData>> getDomainProvider(StartupParameters service) {
 		return Dispatcher.getDomainProvider(service);
 	}
 
-	
 	@Override
 	protected void onNextButtonPressed(OrganisationData data, SessionStore<OrganisationData> store) {
 		try{
 			if( store.getContactPersonData() == null )
 				return;
 			PersonData person = store.getPersonData();
-			if( person == null ) 				
-				controller.register( store.getContactPersonData());
-			else
-				Dispatcher.jump( Pages.ORGANISATION, store.getToken());						
+			//if( person == null ) 				
+				//controller.getAll( store.getContactPersonData());
+			//else
+			//	Dispatcher.jump( Pages.ORGANISATION, store.getToken());						
 		}
 		catch( Exception ex ){
 			ex.printStackTrace();
@@ -92,19 +77,9 @@ public class AcceptanceEntryPoint extends AbstractWizardEntryPoint<AcceptOrganis
 
 	@Override
 	protected boolean onPostProcess(String context, OrganisationData data, SessionStore<OrganisationData> store) {
-		controller = new WebController();
-		controller.setInput(context, IRestPages.Pages.CONTACT.toPath());
-		PersonData personData = store.getPersonData();
-		ContactPersonData person = store.getContactPersonData();
-		if( personData != null ) {
-			person = new ContactPersonData( personData );
-			person.clearContacts();
-			for( IContact contact: personData.getContacts() )
-				person.addContact(contact);
-			store.setContactPersonData(person);
-		}
-		//if( person != null )
-			//acceptTableViewer.setInput(store.getData(), true);
+		controller = new WebController( store.getLoginUser());
+		controller.setInput(context, IRestPages.Pages.ORGANISATION.toPath());
+		controller.getAll( IOrganisation.Verification.ALL);
 		return true;
 	}
 
@@ -117,7 +92,7 @@ public class AcceptanceEntryPoint extends AbstractWizardEntryPoint<AcceptOrganis
 			//store.setContactPersonData( this.acceptTableViewer.getInput());
 			PersonData person = store.getPersonData();
 			if( person == null ) 
-				controller.register( store.getContactPersonData());
+				controller.getAll( IOrganisation.Verification.ALL);
 			else
 				Dispatcher.jump( Pages.CONTACTS, store.getToken());
 				
@@ -143,58 +118,41 @@ public class AcceptanceEntryPoint extends AbstractWizardEntryPoint<AcceptOrganis
 		}
 	}
 	
-	private class WebController extends AbstractHttpRequest<ProfileData.Requests>{
+	private class WebController extends AbstractHttpRequest<OrganisationData.Requests>{
 		
 		private EditEvent.EditTypes type;
+		private ILoginUser user;
 		
-		public WebController() {
+		public WebController( ILoginUser user ) {
 			super();
+			this.user = user;
 		}
 
 		public void setInput(String context, String path) {
 			super.setContextPath(context + path);
 		}
 
-		public void register( ContactPersonData person ) {
+		public void getAll( IOrganisation.Verification verify ) {
 			Map<String, String> params = super.getParameters();
-			params.put(ProfileData.Parameters.NAME.toString(), person.getName());
-			params.put(ProfileData.Parameters.PREFIX.toString(), person.getPrefix());
-			params.put(ProfileData.Parameters.SURNAME.toString(), person.getSurname());
-			params.put(ProfileData.Parameters.EMAIL.toString(), person.getEmail());
+			params.put( LoginData.Parameters.USER_ID.toString(), String.valueOf( user.getId()));
+			params.put( LoginData.Parameters.SECURITY.toString(), String.valueOf( user.getSecurity()));
+			params.put(OrganisationData.Parameters.VERIFIED.toString(), verify.name());
 			try {
-				sendGet(ProfileData.Requests.REGISTER, params );
+				sendGet(OrganisationData.Requests.GET_ALL, params );
 			} catch (IOException e) {
 				logger.warning(e.getMessage());
 			}
 		}
 
 		@Override
-		protected String onHandleResponse(ResponseEvent<ProfileData.Requests> event) throws IOException {
+		protected String onHandleResponse(ResponseEvent<OrganisationData.Requests> event) throws IOException {
 			try {
 				SessionStore<OrganisationData> store = getSessionStore();
 				Gson gson = new Gson();
 				switch( event.getRequest()){
-				case REGISTER:
-					PersonData data = gson.fromJson(event.getResponse(), PersonData.class);
-					store.setPersonData(data);
-					switch( type ) {
-					case ADDED:
-						Dispatcher.jump( Pages.CONTACTS, store.getToken());
-						break;
-					case COMPLETE:
-						Dispatcher.jump( Pages.ORGANISATION, store.getToken());
-						break;
-					default:
-						break;
-					}
-					break;
-				case UPDATE_PERSON:
-					Dispatcher.redirect(Entries.Pages.ACTIVE, store.getToken());
-					break;
-				case GET_PROFILE:					
-					ProfileData profile = gson.fromJson(event.getResponse(), ProfileData.class);
-					//editComposite.setInput(profile, true);
-					store.setProfile(profile);
+				case GET_ALL:
+					OrganisationData[] data = gson.fromJson(event.getResponse(), OrganisationData[].class);
+					acceptTableViewer.setInput( Arrays.asList(data));
 					break;
 				default:
 					break;
@@ -208,7 +166,7 @@ public class AcceptanceEntryPoint extends AbstractWizardEntryPoint<AcceptOrganis
 		}
 
 		@Override
-		protected void onHandleResponseFail(HttpStatus status, ResponseEvent<ProfileData.Requests> event) throws IOException {
+		protected void onHandleResponseFail(HttpStatus status, ResponseEvent<OrganisationData.Requests> event) throws IOException {
 			super.onHandleResponseFail(status, event);
 		}
 	

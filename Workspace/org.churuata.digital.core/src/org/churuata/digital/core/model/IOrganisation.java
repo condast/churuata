@@ -29,7 +29,19 @@ public interface IOrganisation {
 			return StringStyler.prettyString( name());
 		}	
 	}
-	
+
+	public enum Verification{
+		UNKNOWN,
+		ALL,
+		VERIFIED,
+		NOT_VERIFIED;
+		
+		@Override
+		public String toString() {
+			return StringStyler.prettyString( name());
+		}	
+	}
+
 	long getId();
 	
 	LatLng getLocation();

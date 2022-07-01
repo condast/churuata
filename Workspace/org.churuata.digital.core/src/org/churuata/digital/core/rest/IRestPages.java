@@ -10,6 +10,7 @@ public interface IRestPages {
 
 	public static enum Pages{
 		AUTH,
+		ADMIN,
 		SUPPORT,
 		CONTACT,
 		ORGANISATION,
@@ -22,6 +23,8 @@ public interface IRestPages {
 		
 		public String toPath() {
 			switch( this ) {
+			case ADMIN:
+				return S_CHURUATA_CONTEXT_PATH + "/" + Pages.AUTH.toString() + "/" + Pages.ADMIN.toString();
 			case CONTACT:
 				return S_CHURUATA_CONTEXT_PATH_ORGANISATION + "/" + toString();
 			default:

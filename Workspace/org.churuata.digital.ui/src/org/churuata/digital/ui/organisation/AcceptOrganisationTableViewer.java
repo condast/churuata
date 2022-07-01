@@ -1,4 +1,4 @@
-package org.churuata.digital.ui.admin;
+package org.churuata.digital.ui.organisation;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -133,7 +133,7 @@ public class AcceptOrganisationTableViewer extends AbstractTableViewerWithDelete
 			OrganisationData organisation = swd.getStore();
 			switch( column){
 			case NAME:
-				retval = ChuruataLanguage.getInstance().getString( organisation.getName());
+				retval = organisation.getName();
 				break;
 			case WEBSITE:
 				retval = organisation.getWebsite();
@@ -155,13 +155,11 @@ public class AcceptOrganisationTableViewer extends AbstractTableViewerWithDelete
 		@Override
 		public Image getColumnImage(Object arg0, int columnIndex) {
 			Image image = super.getColumnImage(arg0, columnIndex);
-			if( columnIndex == getDeleteColumnindex() ){
-				IStoreWithDelete<OrganisationData> swd = (IStoreWithDelete<OrganisationData>) arg0;
-				if( swd.getCount() == 1 )
-					return null;
-			}
-			Columns column = Columns.values()[ columnIndex ];
 			IStoreWithDelete<OrganisationData> swd = (IStoreWithDelete<OrganisationData>) arg0;
+			if( swd.getCount() == 1 )
+				return null;
+
+			Columns column = Columns.values()[ columnIndex ];
 			OrganisationData organisation = swd.getStore();
 			ChuruataImages images = ChuruataImages.getInstance();
 			switch( column){

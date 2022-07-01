@@ -28,7 +28,8 @@ public class OrganisationData implements IOrganisation, Serializable, Cloneable 
 		FIND_IN_RANGE,
 		ADD_SERVICE,
 		REMOVE_SERVICE, 
-		SET_LOCATION;
+		SET_LOCATION,
+		GET_ALL;
 	}
 
 	public enum Parameters{
@@ -40,6 +41,7 @@ public class OrganisationData implements IOrganisation, Serializable, Cloneable 
 		LONGITUDE,
 		RANGE,
 		TYPE, 
+		VERIFIED,
 		WEBSITE;
 
 		@Override

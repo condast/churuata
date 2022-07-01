@@ -32,6 +32,7 @@ public class ActiveServlet extends HttpServlet {
 	private enum Pages{
 		LOGOFF,
 		PROFILE,
+		ACCEPTANCE,
 		ADMIN;
 
 		@Override
@@ -148,13 +149,19 @@ public class ActiveServlet extends HttpServlet {
 				href.append("/churuata/");
 				boolean activePage = active.equals(page); 
 				switch( page ) {
+				case ACCEPTANCE:
+					if( admin == null )
+						break;
+					href.append( page.toString());
+					href.append("?token=" + token + "&select=" + page.toString());
+					builder.append(super.addLink(href.toString(), StringStyler.prettyString( page.name()), activePage));
+					break;
 				case ADMIN:
 					if( admin == null )
 						break;
 					href.append( page.toString());
 					href.append("?token=" + token + "&select=" + page.toString());
 					builder.append(super.addLink(href.toString(), StringStyler.prettyString( page.name()), activePage));
-
 					break;
 				case LOGOFF:
 					href.append(page.toString());
