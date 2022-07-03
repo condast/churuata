@@ -83,6 +83,7 @@ public class Admin implements IAdmin, Serializable {
 		return StringUtils.isEmpty(role)?Roles.GUEST: Roles.valueOf(role);
 	}
 
+	@Override
 	public void setRole( Roles role) {
 		this.role = role.name();
 	}

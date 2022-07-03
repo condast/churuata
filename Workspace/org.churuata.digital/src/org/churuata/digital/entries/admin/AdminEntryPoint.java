@@ -45,6 +45,11 @@ public class AdminEntryPoint extends AbstractWizardEntryPoint<AdminTableViewer, 
 	
 	private Logger logger = Logger.getLogger(this.getClass().getName());
 
+	
+	public AdminEntryPoint() {
+		super( false );
+	}
+
 	@SuppressWarnings("unchecked")
 	@Override
 	protected IDomainProvider<SessionStore<AdminData>> getDomainProvider(StartupParameters service) {
@@ -53,7 +58,7 @@ public class AdminEntryPoint extends AbstractWizardEntryPoint<AdminTableViewer, 
 	}
 
 	@Override
-	protected void onNextButtonPressed(AdminData data, SessionStore<AdminData> store) {
+	protected void onButtonPressed(AdminData data, SessionStore<AdminData> store) {
 		try{
 			if( store.getContactPersonData() == null )
 				return;
@@ -73,6 +78,7 @@ public class AdminEntryPoint extends AbstractWizardEntryPoint<AdminTableViewer, 
 		adminTableViewer = new AdminTableViewer(parent, SWT.NONE );
 		adminTableViewer.setData( RWT.CUSTOM_VARIANT, S_CHURUATA );
 		adminTableViewer.setLayoutData( new GridData( SWT.FILL, SWT.FILL, true, true ));
+		adminTableViewer.addEditListener(listener);
 		return adminTableViewer;
 	}
 
@@ -88,14 +94,8 @@ public class AdminEntryPoint extends AbstractWizardEntryPoint<AdminTableViewer, 
 		ContactPersonData data = null;
 		SessionStore<AdminData> store = super.getSessionStore();
 		switch( event.getType()) {
-		case ADDED:
-			//store.setContactPersonData( this.acceptTableViewer.getInput());
-			PersonData person = store.getPersonData();
-			if( person == null ) 
-				controller.getAll( IAdmin.Roles.UNKNOWN);
-			else
-				Dispatcher.jump( Pages.CONTACTS, store.getToken());
-				
+		case SELECTED:
+			Dispatcher.jump( Pages.EDIT_ADMIN, store.getToken());
 			break;
 		case COMPLETE:
 			//data = event.getData();
@@ -117,7 +117,14 @@ public class AdminEntryPoint extends AbstractWizardEntryPoint<AdminTableViewer, 
 			e.printStackTrace();
 		}
 	}
-	
+		
+	@Override
+	public void close() {
+		this.adminTableViewer.removeEditListener(listener);
+		super.close();
+	}
+
+
 	private class WebController extends AbstractHttpRequest<AdminData.Requests>{
 		
 		private ILoginUser user;

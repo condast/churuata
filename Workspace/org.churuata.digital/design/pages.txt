@@ -25,5 +25,6 @@ CONFIRM_SERVICE  | org.churuata.digital.entries.register.ConfirmServiceEntryPoin
 
 #Admin
 ADMIN            | org.churuata.digital.entries.admin.AdminEntryPoint       | Administration;
+EDIT_ADMIN       | org.churuata.digital.entries.admin.EditAdminEntryPoint   | Edit Administration;
 USERS            | org.churuata.digital.entries.admin.UsersEntryPoint       | User Management;
 ACCEPTANCE       | org.churuata.digital.entries.admin.AcceptanceEntryPoint  | Acceptance;

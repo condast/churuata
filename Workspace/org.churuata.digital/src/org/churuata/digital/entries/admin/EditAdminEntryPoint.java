@@ -1,20 +1,18 @@
 package org.churuata.digital.entries.admin;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Map;
 import java.util.logging.Logger;
 
 import org.churuata.digital.core.AbstractWizardEntryPoint;
 import org.churuata.digital.core.Dispatcher;
 import org.churuata.digital.core.Entries.Pages;
-import org.churuata.digital.core.data.OrganisationData;
-import org.churuata.digital.core.model.IOrganisation;
 import org.churuata.digital.core.rest.IRestPages;
 import org.churuata.digital.session.SessionStore;
-import org.churuata.digital.ui.organisation.AcceptOrganisationTableViewer;
-import org.condast.commons.authentication.core.LoginData;
+import org.condast.commons.authentication.core.AdminData;
 import org.condast.commons.authentication.http.IDomainProvider;
+import org.condast.commons.authentication.ui.views.AdminWidget;
+import org.condast.commons.authentication.user.IAdmin;
 import org.condast.commons.authentication.user.ILoginUser;
 import org.condast.commons.messaging.http.AbstractHttpRequest;
 import org.condast.commons.messaging.http.ResponseEvent;
@@ -33,26 +31,28 @@ import org.eclipse.swt.widgets.Composite;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
-public class AcceptanceEntryPoint extends AbstractWizardEntryPoint<AcceptOrganisationTableViewer, OrganisationData>{
+public class EditAdminEntryPoint extends AbstractWizardEntryPoint<AdminWidget, AdminData>{
 	private static final long serialVersionUID = 1L;
 
 	public static final String S_ADD_ACCOUNT = "Add Account";
 
-	private AcceptOrganisationTableViewer acceptTableViewer;
+	private AdminWidget adminWidget;
 
-	private IEditListener<OrganisationData> listener = e->onOrganisationEvent(e);
+	private IEditListener<AdminData> listener = e->onOrganisationEvent(e);
 
 	private WebController controller;
 	
 	private Logger logger = Logger.getLogger(this.getClass().getName());
 
+	@SuppressWarnings("unchecked")
 	@Override
-	protected IDomainProvider<SessionStore<OrganisationData>> getDomainProvider(StartupParameters service) {
-		return Dispatcher.getDomainProvider(service);
+	protected IDomainProvider<SessionStore<AdminData>> getDomainProvider(StartupParameters service) {
+		IDomainProvider<?> domain = Dispatcher.getDomainProvider(service);
+		return (IDomainProvider<SessionStore<AdminData>>) domain;
 	}
 
 	@Override
-	protected void onButtonPressed(OrganisationData data, SessionStore<OrganisationData> store) {
+	protected void onButtonPressed(AdminData data, SessionStore<AdminData> store) {
 		try{
 			if( store.getContactPersonData() == null )
 				return;
@@ -68,34 +68,28 @@ public class AcceptanceEntryPoint extends AbstractWizardEntryPoint<AcceptOrganis
 	}
 
 	@Override
-	protected AcceptOrganisationTableViewer onCreateComposite(Composite parent, int style) {
-		acceptTableViewer = new AcceptOrganisationTableViewer(parent, SWT.NONE );
-		acceptTableViewer.setData( RWT.CUSTOM_VARIANT, S_CHURUATA );
-		acceptTableViewer.setLayoutData( new GridData( SWT.FILL, SWT.FILL, true, true ));
-		return acceptTableViewer;
+	protected AdminWidget onCreateComposite(Composite parent, int style) {
+		adminWidget = new AdminWidget(parent, SWT.NONE );
+		adminWidget.setData( RWT.CUSTOM_VARIANT, S_CHURUATA );
+		adminWidget.setLayoutData( new GridData( SWT.FILL, SWT.FILL, true, true ));
+		adminWidget.addEditListener(listener);
+		return adminWidget;
 	}
 
 	@Override
-	protected boolean onPostProcess(String context, OrganisationData data, SessionStore<OrganisationData> store) {
+	protected boolean onPostProcess(String context, AdminData data, SessionStore<AdminData> store) {
 		controller = new WebController( store.getLoginUser());
-		controller.setInput(context, IRestPages.Pages.ORGANISATION.toPath());
-		controller.getAll( IOrganisation.Verification.ALL);
+		controller.setInput(context, IRestPages.Pages.ADMIN.toPath());
+		controller.getAll( IAdmin.Roles.UNKNOWN);
 		return true;
 	}
 
-	protected void onOrganisationEvent( EditEvent<OrganisationData> event ) {
+	protected void onOrganisationEvent( EditEvent<AdminData> event ) {
 		ContactPersonData data = null;
-		SessionStore<OrganisationData> store = super.getSessionStore();
-		controller.type = event.getType();
+		SessionStore<AdminData> store = super.getSessionStore();
 		switch( event.getType()) {
-		case ADDED:
-			//store.setContactPersonData( this.acceptTableViewer.getInput());
-			PersonData person = store.getPersonData();
-			if( person == null ) 
-				controller.getAll( IOrganisation.Verification.ALL);
-			else
-				Dispatcher.jump( Pages.CONTACTS, store.getToken());
-				
+		case SELECTED:
+			Dispatcher.jump( Pages.EDIT_ADMIN, store.getToken());
 			break;
 		case COMPLETE:
 			//data = event.getData();
@@ -109,7 +103,7 @@ public class AcceptanceEntryPoint extends AbstractWizardEntryPoint<AcceptOrganis
 	}
 
 	@Override
-	protected void onHandleTimer(SessionEvent<OrganisationData> event) {
+	protected void onHandleTimer(SessionEvent<AdminData> event) {
 		try {
 			//acceptTableViewer.refresh();
 			super.handleTimer();
@@ -117,10 +111,16 @@ public class AcceptanceEntryPoint extends AbstractWizardEntryPoint<AcceptOrganis
 			e.printStackTrace();
 		}
 	}
-	
-	private class WebController extends AbstractHttpRequest<OrganisationData.Requests>{
 		
-		private EditEvent.EditTypes type;
+	@Override
+	public void close() {
+		this.adminWidget.removeEditListener(listener);
+		super.close();
+	}
+
+
+	private class WebController extends AbstractHttpRequest<AdminData.Requests>{
+		
 		private ILoginUser user;
 		
 		public WebController( ILoginUser user ) {
@@ -132,27 +132,27 @@ public class AcceptanceEntryPoint extends AbstractWizardEntryPoint<AcceptOrganis
 			super.setContextPath(context + path);
 		}
 
-		public void getAll( IOrganisation.Verification verify ) {
+		public void getAll( IAdmin.Roles role ) {
 			Map<String, String> params = super.getParameters();
-			params.put( LoginData.Parameters.USER_ID.toString(), String.valueOf( user.getId()));
-			params.put( LoginData.Parameters.SECURITY.toString(), String.valueOf( user.getSecurity()));
-			params.put(OrganisationData.Parameters.VERIFIED.toString(), verify.name());
+			params.put( AdminData.Parameters.USER_ID.toString(), String.valueOf( user.getId()));
+			params.put( AdminData.Parameters.SECURITY.toString(), String.valueOf( user.getSecurity()));
+			params.put( AdminData.Parameters.ROLE.toString(), role.name());
 			try {
-				sendGet(OrganisationData.Requests.GET_ALL, params );
+				sendGet(AdminData.Requests.SET_ROLE, params );
 			} catch (IOException e) {
 				logger.warning(e.getMessage());
 			}
 		}
 
 		@Override
-		protected String onHandleResponse(ResponseEvent<OrganisationData.Requests> event) throws IOException {
+		protected String onHandleResponse(ResponseEvent<AdminData.Requests> event) throws IOException {
 			try {
-				SessionStore<OrganisationData> store = getSessionStore();
+				SessionStore<AdminData> store = getSessionStore();
 				Gson gson = new Gson();
 				switch( event.getRequest()){
-				case GET_ALL:
-					OrganisationData[] data = gson.fromJson(event.getResponse(), OrganisationData[].class);
-					acceptTableViewer.setInput( Arrays.asList(data));
+				case SET_ROLE:
+					AdminData data = gson.fromJson(event.getResponse(), AdminData.class);
+					adminWidget.setInput( data, true );
 					break;
 				default:
 					break;
@@ -166,7 +166,7 @@ public class AcceptanceEntryPoint extends AbstractWizardEntryPoint<AcceptOrganis
 		}
 
 		@Override
-		protected void onHandleResponseFail(HttpStatus status, ResponseEvent<OrganisationData.Requests> event) throws IOException {
+		protected void onHandleResponseFail(HttpStatus status, ResponseEvent<AdminData.Requests> event) throws IOException {
 			super.onHandleResponseFail(status, event);
 		}
 	

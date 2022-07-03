@@ -29,8 +29,20 @@ public abstract class AbstractWizardEntryPoint<C extends Composite, D extends Ob
 	private SessionHandler handler;
 	
 	private D data = null;
+	
+	private boolean includeButton;
 
 	protected abstract IDomainProvider<SessionStore<D>> getDomainProvider( StartupParameters service );
+
+	
+	public AbstractWizardEntryPoint() {
+		this(true);
+	}
+
+	public AbstractWizardEntryPoint( boolean includeButton) {
+		super();
+		this.includeButton = includeButton;
+	}
 	
 	@Override
 	protected boolean prepare(org.eclipse.swt.widgets.Composite parent) {
@@ -48,43 +60,44 @@ public abstract class AbstractWizardEntryPoint<C extends Composite, D extends Ob
 
 	protected abstract C onCreateComposite( Composite parent, int style );
 
-	protected abstract void onNextButtonPressed( D data, SessionStore<D> store );
+	protected abstract void onButtonPressed( D data, SessionStore<D> store );
 
 	@Override
 	protected org.eclipse.swt.widgets.Composite createComposite(org.eclipse.swt.widgets.Composite parent) {
-        parent.setLayout(new GridLayout( 1, false ));
-        composite = onCreateComposite( parent, SWT.NONE);
-        if( composite != null ) {
-        	composite.setData( RWT.CUSTOM_VARIANT, S_CHURUATA );
-        	composite.setLayoutData( new GridData(SWT.FILL, SWT.FILL, true, true));
-        }
-        Group group = new Group( parent, SWT.NONE );
+		parent.setLayout(new GridLayout( 1, false ));
+		composite = onCreateComposite( parent, SWT.NONE);
+		if( composite != null ) {
+			composite.setData( RWT.CUSTOM_VARIANT, S_CHURUATA );
+			composite.setLayoutData( new GridData(SWT.FILL, SWT.FILL, true, true));
+		}
+		Group group = new Group( parent, SWT.NONE );
 		group.setText("Add Churuata Service");
 		group.setLayout( new GridLayout(5, false ));
 		group.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 
-		btnNext = new Button(group, SWT.NONE);
-		btnNext.setEnabled(false);
-		btnNext.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true));
-		btnNext.setImage( PlayerImages.getImage( PlayerImages.Images.NEXT));
-		btnNext.addSelectionListener( new SelectionAdapter(){
-			private static final long serialVersionUID = 1L;
+		if( this.includeButton) {
+			btnNext = new Button(group, SWT.NONE);
+			btnNext.setEnabled(false);
+			btnNext.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true));
+			btnNext.setImage( PlayerImages.getImage( PlayerImages.Images.NEXT));
+			btnNext.addSelectionListener( new SelectionAdapter(){
+				private static final long serialVersionUID = 1L;
 
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				try{
-					SessionStore<D> store = getSessionStore();
-					onNextButtonPressed(data, store);
+				@Override
+				public void widgetSelected(final SelectionEvent e) {
+					try{
+						SessionStore<D> store = getSessionStore();
+						onButtonPressed(data, store);
+					}
+					catch( Exception ex ){
+						ex.printStackTrace();
+					}
+					super.widgetSelected(e);
 				}
-				catch( Exception ex ){
-					ex.printStackTrace();
-				}
-				super.widgetSelected(e);
-			}
-		});
-
- 		return composite;
-    }
+			});
+		}
+		return composite;
+	}
 
 	protected abstract boolean onPostProcess( String context, D data, SessionStore<D> store );
 

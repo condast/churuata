@@ -82,7 +82,7 @@ public class LocationEntryPoint extends AbstractWizardEntryPoint<OrganisationMap
 	}
 
 	@Override
-	protected void onNextButtonPressed(OrganisationData data, SessionStore<OrganisationData> store) {
+	protected void onButtonPressed(OrganisationData data, SessionStore<OrganisationData> store) {
 		Dispatcher.jump( Pages.SHOW_LEGAL, store.getToken());
 	}
 

@@ -11,10 +11,12 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.churuata.digital.authentication.core.Dispatcher;
+import org.churuata.digital.authentication.model.Admin;
 import org.churuata.digital.authentication.services.AdminService;
 import org.condast.commons.authentication.core.AdminData;
 import org.condast.commons.authentication.user.IAdmin;
 import org.condast.commons.authentication.user.IAdmin.Roles;
+import org.condast.commons.authentication.user.ILoginUser;
 import org.condast.commons.persistence.service.TransactionManager;
 import org.condast.commons.strings.StringStyler;
 import org.condast.commons.strings.StringUtils;
@@ -73,4 +75,44 @@ public class AdminResource{
 			t.close();
 		}
 	}
+
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/set-role")
+	public Response setRole( @QueryParam("user-id") long userId, @QueryParam("security") long security, 
+			@QueryParam("role") String rolestr ) {
+		Dispatcher dispatcher=  Dispatcher.getInstance();
+		if( !dispatcher.isLoggedIn(userId, security))
+			return Response.status( Status.UNAUTHORIZED).build();
+
+		ILoginUser user = dispatcher.getLoginUser(userId, security);
+		if( user == null )
+			return Response.status(Status.NOT_FOUND).build();
+		
+		IAdmin.Roles role = StringUtils.isEmpty(rolestr)?Roles.UNKNOWN: Roles.valueOf(StringStyler.styleToEnum(rolestr));
+		logger.info( "Login " + userId );
+		TransactionManager t = new TransactionManager( dispatcher );
+		try{
+			t.open();
+			AdminService as = new AdminService( dispatcher );
+			Admin admin = (Admin) as.find(user);
+			if( admin == null )
+				return Response.status(Status.NOT_FOUND).build();
+			admin.setRole(role);
+			as.update(admin);
+			AdminData result = new AdminData( admin );
+			Gson gson = new Gson();
+			
+			String str = gson.toJson( result, AdminData.class );
+			return Response.ok( str ).build();
+		}
+		catch( Exception ex ){
+			ex.printStackTrace();
+			return Response.serverError().build();
+		}
+		finally{
+			t.close();
+		}
+	}
+
 }

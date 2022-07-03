@@ -67,7 +67,7 @@ public class UsersEntryPoint extends AbstractWizardEntryPoint<ContactPersonCompo
 
 	
 	@Override
-	protected void onNextButtonPressed(OrganisationData data, SessionStore<OrganisationData> store) {
+	protected void onButtonPressed(OrganisationData data, SessionStore<OrganisationData> store) {
 		try{
 			if( store.getContactPersonData() == null )
 				return;

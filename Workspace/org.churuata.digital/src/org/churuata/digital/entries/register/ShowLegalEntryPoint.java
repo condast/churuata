@@ -178,7 +178,7 @@ public class ShowLegalEntryPoint extends AbstractWizardEntryPoint<Browser, Organ
 	}
 
 	@Override
-	protected void onNextButtonPressed(OrganisationData data, SessionStore<OrganisationData> store) {
+	protected void onButtonPressed(OrganisationData data, SessionStore<OrganisationData> store) {
 		store.setData(null);
 		Config config = Config.getInstance();
 		String path = config.getServerContext() + Entries.S_HOME;

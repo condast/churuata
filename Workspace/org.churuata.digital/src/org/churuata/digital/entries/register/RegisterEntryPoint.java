@@ -67,7 +67,7 @@ public class RegisterEntryPoint extends AbstractWizardEntryPoint<ContactPersonCo
 
 	
 	@Override
-	protected void onNextButtonPressed(OrganisationData data, SessionStore<OrganisationData> store) {
+	protected void onButtonPressed(OrganisationData data, SessionStore<OrganisationData> store) {
 		try{
 			if( store.getContactPersonData() == null )
 				return;

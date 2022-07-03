@@ -137,7 +137,7 @@ public class Dispatcher extends AbstractPersistencyService implements IPersisten
 		return ( loginId <= 0);
 	}
 
-	public ILoginUser getLoginUser(long loginId, long token ) {
+	public ILoginUser getLoginUser(long loginId, long security ) {
 		for( ILoginUser user: this.users) {
 			if( user.getId() == loginId )
 				return user;
@@ -145,11 +145,11 @@ public class Dispatcher extends AbstractPersistencyService implements IPersisten
 		return null;
 	}
 
-	public boolean hasLoginUser( String userName, long token ) {
+	public boolean hasLoginUser( String userName, long security ) {
 		if( StringUtils.isEmpty(userName))
 			return false;
 		for( ILoginUser user: this.users) {
-			if( userName.equals( user.getUserName()) && ( user.getSecurity() - token ) == 0) 
+			if( userName.equals( user.getUserName()) && ( user.getSecurity() - security ) == 0) 
 				return true;
 		}
 		return false;
@@ -177,8 +177,8 @@ public class Dispatcher extends AbstractPersistencyService implements IPersisten
 		return this.confirmation.remove(confirmation);
 	}
 
-	public boolean logout(long loginId, long token ) {
-		ILoginUser user = getLoginUser(loginId, token );
+	public boolean logout(long loginId, long security ) {
+		ILoginUser user = getLoginUser(loginId, security );
 		if( user == null )
 			return false;
 		this.removeUser(user);

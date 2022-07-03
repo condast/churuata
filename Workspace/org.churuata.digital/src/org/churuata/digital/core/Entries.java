@@ -43,6 +43,7 @@ public class Entries {
 		SHOW_LEGAL,
 		CONFIRM_SERVICE,
 		ADMIN,
+		EDIT_ADMIN,
 		USERS,
 		ACCEPTANCE;
 	

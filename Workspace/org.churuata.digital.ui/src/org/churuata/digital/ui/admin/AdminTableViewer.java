@@ -7,10 +7,18 @@ import org.churuata.digital.ui.image.ChuruataImages;
 import org.condast.commons.Utils;
 import org.condast.commons.authentication.core.AdminData;
 import org.condast.commons.authentication.core.LoginData;
+import org.condast.commons.authentication.user.IAdmin;
+import org.condast.commons.authentication.user.IAdmin.Roles;
+import org.condast.commons.ui.celleditors.ComboCellEditor;
+import org.condast.commons.ui.controller.IEditListener;
+import org.condast.commons.ui.controller.EditEvent;
 import org.condast.commons.ui.controller.EditEvent.EditTypes;
 import org.condast.commons.ui.na.NALanguage;
 import org.condast.commons.ui.table.AbstractTableViewerWithDelete;
 import org.condast.commons.ui.widgets.IStoreWithDelete;
+import org.eclipse.jface.viewers.CellEditor;
+import org.eclipse.jface.viewers.ColumnViewer;
+import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
@@ -46,8 +54,11 @@ public class AdminTableViewer extends AbstractTableViewerWithDelete<AdminData>{
 		}
 	}
 
+	private Collection< IEditListener<AdminData>> listeners;
+	
 	public AdminTableViewer(Composite parent,int style ) {
 		super(parent,style, false );
+		listeners=  new ArrayList<>();
 	}
 
 	@Override
@@ -60,6 +71,18 @@ public class AdminTableViewer extends AbstractTableViewerWithDelete<AdminData>{
 		String deleteStr = NALanguage.getInstance().getString( Buttons.DELETE );
 		super.createDeleteColumn( Columns.values().length, deleteStr, 10 );	
 		viewer.setLabelProvider( new ServicesLabelProvider() );
+	}
+
+	public void addEditListener( IEditListener<AdminData> listener ){
+		this.listeners.add( (IEditListener<AdminData>) listener );
+	}
+
+	public void removeEditListener( IEditListener<AdminData> listener ){
+		this.listeners.remove( listener );
+	}
+
+	private void notifyEditEvent( EditEvent<AdminData> event ) {
+		this.listeners.forEach( l-> l.notifyInputEdited(event));
 	}
 	
 	public AdminData[] getInput(){
@@ -78,7 +101,7 @@ public class AdminTableViewer extends AbstractTableViewerWithDelete<AdminData>{
 	
 	@Override
 	protected void onRowDoubleClick(AdminData selection) {
-		/* NOTHING */
+		notifyEditEvent( new EditEvent<AdminData>( this, EditTypes.SELECTED, selection ));
 	}
 
 	@Override
@@ -109,6 +132,13 @@ public class AdminTableViewer extends AbstractTableViewerWithDelete<AdminData>{
 
 	private TableViewerColumn createColumn( final Columns column ) {
 		TableViewerColumn result = super.createColumn( column.toString(), column.ordinal(), Columns.getWeight(column) );
+		switch( column ) {
+		case ROLE:				
+			result.setEditingSupport( new ComboEditingSupport( super.getViewer()));
+		break;
+		default:
+			break;
+		}
 		return result;
 	}
 	
@@ -166,6 +196,48 @@ public class AdminTableViewer extends AbstractTableViewerWithDelete<AdminData>{
 				break;				
 			}
 			return image;
+		}
+	}
+	
+	private class ComboEditingSupport extends EditingSupport{
+		private static final long serialVersionUID = 1L;
+		
+		private ComboCellEditor cellEditor;
+
+		public ComboEditingSupport(ColumnViewer viewer) {
+			super(viewer);
+			this.cellEditor = new ComboCellEditor();
+			this.cellEditor.create(getParent());
+			this.cellEditor.setItems(IAdmin.Roles.getItems());
+		}
+
+		@Override
+		protected boolean canEdit(Object arg0) {
+			return true;
+		}
+
+		@Override
+		protected CellEditor getCellEditor(Object arg0) {
+			return this.cellEditor;
+		}
+
+		@SuppressWarnings("unchecked")
+		@Override
+		protected Object getValue(Object arg0) {
+			IStoreWithDelete<AdminData> store = (IStoreWithDelete<AdminData>) arg0;
+			AdminData admin = store.getStore();
+			return admin.getRole().ordinal();
+		}
+
+		@SuppressWarnings("unchecked")
+		@Override
+		protected void setValue(Object arg0, Object arg1) {
+			IStoreWithDelete<AdminData> store = (IStoreWithDelete<AdminData>) arg0;
+			AdminData admin = store.getStore();
+			int value = (int) arg1;
+			admin.setRole(Roles.values()[ value]);
+			notifyEditEvent( new EditEvent<AdminData>( this, EditTypes.CHANGED, admin));
+			super.getViewer().update(admin, null);			
 		}
 	}
 }
