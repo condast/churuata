@@ -4,20 +4,20 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import javax.servlet.http.HttpSession;
+
 import org.churuata.digital.core.AbstractWizardEntryPoint;
 import org.churuata.digital.core.Dispatcher;
 import org.churuata.digital.core.Entries.Pages;
 import org.churuata.digital.core.rest.IRestPages;
 import org.churuata.digital.session.SessionStore;
 import org.condast.commons.authentication.core.AdminData;
+import org.condast.commons.authentication.core.LoginData;
 import org.condast.commons.authentication.http.IDomainProvider;
 import org.condast.commons.authentication.ui.views.AdminWidget;
-import org.condast.commons.authentication.user.IAdmin;
 import org.condast.commons.authentication.user.ILoginUser;
 import org.condast.commons.messaging.http.AbstractHttpRequest;
 import org.condast.commons.messaging.http.ResponseEvent;
-import org.condast.commons.na.data.ContactPersonData;
-import org.condast.commons.na.data.PersonData;
 import org.condast.commons.ui.controller.EditEvent;
 import org.condast.commons.ui.controller.IEditListener;
 import org.condast.commons.ui.session.SessionEvent;
@@ -31,14 +31,14 @@ import org.eclipse.swt.widgets.Composite;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
-public class EditAdminEntryPoint extends AbstractWizardEntryPoint<AdminWidget, AdminData>{
+public class EditAdminEntryPoint extends AbstractWizardEntryPoint<AdminWidget, LoginData>{
 	private static final long serialVersionUID = 1L;
 
 	public static final String S_ADD_ACCOUNT = "Add Account";
 
 	private AdminWidget adminWidget;
 
-	private IEditListener<AdminData> listener = e->onOrganisationEvent(e);
+	private IEditListener<LoginData> listener = e->onOrganisationEvent(e);
 
 	private WebController controller;
 	
@@ -46,21 +46,17 @@ public class EditAdminEntryPoint extends AbstractWizardEntryPoint<AdminWidget, A
 
 	@SuppressWarnings("unchecked")
 	@Override
-	protected IDomainProvider<SessionStore<AdminData>> getDomainProvider(StartupParameters service) {
+	protected IDomainProvider<SessionStore<LoginData>> getDomainProvider(StartupParameters service) {
 		IDomainProvider<?> domain = Dispatcher.getDomainProvider(service);
-		return (IDomainProvider<SessionStore<AdminData>>) domain;
+		return (IDomainProvider<SessionStore<LoginData>>) domain;
 	}
 
 	@Override
-	protected void onButtonPressed(AdminData data, SessionStore<AdminData> store) {
+	protected void onButtonPressed(LoginData data, SessionStore<LoginData> store) {
 		try{
 			if( store.getContactPersonData() == null )
 				return;
-			PersonData person = store.getPersonData();
-			//if( person == null ) 				
-				//controller.getAll( store.getContactPersonData());
-			//else
-			//	Dispatcher.jump( Pages.ORGANISATION, store.getToken());						
+			Dispatcher.jump( Pages.ADMIN, store.getToken());						
 		}
 		catch( Exception ex ){
 			ex.printStackTrace();
@@ -77,25 +73,21 @@ public class EditAdminEntryPoint extends AbstractWizardEntryPoint<AdminWidget, A
 	}
 
 	@Override
-	protected boolean onPostProcess(String context, AdminData data, SessionStore<AdminData> store) {
+	protected boolean onPostProcess(String context, LoginData data, SessionStore<LoginData> store) {
+		HttpSession session = RWT.getUISession().getHttpSession();
+		LoginData client = (LoginData) session.getAttribute(AdminData.Parameters.LOGIN_USER.name());
+		adminWidget.setInput(client, true);
 		controller = new WebController( store.getLoginUser());
 		controller.setInput(context, IRestPages.Pages.ADMIN.toPath());
-		controller.getAll( IAdmin.Roles.UNKNOWN);
 		return true;
 	}
 
-	protected void onOrganisationEvent( EditEvent<AdminData> event ) {
-		ContactPersonData data = null;
-		SessionStore<AdminData> store = super.getSessionStore();
+	protected void onOrganisationEvent( EditEvent<LoginData> event ) {
 		switch( event.getType()) {
-		case SELECTED:
-			Dispatcher.jump( Pages.EDIT_ADMIN, store.getToken());
-			break;
-		case COMPLETE:
-			//data = event.getData();
-			store.setContactPersonData(data);
+		case CHANGED:
 			Button btnNext = super.getBtnNext();
-			btnNext.setEnabled(( data != null ));
+			btnNext.setEnabled(true);
+			controller.setRole(event.getData());
 			break;
 		default:
 			break;
@@ -103,7 +95,7 @@ public class EditAdminEntryPoint extends AbstractWizardEntryPoint<AdminWidget, A
 	}
 
 	@Override
-	protected void onHandleTimer(SessionEvent<AdminData> event) {
+	protected void onHandleTimer(SessionEvent<LoginData> event) {
 		try {
 			//acceptTableViewer.refresh();
 			super.handleTimer();
@@ -132,11 +124,12 @@ public class EditAdminEntryPoint extends AbstractWizardEntryPoint<AdminWidget, A
 			super.setContextPath(context + path);
 		}
 
-		public void getAll( IAdmin.Roles role ) {
+		public void setRole( LoginData client ) {
 			Map<String, String> params = super.getParameters();
-			params.put( AdminData.Parameters.USER_ID.toString(), String.valueOf( user.getId()));
-			params.put( AdminData.Parameters.SECURITY.toString(), String.valueOf( user.getSecurity()));
-			params.put( AdminData.Parameters.ROLE.toString(), role.name());
+			params.put( LoginData.Parameters.USER_ID.toString(), String.valueOf( user.getId()));
+			params.put( LoginData.Parameters.SECURITY.toString(), String.valueOf( user.getSecurity()));
+			params.put( AdminData.Parameters.LOGIN_USER.toString(), String.valueOf( client.getId() ));
+			params.put( AdminData.Parameters.ROLE.toString(), client.getRole().name());
 			try {
 				sendGet(AdminData.Requests.SET_ROLE, params );
 			} catch (IOException e) {
@@ -147,11 +140,10 @@ public class EditAdminEntryPoint extends AbstractWizardEntryPoint<AdminWidget, A
 		@Override
 		protected String onHandleResponse(ResponseEvent<AdminData.Requests> event) throws IOException {
 			try {
-				SessionStore<AdminData> store = getSessionStore();
 				Gson gson = new Gson();
 				switch( event.getRequest()){
 				case SET_ROLE:
-					AdminData data = gson.fromJson(event.getResponse(), AdminData.class);
+					LoginData data = gson.fromJson(event.getResponse(), LoginData.class);
 					adminWidget.setInput( data, true );
 					break;
 				default:

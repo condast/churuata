@@ -3,14 +3,12 @@ package org.churuata.digital.ui.admin;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.churuata.digital.ui.image.ChuruataImages;
 import org.condast.commons.Utils;
 import org.condast.commons.authentication.core.AdminData;
 import org.condast.commons.authentication.core.LoginData;
 import org.condast.commons.authentication.user.IAdmin;
 import org.condast.commons.authentication.user.IAdmin.Roles;
 import org.condast.commons.ui.celleditors.ComboCellEditor;
-import org.condast.commons.ui.controller.IEditListener;
 import org.condast.commons.ui.controller.EditEvent;
 import org.condast.commons.ui.controller.EditEvent.EditTypes;
 import org.condast.commons.ui.na.NALanguage;
@@ -29,7 +27,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 
-public class AdminTableViewer extends AbstractTableViewerWithDelete<AdminData>{
+public class AdminTableViewer extends AbstractTableViewerWithDelete<LoginData>{
 	private static final long serialVersionUID = 1L;
 
 	private enum Columns{
@@ -54,11 +52,8 @@ public class AdminTableViewer extends AbstractTableViewerWithDelete<AdminData>{
 		}
 	}
 
-	private Collection< IEditListener<AdminData>> listeners;
-	
 	public AdminTableViewer(Composite parent,int style ) {
 		super(parent,style, false );
-		listeners=  new ArrayList<>();
 	}
 
 	@Override
@@ -72,36 +67,24 @@ public class AdminTableViewer extends AbstractTableViewerWithDelete<AdminData>{
 		super.createDeleteColumn( Columns.values().length, deleteStr, 10 );	
 		viewer.setLabelProvider( new ServicesLabelProvider() );
 	}
-
-	public void addEditListener( IEditListener<AdminData> listener ){
-		this.listeners.add( (IEditListener<AdminData>) listener );
-	}
-
-	public void removeEditListener( IEditListener<AdminData> listener ){
-		this.listeners.remove( listener );
-	}
-
-	private void notifyEditEvent( EditEvent<AdminData> event ) {
-		this.listeners.forEach( l-> l.notifyInputEdited(event));
-	}
 	
-	public AdminData[] getInput(){
-		Collection<AdminData> contacts = new ArrayList<AdminData>();
+	public LoginData[] getInput(){
+		Collection<LoginData> contacts = new ArrayList<LoginData>();
 		if( Utils.assertNull( super.getInput() ))
 			return null;
 		for( Object obj: super.getInput() ){
-			contacts.add( (AdminData) obj );				
+			contacts.add( (LoginData) obj );				
 		}
-		return contacts.toArray( new AdminData[ contacts.size() ]);
+		return contacts.toArray( new LoginData[ contacts.size() ]);
 	}
 	
-	public void setInput( Collection<AdminData> contacts ){
+	public void setInput( Collection<LoginData> contacts ){
 		super.setInput( contacts );
 	}
 	
 	@Override
-	protected void onRowDoubleClick(AdminData selection) {
-		notifyEditEvent( new EditEvent<AdminData>( this, EditTypes.SELECTED, selection ));
+	protected void onRowDoubleClick(LoginData selection) {
+		notifyEditEvent( new EditEvent<LoginData>( this, EditTypes.SELECTED, selection ));
 	}
 
 	@Override
@@ -126,7 +109,7 @@ public class AdminTableViewer extends AbstractTableViewerWithDelete<AdminData>{
 	}
 	
 	@Override
-	protected boolean onDeleteButton( Collection<AdminData> deleted ) {
+	protected boolean onDeleteButton( Collection<LoginData> deleted ) {
 		return true;
 	}
 
@@ -157,9 +140,8 @@ public class AdminTableViewer extends AbstractTableViewerWithDelete<AdminData>{
 			if( retval != null )
 				return retval;
 			Columns column = Columns.values()[ columnIndex ];
-			IStoreWithDelete<AdminData> swd = (IStoreWithDelete<AdminData>) element;
-			AdminData admin = swd.getStore();
-			LoginData user = admin.getUser();
+			IStoreWithDelete<LoginData> swd = (IStoreWithDelete<LoginData>) element;
+			LoginData user = swd.getStore();
 			switch( column){
 			case USER_NAME:
 				retval = user.getNickName();
@@ -171,7 +153,7 @@ public class AdminTableViewer extends AbstractTableViewerWithDelete<AdminData>{
 			//	retval = user.getLocation().toLocation();
 			//	break;
 			case ROLE:
-				retval = admin.getRole().toString();
+				retval = user.getRole().toString();
 				break;
 			default:
 				break;				
@@ -184,13 +166,13 @@ public class AdminTableViewer extends AbstractTableViewerWithDelete<AdminData>{
 		@Override
 		public Image getColumnImage(Object arg0, int columnIndex) {
 			Image image = super.getColumnImage(arg0, columnIndex);
-			IStoreWithDelete<AdminData> swd = (IStoreWithDelete<AdminData>) arg0;
+			if( image != null )
+				return image; //delete checkbox
+
+			IStoreWithDelete<LoginData> swd = (IStoreWithDelete<LoginData>) arg0;
 			if( swd.getCount() == 1 )
 				return null;
-
 			Columns column = Columns.values()[ columnIndex ];
-			AdminData admin = swd.getStore();
-			ChuruataImages images = ChuruataImages.getInstance();
 			switch( column){
 			default:
 				break;				
@@ -224,19 +206,21 @@ public class AdminTableViewer extends AbstractTableViewerWithDelete<AdminData>{
 		@SuppressWarnings("unchecked")
 		@Override
 		protected Object getValue(Object arg0) {
-			IStoreWithDelete<AdminData> store = (IStoreWithDelete<AdminData>) arg0;
-			AdminData admin = store.getStore();
-			return admin.getRole().ordinal();
+			IStoreWithDelete<LoginData> store = (IStoreWithDelete<LoginData>) arg0;
+			LoginData login = store.getStore();
+			AdminData admin = login.getAdmin();
+			return ( admin == null )? Roles.UNKNOWN: admin.getRole().ordinal();
 		}
 
 		@SuppressWarnings("unchecked")
 		@Override
 		protected void setValue(Object arg0, Object arg1) {
-			IStoreWithDelete<AdminData> store = (IStoreWithDelete<AdminData>) arg0;
-			AdminData admin = store.getStore();
+			IStoreWithDelete<LoginData> store = (IStoreWithDelete<LoginData>) arg0;
+			LoginData login = store.getStore();
 			int value = (int) arg1;
+			AdminData admin = login.getAdmin();
 			admin.setRole(Roles.values()[ value]);
-			notifyEditEvent( new EditEvent<AdminData>( this, EditTypes.CHANGED, admin));
+			notifyEditEvent( new EditEvent<LoginData>( this, EditTypes.CHANGED, login));
 			super.getViewer().update(admin, null);			
 		}
 	}

@@ -284,7 +284,7 @@ public class EditChuruataComposite extends AbstractEntityComposite<OrganisationD
 		protected String onHandleResponse(ResponseEvent<Requests> event) throws IOException {
 			switch( event.getRequest()){
 			case REGISTER:
-				notifyInputEdited( new EditEvent<OrganisationData>( this, EditTypes.CHANGED, null));
+				notifyInputEdited( new EditEvent<OrganisationData>( this, EditTypes.CHANGED));
 				break;
 			default:
 				break;

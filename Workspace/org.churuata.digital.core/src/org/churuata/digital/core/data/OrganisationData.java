@@ -27,7 +27,8 @@ public class OrganisationData implements IOrganisation, Serializable, Cloneable 
 		FIND,
 		FIND_IN_RANGE,
 		ADD_SERVICE,
-		REMOVE_SERVICE, 
+		REMOVE_SERVICE,
+		VERIFY,
 		SET_LOCATION,
 		GET_ALL;
 	}

@@ -5,10 +5,11 @@ import java.util.Collection;
 
 import org.churuata.digital.core.data.OrganisationData;
 import org.churuata.digital.ui.ChuruataLanguage;
-import org.churuata.digital.ui.image.ChuruataImages;
-import org.churuata.digital.ui.image.ChuruataImages.Images;
 import org.condast.commons.Utils;
+import org.condast.commons.ui.celleditors.AbstractCheckBoxCellEditor;
+import org.condast.commons.ui.controller.EditEvent;
 import org.condast.commons.ui.controller.EditEvent.EditTypes;
+import org.condast.commons.ui.edit.CheckBoxEditingSupport;
 import org.condast.commons.ui.na.NALanguage;
 import org.condast.commons.ui.table.AbstractTableViewerWithDelete;
 import org.condast.commons.ui.widgets.IStoreWithDelete;
@@ -39,6 +40,8 @@ public class AcceptOrganisationTableViewer extends AbstractTableViewerWithDelete
 
 		public static int getWeight( Columns column ){
 			switch( column ){
+			case DESCRIPTION:
+				return 50;
 			case WEBSITE:
 			case NAME:
 				return 30;
@@ -63,7 +66,7 @@ public class AcceptOrganisationTableViewer extends AbstractTableViewerWithDelete
 		super.createDeleteColumn( Columns.values().length, deleteStr, 10 );	
 		viewer.setLabelProvider( new ServicesLabelProvider() );
 	}
-	
+
 	public OrganisationData[] getInput(){
 		Collection<OrganisationData> contacts = new ArrayList<OrganisationData>();
 		if( Utils.assertNull( super.getInput() ))
@@ -103,14 +106,21 @@ public class AcceptOrganisationTableViewer extends AbstractTableViewerWithDelete
 		}
 		return result;
 	}
-	
+
 	@Override
-	protected boolean onDeleteButton( Collection<OrganisationData> deleted ) {
+	protected boolean onDeleteButton(Collection<OrganisationData> deleted) {
 		return true;
 	}
 
 	private TableViewerColumn createColumn( final Columns column ) {
 		TableViewerColumn result = super.createColumn( column.toString(), column.ordinal(), Columns.getWeight(column) );
+		switch( column) {
+		case VERIFIED:
+			result.setEditingSupport( new CheckBoxEditingSupport<>( getViewer(), new VerifyCheckBoxEditor() ) );
+			break;
+		default:
+			break;
+		}
 		return result;
 	}
 	
@@ -155,21 +165,46 @@ public class AcceptOrganisationTableViewer extends AbstractTableViewerWithDelete
 		@Override
 		public Image getColumnImage(Object arg0, int columnIndex) {
 			Image image = super.getColumnImage(arg0, columnIndex);
+			if( image != null )
+				return image;//delete image
 			IStoreWithDelete<OrganisationData> swd = (IStoreWithDelete<OrganisationData>) arg0;
 			if( swd.getCount() == 1 )
 				return null;
 
 			Columns column = Columns.values()[ columnIndex ];
 			OrganisationData organisation = swd.getStore();
-			ChuruataImages images = ChuruataImages.getInstance();
 			switch( column){
 			case VERIFIED:
-				image = organisation.isVerified()? images.getImage( Images.CHECK): image;
+				image = setCheckedButton( true, organisation.isVerified());
 				break;
 			default:
 				break;				
 			}
 			return image;
+		}
+	}
+	
+	private class VerifyCheckBoxEditor extends AbstractCheckBoxCellEditor<StoreWithDelete>{
+		private static final long serialVersionUID = 1L;
+
+		@Override
+		protected void onToggle() {
+			boolean value = super.getData().isDelete();
+			OrganisationData organisation = super.getData().getStore();
+			organisation.setVerified( !value );
+			notifyEditEvent(new EditEvent<OrganisationData>( this, EditTypes.CHANGED, organisation));
+		}
+
+		@Override
+		protected Object doGetValue() {
+			OrganisationData organisation = super.getData().getStore();
+			return organisation.isVerified();
+		}
+
+		@Override
+		protected void doSetValue( Object value ) {
+			OrganisationData organisation = super.getData().getStore();
+			organisation.setVerified((boolean)value );
 		}
 	}
 }

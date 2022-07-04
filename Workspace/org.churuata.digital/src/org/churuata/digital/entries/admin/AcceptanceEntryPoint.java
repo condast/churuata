@@ -7,7 +7,6 @@ import java.util.logging.Logger;
 
 import org.churuata.digital.core.AbstractWizardEntryPoint;
 import org.churuata.digital.core.Dispatcher;
-import org.churuata.digital.core.Entries.Pages;
 import org.churuata.digital.core.data.OrganisationData;
 import org.churuata.digital.core.model.IOrganisation;
 import org.churuata.digital.core.rest.IRestPages;
@@ -18,7 +17,6 @@ import org.condast.commons.authentication.http.IDomainProvider;
 import org.condast.commons.authentication.user.ILoginUser;
 import org.condast.commons.messaging.http.AbstractHttpRequest;
 import org.condast.commons.messaging.http.ResponseEvent;
-import org.condast.commons.na.data.ContactPersonData;
 import org.condast.commons.na.data.PersonData;
 import org.condast.commons.ui.controller.EditEvent;
 import org.condast.commons.ui.controller.IEditListener;
@@ -52,6 +50,36 @@ public class AcceptanceEntryPoint extends AbstractWizardEntryPoint<AcceptOrganis
 	}
 
 	@Override
+	protected AcceptOrganisationTableViewer onCreateComposite(Composite parent, int style) {
+		acceptTableViewer = new AcceptOrganisationTableViewer(parent, SWT.NONE );
+		acceptTableViewer.setData( RWT.CUSTOM_VARIANT, S_CHURUATA );
+		acceptTableViewer.setLayoutData( new GridData( SWT.FILL, SWT.FILL, true, true ));
+		acceptTableViewer.addEditListener(listener);
+		return acceptTableViewer;
+	}
+
+	@Override
+	protected boolean onPostProcess(String context, OrganisationData data, SessionStore<OrganisationData> store) {
+		controller = new WebController( store.getLoginUser());
+		controller.setInput(context, IRestPages.Pages.ORGANISATION.toPath());
+		controller.getAll( IOrganisation.Verification.ALL);
+		return true;
+	}
+
+	protected void onOrganisationEvent( EditEvent<OrganisationData> event ) {
+		controller.type = event.getType();
+		OrganisationData data = event.getData();
+		switch( event.getType()) {
+		case CHANGED:
+			Button btnNext = super.getBtnNext();
+			btnNext.setEnabled(( data != null ));
+			break;
+		default:
+			break;
+		}
+	}
+
+	@Override
 	protected void onButtonPressed(OrganisationData data, SessionStore<OrganisationData> store) {
 		try{
 			if( store.getContactPersonData() == null )
@@ -68,47 +96,6 @@ public class AcceptanceEntryPoint extends AbstractWizardEntryPoint<AcceptOrganis
 	}
 
 	@Override
-	protected AcceptOrganisationTableViewer onCreateComposite(Composite parent, int style) {
-		acceptTableViewer = new AcceptOrganisationTableViewer(parent, SWT.NONE );
-		acceptTableViewer.setData( RWT.CUSTOM_VARIANT, S_CHURUATA );
-		acceptTableViewer.setLayoutData( new GridData( SWT.FILL, SWT.FILL, true, true ));
-		return acceptTableViewer;
-	}
-
-	@Override
-	protected boolean onPostProcess(String context, OrganisationData data, SessionStore<OrganisationData> store) {
-		controller = new WebController( store.getLoginUser());
-		controller.setInput(context, IRestPages.Pages.ORGANISATION.toPath());
-		controller.getAll( IOrganisation.Verification.ALL);
-		return true;
-	}
-
-	protected void onOrganisationEvent( EditEvent<OrganisationData> event ) {
-		ContactPersonData data = null;
-		SessionStore<OrganisationData> store = super.getSessionStore();
-		controller.type = event.getType();
-		switch( event.getType()) {
-		case ADDED:
-			//store.setContactPersonData( this.acceptTableViewer.getInput());
-			PersonData person = store.getPersonData();
-			if( person == null ) 
-				controller.getAll( IOrganisation.Verification.ALL);
-			else
-				Dispatcher.jump( Pages.CONTACTS, store.getToken());
-				
-			break;
-		case COMPLETE:
-			//data = event.getData();
-			store.setContactPersonData(data);
-			Button btnNext = super.getBtnNext();
-			btnNext.setEnabled(( data != null ));
-			break;
-		default:
-			break;
-		}
-	}
-
-	@Override
 	protected void onHandleTimer(SessionEvent<OrganisationData> event) {
 		try {
 			//acceptTableViewer.refresh();
@@ -117,7 +104,14 @@ public class AcceptanceEntryPoint extends AbstractWizardEntryPoint<AcceptOrganis
 			e.printStackTrace();
 		}
 	}
-	
+
+	@Override
+	public void close() {
+		this.acceptTableViewer.removeEditListener(listener);
+		super.close();
+	}
+
+
 	private class WebController extends AbstractHttpRequest<OrganisationData.Requests>{
 		
 		private EditEvent.EditTypes type;

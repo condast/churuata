@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -314,7 +315,7 @@ public class OrganisationResource{
 	}
 
 	@GET
-	@Produces(MediaType.TEXT_PLAIN)
+	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/remove-service")
 	public Response removeService( @QueryParam("user-id") long userId, @QueryParam("security") long security,
 			@QueryParam("organisation-id") long organisationId, @QueryParam("service-id") long serviceId) {
@@ -334,6 +335,54 @@ public class OrganisationResource{
 			if( organisation == null )
 				return Response.noContent().build();
 			organisation.removeService( serviceId);
+			Gson gson = new Gson();
+			String str = gson.toJson( new OrganisationData( organisation ), OrganisationData.class);
+			return Response.ok( str ).build();
+		}
+		catch( Exception ex ) {
+			ex.printStackTrace();
+			return Response.serverError().build();
+		}
+		finally {
+			t.close();
+		}
+	}
+
+	@POST
+	@Produces(MediaType.TEXT_PLAIN)
+	@Path("/verify")
+	public Response verify(@QueryParam("user-id") long userId, @QueryParam("security") long security,
+			long organisationId, @QueryParam("verified") boolean verified, String data ) {
+
+		AuthenticationDispatcher dispatcher=  AuthenticationDispatcher.getInstance();
+		if( !dispatcher.isLoggedIn(userId, security))
+			return Response.status( Status.UNAUTHORIZED).build();
+		
+		if( StringUtils.isEmpty(data))
+			return Response.noContent().build();
+		
+		TransactionManager t = new TransactionManager( Dispatcher.getInstance() );
+		Gson gson = new Gson();
+		OrganisationData[] organisations = gson.fromJson(data, OrganisationData[].class);
+		try {
+			t.open();
+			OrganisationService os = new OrganisationService(); 
+			PersonService ps = new PersonService();
+			for( OrganisationData od: organisations  ){
+				Organisation organisation = os.find(organisationId);
+				if( organisation == null)
+					return Response.status(Status.NOT_FOUND).build();
+				if( !organisation.isVerified() && verified ) {
+					organisation.setVerified(verified);
+					IContactPerson person = organisation.getContact();
+
+					//dispatcher.re
+					os.update(organisation);
+				}else if( organisation.isVerified() && !verified ) {
+					organisation.setVerified(verified);
+					os.update(organisation);				
+				}
+			}
 			return Response.ok().build();
 		}
 		catch( Exception ex ) {

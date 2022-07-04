@@ -53,7 +53,7 @@ public class Admin implements IAdmin, Serializable {
 	public Admin( ILoginUser user, Roles role) {
 		this();
 		this.role = role.name();
-		this.loginId = this.login.getId();
+		this.loginId = user.getId();
 		this.login = (Login) user;
 	}
 
@@ -81,6 +81,11 @@ public class Admin implements IAdmin, Serializable {
 
 	public Roles getRole() {
 		return StringUtils.isEmpty(role)?Roles.GUEST: Roles.valueOf(role);
+	}
+
+	@Override
+	public boolean isAdmin() {
+		return IAdmin.Roles.isAdmin( this);
 	}
 
 	@Override

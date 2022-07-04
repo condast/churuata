@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import javax.servlet.http.HttpSession;
+
 import org.churuata.digital.core.AbstractWizardEntryPoint;
 import org.churuata.digital.core.Dispatcher;
 import org.churuata.digital.core.Entries.Pages;
@@ -12,6 +14,7 @@ import org.churuata.digital.core.rest.IRestPages;
 import org.churuata.digital.session.SessionStore;
 import org.churuata.digital.ui.admin.AdminTableViewer;
 import org.condast.commons.authentication.core.AdminData;
+import org.condast.commons.authentication.core.LoginData;
 import org.condast.commons.authentication.http.IDomainProvider;
 import org.condast.commons.authentication.user.IAdmin;
 import org.condast.commons.authentication.user.ILoginUser;
@@ -32,14 +35,14 @@ import org.eclipse.swt.widgets.Composite;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
-public class AdminEntryPoint extends AbstractWizardEntryPoint<AdminTableViewer, AdminData>{
+public class AdminEntryPoint extends AbstractWizardEntryPoint<AdminTableViewer, LoginData>{
 	private static final long serialVersionUID = 1L;
 
 	public static final String S_ADD_ACCOUNT = "Add Account";
 
 	private AdminTableViewer adminTableViewer;
 
-	private IEditListener<AdminData> listener = e->onOrganisationEvent(e);
+	private IEditListener<LoginData> listener = e->onOrganisationEvent(e);
 
 	private WebController controller;
 	
@@ -52,13 +55,13 @@ public class AdminEntryPoint extends AbstractWizardEntryPoint<AdminTableViewer, 
 
 	@SuppressWarnings("unchecked")
 	@Override
-	protected IDomainProvider<SessionStore<AdminData>> getDomainProvider(StartupParameters service) {
+	protected IDomainProvider<SessionStore<LoginData>> getDomainProvider(StartupParameters service) {
 		IDomainProvider<?> domain = Dispatcher.getDomainProvider(service);
-		return (IDomainProvider<SessionStore<AdminData>>) domain;
+		return (IDomainProvider<SessionStore<LoginData>>) domain;
 	}
 
 	@Override
-	protected void onButtonPressed(AdminData data, SessionStore<AdminData> store) {
+	protected void onButtonPressed(LoginData data, SessionStore<LoginData> store) {
 		try{
 			if( store.getContactPersonData() == null )
 				return;
@@ -83,18 +86,20 @@ public class AdminEntryPoint extends AbstractWizardEntryPoint<AdminTableViewer, 
 	}
 
 	@Override
-	protected boolean onPostProcess(String context, AdminData data, SessionStore<AdminData> store) {
+	protected boolean onPostProcess(String context, LoginData data, SessionStore<LoginData> store) {
 		controller = new WebController( store.getLoginUser());
 		controller.setInput(context, IRestPages.Pages.ADMIN.toPath());
 		controller.getAll( IAdmin.Roles.UNKNOWN);
 		return true;
 	}
 
-	protected void onOrganisationEvent( EditEvent<AdminData> event ) {
+	protected void onOrganisationEvent( EditEvent<LoginData> event ) {
 		ContactPersonData data = null;
-		SessionStore<AdminData> store = super.getSessionStore();
+		SessionStore<LoginData> store = super.getSessionStore();
 		switch( event.getType()) {
 		case SELECTED:
+			HttpSession session = RWT.getUISession().getHttpSession();
+			session.setAttribute(AdminData.Parameters.LOGIN_USER.name(), event.getData());
 			Dispatcher.jump( Pages.EDIT_ADMIN, store.getToken());
 			break;
 		case COMPLETE:
@@ -109,7 +114,7 @@ public class AdminEntryPoint extends AbstractWizardEntryPoint<AdminTableViewer, 
 	}
 
 	@Override
-	protected void onHandleTimer(SessionEvent<AdminData> event) {
+	protected void onHandleTimer(SessionEvent<LoginData> event) {
 		try {
 			//acceptTableViewer.refresh();
 			super.handleTimer();
@@ -140,8 +145,8 @@ public class AdminEntryPoint extends AbstractWizardEntryPoint<AdminTableViewer, 
 
 		public void getAll( IAdmin.Roles role ) {
 			Map<String, String> params = super.getParameters();
-			params.put( AdminData.Parameters.USER_ID.toString(), String.valueOf( user.getId()));
-			params.put( AdminData.Parameters.SECURITY.toString(), String.valueOf( user.getSecurity()));
+			params.put( LoginData.Parameters.USER_ID.toString(), String.valueOf( user.getId()));
+			params.put( LoginData.Parameters.SECURITY.toString(), String.valueOf( user.getSecurity()));
 			params.put( AdminData.Parameters.ROLE.toString(), role.name());
 			try {
 				sendGet(AdminData.Requests.GET_ALL, params );
@@ -153,11 +158,11 @@ public class AdminEntryPoint extends AbstractWizardEntryPoint<AdminTableViewer, 
 		@Override
 		protected String onHandleResponse(ResponseEvent<AdminData.Requests> event) throws IOException {
 			try {
-				SessionStore<AdminData> store = getSessionStore();
+				SessionStore<LoginData> store = getSessionStore();
 				Gson gson = new Gson();
 				switch( event.getRequest()){
 				case GET_ALL:
-					AdminData[] data = gson.fromJson(event.getResponse(), AdminData[].class);
+					LoginData[] data = gson.fromJson(event.getResponse(), LoginData[].class);
 					adminTableViewer.setInput( Arrays.asList(data));
 					break;
 				default:
@@ -174,7 +179,6 @@ public class AdminEntryPoint extends AbstractWizardEntryPoint<AdminTableViewer, 
 		@Override
 		protected void onHandleResponseFail(HttpStatus status, ResponseEvent<AdminData.Requests> event) throws IOException {
 			super.onHandleResponseFail(status, event);
-		}
-	
+		}	
 	}
 }

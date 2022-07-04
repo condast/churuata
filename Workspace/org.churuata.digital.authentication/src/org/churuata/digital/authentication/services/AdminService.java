@@ -38,6 +38,8 @@ public class AdminService extends AbstractEntityService<Admin>{
 		query.setParameter("loginId", user.getId());
 		Collection<IAdmin> users = query.getResultList();
 		Admin admin = Utils.assertNull( users)? null: (Admin) users.iterator().next();
+		if( admin == null )
+			return admin;
 		admin.setLogin(user);
 		return admin;
 	}
