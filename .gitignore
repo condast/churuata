@@ -10,6 +10,10 @@ obj/
 artifacts.jar
 content.jar
 
+#Persistence
+persistence.xml
+META-INF/sql/*.sql
+
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
 .settings

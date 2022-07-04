@@ -244,6 +244,28 @@ public class OrganisationResource{
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/find-all")
+	public Response findAll() {
+		TransactionManager t = new TransactionManager( Dispatcher.getInstance() );
+		try {
+			t.open();
+			OrganisationService os = new OrganisationService(); 
+			OrganisationData[] organisations = OrganisationService.toOrganisationData( os.findAll( IOrganisation.Verification.VERIFIED ));
+			Gson gson = new Gson();
+			String str = gson.toJson( organisations, OrganisationData[].class);
+			return Response.ok( str ).build();
+		}
+		catch( Exception ex ) {
+			ex.printStackTrace();
+			return Response.serverError().build();
+		}
+		finally {
+			t.close();
+		}
+	}
+
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/find-in-range")
 	public Response findAll( @QueryParam("latitude") double latitude, @QueryParam("longitude") double longitude, @QueryParam("range") int range ) {
 		logger.info( "ATTEMPT Get " );
@@ -352,7 +374,7 @@ public class OrganisationResource{
 	@Produces(MediaType.TEXT_PLAIN)
 	@Path("/verify")
 	public Response verify(@QueryParam("user-id") long userId, @QueryParam("security") long security,
-			long organisationId, @QueryParam("verified") boolean verified, String data ) {
+			@QueryParam("verified") boolean verified, String data ) {
 
 		AuthenticationDispatcher dispatcher=  AuthenticationDispatcher.getInstance();
 		if( !dispatcher.isLoggedIn(userId, security))
@@ -369,7 +391,7 @@ public class OrganisationResource{
 			OrganisationService os = new OrganisationService(); 
 			PersonService ps = new PersonService();
 			for( OrganisationData od: organisations  ){
-				Organisation organisation = os.find(organisationId);
+				Organisation organisation = os.find(od.getId());
 				if( organisation == null)
 					return Response.status(Status.NOT_FOUND).build();
 				if( !organisation.isVerified() && verified ) {
