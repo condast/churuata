@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.logging.Logger;
 
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -150,6 +151,62 @@ public class AdminResource{
 			return Response.serverError().build();
 		}
 		finally{
+			t.close();
+		}
+	}
+
+	@GET
+	@Produces(MediaType.TEXT_PLAIN)
+	@Path("/remove-admin")
+	public Response removeAdmin( @QueryParam("user-id") long userId, @QueryParam("security") long security,
+			@QueryParam("organisation-id") long adminId) {
+
+		Dispatcher dispatcher=  Dispatcher.getInstance();
+		if( !dispatcher.isLoggedIn(userId, security))
+			return Response.status( Status.UNAUTHORIZED).build();
+		
+		TransactionManager t = new TransactionManager( Dispatcher.getInstance() );
+		try {
+			t.open();
+			AdminService os = new AdminService( dispatcher ); 
+			boolean result = os.remove( adminId );
+			return Response.ok( result ).build();
+		}
+		catch( Exception ex ) {
+			ex.printStackTrace();
+			return Response.serverError().build();
+		}
+		finally {
+			t.close();
+		}
+	}
+
+	@DELETE
+	@Produces(MediaType.TEXT_PLAIN)
+	@Path("/remove-admins")
+	public Response removeAll( @QueryParam("user-id") long userId, @QueryParam("security") long security, String data ) {
+
+		Dispatcher dispatcher=  Dispatcher.getInstance();
+		if( !dispatcher.isLoggedIn(userId, security))
+			return Response.status( Status.UNAUTHORIZED).build();
+		
+		if( StringUtils.isEmpty(data))
+			return Response.noContent().build();
+		
+		Gson gson = new Gson();
+		long[] ids = gson.fromJson(data, long[].class);
+		TransactionManager t = new TransactionManager( Dispatcher.getInstance() );
+		try {
+			t.open();
+			AdminService os = new AdminService( dispatcher ); 
+			os.removeAll( ids );
+			return Response.ok().build();
+		}
+		catch( Exception ex ) {
+			ex.printStackTrace();
+			return Response.serverError().build();
+		}
+		finally {
 			t.close();
 		}
 	}

@@ -109,6 +109,10 @@ public class AcceptOrganisationTableViewer extends AbstractTableViewerWithDelete
 
 	@Override
 	protected boolean onDeleteButton(Collection<OrganisationData> deleted) {
+		if( Utils.assertNull(deleted))
+			return false;
+		EditEvent<OrganisationData> event = new EditEvent<OrganisationData>( this, EditTypes.DELETE, deleted);
+		notifyEditEvent( event);
 		return true;
 	}
 

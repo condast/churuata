@@ -59,6 +59,7 @@ public class LocationEntryPoint extends AbstractWizardEntryPoint<OrganisationMap
 		controller = new WebController( context, IRestPages.Pages.ORGANISATION.toPath());
 		mapComposite.setInput(context);
 		mapComposite.setInput(new SimpleOrganisationData( store.getData()));
+		getBtnNext().setEnabled(false);
 		mapComposite.locate();
 		return true;
 	}

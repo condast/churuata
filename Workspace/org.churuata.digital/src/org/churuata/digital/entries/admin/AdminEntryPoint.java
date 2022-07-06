@@ -2,6 +2,7 @@ package org.churuata.digital.entries.admin;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -20,8 +21,6 @@ import org.condast.commons.authentication.user.IAdmin;
 import org.condast.commons.authentication.user.ILoginUser;
 import org.condast.commons.messaging.http.AbstractHttpRequest;
 import org.condast.commons.messaging.http.ResponseEvent;
-import org.condast.commons.na.data.ContactPersonData;
-import org.condast.commons.na.data.PersonData;
 import org.condast.commons.ui.controller.EditEvent;
 import org.condast.commons.ui.controller.IEditListener;
 import org.condast.commons.ui.session.SessionEvent;
@@ -29,7 +28,6 @@ import org.eclipse.rap.rwt.RWT;
 import org.eclipse.rap.rwt.client.service.StartupParameters;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 
 import com.google.gson.Gson;
@@ -62,18 +60,7 @@ public class AdminEntryPoint extends AbstractWizardEntryPoint<AdminTableViewer, 
 
 	@Override
 	protected void onButtonPressed(LoginData data, SessionStore<LoginData> store) {
-		try{
-			if( store.getContactPersonData() == null )
-				return;
-			PersonData person = store.getPersonData();
-			//if( person == null ) 				
-				//controller.getAll( store.getContactPersonData());
-			//else
-			//	Dispatcher.jump( Pages.ORGANISATION, store.getToken());						
-		}
-		catch( Exception ex ){
-			ex.printStackTrace();
-		}
+		// NOTHING; No Button
 	}
 
 	@Override
@@ -94,7 +81,6 @@ public class AdminEntryPoint extends AbstractWizardEntryPoint<AdminTableViewer, 
 	}
 
 	protected void onOrganisationEvent( EditEvent<LoginData> event ) {
-		ContactPersonData data = null;
 		SessionStore<LoginData> store = super.getSessionStore();
 		switch( event.getType()) {
 		case SELECTED:
@@ -102,11 +88,8 @@ public class AdminEntryPoint extends AbstractWizardEntryPoint<AdminTableViewer, 
 			session.setAttribute(AdminData.Parameters.LOGIN_USER.name(), event.getData());
 			Dispatcher.jump( Pages.EDIT_ADMIN, store.getToken());
 			break;
-		case COMPLETE:
-			//data = event.getData();
-			store.setContactPersonData(data);
-			Button btnNext = super.getBtnNext();
-			btnNext.setEnabled(( data != null ));
+		case DELETE:
+			controller.removeAll(event.getBatch());
 			break;
 		default:
 			break;
@@ -155,10 +138,22 @@ public class AdminEntryPoint extends AbstractWizardEntryPoint<AdminTableViewer, 
 			}
 		}
 
+		public void removeAll( Collection<LoginData> admins ) {
+			Map<String, String> params = super.getParameters();
+			params.put( LoginData.Parameters.USER_ID.toString(), String.valueOf( user.getId()));
+			params.put( LoginData.Parameters.SECURITY.toString(), String.valueOf( user.getSecurity()));
+			Gson gson = new Gson();
+			String data = gson.toJson( AdminData.getIDsFromlogin(admins), long[].class );
+			try {
+				sendDelete(AdminData.Requests.REMOVE_ADMINS, params, data );
+			} catch (IOException e) {
+				logger.warning(e.getMessage());
+			}
+		}
+
 		@Override
 		protected String onHandleResponse(ResponseEvent<AdminData.Requests> event) throws IOException {
 			try {
-				SessionStore<LoginData> store = getSessionStore();
 				Gson gson = new Gson();
 				switch( event.getRequest()){
 				case GET_ALL:

@@ -2,6 +2,7 @@ package org.churuata.digital.entries.admin;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -13,6 +14,7 @@ import org.churuata.digital.core.model.IOrganisation;
 import org.churuata.digital.core.rest.IRestPages;
 import org.churuata.digital.session.SessionStore;
 import org.churuata.digital.ui.organisation.AcceptOrganisationTableViewer;
+import org.condast.commons.Utils;
 import org.condast.commons.authentication.core.LoginData;
 import org.condast.commons.authentication.http.IDomainProvider;
 import org.condast.commons.authentication.user.ILoginUser;
@@ -74,6 +76,9 @@ public class AcceptanceEntryPoint extends AbstractWizardEntryPoint<AcceptOrganis
 			btnNext.setEnabled(( data != null ));
 			if( data != null )
 				controller.setVerified(data);
+			break;
+		case DELETE:
+			controller.removeAll(event.getBatch());
 			break;
 		default:
 			break;
@@ -140,6 +145,21 @@ public class AcceptanceEntryPoint extends AbstractWizardEntryPoint<AcceptOrganis
 			params.put(OrganisationData.Parameters.VERIFIED.toString(), String.valueOf( organisation.isVerified()));
 			try {
 				sendGet(OrganisationData.Requests.SET_VERIFIED, params );
+			} catch (IOException e) {
+				logger.warning(e.getMessage());
+			}
+		}
+
+		public void removeAll( Collection<OrganisationData> organisations ) {
+			if( Utils.assertNull(organisations))
+				return;
+			Map<String, String> params = super.getParameters();
+			params.put( LoginData.Parameters.USER_ID.toString(), String.valueOf( user.getId()));
+			params.put( LoginData.Parameters.SECURITY.toString(), String.valueOf( user.getSecurity()));
+			Gson gson = new Gson();
+			String data = gson.toJson( OrganisationData.getIDs(organisations), long[].class );
+			try {
+				sendDelete(OrganisationData.Requests.REMOVE_ORGANISATIONS, params, data );
 			} catch (IOException e) {
 				logger.warning(e.getMessage());
 			}

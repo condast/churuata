@@ -197,9 +197,9 @@ public class ShowLegalEntryPoint extends AbstractWizardEntryPoint<Browser, Organ
 		setPrivacyPath( path + S_PRIVACY);
 		setLicensePath( path + S_TOS);
 
-		//if( store.getData() == null )
-		//	return false;
-		FileParser parser = new FileParser( null, 0 );
+		if( store.getData() == null )
+			return false;
+		FileParser parser = new FileParser( store.getData(), 0 );
 		String str =null;
 		try{
 			str = parser.parse( this.getClass().getResourceAsStream(S_RESOURCE_FILE) );

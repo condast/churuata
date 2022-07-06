@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -483,4 +484,59 @@ public class OrganisationResource{
 		}
 	}
 
+	@GET
+	@Produces(MediaType.TEXT_PLAIN)
+	@Path("/remove-organisation")
+	public Response removeOrganisation( @QueryParam("user-id") long userId, @QueryParam("security") long security,
+			@QueryParam("organisation-id") long organisationId) {
+
+		AuthenticationDispatcher dispatcher=  AuthenticationDispatcher.getInstance();
+		if( !dispatcher.isLoggedIn(userId, security))
+			return Response.status( Status.UNAUTHORIZED).build();
+		
+		TransactionManager t = new TransactionManager( Dispatcher.getInstance() );
+		try {
+			t.open();
+			OrganisationService os = new OrganisationService(); 
+			boolean result = os.remove( organisationId );
+			return Response.ok( result ).build();
+		}
+		catch( Exception ex ) {
+			ex.printStackTrace();
+			return Response.serverError().build();
+		}
+		finally {
+			t.close();
+		}
+	}
+
+	@DELETE
+	@Produces(MediaType.TEXT_PLAIN)
+	@Path("/remove-organisations")
+	public Response removeAll( @QueryParam("user-id") long userId, @QueryParam("security") long security, String data ) {
+
+		AuthenticationDispatcher dispatcher=  AuthenticationDispatcher.getInstance();
+		if( !dispatcher.isLoggedIn(userId, security))
+			return Response.status( Status.UNAUTHORIZED).build();
+		
+		if( StringUtils.isEmpty(data))
+			return Response.noContent().build();
+		
+		Gson gson = new Gson();
+		long[] ids = gson.fromJson(data, long[].class);
+		TransactionManager t = new TransactionManager( Dispatcher.getInstance() );
+		try {
+			t.open();
+			OrganisationService os = new OrganisationService(); 
+			os.removeAll( ids );
+			return Response.ok().build();
+		}
+		catch( Exception ex ) {
+			ex.printStackTrace();
+			return Response.serverError().build();
+		}
+		finally {
+			t.close();
+		}
+	}
 }

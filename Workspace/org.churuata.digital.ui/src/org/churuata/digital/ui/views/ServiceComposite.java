@@ -40,8 +40,6 @@ public class ServiceComposite extends AbstractEntityComposite<IChuruataService>
 	private static final String S_CONTRIBUTION = "Contribution: ";
 	private static final String S_CHURUATA_INFORMATION_TIP = "The type of churuata";
 	private static final String S_NAME_INFORMATION_TIP = "The Churuata name";
-	private static final String S_DESCRIPTION = "Description";
-	private static final String S_DESCRIPTOR_INFORMATION_TIP = "Describe the Churuata";
 	private static final String S_FROM = "From: ";
 	private static final String S_TO = "To: ";
 	
@@ -49,7 +47,6 @@ public class ServiceComposite extends AbstractEntityComposite<IChuruataService>
 	private Combo comboTypes;
 
 	private InputField churuataField;
-	private InputField descriptionField;
 
 	private AttributeFieldComposite contributionField;
 	private Combo contributionTypes;
@@ -145,32 +142,7 @@ public class ServiceComposite extends AbstractEntityComposite<IChuruataService>
 		gridData_2.horizontalAlignment = GridData.FILL;
 		gridData_2.grabExcessHorizontalSpace = true;
 		churuataField.setLayoutData(gridData_2);	
-		
-		descriptionField = new InputField(grpFillIn, SWT.NONE);
-		descriptionField.setLabel( S_DESCRIPTION + ": ");
-		descriptionField.setBackgroundControl(0);
-		descriptionField.setLabelWidth(85);
-		descriptionField.setInformationMessage(S_DESCRIPTOR_INFORMATION_TIP);
-		GridData gridData_3 = new GridData();
-		gridData_3.horizontalSpan = 2;
-		gridData_3.heightHint = 33;
-		gridData_3.widthHint = 182;
-		gridData_3.horizontalAlignment = GridData.FILL;
-		gridData_3.grabExcessHorizontalSpace = true;
-		descriptionField.setLayoutData(gridData_3);
-		this.descriptionField.addVerifyListener( new VerifyListener()
-		{	
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public void verifyText(VerifyEvent event) {
-				onVerifyText(event, null);
-				if( isFilled())
-					notifyInputEdited( new EditEvent<IChuruataService>( this, EditTypes.COMPLETE, getInput()));
-			}
-		});
-		
-				
+								
 		this.contributionField = new AttributeFieldComposite( grpFillIn, SWT.NONE );
 		this.contributionField.setLabel( S_CONTRIBUTION + ": ");
 		this.contributionField.setLabelWidth(115);
@@ -261,7 +233,7 @@ public class ServiceComposite extends AbstractEntityComposite<IChuruataService>
 			input = new ServiceData();
 		input.setFrom( DateUtils.getDate(fromField ));
 		input.setTo( DateUtils.getDate(toField));
-		input.setDescription( this.descriptionField.getText() );
+		input.setDescription( this.churuataField.getText() );
 		input.setService( IChuruataService.Services.values()[ this.comboTypes.getSelectionIndex()]);
 		if( input instanceof ServiceData ) {
 			ServiceData sd = (ServiceData) input;
@@ -276,7 +248,7 @@ public class ServiceComposite extends AbstractEntityComposite<IChuruataService>
 			return;
 		DateUtils.setDate(fromField, input.from());
 		DateUtils.setDate(toField, input.to());
-		this.descriptionField.setText(input.getDescription( ) );
+		this.churuataField.setText(input.getDescription( ) );
 		this.comboTypes.select( input.getService().ordinal());
 		if( input instanceof ServiceData ) {
 			ServiceData sd = (ServiceData) input;
@@ -311,7 +283,7 @@ public class ServiceComposite extends AbstractEntityComposite<IChuruataService>
 		boolean filled = !StringUtils.isEmpty( churuataField.getText());
 		if( !filled )
 			return false;
-		return !StringUtils.isEmpty( this.descriptionField.getText());
+		return !StringUtils.isEmpty( this.churuataField.getText());
 	}
 
 	@Override

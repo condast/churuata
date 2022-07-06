@@ -7,6 +7,7 @@ import java.util.Collection;
 
 import org.churuata.digital.core.location.IChuruataService;
 import org.churuata.digital.core.model.IOrganisation;
+import org.condast.commons.Utils;
 import org.condast.commons.data.latlng.LatLng;
 import org.condast.commons.na.data.PersonData;
 import org.condast.commons.na.model.IAddress;
@@ -29,6 +30,8 @@ public class OrganisationData implements IOrganisation, Serializable, Cloneable 
 		FIND_IN_RANGE,
 		GET_ALL, 
 		REMOVE_SERVICE,
+		REMOVE_ORGANISATION,
+		REMOVE_ORGANISATIONS,
 		VERIFY,
 		SET_LOCATION,
 		SET_VERIFIED;
@@ -228,18 +231,22 @@ public class OrganisationData implements IOrganisation, Serializable, Cloneable 
 
 	@Override
 	public void removeService(long serviceId) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void addService(IChuruataService type, String value) {
-		// TODO Auto-generated method stub
-		
+		// TODO Auto-generated method stub		
 	}
 
 	@Override
 	public int getServicesSize() {
 		return this.services.size();
+	}
+	
+	public static long[] getIDs( Collection<OrganisationData> organisations) {
+		if( Utils.assertNull(organisations))
+			return new long[0];
+		long[] results = new long[ organisations.size()];
+		int index = 0;
+		for( OrganisationData organisation: organisations ) {
+			results[index++] = organisation.getId();
+		}
+		return results;
 	}
 }

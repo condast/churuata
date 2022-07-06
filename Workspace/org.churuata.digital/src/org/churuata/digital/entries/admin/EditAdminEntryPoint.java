@@ -54,8 +54,6 @@ public class EditAdminEntryPoint extends AbstractWizardEntryPoint<AdminWidget, L
 	@Override
 	protected void onButtonPressed(LoginData data, SessionStore<LoginData> store) {
 		try{
-			if( store.getContactPersonData() == null )
-				return;
 			Dispatcher.jump( Pages.ADMIN, store.getToken());						
 		}
 		catch( Exception ex ){

@@ -79,8 +79,6 @@ public interface IOrganisation {
 
 	IChuruataService[] getServices();
 
-	void addService( IChuruataService type, String value);
-
 	int getServicesSize();
 
 	String getWebsite();

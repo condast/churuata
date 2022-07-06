@@ -62,7 +62,7 @@ public class Organisation implements IOrganisation, Serializable, Cloneable {
 	
 	private int score;
 
-	@OneToMany( mappedBy="organisation", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy="organisation", cascade=CascadeType.ALL, orphanRemoval = true)
 	private Collection<Service> services;
 
 	@Column( nullable=false)
@@ -213,14 +213,10 @@ public class Organisation implements IOrganisation, Serializable, Cloneable {
 	}
 
 	@Override
-	public void addService( IChuruataService type, String value) {
-		Service contact = new Service( this.services.size(), type.getService(), value );
-		this.services.add( contact );
-	}
-
-	@Override
-	public int addService( IChuruataService contact) {
-		this.services.add(( Service )contact );
+	public int addService( IChuruataService cservice) {
+		Service service = (Service) cservice;
+		service.setOrganisation(this);
+		this.services.add(service );
 		return this.services.size()-1;
 	}
 
