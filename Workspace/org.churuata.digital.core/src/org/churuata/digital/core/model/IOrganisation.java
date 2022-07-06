@@ -5,6 +5,7 @@ import org.condast.commons.data.latlng.LatLng;
 import org.condast.commons.na.model.IAddress;
 import org.condast.commons.na.model.IContactPerson;
 import org.condast.commons.strings.StringStyler;
+import org.condast.commons.strings.StringUtils;
 
 public interface IOrganisation {
 
@@ -40,6 +41,10 @@ public interface IOrganisation {
 		public String toString() {
 			return StringStyler.prettyString( name());
 		}	
+		
+		public static Verification getVerification( String arg0 ) {
+			return StringUtils.isEmpty(arg0)?Verification.ALL: Verification.valueOf(arg0);
+		}
 	}
 
 	long getId();

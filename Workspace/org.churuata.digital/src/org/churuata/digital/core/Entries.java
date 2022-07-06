@@ -1,22 +1,13 @@
 package org.churuata.digital.core;
 
-import java.io.InputStream;
-import java.lang.reflect.Constructor;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Scanner;
-
 import org.churuata.digital.BasicApplication;
 import org.condast.commons.strings.StringStyler;
 import org.condast.commons.strings.StringUtils;
-import org.eclipse.rap.rwt.application.EntryPoint;
+import org.condast.commons.ui.entry.AbstractEntries;
 
-public class Entries {
+public class Entries extends AbstractEntries<Entries.Pages>{
 
 	public static final String S_HOME = "churuata";
-
-	public static final String S_ENTRY_POITNT = "EntryPoint";
-	private static final String S_PAGE_RESOURCE = "/design/pages.txt";
 	
 	public enum Pages{
 		ACCOUNT,
@@ -71,101 +62,13 @@ public class Entries {
 		}
 	}
 
-	private Map<Pages,PageEntries> pages;
-	
-	private Class<?> clss;
-
 	private static Entries entry = new Entries();
 	
 	private Entries() {
-		this( Entries.class, Entries.class.getResourceAsStream( S_PAGE_RESOURCE));
-	}
-
-	public Entries( Class<?> clss, String path ) {
-		this( clss, clss.getResourceAsStream(path));
-	}
-	
-	public Entries( Class<?> clss, InputStream in ) {
-		this.clss = clss;
-		pages = new HashMap<>();
-		Scanner scanner = new Scanner( in );
-		try {
-			while( scanner.hasNextLine()) {
-				String line=  scanner.nextLine();
-				if( StringUtils.isEmpty(line) || StringUtils.isComment(line))
-					continue;
-				String[] split = line.split("[|]");
-				PageEntries entry = new PageEntries(split);
-				pages.put(entry.page, entry);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		finally {
-			scanner.close();
-		}
+		super( Pages.class, S_PAGE_RESOURCE );
 	}
 
 	public static Entries getInstance() {
 		return entry;
-	}
-	
-	public IPageEntry getPageEntry( Pages page ) {
-		return this.pages.get(page);
-	}
-	
-	private class PageEntries implements IPageEntry{
-		
-		private Pages page;
-		private String title;
-		private String link;
-		private String className;
-
-		public PageEntries(String[] split ) {
-			String str = StringStyler.styleToEnum(split[0].trim());
-			str = str.replace(";", "");
-			this.page = Pages.valueOf(str);
-			this.className = ( split.length > 1)?split[1].trim(): page.toPretty() + S_ENTRY_POITNT;
-			this.title = ( split.length > 2)? split[2].trim(): page.toPretty();
-			if( split.length > 3)
-				this.link = split[3].trim();
-		}
-
-		@Override
-		public Pages getPage() {
-			return page;
-		}
-
-		@Override
-		public String getTitle() {
-			return title;
-		}
-
-		@Override
-		public String getLink() {
-			return link;
-		}
-
-		@Override
-		public String getClassName() {
-			return className;
-		}
-
-		@SuppressWarnings("unchecked")
-		@Override
-		public EntryPoint getEntryPoint() {
-			if( StringUtils.isEmpty( className ))
-				return null;
-			Class<EntryPoint> builderClass;
-			EntryPoint bentryPoint = null;
-			try {
-				builderClass = (Class<EntryPoint>) clss.getClassLoader().loadClass( className );
-				Constructor<EntryPoint> constructor = builderClass.getConstructor();
-				bentryPoint = constructor.newInstance();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			return bentryPoint;
-		}
 	}
 }

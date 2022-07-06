@@ -22,20 +22,22 @@ public class OrganisationData implements IOrganisation, Serializable, Cloneable 
 	public static final String S_ORGANISATION_REST_PATH = "organisation/admin/";
 	
 	public enum Requests{
+		ADD_SERVICE,
 		CREATE,
 		REGISTER,
 		FIND,
 		FIND_IN_RANGE,
-		ADD_SERVICE,
+		GET_ALL, 
 		REMOVE_SERVICE,
 		VERIFY,
 		SET_LOCATION,
-		GET_ALL;
+		SET_VERIFIED;
 	}
 
 	public enum Parameters{
 		USER_ID,
 		SECURITY,
+		ORGANISATION_ID,
 		NAME,
 		DESCRIPTION,
 		LATITUDE,

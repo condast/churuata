@@ -34,6 +34,17 @@ public class ChuruataServlet extends HttpServlet {
 		}				
 	}
 
+	//Frames
+	private enum Views{
+		BANNER,
+		HOME;
+
+		@Override
+		public String toString() {
+			return StringStyler.xmlStyleString(name());
+		}
+	}
+
 	public ChuruataServlet() {
 		super();
 	}
@@ -98,13 +109,15 @@ public class ChuruataServlet extends HttpServlet {
 		@Override
 		protected String onCreateFrame( Attributes attr, String[] arguments) {
 			StringBuilder builder = new StringBuilder();
-			builder.append("/churuata/");
-			switch( attr ) {
+			builder.append("/" + S_CHURUATA + "/");
+			String viewstr = StringStyler.styleToEnum(arguments[1]);
+			Views view = Views.valueOf(viewstr);
+			switch( view ) {
 			case HOME:
 				builder.append("map");
 				break;				
 			default:
-				builder.append(attr.toAttribute());
+				builder.append(view.toString());
 				break;								
 			}
 			builder.append("'");

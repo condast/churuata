@@ -4,11 +4,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.churuata.digital.core.Entries;
-import org.churuata.digital.core.IPageEntry;
 import org.churuata.digital.core.data.OrganisationData;
 import org.churuata.digital.entries.BasicEntryPoint;
 import org.churuata.digital.session.SessionStore;
 import org.condast.commons.ui.entry.IDataEntryPoint;
+import org.condast.commons.ui.entry.IPageEntry;
 import org.eclipse.rap.rwt.application.Application;
 import org.eclipse.rap.rwt.application.Application.OperationMode;
 import org.eclipse.rap.rwt.application.ApplicationConfiguration;
@@ -34,7 +34,7 @@ public class BasicApplication implements ApplicationConfiguration {
 		SessionStore<OrganisationData> store = new SessionStore<OrganisationData>();
 		Entries entries = Entries.getInstance();
 		for( Entries.Pages page: Entries.Pages.values()) {
-			IPageEntry entry = entries.getPageEntry(page);
+			IPageEntry<Entries.Pages> entry = entries.getPageEntry(page);
 			if( entry == null )
 				continue;
 			Map<String, String> properties = new HashMap<String, String>();
@@ -54,9 +54,9 @@ public class BasicApplication implements ApplicationConfiguration {
 	private class ChuruataEntryPointFactory  implements EntryPointFactory{
 
 		private SessionStore<OrganisationData> store;
-		IPageEntry page;
+		IPageEntry<Entries.Pages> page;
 		
-		public ChuruataEntryPointFactory( SessionStore<OrganisationData> store, IPageEntry page) {
+		public ChuruataEntryPointFactory( SessionStore<OrganisationData> store, IPageEntry<Entries.Pages> page) {
 			super();
 			this.store = store;
 			this.page = page;

@@ -9,6 +9,7 @@ import javax.servlet.http.HttpSession;
 
 import org.churuata.digital.core.data.OrganisationData;
 import org.churuata.digital.core.data.simple.SimpleOrganisationData;
+import org.churuata.digital.core.model.IOrganisation;
 import org.churuata.digital.core.rest.IRestPages;
 import org.churuata.digital.ui.map.MapBrowser;
 import org.condast.commons.config.Config;
@@ -124,6 +125,7 @@ public class BasicEntryPoint extends AbstractRestEntryPoint<OrganisationData> {
 			params.put(OrganisationData.Parameters.LATITUDE.toString(), String.valueOf( location.getLatitude()));
 			params.put(OrganisationData.Parameters.LONGITUDE.toString(), String.valueOf( location.getLongitude()));
 			params.put(OrganisationData.Parameters.RANGE.toString(), String.valueOf( range ));
+			params.put(OrganisationData.Parameters.VERIFIED.toString(), IOrganisation.Verification.VERIFIED.name());
 			try {
 				sendGet(OrganisationData.Requests.FIND_IN_RANGE, params );
 			} catch (IOException e) {

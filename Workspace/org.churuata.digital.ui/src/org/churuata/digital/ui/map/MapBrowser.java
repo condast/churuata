@@ -3,6 +3,7 @@ package org.churuata.digital.ui.map;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Random;
 import java.util.logging.Logger;
 
 import org.churuata.digital.core.data.simple.SimpleOrganisationData;
@@ -10,6 +11,7 @@ import org.churuata.digital.core.location.IChuruata;
 import org.churuata.digital.core.location.IChuruataService;
 import org.condast.commons.Utils;
 import org.condast.commons.data.latlng.LatLng;
+import org.condast.commons.data.latlng.LatLngUtils;
 import org.condast.commons.data.plane.FieldData;
 import org.condast.commons.data.plane.IPolygon;
 import org.condast.commons.strings.StringStyler;
@@ -31,6 +33,7 @@ import org.openlayer.map.control.GeoView;
 import org.openlayer.map.control.IconsView;
 import org.openlayer.map.control.NavigationView;
 import org.openlayer.map.controller.OpenLayerController;
+import org.openlayer.map.data.IconData;
 
 public class MapBrowser extends Browser {
 	private static final long serialVersionUID = 1L;
@@ -173,6 +176,7 @@ public class MapBrowser extends Browser {
 					IconsView icons = new IconsView( mapController );
 					icons.clearIcons();		
 					icons.addMarker(latlng, Markers.RED, 'H');
+					updateMap();
 					notifyEditListeners( new EditEvent<LatLng>( this, EditTypes.SELECTED, latlng ));
 				}
 			}
@@ -219,21 +223,30 @@ public class MapBrowser extends Browser {
 	}
 
 	protected void updateMap() {
-		if( mapController.isExecuting())
-			return;
-		IconsView icons = new IconsView( mapController );
-		icons.clearIcons();
-		for( SimpleOrganisationData data: this.organisations)
-			createIcon(icons, data);
-		//updateMarkers(icons);
+		try {
+			IconsView icons = new IconsView( mapController );
+			icons.clearIcons();
+			LatLng next = this.fieldData.getCoordinates();
+			for( int i=0; i<10; i++ ) {
+				char chr = (char) ('A' + i);
+				icons.addMarker(next, Markers.DARKGREEN, chr);
+				Random random = new Random();
+				next = LatLngUtils.transform(next, random.nextInt(100), random.nextInt(100));
+			}
 
-		if( Utils.assertNull(churuatas))
-			return;
-		
-		//for( SimpleOrganisationData mt: churuatas ) {
-		//	Markers marker = IChuruataService.Services.getMarker( IChuruataService.Services.values()[ mt.getMaxLeaves()]);
-		//	icons.addMarker(mt.getLocation(), marker, mt.getLocation().getId().charAt(0));
-		//}
+			for( SimpleOrganisationData data: this.organisations)			
+				icons.addMarker(data.getLocation(), Markers.PINK, 'S');
+
+			if( Utils.assertNull(churuatas))
+				return;
+			
+			//for( SimpleOrganisationData mt: churuatas ) {
+			//	Markers marker = IChuruataService.Services.getMarker( IChuruataService.Services.values()[ mt.getMaxLeaves()]);
+			//	icons.addMarker(mt.getLocation(), marker, mt.getLocation().getId().charAt(0));
+			//}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public void dispose() {
@@ -317,13 +330,17 @@ public class MapBrowser extends Browser {
 
 		@Override
 		protected void onHandleSession(SessionEvent<SimpleOrganisationData[]> sevent) {
-			if( sevent.getData() != null ) {
-				SimpleOrganisationData[] data = sevent.getData();
-				organisations.clear();
-				for( SimpleOrganisationData service: data)
-					organisations.add( service );
+			try {
+				if( sevent.getData() != null ) {
+					SimpleOrganisationData[] data = sevent.getData();
+					organisations.clear();
+					for( SimpleOrganisationData service: data)
+						organisations.add( service );
+					//updateMap();		
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
-			updateMap();		
 		}	
 	}
 }

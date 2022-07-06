@@ -23,10 +23,6 @@ import org.condast.commons.parser.AbstractResourceParser;
 public class ActiveServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
-	//same as alias in plugin.xml
-	public static final String S_CHURUATA = "churuata/";
-	public static final String S_CONTEXT_PATH = S_CHURUATA + "index";
-
 	public static final String S_RESOURCE_FILE = "/resources/active.html";
 
 	private enum Pages{

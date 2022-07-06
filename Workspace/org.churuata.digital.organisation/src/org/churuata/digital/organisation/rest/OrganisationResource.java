@@ -267,14 +267,16 @@ public class OrganisationResource{
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/find-in-range")
-	public Response findAll( @QueryParam("latitude") double latitude, @QueryParam("longitude") double longitude, @QueryParam("range") int range ) {
+	public Response findAll( @QueryParam("latitude") double latitude, @QueryParam("longitude") double longitude, @QueryParam("range") int range,  @QueryParam("verified") String verifiedstr ) {
 		logger.info( "ATTEMPT Get " );
 
 		TransactionManager t = new TransactionManager( Dispatcher.getInstance() );
 		try {
 			t.open();
 			OrganisationService os = new OrganisationService(); 
-			List<Organisation> orgs = os.findAll();// os.getAll(latitude, longitude, range );
+			IOrganisation.Verification verified = IOrganisation.Verification.getVerification(verifiedstr);
+
+			List<IOrganisation> orgs = os.findAll( verified );
 			Collections.sort(orgs, new LocationComparator<IOrganisation>( latitude, longitude));
 			if( Utils.assertNull(orgs))
 				return Response.noContent().build();
@@ -370,6 +372,43 @@ public class OrganisationResource{
 		}
 	}
 
+	@GET
+	@Produces(MediaType.TEXT_PLAIN)
+	@Path("/set-verified")
+	public Response setVerifies(@QueryParam("user-id") long userId, @QueryParam("security") long security,
+			@QueryParam("organisation-id") long organisationId, @QueryParam("verified") boolean verified ) {
+
+		AuthenticationDispatcher dispatcher=  AuthenticationDispatcher.getInstance();
+		if( !dispatcher.isLoggedIn(userId, security))
+			return Response.status( Status.UNAUTHORIZED).build();
+				
+		TransactionManager t = new TransactionManager( Dispatcher.getInstance() );
+		try {
+			t.open();
+			OrganisationService os = new OrganisationService(); 
+			Organisation organisation = os.find(organisationId);
+			if( organisation == null)
+				return Response.status(Status.NOT_FOUND).build();
+			if( !organisation.isVerified() && verified ) {
+				organisation.setVerified(verified);
+				os.update(organisation);
+			}else if( organisation.isVerified() && !verified ) {
+				organisation.setVerified(verified);
+				os.update(organisation);				
+			}
+			Gson gson = new Gson();
+			String str = gson.toJson( new OrganisationData( organisation ), OrganisationData.class);
+			return Response.ok( str ).build();
+		}
+		catch( Exception ex ) {
+			ex.printStackTrace();
+			return Response.serverError().build();
+		}
+		finally {
+			t.close();
+		}
+	}
+
 	@POST
 	@Produces(MediaType.TEXT_PLAIN)
 	@Path("/verify")
@@ -389,16 +428,12 @@ public class OrganisationResource{
 		try {
 			t.open();
 			OrganisationService os = new OrganisationService(); 
-			PersonService ps = new PersonService();
 			for( OrganisationData od: organisations  ){
 				Organisation organisation = os.find(od.getId());
 				if( organisation == null)
 					return Response.status(Status.NOT_FOUND).build();
 				if( !organisation.isVerified() && verified ) {
 					organisation.setVerified(verified);
-					IContactPerson person = organisation.getContact();
-
-					//dispatcher.re
 					os.update(organisation);
 				}else if( organisation.isVerified() && !verified ) {
 					organisation.setVerified(verified);
@@ -428,7 +463,6 @@ public class OrganisationResource{
 
 		if( StringUtils.isEmpty(name) || StringUtils.isEmpty( type )) 
 			return Response.notModified( ErrorMessages.NO_NAME_OR_TYPE.name()).build();
-		IChuruataService.Services st = IChuruataService.Services.valueOf(type);
 		
 		TransactionManager t = new TransactionManager( Dispatcher.getInstance() );
 		try {

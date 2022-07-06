@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 
 import org.churuata.digital.core.AbstractWizardEntryPoint;
 import org.churuata.digital.core.Dispatcher;
+import org.churuata.digital.core.Entries.Pages;
 import org.churuata.digital.core.data.OrganisationData;
 import org.churuata.digital.core.model.IOrganisation;
 import org.churuata.digital.core.rest.IRestPages;
@@ -17,7 +18,6 @@ import org.condast.commons.authentication.http.IDomainProvider;
 import org.condast.commons.authentication.user.ILoginUser;
 import org.condast.commons.messaging.http.AbstractHttpRequest;
 import org.condast.commons.messaging.http.ResponseEvent;
-import org.condast.commons.na.data.PersonData;
 import org.condast.commons.ui.controller.EditEvent;
 import org.condast.commons.ui.controller.IEditListener;
 import org.condast.commons.ui.session.SessionEvent;
@@ -67,12 +67,13 @@ public class AcceptanceEntryPoint extends AbstractWizardEntryPoint<AcceptOrganis
 	}
 
 	protected void onOrganisationEvent( EditEvent<OrganisationData> event ) {
-		controller.type = event.getType();
 		OrganisationData data = event.getData();
 		switch( event.getType()) {
 		case CHANGED:
 			Button btnNext = super.getBtnNext();
 			btnNext.setEnabled(( data != null ));
+			if( data != null )
+				controller.setVerified(data);
 			break;
 		default:
 			break;
@@ -82,13 +83,7 @@ public class AcceptanceEntryPoint extends AbstractWizardEntryPoint<AcceptOrganis
 	@Override
 	protected void onButtonPressed(OrganisationData data, SessionStore<OrganisationData> store) {
 		try{
-			if( store.getContactPersonData() == null )
-				return;
-			PersonData person = store.getPersonData();
-			//if( person == null ) 				
-				//controller.getAll( store.getContactPersonData());
-			//else
-			//	Dispatcher.jump( Pages.ORGANISATION, store.getToken());						
+			Dispatcher.jump( Pages.ACTIVE, store.getToken());						
 		}
 		catch( Exception ex ){
 			ex.printStackTrace();
@@ -114,7 +109,6 @@ public class AcceptanceEntryPoint extends AbstractWizardEntryPoint<AcceptOrganis
 
 	private class WebController extends AbstractHttpRequest<OrganisationData.Requests>{
 		
-		private EditEvent.EditTypes type;
 		private ILoginUser user;
 		
 		public WebController( ILoginUser user ) {
@@ -138,10 +132,22 @@ public class AcceptanceEntryPoint extends AbstractWizardEntryPoint<AcceptOrganis
 			}
 		}
 
+		public void setVerified( IOrganisation organisation ) {
+			Map<String, String> params = super.getParameters();
+			params.put( LoginData.Parameters.USER_ID.toString(), String.valueOf( user.getId()));
+			params.put( LoginData.Parameters.SECURITY.toString(), String.valueOf( user.getSecurity()));
+			params.put(OrganisationData.Parameters.ORGANISATION_ID.toString(), String.valueOf( organisation.getId()));
+			params.put(OrganisationData.Parameters.VERIFIED.toString(), String.valueOf( organisation.isVerified()));
+			try {
+				sendGet(OrganisationData.Requests.SET_VERIFIED, params );
+			} catch (IOException e) {
+				logger.warning(e.getMessage());
+			}
+		}
+
 		@Override
 		protected String onHandleResponse(ResponseEvent<OrganisationData.Requests> event) throws IOException {
 			try {
-				SessionStore<OrganisationData> store = getSessionStore();
 				Gson gson = new Gson();
 				switch( event.getRequest()){
 				case GET_ALL:

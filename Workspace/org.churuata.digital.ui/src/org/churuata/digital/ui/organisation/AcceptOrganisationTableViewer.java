@@ -189,8 +189,8 @@ public class AcceptOrganisationTableViewer extends AbstractTableViewerWithDelete
 
 		@Override
 		protected void onToggle() {
-			boolean value = super.getData().isDelete();
 			OrganisationData organisation = super.getData().getStore();
+			boolean value = organisation.isVerified();
 			organisation.setVerified( !value );
 			notifyEditEvent(new EditEvent<OrganisationData>( this, EditTypes.CHANGED, organisation));
 		}
