@@ -5,13 +5,18 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Map;
 
 import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Temporal;
@@ -21,13 +26,14 @@ import org.condast.commons.na.model.IName;
 import org.condast.commons.na.model.IProfessional;
 import org.condast.commons.na.model.IContact;
 import org.condast.commons.na.model.IContact.ContactTypes;
+import org.condast.commons.settings.ISettingsSupport;
 import org.condast.commons.na.model.IContactPerson;
 
 /**
  * The persistent class for the eet_tb_persoon database table.
  */
 @Entity(name="PERSON")
-public class Person implements IContactPerson, Serializable, Cloneable {
+public class Person implements IContactPerson, ISettingsSupport,Serializable, Cloneable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
@@ -46,6 +52,14 @@ public class Person implements IContactPerson, Serializable, Cloneable {
 
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
 	private Collection<Contact> contacts;
+	
+	@ElementCollection
+	@CollectionTable(name = "settings",
+	joinColumns = { @JoinColumn(name = "settings_id") })
+	@MapKeyColumn(name = "item")
+	@Column(name = "quantity")
+	private Map<String, String> settings;
+
 
 	@Column( nullable=false)
 	@Temporal(TemporalType.TIMESTAMP)
@@ -118,6 +132,21 @@ public class Person implements IContactPerson, Serializable, Cloneable {
 
 	public void setVerified(boolean verified) {
 		this.verified = verified;
+	}
+
+	@Override
+	public void putSetting( String key, String value ) {
+		settings.put(key, value);
+	}
+
+	@Override
+	public String getSetting( String key ) {
+		return settings.get(key);
+	}
+
+	@Override
+	public Map<String, String> getSettings(){
+		return settings;
 	}
 
 	public Date getCreateDate() {
