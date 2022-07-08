@@ -15,7 +15,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.churuata.digital.core.data.OrganisationData;
-import org.churuata.digital.core.data.ProfileData;
+import org.churuata.digital.core.data.ChuruataProfileData;
 import org.churuata.digital.organisation.core.AuthenticationDispatcher;
 import org.churuata.digital.organisation.core.Dispatcher;
 import org.churuata.digital.organisation.model.Organisation;
@@ -24,9 +24,11 @@ import org.churuata.digital.organisation.services.ContactService;
 import org.churuata.digital.organisation.services.OrganisationService;
 import org.churuata.digital.organisation.services.PersonService;
 import org.condast.commons.Utils;
+import org.condast.commons.authentication.core.LoginData;
 import org.condast.commons.authentication.user.ILoginUser;
 import org.condast.commons.io.IOUtils;
 import org.condast.commons.na.data.PersonData;
+import org.condast.commons.na.data.ProfileData;
 import org.condast.commons.na.model.IContact;
 import org.condast.commons.na.model.IContact.ContactTypes;
 import org.condast.commons.persistence.service.TransactionManager;
@@ -214,10 +216,10 @@ public class ContactPersonResource{
 				person = persons.iterator().next();
 				orgs = os.getAll(person);
 			}
-			ProfileData profile = new ProfileData( person );
+			ChuruataProfileData profile = new ChuruataProfileData( new LoginData( user ), person );
 			orgs.forEach(o->profile.addOrganisation( new OrganisationData(o)));
 			Gson gson = new Gson();
-			String str = gson.toJson(profile, ProfileData.class);
+			String str = gson.toJson(profile, ChuruataProfileData.class);
 			return Response.ok( str ).build();
 		}
 		catch( Exception ex ) {
@@ -231,7 +233,7 @@ public class ContactPersonResource{
 
 	@PUT
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.TEXT_PLAIN)
+	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/update-person")
 	public Response updatePerson( @QueryParam("user-id") long userId, @QueryParam("security") long security, String data) {
 		logger.info( "ATTEMPT Get " );
@@ -240,7 +242,8 @@ public class ContactPersonResource{
 		if( !adispatcher.isLoggedIn(userId, security))
 			return Response.status( Status.UNAUTHORIZED).build();
 
-		if( !adispatcher.isLoggedIn(userId, security))
+		ILoginUser user = adispatcher.getLoginUser(userId, security);
+		if( user == null )
 			return Response.status( Status.UNAUTHORIZED ).build();
 		
 		TransactionManager t = new TransactionManager( dispatcher );
@@ -252,8 +255,12 @@ public class ContactPersonResource{
 			PersonData personData = gson.fromJson(data, PersonData.class);
 			
 			IContactPerson person = ps.update(personData );
-			return ( person == null )? Response.status( Status.NOT_FOUND).build():
-				Response.ok().build();
+			if( person == null )
+				return Response.status( Status.NOT_FOUND).build();
+			
+			ProfileData profile = new ProfileData( user, new PersonData( person ));
+			String str = gson.toJson( profile, ProfileData.class);	
+			return Response.ok( str ).build();
 		}
 		catch( Exception ex ) {
 			ex.printStackTrace();

@@ -10,7 +10,7 @@ import org.churuata.digital.core.AbstractChuruataEntryPoint;
 import org.churuata.digital.core.Dispatcher;
 import org.churuata.digital.core.Entries.Pages;
 import org.churuata.digital.core.data.OrganisationData;
-import org.churuata.digital.core.data.ProfileData;
+import org.churuata.digital.core.data.ChuruataProfileData;
 import org.churuata.digital.core.data.ServiceData;
 import org.churuata.digital.core.location.IChuruataService;
 import org.churuata.digital.core.rest.IRestPages;
@@ -164,7 +164,7 @@ public class AddServicesEntryPoint extends AbstractChuruataEntryPoint<Organisati
 		}
 	}
 	
-	private class WebController extends AbstractHttpRequest<ProfileData.Requests>{
+	private class WebController extends AbstractHttpRequest<ChuruataProfileData.Requests>{
 		
 		public WebController(String context, String path) {
 			super();
@@ -178,14 +178,14 @@ public class AddServicesEntryPoint extends AbstractChuruataEntryPoint<Organisati
 			params.put(ServiceData.Parameters.TYPE.toString(), service.getDescription());
 			params.put(ServiceData.Parameters.NAME.toString(), service.getDescription());
 			try {
-				sendGet(ProfileData.Requests.ADD_CONTACT_TYPE, params );
+				sendGet(ChuruataProfileData.Requests.ADD_CONTACT_TYPE, params );
 			} catch (IOException e) {
 				logger.warning(e.getMessage());
 			}
 		}
 
 		@Override
-		protected String onHandleResponse(ResponseEvent<ProfileData.Requests> event) throws IOException {
+		protected String onHandleResponse(ResponseEvent<ChuruataProfileData.Requests> event) throws IOException {
 			try {
 				SessionStore<OrganisationData> store = getSessionStore();
 				Gson gson = new Gson();
@@ -207,7 +207,7 @@ public class AddServicesEntryPoint extends AbstractChuruataEntryPoint<Organisati
 		}
 
 		@Override
-		protected void onHandleResponseFail(HttpStatus status, ResponseEvent<ProfileData.Requests> event) throws IOException {
+		protected void onHandleResponseFail(HttpStatus status, ResponseEvent<ChuruataProfileData.Requests> event) throws IOException {
 			super.onHandleResponseFail(status, event);
 		}
 	

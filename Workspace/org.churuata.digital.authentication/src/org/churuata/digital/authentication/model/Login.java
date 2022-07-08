@@ -84,6 +84,7 @@ public class Login implements ILoginUser, Serializable {
 		this.userName = userName;
 	}
 
+	@Override
 	public String getPassword() {
 		return password;
 	}

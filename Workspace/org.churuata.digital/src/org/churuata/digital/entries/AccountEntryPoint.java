@@ -10,7 +10,6 @@ import org.churuata.digital.core.AbstractChuruataEntryPoint;
 import org.churuata.digital.core.Dispatcher;
 import org.churuata.digital.core.Entries;
 import org.churuata.digital.core.data.OrganisationData;
-import org.churuata.digital.core.data.ProfileData;
 import org.churuata.digital.core.rest.IRestPages;
 import org.churuata.digital.session.SessionStore;
 import org.churuata.digital.ui.image.ChuruataImages;
@@ -19,10 +18,11 @@ import org.condast.commons.authentication.user.ILoginUser;
 import org.condast.commons.config.Config;
 import org.condast.commons.messaging.http.AbstractHttpRequest;
 import org.condast.commons.messaging.http.ResponseEvent;
-import org.condast.commons.na.data.PersonData;
+import org.condast.commons.na.data.ProfileData;
+import org.condast.commons.strings.StringUtils;
 import org.condast.commons.ui.controller.EditEvent;
 import org.condast.commons.ui.controller.IEditListener;
-import org.condast.commons.ui.na.person.PersonComposite;
+import org.condast.commons.ui.na.person.ProfileComposite;
 import org.eclipse.rap.rwt.RWT;
 import org.eclipse.rap.rwt.client.service.StartupParameters;
 import org.eclipse.swt.SWT;
@@ -45,10 +45,10 @@ public class AccountEntryPoint extends AbstractChuruataEntryPoint<OrganisationDa
 	public static final String S_CHURUATA = "churuata";
 	public static final String S_ADD_ACCOUNT = "Add Account";
 
-	private PersonComposite editComposite;
+	private ProfileComposite profileComposite;
 	private Button btnAdd;
 
-	private IEditListener<PersonData> listener = e->onPersonEvent(e);
+	private IEditListener<ProfileData> listener = e->onProfileEvent(e);
 
 	private WebController controller;
 	
@@ -71,10 +71,10 @@ public class AccountEntryPoint extends AbstractChuruataEntryPoint<OrganisationDa
 	@Override
 	protected Composite createComposite(Composite parent) {
 		parent.setLayout( new GridLayout(1,false));
-		editComposite = new PersonComposite(parent, SWT.NONE );
-		editComposite.setData( RWT.CUSTOM_VARIANT, S_CHURUATA );
-		editComposite.setLayoutData( new GridData( SWT.FILL, SWT.FILL, true, true ));
-		editComposite.addEditListener( listener);
+		profileComposite = new ProfileComposite(parent, SWT.NONE );
+		profileComposite.setData( RWT.CUSTOM_VARIANT, S_CHURUATA );
+		profileComposite.setLayoutData( new GridData( SWT.FILL, SWT.FILL, true, true ));
+		profileComposite.addEditListener( listener);
 
 		Group group = new Group( parent, SWT.NONE );
 		group.setText( S_ADD_ACCOUNT);
@@ -94,9 +94,10 @@ public class AccountEntryPoint extends AbstractChuruataEntryPoint<OrganisationDa
 			public void widgetSelected(final SelectionEvent e) {
 				try{
 					SessionStore<OrganisationData> store = getSessionStore();
-					if( store.getPersonData() == null )
+					if( store.getProfile() == null )
 						return;
-					controller.update( store.getPersonData());
+					ProfileData profile = store.getProfile();
+					controller.update( profile);
 				}
 				catch( Exception ex ){
 					ex.printStackTrace();
@@ -104,8 +105,7 @@ public class AccountEntryPoint extends AbstractChuruataEntryPoint<OrganisationDa
 				super.widgetSelected(e);
 			}
 		});
-
-		return editComposite;
+		return profileComposite;
 	}
 
 	@Override
@@ -128,40 +128,35 @@ public class AccountEntryPoint extends AbstractChuruataEntryPoint<OrganisationDa
 		return true;
 	}
 
-	protected void onPersonEvent( EditEvent<PersonData> event ) {
-		PersonData data = null;
+	protected void onProfileEvent( EditEvent<ProfileData> event ) {
 		SessionStore<OrganisationData> store = super.getSessionStore();
 		switch( event.getType()) {
 		case INITIALISED:
 			break;
 		case CHANGED:
-			data = event.getData();
-			//store.setProfile(data);
-			break;
-		case SELECTED:
-			data = event.getData();
-			//store.setProfile(data);
-			//Dispatcher.jump(BasicApplication.Pages.CREATE, store.getToken());
-			break;
-		case ADDED:
-			editComposite.getInput();
-			//Dispatcher.jump(BasicApplication.Pages.SERVICES, store.getToken());
-			break;
 		case COMPLETE:
-			data = event.getData();
-			store.setPersonData(data);
-			btnAdd.setEnabled(( data != null ));
+			if( !isFilled( event.getData()))
+				return;
+			btnAdd.setEnabled(true);
+			store.setProfile(event.getData());
 			break;
 		default:
 			break;
 		}
 	}
 
+	protected boolean isFilled( ProfileData profile ) {
+		if( profile == null )
+			return false;
+		return !StringUtils.isEmpty(profile.getName()) && !StringUtils.isEmpty(profile.getFirstName()) &&
+			!StringUtils.isEmpty(profile.getEmail()) && !StringUtils.isEmpty(profile.getSurname());
+	}
+
 	@Override
 	protected void createTimer(boolean create, int nrOfThreads, TimeUnit unit, int startTime, int rate) {
 		super.createTimer(true, nrOfThreads, unit, startTime, rate);
 	}
-
+	
 	@Override
 	protected void handleTimer() {
 		try {
@@ -204,7 +199,7 @@ public class AccountEntryPoint extends AbstractChuruataEntryPoint<OrganisationDa
 			}
 		}
 
-		public void update( PersonData person ) {
+		public void update( ProfileData person ) {
 			Map<String, String> params = new HashMap<>();
 			try {
 				if( person == null )
@@ -223,13 +218,17 @@ public class AccountEntryPoint extends AbstractChuruataEntryPoint<OrganisationDa
 		protected String onHandleResponse(ResponseEvent<ProfileData.Requests> event) throws IOException {
 			try {
 				SessionStore<OrganisationData> store = getSessionStore();
+				Gson gson = new Gson();
+				ProfileData profile = null;
 				switch( event.getRequest()){
 				case UPDATE_PERSON:
+					profile = gson.fromJson(event.getResponse(), ProfileData.class);
+					store.setProfile(profile);
 					Dispatcher.redirect(Entries.Pages.ACTIVE, store.getToken());
 					break;
-				case GET_PROFILE:					Gson gson = new Gson();
-					ProfileData profile = gson.fromJson(event.getResponse(), ProfileData.class);
-					editComposite.setInput(profile, true);
+				case GET_PROFILE:					
+					profile = gson.fromJson(event.getResponse(), ProfileData.class);
+					profileComposite.setInput(profile, true);
 					store.setProfile(profile);
 					break;
 				default:
@@ -246,8 +245,6 @@ public class AccountEntryPoint extends AbstractChuruataEntryPoint<OrganisationDa
 		@Override
 		protected void onHandleResponseFail(HttpStatus status, ResponseEvent<ProfileData.Requests> event) throws IOException {
 			super.onHandleResponseFail(status, event);
-		}
-	
+		}	
 	}
-
 }

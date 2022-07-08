@@ -9,7 +9,7 @@ import org.churuata.digital.core.AbstractChuruataEntryPoint;
 import org.churuata.digital.core.Dispatcher;
 import org.churuata.digital.core.Entries.Pages;
 import org.churuata.digital.core.data.OrganisationData;
-import org.churuata.digital.core.data.ProfileData;
+import org.churuata.digital.core.data.ChuruataProfileData;
 import org.churuata.digital.core.rest.IRestPages;
 import org.churuata.digital.session.SessionStore;
 import org.churuata.digital.ui.views.OrganisationComposite;
@@ -202,7 +202,7 @@ public class OrganisationEntryPoint extends AbstractChuruataEntryPoint<Organisat
 
 		public void register( long personId, OrganisationData organisation ) {
 			Map<String, String> params = super.getParameters();
-			params.put(ProfileData.Parameters.PERSON_ID.toString(), String.valueOf( personId ));
+			params.put(ChuruataProfileData.Parameters.PERSON_ID.toString(), String.valueOf( personId ));
 			Gson gson = new Gson();
 			String data = gson.toJson(organisation, OrganisationData.class);
 			try {

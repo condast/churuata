@@ -168,9 +168,8 @@ public class ProfileServlet extends HttpServlet {
 	
 		@Override
 		protected String onCreateFrame( Attributes attr, String[] arguments) {
-			StringBuilder builder = new StringBuilder();
-			builder.append("/churuata/" + active + "?token='" + token);
-			return builder.toString();
+			String str = "/churuata/" + active + "?token=" + token;
+			return str;
 		}
 			
 		@Override

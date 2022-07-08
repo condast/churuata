@@ -10,7 +10,7 @@ import org.churuata.digital.core.AbstractChuruataEntryPoint;
 import org.churuata.digital.core.Dispatcher;
 import org.churuata.digital.core.Entries.Pages;
 import org.churuata.digital.core.data.OrganisationData;
-import org.churuata.digital.core.data.ProfileData;
+import org.churuata.digital.core.data.ChuruataProfileData;
 import org.churuata.digital.core.rest.IRestPages;
 import org.churuata.digital.session.SessionStore;
 import org.churuata.digital.ui.image.ChuruataImages;
@@ -165,7 +165,7 @@ public class ContactsEntryPoint extends AbstractChuruataEntryPoint<OrganisationD
 		}
 	}
 	
-	private class WebController extends AbstractHttpRequest<ProfileData.Requests>{
+	private class WebController extends AbstractHttpRequest<ChuruataProfileData.Requests>{
 		
 		public WebController(String context, String path) {
 			super();
@@ -179,14 +179,14 @@ public class ContactsEntryPoint extends AbstractChuruataEntryPoint<OrganisationD
 			params.put(ContactData.Parameters.VALUE.toString(), contact.getValue());
 			params.put(ContactData.Parameters.RESTRICTED.toString(), String.valueOf( contact.isRestricted()));
 			try {
-				sendGet(ProfileData.Requests.ADD_CONTACT_TYPE, params );
+				sendGet(ChuruataProfileData.Requests.ADD_CONTACT_TYPE, params );
 			} catch (IOException e) {
 				logger.warning(e.getMessage());
 			}
 		}
 
 		@Override
-		protected String onHandleResponse(ResponseEvent<ProfileData.Requests> event) throws IOException {
+		protected String onHandleResponse(ResponseEvent<ChuruataProfileData.Requests> event) throws IOException {
 			try {
 				SessionStore<OrganisationData> store = getSessionStore();
 				Gson gson = new Gson();
@@ -208,7 +208,7 @@ public class ContactsEntryPoint extends AbstractChuruataEntryPoint<OrganisationD
 		}
 
 		@Override
-		protected void onHandleResponseFail(HttpStatus status, ResponseEvent<ProfileData.Requests> event) throws IOException {
+		protected void onHandleResponseFail(HttpStatus status, ResponseEvent<ChuruataProfileData.Requests> event) throws IOException {
 			super.onHandleResponseFail(status, event);
 		}
 	

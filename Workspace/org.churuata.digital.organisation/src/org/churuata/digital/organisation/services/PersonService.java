@@ -55,12 +55,9 @@ public class PersonService extends AbstractEntityService<Person>{
 		Person person = find( data.getId());
 		if( person == null )
 			return null;
-		person.setName(data.getName());
 		person.setFirstName( data.getFirstName());
-		person.setCallingName(data.getName());
 		person.setPrefix(data.getPrefix());
-		person.setTitle(data.getTitle());
-		person.setDescription(data.getDescription());
+		person.setSurname(data.getSurname());
 		return person;
 	}
 }

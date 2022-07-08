@@ -25,6 +25,8 @@ public class ActiveServlet extends HttpServlet {
 
 	public static final String S_RESOURCE_FILE = "/resources/active.html";
 
+	private static final String S_ACCOUNT = "account";
+
 	private enum Pages{
 		LOGOFF,
 		PROFILE,
@@ -165,7 +167,7 @@ public class ActiveServlet extends HttpServlet {
 					break;
 				default:
 					href.append( page.toString());
-					href.append("?token=" + token + "&select=" + page.toString());
+					href.append("?token=" + token + "&select=" + S_ACCOUNT);
 					builder.append(super.addLink(href.toString(), StringStyler.prettyString( page.name()), activePage));
 					break;
 				}
