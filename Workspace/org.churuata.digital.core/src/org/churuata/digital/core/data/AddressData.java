@@ -5,14 +5,13 @@ import java.math.BigDecimal;
 
 import org.condast.commons.Utils;
 import org.condast.commons.data.latlng.LatLng;
-import org.condast.commons.na.model.IAddress.AddressTypes;
-import org.condast.commons.na.model.IAddress.Countries;
+import org.condast.commons.na.model.IAddress;
 
 /**
  * The persistent class for the alg_tb_adres database table.
  * 
  */
-public class AddressData implements Serializable {
+public class AddressData implements IAddress,Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private long addressId;
@@ -24,6 +23,8 @@ public class AddressData implements Serializable {
 	private String street;
 	
 	private String street_ext;
+	
+	private String number;
 	
 	private String country;
 		
@@ -52,24 +53,73 @@ public class AddressData implements Serializable {
 		this.town = plaats;
 	}
 	
+	public AddressData(IAddress address) {
+		this.addressId = address.getAddressId();
+		this.street = address.getStreet();
+		this.street_ext = address.getStreetExtension();
+		this.number = address.getHouseNumber();
+		this.postcode = address.getPostcode();
+		this.town = address.getTown();
+		this.country = address.getCountry();
+		this.latitude = address.getLocation().getLatitude();
+		this.longitude = address.getLocation().getLongitude();
+	}
+
 	public long getAddressId() {
 		return this.addressId;
 	}
 
-	public String getTown() {
-		return this.town;
-	}
-
+	@Override
 	public String getPostcode() {
 		return this.postcode;
 	}
 
+	@Override
+	public void setPostcode(String postcode) {
+		this.postcode = postcode;
+	}
+
+	@Override
 	public String getStreet() {
 		return this.street;
 	}
 
+	public void setStreet(String street) {
+		this.street = street;
+	}
+
+	@Override
+	public void setNumber(String number) {
+		this.number = number;
+	}
+
+	@Override
+	public String getHouseNumber() {
+		return number;
+	}
+
+	@Override
+	public boolean hasValidLocation() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
 	public String getStreetExtension() {
 		return this.street_ext;
+	}
+
+	public void setStreetExtension(String street_ext) {
+		this.street_ext = street_ext;
+	}
+
+	@Override
+	public String getTown() {
+		return this.town;
+	}
+
+	public void setTown(String town) {
+		this.town = town;
 	}
 
 	public String getCountry() {
@@ -99,5 +149,11 @@ public class AddressData implements Serializable {
 		s.append(" ");
 		s.append(getTown());
 		return s.toString();
+	}
+
+	@Override
+	public String printStreet(boolean skipStreet) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

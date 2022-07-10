@@ -10,7 +10,6 @@ import org.churuata.digital.core.model.IOrganisation;
 import org.condast.commons.Utils;
 import org.condast.commons.data.latlng.LatLng;
 import org.condast.commons.na.data.PersonData;
-import org.condast.commons.na.model.IAddress;
 import org.condast.commons.na.model.IContactPerson;
 import org.condast.commons.strings.StringStyler;
 
@@ -33,6 +32,7 @@ public class OrganisationData implements IOrganisation, Serializable, Cloneable 
 		REMOVE_ORGANISATION,
 		REMOVE_ORGANISATIONS,
 		VERIFY,
+		SET_ADDRESS,
 		SET_LOCATION,
 		SET_VERIFIED;
 	}
@@ -188,8 +188,8 @@ public class OrganisationData implements IOrganisation, Serializable, Cloneable 
 		this.score = score;
 	}
 
-	public IAddress getAddress() {
-		return (IAddress) address;
+	public AddressData getAddress() {
+		return address;
 	}
 	
 	public void clearServices(){

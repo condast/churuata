@@ -78,7 +78,6 @@ public class Address implements IAddress, Serializable {
 		return this.town;
 	}
 
-	@Override
 	public void setTown(String plaats) {
 		this.town = plaats;
 	}
@@ -98,7 +97,6 @@ public class Address implements IAddress, Serializable {
 		return this.street;
 	}
 
-	@Override
 	public void setStreet(String street) {
 		this.street = street;
 	}
@@ -108,7 +106,6 @@ public class Address implements IAddress, Serializable {
 		return this.street_ext;
 	}
 
-	@Override
 	public void setStreetExtension(String street_ext) {
 		this.street_ext = street_ext;
 	}
@@ -118,7 +115,6 @@ public class Address implements IAddress, Serializable {
 		return country;
 	}
 
-	@Override
 	public void setCountry(String country) {
 		this.country = country;
 	}
@@ -161,5 +157,23 @@ public class Address implements IAddress, Serializable {
 			s.append("]");
 		}
 		return s.toString();
+	}
+
+	@Override
+	public void setNumber(String number) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public String getHouseNumber() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean hasValidLocation() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }
