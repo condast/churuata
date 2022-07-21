@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.TreeSet;
 
 import org.churuata.digital.core.IPresentation;
-import org.churuata.digital.core.data.OrganisationData;
+import org.churuata.digital.core.data.ChuruataOrganisationData;
 import org.churuata.digital.core.data.ServiceData;
 import org.churuata.digital.core.location.IChuruataService.Contribution;
 import org.churuata.digital.core.location.IChuruataService.Services;
@@ -48,7 +48,7 @@ public class ChuruataData implements Comparable<ChuruataData>, IChuruata{
 		this.types = new TreeSet<>();
 	}
 
-	public ChuruataData( OrganisationData organisation) {
+	public ChuruataData( ChuruataOrganisationData organisation) {
 		super();
 		this.id = organisation.getId();
 		this.name = organisation.getName();

@@ -14,7 +14,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import org.churuata.digital.core.data.OrganisationData;
+import org.churuata.digital.core.data.ChuruataOrganisationData;
 import org.churuata.digital.core.data.ChuruataProfileData;
 import org.churuata.digital.organisation.core.AuthenticationDispatcher;
 import org.churuata.digital.organisation.core.Dispatcher;
@@ -217,7 +217,7 @@ public class ContactPersonResource{
 				orgs = os.getAll(person);
 			}
 			ChuruataProfileData profile = new ChuruataProfileData( new LoginData( user ), person );
-			orgs.forEach(o->profile.addOrganisation( new OrganisationData(o)));
+			orgs.forEach(o->profile.addOrganisation( new ChuruataOrganisationData(o)));
 			Gson gson = new Gson();
 			String str = gson.toJson(profile, ChuruataProfileData.class);
 			return Response.ok( str ).build();

@@ -33,7 +33,6 @@ import org.openlayer.map.control.GeoView;
 import org.openlayer.map.control.IconsView;
 import org.openlayer.map.control.NavigationView;
 import org.openlayer.map.controller.OpenLayerController;
-import org.openlayer.map.data.IconData;
 
 public class MapBrowser extends Browser {
 	private static final long serialVersionUID = 1L;

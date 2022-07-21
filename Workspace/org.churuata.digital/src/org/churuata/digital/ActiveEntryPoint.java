@@ -2,7 +2,7 @@ package org.churuata.digital;
 
 import java.util.concurrent.TimeUnit;
 
-import org.churuata.digital.core.data.OrganisationData;
+import org.churuata.digital.core.data.ChuruataOrganisationData;
 import org.churuata.digital.session.SessionStore;
 import org.churuata.digital.ui.image.ChuruataImages;
 import org.churuata.digital.ui.map.OrganisationMapBrowser;
@@ -24,7 +24,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 
-public class ActiveEntryPoint extends AbstractRestEntryPoint<SessionStore<OrganisationData>>{
+public class ActiveEntryPoint extends AbstractRestEntryPoint<SessionStore<ChuruataOrganisationData>>{
 	private static final long serialVersionUID = 1L;
 
 	public static final String S_PAGE = "page";
@@ -144,7 +144,7 @@ public class ActiveEntryPoint extends AbstractRestEntryPoint<SessionStore<Organi
 	protected boolean postProcess(Composite parent) {
 		Config config = Config.getInstance();
 		mapComposite.setInput(config.getServerContext());
-		SessionStore<OrganisationData> store = super.getData();
+		SessionStore<ChuruataOrganisationData> store = super.getData();
 		LatLng selected = store.getSelected();
 		this.btnCreate.setEnabled( selected != null );
 		this.btnEdit.setEnabled( selected != null );
@@ -153,7 +153,7 @@ public class ActiveEntryPoint extends AbstractRestEntryPoint<SessionStore<Organi
 	
 	protected void onLocationChanged( EditEvent<LatLng> event ) {
 		LatLng data = event.getData();
-		SessionStore<OrganisationData> store = super.getData();
+		SessionStore<ChuruataOrganisationData> store = super.getData();
 		switch( event.getType()) {
 		case INITIALISED:
 			break;
@@ -177,7 +177,7 @@ public class ActiveEntryPoint extends AbstractRestEntryPoint<SessionStore<Organi
 		try {
 			super.handleTimer();
 			//mapComposite.setInput(null);
-			SessionStore<OrganisationData> store = super.getData();
+			SessionStore<ChuruataOrganisationData> store = super.getData();
 			if(( store == null ) || ( store.getLoginUser() == null ))
 				return;
 		} catch (Exception e) {
@@ -187,7 +187,7 @@ public class ActiveEntryPoint extends AbstractRestEntryPoint<SessionStore<Organi
 
 	@Override
 	protected void handleSessionTimeout(boolean reload) {
-		SessionStore<OrganisationData> store = super.getData();
+		SessionStore<ChuruataOrganisationData> store = super.getData();
 		store.setLoginUser(null);
 		super.handleSessionTimeout(reload);
 	}

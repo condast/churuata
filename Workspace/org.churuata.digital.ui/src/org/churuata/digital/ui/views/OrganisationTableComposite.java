@@ -3,7 +3,7 @@ package org.churuata.digital.ui.views;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.churuata.digital.core.data.OrganisationData;
+import org.churuata.digital.core.data.ChuruataOrganisationData;
 import org.condast.commons.Utils;
 import org.condast.commons.strings.StringStyler;
 import org.condast.commons.ui.controller.EditEvent;
@@ -20,7 +20,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 
-public class OrganisationTableComposite extends AbstractTableViewerWithDelete<OrganisationData>{
+public class OrganisationTableComposite extends AbstractTableViewerWithDelete<ChuruataOrganisationData>{
 	private static final long serialVersionUID = 976428552549736382L;
 
 	public static final String S_TABLECOLUMN_ID = "OrganisationTableColumn";
@@ -42,7 +42,7 @@ public class OrganisationTableComposite extends AbstractTableViewerWithDelete<Or
 		}
 	}
 	
-	private Collection<IEditListener<OrganisationData>> listeners;
+	private Collection<IEditListener<ChuruataOrganisationData>> listeners;
 
 	private Composite container;
 
@@ -57,16 +57,16 @@ public class OrganisationTableComposite extends AbstractTableViewerWithDelete<Or
 		listeners = new ArrayList<>();
 	}
 
-	public void addEditListener( IEditListener<OrganisationData> listener ) {
+	public void addEditListener( IEditListener<ChuruataOrganisationData> listener ) {
 		this.listeners.add(listener);
 	}
 
-	public void removeEditListener( IEditListener<OrganisationData> listener ) {
+	public void removeEditListener( IEditListener<ChuruataOrganisationData> listener ) {
 		this.listeners.remove(listener);
 	}
 
-	private void notifyEditListeners( EditEvent<OrganisationData> event ) {
-		for( IEditListener<OrganisationData> listener: this.listeners ) {
+	private void notifyEditListeners( EditEvent<ChuruataOrganisationData> event ) {
+		for( IEditListener<ChuruataOrganisationData> listener: this.listeners ) {
 			listener.notifyInputEdited(event);
 		}
 	}
@@ -83,17 +83,17 @@ public class OrganisationTableComposite extends AbstractTableViewerWithDelete<Or
 		viewer.setLabelProvider( new OrganisationLabelProvider() );
 	}
 
-	public OrganisationData[] getInput() {
-		Collection<OrganisationData> types = new ArrayList<>();
+	public ChuruataOrganisationData[] getInput() {
+		Collection<ChuruataOrganisationData> types = new ArrayList<>();
 		if( !Utils.assertNull(super.getInput())) {
 			for( Object tp: super.getInput() )
-				types.add((OrganisationData) tp);
+				types.add((ChuruataOrganisationData) tp);
 		}
-		return types.toArray( new OrganisationData[ types.size()]);
+		return types.toArray( new ChuruataOrganisationData[ types.size()]);
 	}
 	
 	@Override
-	protected void onRowDoubleClick(OrganisationData selection) {
+	protected void onRowDoubleClick(ChuruataOrganisationData selection) {
 		try{
 			notifyEditListeners(new EditEvent<>( container, EditTypes.SELECTED, selection));
 		}
@@ -114,7 +114,7 @@ public class OrganisationTableComposite extends AbstractTableViewerWithDelete<Or
 	protected boolean onAddButtonSelected(SelectionEvent e) {
 		boolean result = false;
 		try{
-			notifyEditListeners(new EditEvent<OrganisationData>( container, EditTypes.ADDED));
+			notifyEditListeners(new EditEvent<ChuruataOrganisationData>( container, EditTypes.ADDED));
 		}
 		catch( Exception ex ){
 			ex.printStackTrace();
@@ -123,10 +123,10 @@ public class OrganisationTableComposite extends AbstractTableViewerWithDelete<Or
 	}
 
 	@Override
-	protected boolean onDeleteButton( Collection<OrganisationData> deleted ) {
+	protected boolean onDeleteButton( Collection<ChuruataOrganisationData> deleted ) {
 		Collection<Long> ids = new ArrayList<>();
 		boolean result = false;
-		for( OrganisationData vessel: deleted )
+		for( ChuruataOrganisationData vessel: deleted )
 			ids.add(vessel.getId());
 		//try {
 			//Map<String, String> params = controller.getUserParams(user.getId(), user.getSecurity());
@@ -157,12 +157,12 @@ public class OrganisationTableComposite extends AbstractTableViewerWithDelete<Or
 		@SuppressWarnings("unchecked")
 		@Override
 		public String getColumnText(Object element, int columnIndex) {
-			StoreWithDelete store = (AbstractTableViewerWithDelete<OrganisationData>.StoreWithDelete) element;
+			StoreWithDelete store = (AbstractTableViewerWithDelete<ChuruataOrganisationData>.StoreWithDelete) element;
 			String result = super.getColumnText(element, columnIndex);
 			if( result != null )
 				return result;
 			Columns column = Columns.values()[ columnIndex ];
-			OrganisationData organisation = (OrganisationData) store.getStore();
+			ChuruataOrganisationData organisation = (ChuruataOrganisationData) store.getStore();
 			try {
 				switch( column ) {
 				case DESCRIPTION:

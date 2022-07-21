@@ -19,7 +19,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.churuata.digital.core.data.OrganisationData;
+import org.churuata.digital.core.data.ChuruataOrganisationData;
 import org.churuata.digital.core.location.IChuruataService;
 import org.churuata.digital.core.model.IOrganisation;
 import org.condast.commons.data.latlng.LatLng;
@@ -56,11 +56,13 @@ public class Organisation implements IOrganisation, Serializable, Cloneable {
 	
 	private String website;
 	
-	private OrganisationTypes type;
+	private int type;
 	
 	private boolean verified;
 	
 	private int score;
+	
+	private boolean principal;
 
 	@OneToMany(mappedBy="organisation", cascade=CascadeType.ALL, orphanRemoval = true)
 	private Collection<Service> services;
@@ -77,12 +79,13 @@ public class Organisation implements IOrganisation, Serializable, Cloneable {
 		this.createDate = Calendar.getInstance().getTime();
 	}
 
-	public Organisation( String name, String description ){
+	public Organisation( String name, String description, boolean principal ){
 		this.name = name;
 		this.description = description;
 		this.verified = false;
 		this.score = 0;
-		this.type = OrganisationTypes.UNKNOWN;
+		this.type = OrganisationTypes.UNKNOWN.getIndex();
+		this.principal = principal;
 		this.createDate = Calendar.getInstance().getTime();
 		this.updateDate = Calendar.getInstance().getTime();
 	}
@@ -94,19 +97,24 @@ public class Organisation implements IOrganisation, Serializable, Cloneable {
 		this.description = description;
 		this.verified = false;
 		this.score = 0;
-		this.type = OrganisationTypes.UNKNOWN;
+		this.type = OrganisationTypes.UNKNOWN.getIndex();
 		this.services = new ArrayList<Service>();
 		this.createDate = Calendar.getInstance().getTime();
 		this.updateDate = Calendar.getInstance().getTime();
 	}
 
-	public Organisation( OrganisationData data ){
+	public Organisation( IContactPerson contact, ChuruataOrganisationData data ){
+		this( data );
+		this.contact = (Person) contact;
+	}
+	
+	public Organisation( ChuruataOrganisationData data ){
 		this();
 		this.contact= (Person) data.getContact();
 		this.name = data.getName();
 		this.description = data.getDescription();
 		this.services = new ArrayList<Service>();
-		this.type = data.getType();
+		this.type = data.getType().getIndex();
 		this.verified = data.isVerified();
 		this.score = data.getScore();
 		for( IChuruataService service: data.getServices())
@@ -153,6 +161,7 @@ public class Organisation implements IOrganisation, Serializable, Cloneable {
 		return contact;
 	}
 	
+	
 	public void setDescription(String description) {
 		this.description = description;
 	}
@@ -168,11 +177,11 @@ public class Organisation implements IOrganisation, Serializable, Cloneable {
 	
 	@Override
 	public OrganisationTypes getType() {
-		return type;
+		return OrganisationTypes.values()[ type ];
 	}
 
 	public void setType(OrganisationTypes type) {
-		this.type = type;
+		this.type = type.getIndex();
 	}
 
 	@Override
@@ -193,12 +202,20 @@ public class Organisation implements IOrganisation, Serializable, Cloneable {
 		this.score = score;
 	}
 
+	public boolean isPrimary() {
+		return principal;
+	}
+
+	public void setPrimary(boolean primary) {
+		this.principal = primary;
+	}
+
 	@Override
 	public IAddress getAddress() {
 		return address;
 	}
 
-	public void addAddress( IAddress address) {
+	public void setAddress( IAddress address) {
 		this.address = (Address) address;
 	}
 

@@ -38,6 +38,8 @@ public class Address implements IAddress, Serializable {
 	
 	@Column(nullable=false)
 	private String country;
+	
+	private String name;
 		
 	private double longitude;
 	private double latitude;
@@ -71,6 +73,15 @@ public class Address implements IAddress, Serializable {
 
 	public void setAddressId( long adresId) {
 		this.id = adresId;
+	}
+
+	@Override
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	@Override

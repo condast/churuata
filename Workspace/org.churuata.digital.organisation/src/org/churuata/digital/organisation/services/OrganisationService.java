@@ -6,8 +6,7 @@ import java.util.List;
 
 import javax.persistence.TypedQuery;
 
-import org.churuata.digital.core.data.OrganisationData;
-import org.churuata.digital.core.location.IChuruataService;
+import org.churuata.digital.core.data.ChuruataOrganisationData;
 import org.churuata.digital.core.model.IOrganisation;
 import org.churuata.digital.organisation.core.Dispatcher;
 import org.churuata.digital.organisation.model.Organisation;
@@ -22,6 +21,7 @@ public class OrganisationService extends AbstractEntityService<Organisation>{
 
 	public static final String S_QUERY_SELECT = "SELECT o FROM ORGANISATION o";
 	public static final String S_QUERY_GET_ALL = S_QUERY_SELECT + ", PERSON c WHERE o.contact.id = :personid";
+	public static final String S_QUERY_FIND_PRIMARY = S_QUERY_GET_ALL + " AND o.principal = true";
 
 	public static final String S_QUERY_VERIFIED = " WHERE o.verified = :choice";
 
@@ -61,18 +61,14 @@ public class OrganisationService extends AbstractEntityService<Organisation>{
 		return new ArrayList<IOrganisation>( results );
 	}
 
-	public Organisation create( IContactPerson person, String name, String description ) {
-		Organisation organisation = new Organisation( name, description );
+	public Organisation create( IContactPerson person, String name, String description, boolean primary ) {
+		Organisation organisation = new Organisation( name, description, primary );
 		super.create(organisation);
 		return organisation;
 	}
 
-	public Organisation create( IContactPerson person, OrganisationData data ) {
-		Organisation o = new Organisation( person, data.getName(), data.getDescription() );
-		o.setWebsite(data.getWebsite());
-		for( IChuruataService tp: data.getServices()) {
-			o.addService( tp);
-		}		
+	public Organisation create( IContactPerson person, ChuruataOrganisationData data ) {
+		Organisation o = new Organisation( person, data );
 		super.create(o);
 		return o;
 	}
@@ -83,7 +79,14 @@ public class OrganisationService extends AbstractEntityService<Organisation>{
 		List<Organisation> organisation = query.getResultList();
 		return organisation;
 	}
-	
+
+	public Organisation findPrincipal( IContactPerson person ) {
+		TypedQuery<Organisation> query = super.getTypedQuery( S_QUERY_FIND_PRIMARY );
+		query.setParameter("personid", person.getContactId());
+		List<Organisation> organisations = query.getResultList();
+		return Utils.assertNull(organisations)?null: organisations.iterator().next();
+	}
+
 	public List<IOrganisation> getAll( double latitude, double longitude, int range ) {
 		TypedQuery<Organisation> query = super.getTypedQuery( S_QUERY_FIND_IN_RANGE );
 		LatLng location = new LatLng( latitude, longitude );
@@ -98,11 +101,11 @@ public class OrganisationService extends AbstractEntityService<Organisation>{
 		return new ArrayList<IOrganisation>( organisations );
 	}	
 	
-	public static OrganisationData[] toOrganisationData( Collection<IOrganisation> input ){
-		Collection<OrganisationData> results = new ArrayList<>();
+	public static ChuruataOrganisationData[] toOrganisationData( Collection<IOrganisation> input ){
+		Collection<ChuruataOrganisationData> results = new ArrayList<>();
 		if( Utils.assertNull(input))
-			return results.toArray( new OrganisationData[ results.size()]);
-		input.forEach( o->{ results.add(new OrganisationData( o ));});
-		return results.toArray( new OrganisationData[ results.size()]);
+			return results.toArray( new ChuruataOrganisationData[ results.size()]);
+		input.forEach( o->{ results.add(new ChuruataOrganisationData( o ));});
+		return results.toArray( new ChuruataOrganisationData[ results.size()]);
 	}
 }

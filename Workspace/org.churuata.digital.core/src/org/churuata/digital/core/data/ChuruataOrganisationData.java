@@ -7,16 +7,15 @@ import java.util.Collection;
 
 import org.churuata.digital.core.location.IChuruataService;
 import org.churuata.digital.core.model.IOrganisation;
-import org.condast.commons.Utils;
 import org.condast.commons.data.latlng.LatLng;
+import org.condast.commons.na.data.OrganisationData;
 import org.condast.commons.na.data.PersonData;
-import org.condast.commons.na.model.IContactPerson;
 import org.condast.commons.strings.StringStyler;
 
 /**
  * The persistent class for the eet_tb_persoon database table.
  */
-public class OrganisationData implements IOrganisation, Serializable, Cloneable {
+public class ChuruataOrganisationData extends OrganisationData implements IOrganisation, Serializable, Cloneable {
 	private static final long serialVersionUID = 1L;
 
 	public static final String S_ORGANISATION_REST_PATH = "organisation/admin/";
@@ -55,20 +54,6 @@ public class OrganisationData implements IOrganisation, Serializable, Cloneable 
 			return StringStyler.xmlStyleString( name());
 		}
 	}
-
-	private long organisationId;
-	
-	private LatLng location;
-	
-	private AddressData address;
-
-	private PersonData contact;
-	
-	private String name;
-	
-	private String description;
-	
-	private String website;
 	
 	private OrganisationTypes type;
 	
@@ -76,89 +61,49 @@ public class OrganisationData implements IOrganisation, Serializable, Cloneable 
 	
 	private int score;
 	
+	private boolean primary;
+	
 	private Collection<ServiceData> services;
 	
-	public OrganisationData() {
+	public ChuruataOrganisationData() {
 		super();
 		Calendar calendar = Calendar.getInstance();
 		calendar.add( Calendar.YEAR, 1);
 		services = new ArrayList<>();
 		this.verified = false;
 		this.score = 0;
+		this.primary = false;
 	}
 
-	public OrganisationData( LatLng location ){
-		this.location = location;
+	public ChuruataOrganisationData( LatLng location ){
+		super( location );
 		this.verified = false;
 		this.score = 0;
+		this.primary = false;
 		services = new ArrayList<>();
 	}
 
-	public OrganisationData( LatLng location, String name, String description ){
+	public ChuruataOrganisationData( LatLng location, String name, String description ){
 		this( location );
-		this.name = name;
-		this.description = description;
 		this.verified = false;
 		this.score = 0;
+		this.primary = false;
 	}
 
-	public OrganisationData( IOrganisation organisation ){
-		this.organisationId = organisation.getId();
-		this.location = organisation.getLocation();
-		this.contact= new PersonData( organisation.getContact());
-		this.name = organisation.getName();
-		this.description = organisation.getDescription();
-		this.website = organisation.getWebsite();
+	public ChuruataOrganisationData( IOrganisation organisation ){
+		super.setOrganisationId( organisation.getId());
+		super.setLocation( organisation.getLocation());
+		super.setContact( new PersonData( organisation.getContact()));
+		super.setName( organisation.getName());
+		super.setDescription( organisation.getDescription());
+		super.setWebsite( organisation.getWebsite());
 		this.type = organisation.getType();
 		this.verified = organisation.isVerified();
 		this.score = organisation.getScore();
+		this.primary = organisation.isPrimary();
 		services = new ArrayList<>();
 		for( IChuruataService service: organisation.getServices())
 			services.add( new ServiceData( service ));
-	}
-
-	public long getId() {
-		return this.organisationId;
-	}
-	
-	public LatLng getLocation() {
-		return location;
-	}
-
-	public void setLocation(LatLng location) {
-		this.location = location;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	public String getWebsite() {
-		return website;
-	}
-
-	public void setWebsite(String website) {
-		this.website = website;
-	}
-
-	public IContactPerson getContact() {
-		return (IContactPerson) contact;
-	}
-
-	public void setContact(PersonData contact) {
-		this.contact = contact;
 	}
 
 	@Override
@@ -188,10 +133,15 @@ public class OrganisationData implements IOrganisation, Serializable, Cloneable 
 		this.score = score;
 	}
 
-	public AddressData getAddress() {
-		return address;
+	@Override
+	public boolean isPrimary() {
+		return primary;
 	}
-	
+
+	public void setPrimary(boolean primary) {
+		this.primary = primary;
+	}
+
 	public void clearServices(){
 		this.services.clear();
 	}
@@ -237,16 +187,5 @@ public class OrganisationData implements IOrganisation, Serializable, Cloneable 
 	@Override
 	public int getServicesSize() {
 		return this.services.size();
-	}
-	
-	public static long[] getIDs( Collection<OrganisationData> organisations) {
-		if( Utils.assertNull(organisations))
-			return new long[0];
-		long[] results = new long[ organisations.size()];
-		int index = 0;
-		for( OrganisationData organisation: organisations ) {
-			results[index++] = organisation.getId();
-		}
-		return results;
 	}
 }

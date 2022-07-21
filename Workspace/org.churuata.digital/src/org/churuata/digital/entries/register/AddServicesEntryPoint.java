@@ -9,7 +9,7 @@ import java.util.logging.Logger;
 import org.churuata.digital.core.AbstractChuruataEntryPoint;
 import org.churuata.digital.core.Dispatcher;
 import org.churuata.digital.core.Entries.Pages;
-import org.churuata.digital.core.data.OrganisationData;
+import org.churuata.digital.core.data.ChuruataOrganisationData;
 import org.churuata.digital.core.data.ChuruataProfileData;
 import org.churuata.digital.core.data.ServiceData;
 import org.churuata.digital.core.location.IChuruataService;
@@ -41,7 +41,7 @@ import org.eclipse.swt.widgets.Group;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
-public class AddServicesEntryPoint extends AbstractChuruataEntryPoint<OrganisationData> {
+public class AddServicesEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrganisationData> {
 	private static final long serialVersionUID = 1L;
 
 	private ServiceComposite servicesComposite;
@@ -60,10 +60,10 @@ public class AddServicesEntryPoint extends AbstractChuruataEntryPoint<Organisati
 	@Override
 	protected boolean prepare(Composite parent) {
 		StartupParameters service = RWT.getClient().getService( StartupParameters.class );
-		IDomainProvider<SessionStore<OrganisationData>> domain = Dispatcher.getDomainProvider( service );
+		IDomainProvider<SessionStore<ChuruataOrganisationData>> domain = Dispatcher.getDomainProvider( service );
 		if( domain == null )
 			return false;
-		SessionStore<OrganisationData> store = domain.getData();
+		SessionStore<ChuruataOrganisationData> store = domain.getData();
 		if( store == null )
 			return false;
 		setData(store);
@@ -96,7 +96,7 @@ public class AddServicesEntryPoint extends AbstractChuruataEntryPoint<Organisati
 				try{
 					if( data == null )
 						return;
-					SessionStore<OrganisationData> store = getSessionStore();
+					SessionStore<ChuruataOrganisationData> store = getSessionStore();
 					PersonData person = store.getPersonData();
 					controller.addService(data, person.getId());
 				}
@@ -124,7 +124,7 @@ public class AddServicesEntryPoint extends AbstractChuruataEntryPoint<Organisati
 	protected void onContactEvent( EditEvent<IChuruataService> event ) {
 		switch( event.getType()) {
 		case COMPLETE:
-			SessionStore<OrganisationData> store = getSessionStore();
+			SessionStore<ChuruataOrganisationData> store = getSessionStore();
 			if( store.getContactPersonData() == null )
 				return;
 			data = event.getData();
@@ -152,14 +152,14 @@ public class AddServicesEntryPoint extends AbstractChuruataEntryPoint<Organisati
 		super.close();
 	}
 	
-	private class SessionHandler extends AbstractSessionHandler<SessionStore<OrganisationData>>{
+	private class SessionHandler extends AbstractSessionHandler<SessionStore<ChuruataOrganisationData>>{
 
 		protected SessionHandler(Display display) {
 			super(display);
 		}
 
 		@Override
-		protected void onHandleSession(SessionEvent<SessionStore<OrganisationData>> sevent) {
+		protected void onHandleSession(SessionEvent<SessionStore<ChuruataOrganisationData>> sevent) {
 			/* NOTHING */
 		}
 	}
@@ -187,7 +187,7 @@ public class AddServicesEntryPoint extends AbstractChuruataEntryPoint<Organisati
 		@Override
 		protected String onHandleResponse(ResponseEvent<ChuruataProfileData.Requests> event) throws IOException {
 			try {
-				SessionStore<OrganisationData> store = getSessionStore();
+				SessionStore<ChuruataOrganisationData> store = getSessionStore();
 				Gson gson = new Gson();
 				switch( event.getRequest()){
 				case ADD_CONTACT_TYPE:

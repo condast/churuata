@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
-import org.churuata.digital.core.data.OrganisationData;
+import org.churuata.digital.core.data.ChuruataOrganisationData;
 import org.churuata.digital.core.location.IChuruataService;
 import org.condast.commons.Utils;
 import org.condast.commons.strings.StringStyler;
@@ -96,7 +96,7 @@ public class ChuruataTableComposite extends AbstractTableViewerWithDelete<IChuru
 		return types.toArray( new IChuruataService[ types.size()]);
 	}
 	
-	protected void setInput( OrganisationData churuata) {
+	protected void setInput( ChuruataOrganisationData churuata) {
 		super.setInput( Arrays.asList( churuata.getServices()));
 	}
 

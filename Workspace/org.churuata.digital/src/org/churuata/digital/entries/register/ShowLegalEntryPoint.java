@@ -5,7 +5,7 @@ import java.util.Locale;
 import org.churuata.digital.core.AbstractWizardEntryPoint;
 import org.churuata.digital.core.Dispatcher;
 import org.churuata.digital.core.Entries;
-import org.churuata.digital.core.data.OrganisationData;
+import org.churuata.digital.core.data.ChuruataOrganisationData;
 import org.churuata.digital.session.SessionStore;
 import org.churuata.digital.ui.image.ChuruataImages;
 import org.churuata.digital.ui.image.ChuruataImages.Images;
@@ -31,7 +31,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 
-public class ShowLegalEntryPoint extends AbstractWizardEntryPoint<Browser, OrganisationData>{
+public class ShowLegalEntryPoint extends AbstractWizardEntryPoint<Browser, ChuruataOrganisationData>{
 	private static final long serialVersionUID = 1L;
 
 	public static final String S_RESOURCE_FILE = "/resources/ChuruataRegistration.html";
@@ -87,7 +87,7 @@ public class ShowLegalEntryPoint extends AbstractWizardEntryPoint<Browser, Organ
 	private String privacyPath;
 
 	@Override
-	protected IDomainProvider<SessionStore<OrganisationData>> getDomainProvider(StartupParameters service) {
+	protected IDomainProvider<SessionStore<ChuruataOrganisationData>> getDomainProvider(StartupParameters service) {
 		return Dispatcher.getDomainProvider(service);
 	}
 	
@@ -178,7 +178,7 @@ public class ShowLegalEntryPoint extends AbstractWizardEntryPoint<Browser, Organ
 	}
 
 	@Override
-	protected void onButtonPressed(OrganisationData data, SessionStore<OrganisationData> store) {
+	protected void onButtonPressed(ChuruataOrganisationData data, SessionStore<ChuruataOrganisationData> store) {
 		store.setData(null);
 		Config config = Config.getInstance();
 		String path = config.getServerContext() + Entries.S_HOME;
@@ -186,7 +186,7 @@ public class ShowLegalEntryPoint extends AbstractWizardEntryPoint<Browser, Organ
 	}
 
 	@Override
-	protected boolean onPostProcess(String context, OrganisationData data, SessionStore<OrganisationData> store) {
+	protected boolean onPostProcess(String context, ChuruataOrganisationData data, SessionStore<ChuruataOrganisationData> store) {
 		Button button = getBtnNext();
 		ChuruataImages images = ChuruataImages.getInstance();
 		button.setImage(images.getImage(Images.ADD));
@@ -212,16 +212,16 @@ public class ShowLegalEntryPoint extends AbstractWizardEntryPoint<Browser, Organ
 	}
 
 	@Override
-	protected void onHandleTimer(SessionEvent<OrganisationData> event) {
+	protected void onHandleTimer(SessionEvent<ChuruataOrganisationData> event) {
 		// NOTHING
 	}
 
 	private class FileParser extends AbstractResourceParser{
 
 		private long token;
-		private OrganisationData organisation;
+		private ChuruataOrganisationData organisation;
 		
-		public FileParser(OrganisationData organisation, long token) {
+		public FileParser(ChuruataOrganisationData organisation, long token) {
 			super();
 			this.organisation = organisation;
 			this.token = token;

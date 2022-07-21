@@ -2,6 +2,7 @@ package org.churuata.digital.organisation.services;
 
 import org.churuata.digital.organisation.core.Dispatcher;
 import org.churuata.digital.organisation.model.Address;
+import org.condast.commons.na.data.AddressData;
 import org.condast.commons.persistence.service.AbstractEntityService;
 
 public class AddressService extends AbstractEntityService<Address>{
@@ -12,9 +13,23 @@ public class AddressService extends AbstractEntityService<Address>{
 		super( Address.class, dispatcher );
 	}
 
-	public Address create( String name, String password, String email ) {
+	public Address create( AddressData ad ) {
 		Address address = new Address();
 		super.create(address);
+		update( address, ad );
 		return address;
 	}
+	
+	public static Address update( Address address,  AddressData ad ) {
+		address.setStreet( ad.getStreet());
+		address.setStreetExtension(ad.getStreetExtension());
+		address.setNumber(ad.getHouseNumber());
+		address.setPostcode(ad.getPostcode());
+		address.setTown(ad.getTown());
+		address.setCountry(ad.getCountry());
+		address.setName(ad.getLocation().getId());
+		address.setLocation(ad.getLocation().getLatitude(), ad.getLocation().getLongitude());
+		return address;
+	}
+
 }

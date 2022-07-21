@@ -3,7 +3,7 @@ package org.churuata.digital.ui.views;
 import java.util.Arrays;
 import java.util.Calendar;
 
-import org.churuata.digital.core.data.OrganisationData;
+import org.churuata.digital.core.data.ChuruataOrganisationData;
 import org.condast.commons.Utils;
 import org.condast.commons.strings.StringUtils;
 import org.condast.commons.ui.controller.AbstractEntityComposite;
@@ -21,7 +21,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Group;
 
-public class OrganisationComposite extends AbstractEntityComposite<OrganisationData>
+public class OrganisationComposite extends AbstractEntityComposite<ChuruataOrganisationData>
 {
 	private static final long serialVersionUID = 7782765745284140623L;
 
@@ -83,7 +83,7 @@ public class OrganisationComposite extends AbstractEntityComposite<OrganisationD
 			public void verifyText(VerifyEvent event) {
 				onVerifyText(event, null);
 				if( isFilled())
-					notifyInputEdited( new EditEvent<OrganisationData>( this, EditTypes.COMPLETE, getInput()));
+					notifyInputEdited( new EditEvent<ChuruataOrganisationData>( this, EditTypes.COMPLETE, getInput()));
 			}
 		});
 		churuataField.setLayoutData( new GridData( SWT.FILL, SWT.FILL, true, false,2,1 ));	
@@ -102,7 +102,7 @@ public class OrganisationComposite extends AbstractEntityComposite<OrganisationD
 			public void verifyText(VerifyEvent event) {
 				onVerifyText(event, null);
 				if( isFilled())
-					notifyInputEdited( new EditEvent<OrganisationData>( this, EditTypes.COMPLETE, getInput()));
+					notifyInputEdited( new EditEvent<ChuruataOrganisationData>( this, EditTypes.COMPLETE, getInput()));
 			}
 		});
 
@@ -120,7 +120,7 @@ public class OrganisationComposite extends AbstractEntityComposite<OrganisationD
 			public void verifyText(VerifyEvent event) {
 				onVerifyText(event, null);
 				if( isFilled())
-					notifyInputEdited( new EditEvent<OrganisationData>( this, EditTypes.COMPLETE, getInput()));
+					notifyInputEdited( new EditEvent<ChuruataOrganisationData>( this, EditTypes.COMPLETE, getInput()));
 			}
 		});
 		
@@ -131,16 +131,16 @@ public class OrganisationComposite extends AbstractEntityComposite<OrganisationD
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				notifyInputEdited( new EditEvent<OrganisationData>( this, EditTypes.ADDED, getInput()));
+				notifyInputEdited( new EditEvent<ChuruataOrganisationData>( this, EditTypes.ADDED, getInput()));
 				super.widgetSelected(e);
 			}
 		});
 	}
 
 	@Override
-	protected OrganisationData onGetInput(OrganisationData input) {
+	protected ChuruataOrganisationData onGetInput(ChuruataOrganisationData input) {
 		if( input == null )
-			input = new OrganisationData();
+			input = new ChuruataOrganisationData();
 		input.setDescription(this.descriptionField.getText());
 		input.setName( this.churuataField.getText());
 		input.setWebsite(this.websiteField.getText());
@@ -151,14 +151,14 @@ public class OrganisationComposite extends AbstractEntityComposite<OrganisationD
 	}
 
 	@Override
-	protected void onSetInput(OrganisationData input, boolean overwrite) {
+	protected void onSetInput(ChuruataOrganisationData input, boolean overwrite) {
 		this.descriptionField.setText( input.getDescription());
 		this.churuataField.setText( input.getName());
 		this.websiteField.setText(input.getWebsite());
 		viewer.setInput( Arrays.asList( input.getServices()));
 	}
 
-	public void setInput( OrganisationData input ){
+	public void setInput( ChuruataOrganisationData input ){
 		super.setInput( input, false );
 	}
 
@@ -180,7 +180,7 @@ public class OrganisationComposite extends AbstractEntityComposite<OrganisationD
 				//type.setFrom( DateUtils.getDate( this.fromField ));
 				//type.setTo( DateUtils.getDate( this.toField ));
 				//setInput(type);
-				this.notifyInputEdited( new EditEvent<OrganisationData>( this, EditTypes.COMPLETE, getInput()));
+				this.notifyInputEdited( new EditEvent<ChuruataOrganisationData>( this, EditTypes.COMPLETE, getInput()));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

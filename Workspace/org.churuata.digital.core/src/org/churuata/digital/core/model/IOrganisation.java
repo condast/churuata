@@ -64,6 +64,8 @@ public interface IOrganisation {
 	public boolean isVerified();
 	
 	public int getScore();
+	
+	public boolean isPrimary();
 
 	void setServices(IChuruataService[] services);
 

@@ -3,7 +3,7 @@ package org.churuata.digital.ui.organisation;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.churuata.digital.core.data.OrganisationData;
+import org.churuata.digital.core.data.ChuruataOrganisationData;
 import org.churuata.digital.ui.ChuruataLanguage;
 import org.condast.commons.Utils;
 import org.condast.commons.ui.celleditors.AbstractCheckBoxCellEditor;
@@ -23,7 +23,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 
-public class AcceptOrganisationTableViewer extends AbstractTableViewerWithDelete<OrganisationData>{
+public class AcceptOrganisationTableViewer extends AbstractTableViewerWithDelete<ChuruataOrganisationData>{
 	private static final long serialVersionUID = 1L;
 
 	private enum Columns{
@@ -67,22 +67,22 @@ public class AcceptOrganisationTableViewer extends AbstractTableViewerWithDelete
 		viewer.setLabelProvider( new ServicesLabelProvider() );
 	}
 
-	public OrganisationData[] getInput(){
-		Collection<OrganisationData> contacts = new ArrayList<OrganisationData>();
+	public ChuruataOrganisationData[] getInput(){
+		Collection<ChuruataOrganisationData> contacts = new ArrayList<ChuruataOrganisationData>();
 		if( Utils.assertNull( super.getInput() ))
 			return null;
 		for( Object obj: super.getInput() ){
-			contacts.add( (OrganisationData) obj );				
+			contacts.add( (ChuruataOrganisationData) obj );				
 		}
-		return contacts.toArray( new OrganisationData[ contacts.size() ]);
+		return contacts.toArray( new ChuruataOrganisationData[ contacts.size() ]);
 	}
 	
-	public void setInput( Collection<OrganisationData> contacts ){
+	public void setInput( Collection<ChuruataOrganisationData> contacts ){
 		super.setInput( contacts );
 	}
 	
 	@Override
-	protected void onRowDoubleClick(OrganisationData selection) {
+	protected void onRowDoubleClick(ChuruataOrganisationData selection) {
 		/* NOTHING */
 	}
 
@@ -108,10 +108,10 @@ public class AcceptOrganisationTableViewer extends AbstractTableViewerWithDelete
 	}
 
 	@Override
-	protected boolean onDeleteButton(Collection<OrganisationData> deleted) {
+	protected boolean onDeleteButton(Collection<ChuruataOrganisationData> deleted) {
 		if( Utils.assertNull(deleted))
 			return false;
-		EditEvent<OrganisationData> event = new EditEvent<OrganisationData>( this, EditTypes.DELETE, deleted);
+		EditEvent<ChuruataOrganisationData> event = new EditEvent<ChuruataOrganisationData>( this, EditTypes.DELETE, deleted);
 		notifyEditEvent( event);
 		return true;
 	}
@@ -143,8 +143,8 @@ public class AcceptOrganisationTableViewer extends AbstractTableViewerWithDelete
 			if( retval != null )
 				return retval;
 			Columns column = Columns.values()[ columnIndex ];
-			IStoreWithDelete<OrganisationData> swd = (IStoreWithDelete<OrganisationData>) element;
-			OrganisationData organisation = swd.getStore();
+			IStoreWithDelete<ChuruataOrganisationData> swd = (IStoreWithDelete<ChuruataOrganisationData>) element;
+			ChuruataOrganisationData organisation = swd.getStore();
 			switch( column){
 			case NAME:
 				retval = organisation.getName();
@@ -171,12 +171,12 @@ public class AcceptOrganisationTableViewer extends AbstractTableViewerWithDelete
 			Image image = super.getColumnImage(arg0, columnIndex);
 			if( image != null )
 				return image;//delete image
-			IStoreWithDelete<OrganisationData> swd = (IStoreWithDelete<OrganisationData>) arg0;
+			IStoreWithDelete<ChuruataOrganisationData> swd = (IStoreWithDelete<ChuruataOrganisationData>) arg0;
 			if( swd.getCount() == 1 )
 				return null;
 
 			Columns column = Columns.values()[ columnIndex ];
-			OrganisationData organisation = swd.getStore();
+			ChuruataOrganisationData organisation = swd.getStore();
 			switch( column){
 			case VERIFIED:
 				image = setCheckedButton( true, organisation.isVerified());
@@ -193,21 +193,21 @@ public class AcceptOrganisationTableViewer extends AbstractTableViewerWithDelete
 
 		@Override
 		protected void onToggle() {
-			OrganisationData organisation = super.getData().getStore();
+			ChuruataOrganisationData organisation = super.getData().getStore();
 			boolean value = organisation.isVerified();
 			organisation.setVerified( !value );
-			notifyEditEvent(new EditEvent<OrganisationData>( this, EditTypes.CHANGED, organisation));
+			notifyEditEvent(new EditEvent<ChuruataOrganisationData>( this, EditTypes.CHANGED, organisation));
 		}
 
 		@Override
 		protected Object doGetValue() {
-			OrganisationData organisation = super.getData().getStore();
+			ChuruataOrganisationData organisation = super.getData().getStore();
 			return organisation.isVerified();
 		}
 
 		@Override
 		protected void doSetValue( Object value ) {
-			OrganisationData organisation = super.getData().getStore();
+			ChuruataOrganisationData organisation = super.getData().getStore();
 			organisation.setVerified((boolean)value );
 		}
 	}

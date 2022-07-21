@@ -3,7 +3,7 @@ package org.churuata.digital.entries;
 import java.util.concurrent.TimeUnit;
 
 import org.churuata.digital.core.Entries;
-import org.churuata.digital.core.data.OrganisationData;
+import org.churuata.digital.core.data.ChuruataOrganisationData;
 import org.churuata.digital.session.SessionStore;
 import org.churuata.digital.ui.views.EditChuruataComposite;
 import org.condast.commons.authentication.user.ILoginUser;
@@ -17,7 +17,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 
-public class EditEntryPoint extends AbstractRestEntryPoint<SessionStore<OrganisationData>>{
+public class EditEntryPoint extends AbstractRestEntryPoint<SessionStore<ChuruataOrganisationData>>{
 	private static final long serialVersionUID = 1L;
 
 	public static final String S_PAGE = "page";
@@ -39,7 +39,7 @@ public class EditEntryPoint extends AbstractRestEntryPoint<SessionStore<Organisa
 
 	@Override
 	protected boolean prepare(Composite parent) {
-		SessionStore<OrganisationData> store = getData();
+		SessionStore<ChuruataOrganisationData> store = getData();
 		if( store == null )
 			return false;
 		ILoginUser user = store.getLoginUser();
@@ -61,16 +61,16 @@ public class EditEntryPoint extends AbstractRestEntryPoint<SessionStore<Organisa
 	protected boolean postProcess(Composite parent) {
 		Config config = Config.getInstance();
 		String context = config.getServerContext();
-		SessionStore<OrganisationData> store = getData();
+		SessionStore<ChuruataOrganisationData> store = getData();
 
 		ILoginUser user = store.getLoginUser();
 		editComposite.setInput(context, user );
 		return true;
 	}
 	
-	protected void onRegistrationCompleted( EditEvent<OrganisationData> event ) {
+	protected void onRegistrationCompleted( EditEvent<ChuruataOrganisationData> event ) {
 		LatLng data = event.getData().getLocation();
-		SessionStore<OrganisationData> store = getData();
+		SessionStore<ChuruataOrganisationData> store = getData();
 		switch( event.getType()) {
 		case COMPLETE:
 			RWTUtils.redirect(Entries.Pages.READY.toPath());
@@ -92,7 +92,7 @@ public class EditEntryPoint extends AbstractRestEntryPoint<SessionStore<Organisa
 	protected void handleTimer() {
 		try {
 			super.handleTimer();
-			SessionStore<OrganisationData> store = getData();
+			SessionStore<ChuruataOrganisationData> store = getData();
 			if(( store == null ) || ( store.getLoginUser() == null ))
 				return;
 		} catch (Exception e) {
@@ -102,7 +102,7 @@ public class EditEntryPoint extends AbstractRestEntryPoint<SessionStore<Organisa
 
 	@Override
 	protected void handleSessionTimeout(boolean reload) {
-		SessionStore<OrganisationData> store = super.getData();
+		SessionStore<ChuruataOrganisationData> store = super.getData();
 		store.setLoginUser(null);
 		super.handleSessionTimeout(reload);
 	}

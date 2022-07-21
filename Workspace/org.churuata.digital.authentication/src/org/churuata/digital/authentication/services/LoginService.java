@@ -62,6 +62,14 @@ public class LoginService extends AbstractEntityService<Login>{
 		return users.iterator().next();
 	}
 
+	public boolean isRegistered( String user, String password ) {
+		TypedQuery<ILoginUser> query = super.getManager().createQuery( SELECT_USER, ILoginUser.class);
+		query.setParameter("userName", user);
+		query.setParameter("password", password);
+		Collection<ILoginUser> users = query.getResultList();
+		return !Utils.assertNull( users );
+	}
+
 	public ILoginUser[] getAll() {
 		Collection<Login> users = super.findAll("");
 		if( Utils.assertNull( users))

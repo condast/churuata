@@ -9,7 +9,7 @@ import java.util.logging.Logger;
 import org.churuata.digital.core.AbstractChuruataEntryPoint;
 import org.churuata.digital.core.Dispatcher;
 import org.churuata.digital.core.Entries;
-import org.churuata.digital.core.data.OrganisationData;
+import org.churuata.digital.core.data.ChuruataOrganisationData;
 import org.churuata.digital.core.data.ChuruataProfileData;
 import org.churuata.digital.core.rest.IRestPages;
 import org.churuata.digital.session.SessionStore;
@@ -38,7 +38,7 @@ import org.eclipse.swt.widgets.Group;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
-public class AddContactEntryPoint extends AbstractChuruataEntryPoint<OrganisationData>{
+public class AddContactEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrganisationData>{
 	private static final long serialVersionUID = 1L;
 
 	public static final String S_PAGE = "page";
@@ -58,10 +58,10 @@ public class AddContactEntryPoint extends AbstractChuruataEntryPoint<Organisatio
 	@Override
 	protected boolean prepare(Composite parent) {
 		StartupParameters service = RWT.getClient().getService( StartupParameters.class );
-		IDomainProvider<SessionStore<OrganisationData>> domain = Dispatcher.getDomainProvider( service );
+		IDomainProvider<SessionStore<ChuruataOrganisationData>> domain = Dispatcher.getDomainProvider( service );
 		if( domain == null )
 			return false;
-		SessionStore<OrganisationData> store = domain.getData();
+		SessionStore<ChuruataOrganisationData> store = domain.getData();
 		if( store == null )
 			return false;
 		setData(store);
@@ -94,7 +94,7 @@ public class AddContactEntryPoint extends AbstractChuruataEntryPoint<Organisatio
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
 				try{
-					SessionStore<OrganisationData> store = getSessionStore();
+					SessionStore<ChuruataOrganisationData> store = getSessionStore();
 					if( store.getPersonData() == null )
 						return;
 					controller.update( store.getPersonData());
@@ -114,7 +114,7 @@ public class AddContactEntryPoint extends AbstractChuruataEntryPoint<Organisatio
 		Config config = Config.getInstance();
 		String context = config.getServerContext();
 
-		SessionStore<OrganisationData> store = getSessionStore();
+		SessionStore<ChuruataOrganisationData> store = getSessionStore();
 		ILoginUser user = store.getLoginUser();
 		ProfileData profile = store.getProfile();
 		if( profile == null ) {
@@ -131,7 +131,7 @@ public class AddContactEntryPoint extends AbstractChuruataEntryPoint<Organisatio
 
 	protected void onPersonEvent( EditEvent<PersonData> event ) {
 		PersonData data = null;
-		SessionStore<OrganisationData> store = super.getSessionStore();
+		SessionStore<ChuruataOrganisationData> store = super.getSessionStore();
 		switch( event.getType()) {
 		case INITIALISED:
 			break;
@@ -167,7 +167,7 @@ public class AddContactEntryPoint extends AbstractChuruataEntryPoint<Organisatio
 	protected void handleTimer() {
 		try {
 			super.handleTimer();
-			SessionStore<OrganisationData> store = getSessionStore();
+			SessionStore<ChuruataOrganisationData> store = getSessionStore();
 			if(( store == null ) || ( store.getLoginUser() == null ))
 				return;
 		} catch (Exception e) {
@@ -177,7 +177,7 @@ public class AddContactEntryPoint extends AbstractChuruataEntryPoint<Organisatio
 
 	@Override
 	protected boolean handleSessionTimeout(boolean reload) {
-		SessionStore<OrganisationData> store = super.getSessionStore();
+		SessionStore<ChuruataOrganisationData> store = super.getSessionStore();
 		store.setLoginUser(null);
 		return super.handleSessionTimeout(reload);
 	}
@@ -223,7 +223,7 @@ public class AddContactEntryPoint extends AbstractChuruataEntryPoint<Organisatio
 		@Override
 		protected String onHandleResponse(ResponseEvent<ChuruataProfileData.Requests> event) throws IOException {
 			try {
-				SessionStore<OrganisationData> store = getSessionStore();
+				SessionStore<ChuruataOrganisationData> store = getSessionStore();
 				switch( event.getRequest()){
 				case UPDATE_PERSON:
 					Dispatcher.redirect(Entries.Pages.ACTIVE, store.getToken());

@@ -1,8 +1,6 @@
 package org.churuata.digital.core.data;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
 import org.condast.commons.authentication.core.LoginData;
 import org.condast.commons.na.data.ProfileData;
 import org.condast.commons.na.model.IContactPerson;
@@ -48,19 +46,7 @@ public class ChuruataProfileData extends ProfileData implements Serializable, Cl
 			return StringStyler.xmlStyleString( name());
 		}
 	}
-	
-	private Collection<OrganisationData> organisations;
-	
 	public ChuruataProfileData( LoginData user, IContactPerson person ){
 		super( user, person );
-		organisations = new ArrayList<>();
 	}
-
-	public void addOrganisation( OrganisationData type ) {
-		this.organisations.add(type);
-	}
-
-	public OrganisationData[] getOrganisations() {
-		return organisations.toArray( new OrganisationData[ this.organisations.size()]);
-	}	
 }

@@ -9,8 +9,8 @@ import java.util.logging.Logger;
 import org.churuata.digital.core.AbstractChuruataEntryPoint;
 import org.churuata.digital.core.Dispatcher;
 import org.churuata.digital.core.Entries;
-import org.churuata.digital.core.data.OrganisationData;
-import org.churuata.digital.core.data.OrganisationData.Requests;
+import org.churuata.digital.core.data.ChuruataOrganisationData;
+import org.churuata.digital.core.data.ChuruataOrganisationData.Requests;
 import org.churuata.digital.core.rest.IRestPages;
 import org.churuata.digital.session.SessionStore;
 import org.churuata.digital.ui.image.ChuruataImages;
@@ -37,7 +37,7 @@ import org.eclipse.swt.widgets.Group;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
-public class CreateEntryPoint extends AbstractChuruataEntryPoint<OrganisationData>{
+public class CreateEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrganisationData>{
 	private static final long serialVersionUID = 1L;
 
 	public static final String S_PAGE = "page";
@@ -47,7 +47,7 @@ public class CreateEntryPoint extends AbstractChuruataEntryPoint<OrganisationDat
 	private EditChuruataComposite editComposite;
 	private Button btnAdd;
 
-	private IEditListener<OrganisationData> listener = e->onOrganisationEvent(e);
+	private IEditListener<ChuruataOrganisationData> listener = e->onOrganisationEvent(e);
 
 	private WebController controller;
 	
@@ -56,10 +56,10 @@ public class CreateEntryPoint extends AbstractChuruataEntryPoint<OrganisationDat
 	@Override
 	protected boolean prepare(Composite parent) {
 		StartupParameters service = RWT.getClient().getService( StartupParameters.class );
-		IDomainProvider<SessionStore<OrganisationData>> domain = Dispatcher.getDomainProvider( service );
+		IDomainProvider<SessionStore<ChuruataOrganisationData>> domain = Dispatcher.getDomainProvider( service );
 		if( domain == null )
 			return false;
-		SessionStore<OrganisationData> store = domain.getData();
+		SessionStore<ChuruataOrganisationData> store = domain.getData();
 		if( store == null )
 			return false;
 		setData(store);
@@ -92,7 +92,7 @@ public class CreateEntryPoint extends AbstractChuruataEntryPoint<OrganisationDat
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
 				try{
-					SessionStore<OrganisationData> store = getSessionStore();
+					SessionStore<ChuruataOrganisationData> store = getSessionStore();
 					if( store.getData() == null )
 						return;
 					controller.create( store.getData());
@@ -112,13 +112,13 @@ public class CreateEntryPoint extends AbstractChuruataEntryPoint<OrganisationDat
 		Config config = Config.getInstance();
 		String context = config.getServerContext();
 
-		SessionStore<OrganisationData> store = getSessionStore();
+		SessionStore<ChuruataOrganisationData> store = getSessionStore();
 		ILoginUser user = store.getLoginUser();
 		editComposite.setInput(context, user);
 		LatLng selected = store.getSelected();
-		OrganisationData organisation = store.getData();
+		ChuruataOrganisationData organisation = store.getData();
 		if( organisation == null ) {
-			organisation = new OrganisationData( selected );
+			organisation = new ChuruataOrganisationData( selected );
 			store.setData(organisation); 
 		}
 		editComposite.setInput( organisation );
@@ -129,9 +129,9 @@ public class CreateEntryPoint extends AbstractChuruataEntryPoint<OrganisationDat
 		return true;
 	}
 
-	protected void onOrganisationEvent( EditEvent<OrganisationData> event ) {
+	protected void onOrganisationEvent( EditEvent<ChuruataOrganisationData> event ) {
 		LatLng data = null;
-		SessionStore<OrganisationData> store = super.getSessionStore();
+		SessionStore<ChuruataOrganisationData> store = super.getSessionStore();
 		switch( event.getType()) {
 		case INITIALISED:
 			break;
@@ -167,7 +167,7 @@ public class CreateEntryPoint extends AbstractChuruataEntryPoint<OrganisationDat
 	protected void handleTimer() {
 		try {
 			super.handleTimer();
-			SessionStore<OrganisationData> store = getSessionStore();
+			SessionStore<ChuruataOrganisationData> store = getSessionStore();
 			if(( store == null ) || ( store.getLoginUser() == null ))
 				return;
 		} catch (Exception e) {
@@ -177,12 +177,12 @@ public class CreateEntryPoint extends AbstractChuruataEntryPoint<OrganisationDat
 
 	@Override
 	protected boolean handleSessionTimeout(boolean reload) {
-		SessionStore<OrganisationData> store = super.getSessionStore();
+		SessionStore<ChuruataOrganisationData> store = super.getSessionStore();
 		store.setLoginUser(null);
 		return super.handleSessionTimeout(reload);
 	}
 	
-	private class WebController extends AbstractHttpRequest<OrganisationData.Requests>{
+	private class WebController extends AbstractHttpRequest<ChuruataOrganisationData.Requests>{
 		
 		private ILoginUser user;
 		
@@ -194,27 +194,27 @@ public class CreateEntryPoint extends AbstractChuruataEntryPoint<OrganisationDat
 			super.setContextPath(context + path);
 		}
 
-		public void create( OrganisationData organisation ) {
+		public void create( ChuruataOrganisationData organisation ) {
 			Map<String, String> params = new HashMap<>();
 			try {
 				if( organisation == null )
 					return;
-				params.put(OrganisationData.Parameters.USER_ID.toString(), String.valueOf( user.getId()));
-				params.put(OrganisationData.Parameters.SECURITY.toString(), String.valueOf( user.getSecurity() ));
+				params.put(ChuruataOrganisationData.Parameters.USER_ID.toString(), String.valueOf( user.getId()));
+				params.put(ChuruataOrganisationData.Parameters.SECURITY.toString(), String.valueOf( user.getSecurity() ));
 				Gson gson = new Gson();
-				String str = gson.toJson( organisation, OrganisationData.class);
-				sendPut(OrganisationData.Requests.CREATE, params, str );
+				String str = gson.toJson( organisation, ChuruataOrganisationData.class);
+				sendPut(ChuruataOrganisationData.Requests.CREATE, params, str );
 			} catch (IOException e) {
 				logger.warning(e.getMessage());
 			}
 		}
 		
 		@Override
-		protected String onHandleResponse(ResponseEvent<OrganisationData.Requests> event) throws IOException {
+		protected String onHandleResponse(ResponseEvent<ChuruataOrganisationData.Requests> event) throws IOException {
 			try {
 				switch( event.getRequest()){
 				case CREATE:
-					SessionStore<OrganisationData> store = getSessionStore();
+					SessionStore<ChuruataOrganisationData> store = getSessionStore();
 					Dispatcher.jump(Entries.Pages.ACTIVE, store.getToken());
 					break;
 				default:

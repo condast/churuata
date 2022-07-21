@@ -106,13 +106,12 @@
     </setAttribute>
     <setAttribute key="selected_workspace_bundles">
         <setEntry value="nl.martijndwars.webpush@default:default"/>
-        <setEntry value="org.churuata.caminantes@default:default"/>
         <setEntry value="org.churuata.digital.authentication@default:default"/>
         <setEntry value="org.churuata.digital.core@default:default"/>
         <setEntry value="org.churuata.digital.organisation@default:default"/>
         <setEntry value="org.churuata.digital.ui@default:default"/>
         <setEntry value="org.churuata.digital@default:default"/>
-        <setEntry value="org.churuata.rest@9:default"/>
+        <setEntry value="org.churuata.rest@default:default"/>
         <setEntry value="org.condast.commons.authentication.ui@default:default"/>
         <setEntry value="org.condast.commons.authentication@default:default"/>
         <setEntry value="org.condast.commons.data@default:default"/>

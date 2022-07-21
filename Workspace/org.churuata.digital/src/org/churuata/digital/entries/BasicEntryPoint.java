@@ -7,7 +7,7 @@ import java.util.logging.Logger;
 
 import javax.servlet.http.HttpSession;
 
-import org.churuata.digital.core.data.OrganisationData;
+import org.churuata.digital.core.data.ChuruataOrganisationData;
 import org.churuata.digital.core.data.simple.SimpleOrganisationData;
 import org.churuata.digital.core.model.IOrganisation;
 import org.churuata.digital.core.rest.IRestPages;
@@ -28,7 +28,7 @@ import org.eclipse.swt.widgets.Composite;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
-public class BasicEntryPoint extends AbstractRestEntryPoint<OrganisationData> {
+public class BasicEntryPoint extends AbstractRestEntryPoint<ChuruataOrganisationData> {
 	private static final long serialVersionUID = 1L;
 
 	public static final String S_CHURUATA = "Churuata-Digital";
@@ -108,7 +108,7 @@ public class BasicEntryPoint extends AbstractRestEntryPoint<OrganisationData> {
 		super.close();
 	}
 	
-	private class WebController extends AbstractHttpRequest<OrganisationData.Requests>{
+	private class WebController extends AbstractHttpRequest<ChuruataOrganisationData.Requests>{
 		
 		SimpleOrganisationData[] data;
 		
@@ -122,19 +122,19 @@ public class BasicEntryPoint extends AbstractRestEntryPoint<OrganisationData> {
 
 		public void locate( LatLng location, int range ) {
 			Map<String, String> params = super.getParameters();
-			params.put(OrganisationData.Parameters.LATITUDE.toString(), String.valueOf( location.getLatitude()));
-			params.put(OrganisationData.Parameters.LONGITUDE.toString(), String.valueOf( location.getLongitude()));
-			params.put(OrganisationData.Parameters.RANGE.toString(), String.valueOf( range ));
-			params.put(OrganisationData.Parameters.VERIFIED.toString(), IOrganisation.Verification.VERIFIED.name());
+			params.put(ChuruataOrganisationData.Parameters.LATITUDE.toString(), String.valueOf( location.getLatitude()));
+			params.put(ChuruataOrganisationData.Parameters.LONGITUDE.toString(), String.valueOf( location.getLongitude()));
+			params.put(ChuruataOrganisationData.Parameters.RANGE.toString(), String.valueOf( range ));
+			params.put(ChuruataOrganisationData.Parameters.VERIFIED.toString(), IOrganisation.Verification.VERIFIED.name());
 			try {
-				sendGet(OrganisationData.Requests.FIND_IN_RANGE, params );
+				sendGet(ChuruataOrganisationData.Requests.FIND_IN_RANGE, params );
 			} catch (IOException e) {
 				logger.warning(e.getMessage());
 			}
 		}
 
 		@Override
-		protected String onHandleResponse(ResponseEvent<OrganisationData.Requests> event) throws IOException {
+		protected String onHandleResponse(ResponseEvent<ChuruataOrganisationData.Requests> event) throws IOException {
 			try {
 				Gson gson = new Gson();
 				switch( event.getRequest()){
@@ -154,7 +154,7 @@ public class BasicEntryPoint extends AbstractRestEntryPoint<OrganisationData> {
 		}
 
 		@Override
-		protected void onHandleResponseFail(HttpStatus status, ResponseEvent<OrganisationData.Requests> event) throws IOException {
+		protected void onHandleResponseFail(HttpStatus status, ResponseEvent<ChuruataOrganisationData.Requests> event) throws IOException {
 			super.onHandleResponseFail(status, event);
 		}
 	

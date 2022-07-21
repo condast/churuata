@@ -8,7 +8,7 @@ import java.util.Random;
 
 import javax.servlet.http.HttpSession;
 
-import org.churuata.digital.core.data.OrganisationData;
+import org.churuata.digital.core.data.ChuruataOrganisationData;
 import org.churuata.digital.session.SessionStore;
 import org.condast.commons.authentication.core.AuthenticationEvent;
 import org.condast.commons.authentication.core.IAuthenticationListener;
@@ -27,7 +27,7 @@ public class Dispatcher {
 
 	private static Dispatcher dispatcher = new Dispatcher();
 	
-	private Map<Long, IDomainProvider<SessionStore<OrganisationData>>> domains;
+	private Map<Long, IDomainProvider<SessionStore<ChuruataOrganisationData>>> domains;
 	
 	private AuthenticationDispatcher auth = AuthenticationDispatcher.getInstance();
 	private IAuthenticationListener listener = e -> onNotificationEvent(e);
@@ -45,7 +45,7 @@ public class Dispatcher {
 	private void onNotificationEvent( AuthenticationEvent event ) {
 		try {
 			ILoginUser user = event.getUser();
-			IDomainProvider<SessionStore<OrganisationData>> domain = getDomain(user.getId(), user.getSecurity());
+			IDomainProvider<SessionStore<ChuruataOrganisationData>> domain = getDomain(user.getId(), user.getSecurity());
 			switch( event.getEvent()) {
 			case LOGIN:
 				if( domain == null )
@@ -67,8 +67,8 @@ public class Dispatcher {
 	 * @param userId
 	 * @return
 	 */
-	public IDomainProvider<SessionStore<OrganisationData>> createDomain( String domain, long token, String path ) {
-		IDomainProvider<SessionStore<OrganisationData>> provider = this.domains.get( token);
+	public IDomainProvider<SessionStore<ChuruataOrganisationData>> createDomain( String domain, long token, String path ) {
+		IDomainProvider<SessionStore<ChuruataOrganisationData>> provider = this.domains.get( token);
 		if( provider == null ) {
 			provider = new DomainProvider( domain, token, path );
 			this.domains.put(token, provider);
@@ -81,7 +81,7 @@ public class Dispatcher {
 	 * @param token
 	 * @return
 	 */
-	public IDomainProvider<SessionStore<OrganisationData>> getDomain( long token ) {
+	public IDomainProvider<SessionStore<ChuruataOrganisationData>> getDomain( long token ) {
 		if( token < 0 )
 			return null;
 		return this.domains.get(token);
@@ -92,11 +92,11 @@ public class Dispatcher {
 	 * @param token
 	 * @return
 	 */
-	public IDomainProvider<SessionStore<OrganisationData>> getDomain( long userId, long security) {
+	public IDomainProvider<SessionStore<ChuruataOrganisationData>> getDomain( long userId, long security) {
 		if(( userId < 0 ) || ( security < 0 ))
 			return null;
-		for( IDomainProvider<SessionStore<OrganisationData>> domain: this.domains.values()) {
-			SessionStore<OrganisationData> store = domain.getData();
+		for( IDomainProvider<SessionStore<ChuruataOrganisationData>> domain: this.domains.values()) {
+			SessionStore<ChuruataOrganisationData> store = domain.getData();
 			if( store == null )
 				continue;
 			ILoginUser user = store.getLoginUser();
@@ -109,9 +109,9 @@ public class Dispatcher {
 	}
 
 	public void removeDomain( long userId ) {
-		Collection<Map.Entry<Long,IDomainProvider<SessionStore<OrganisationData>>>> entries = 
-				new ArrayList<Map.Entry<Long,IDomainProvider<SessionStore<OrganisationData>>>>( this.domains.entrySet());
-		for(Map.Entry<Long,IDomainProvider<SessionStore<OrganisationData>>> entry: entries) {
+		Collection<Map.Entry<Long,IDomainProvider<SessionStore<ChuruataOrganisationData>>>> entries = 
+				new ArrayList<Map.Entry<Long,IDomainProvider<SessionStore<ChuruataOrganisationData>>>>( this.domains.entrySet());
+		for(Map.Entry<Long,IDomainProvider<SessionStore<ChuruataOrganisationData>>> entry: entries) {
 			ILoginUser user = entry.getValue().getData().getLoginUser();
 			if(( user != null ) && ( user.getId() == userId))
 				this.domains.remove(entry.getKey());
@@ -160,10 +160,10 @@ public class Dispatcher {
 	 * @param active
 	 * @return
 	 */
-	public static IDomainProvider<SessionStore<OrganisationData>> createDomain( ILoginUser user ) {
+	public static IDomainProvider<SessionStore<ChuruataOrganisationData>> createDomain( ILoginUser user ) {
 		Random random = new Random();
 		long token = Math.abs( random.nextLong() );
-		IDomainProvider<SessionStore<OrganisationData>> domain = dispatcher.createDomain( Dispatcher.S_CHURUATA, token, Entries.Pages.ACTIVE.name().toLowerCase());
+		IDomainProvider<SessionStore<ChuruataOrganisationData>> domain = dispatcher.createDomain( Dispatcher.S_CHURUATA, token, Entries.Pages.ACTIVE.name().toLowerCase());
 		domain.getData().setLoginUser(user);
 		return domain;
 	}
@@ -175,13 +175,13 @@ public class Dispatcher {
 	 * @param active
 	 * @return
 	 */
-	public static IDomainProvider<SessionStore<OrganisationData>> createDomain() {	
+	public static IDomainProvider<SessionStore<ChuruataOrganisationData>> createDomain() {	
 		Random random = new Random();
 		long token = Math.abs( random.nextLong() );
 		return dispatcher.createDomain( S_CHURUATA , token, Entries.Pages.ACTIVE.name().toLowerCase());
 	}
 
-	public static IDomainProvider<SessionStore<OrganisationData>> getDomainProvider( StartupParameters service ) {
+	public static IDomainProvider<SessionStore<ChuruataOrganisationData>> getDomainProvider( StartupParameters service ) {
 		String tokenstr = service.getParameter(StringStyler.xmlStyleString( IDomainProvider.Attributes.TOKEN.name()));
 		long token = -1;
 		if(!StringUtils.isEmpty(tokenstr)) { 
@@ -202,16 +202,16 @@ public class Dispatcher {
 		if(StringUtils.isEmpty(securitystr))
 			return null;
 		long security = Long.parseLong(securitystr);
-		IDomainProvider<SessionStore<OrganisationData>> domain = dispatcher.getDomain(userId, security);
+		IDomainProvider<SessionStore<ChuruataOrganisationData>> domain = dispatcher.getDomain(userId, security);
 		return domain;
 	}
-	private class DomainProvider extends AbstractDomainProvider<SessionStore<OrganisationData>>{
+	private class DomainProvider extends AbstractDomainProvider<SessionStore<ChuruataOrganisationData>>{
 
 		private long userId;
 		
 		public DomainProvider( String domain, long token, String path ) {
 			super( domain, path, token );
-			super.setData(new SessionStore<OrganisationData>( token ));
+			super.setData(new SessionStore<ChuruataOrganisationData>( token ));
 		}
 
 		@Override

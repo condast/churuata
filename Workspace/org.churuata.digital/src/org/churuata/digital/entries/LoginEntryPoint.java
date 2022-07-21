@@ -11,7 +11,7 @@ import org.churuata.digital.core.AbstractChuruataEntryPoint;
 import org.churuata.digital.core.AuthenticationDispatcher;
 import org.churuata.digital.core.Dispatcher;
 import org.churuata.digital.core.Entries;
-import org.churuata.digital.core.data.OrganisationData;
+import org.churuata.digital.core.data.ChuruataOrganisationData;
 import org.churuata.digital.core.rest.IRestPages;
 import org.churuata.digital.session.SessionStore;
 import org.condast.commons.authentication.core.LoginData;
@@ -33,7 +33,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 
-public class LoginEntryPoint extends AbstractChuruataEntryPoint<OrganisationData>{
+public class LoginEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrganisationData>{
 	private static final long serialVersionUID = 1L;
 
 	private static final String S_CHURUATA_HOME = "/" + S_CHURUATA + "/home";
@@ -110,20 +110,20 @@ public class LoginEntryPoint extends AbstractChuruataEntryPoint<OrganisationData
 
 	@Override
 	protected boolean handleSessionTimeout(boolean reload) {
-		SessionStore<OrganisationData> store = getSessionStore();
+		SessionStore<ChuruataOrganisationData> store = getSessionStore();
 		store.clear();
 		Dispatcher.redirect( BasicApplication.S_CHURUATA, getToken());
 		return true;
 	}
 
-	private class SessionHandler extends AbstractSessionHandler<SessionStore<OrganisationData>>{
+	private class SessionHandler extends AbstractSessionHandler<SessionStore<ChuruataOrganisationData>>{
 
 		protected SessionHandler(Display display) {
 			super(display);
 		}
 
 		@Override
-		protected void onHandleSession(SessionEvent<SessionStore<OrganisationData>> sevent) {
+		protected void onHandleSession(SessionEvent<SessionStore<ChuruataOrganisationData>> sevent) {
 			group.refresh();
 		}
 	}
@@ -154,7 +154,7 @@ public class LoginEntryPoint extends AbstractChuruataEntryPoint<OrganisationData
 				AuthenticationDispatcher authentication = AuthenticationDispatcher.getInstance();
 				ILoginUser user = authentication.getLoginUser(login.getKey(), login.getValue());
 				Dispatcher dispatcher = Dispatcher.getInstance();
-				IDomainProvider<SessionStore<OrganisationData>> domain = dispatcher.getDomain(user.getId(), user.getSecurity());
+				IDomainProvider<SessionStore<ChuruataOrganisationData>> domain = dispatcher.getDomain(user.getId(), user.getSecurity());
 				if( domain == null )
 					break;
 				long token = domain.getToken();

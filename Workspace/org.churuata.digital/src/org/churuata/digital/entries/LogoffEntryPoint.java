@@ -1,7 +1,7 @@
 package org.churuata.digital.entries;
 
 import org.churuata.digital.core.AuthenticationDispatcher;
-import org.churuata.digital.core.data.OrganisationData;
+import org.churuata.digital.core.data.ChuruataOrganisationData;
 import org.churuata.digital.session.SessionStore;
 import org.condast.commons.authentication.user.ILoginUser;
 import org.condast.commons.ui.entry.IDataEntryPoint;
@@ -9,21 +9,21 @@ import org.condast.commons.ui.utils.RWTUtils;
 import org.eclipse.rap.rwt.application.AbstractEntryPoint;
 import org.eclipse.swt.widgets.Composite;
 
-public class LogoffEntryPoint extends AbstractEntryPoint implements IDataEntryPoint<SessionStore<OrganisationData>>{
+public class LogoffEntryPoint extends AbstractEntryPoint implements IDataEntryPoint<SessionStore<ChuruataOrganisationData>>{
 	private static final long serialVersionUID = 1L;
 
 	private static final String S_CHURUATA_HOME = "/churuata";
 	
 	private AuthenticationDispatcher dispatcher = AuthenticationDispatcher.getInstance();
 
-	private SessionStore<OrganisationData> store;
+	private SessionStore<ChuruataOrganisationData> store;
 	
 	public LogoffEntryPoint() {
 		super();
 	}
 	
 	@Override
-	public void setData(SessionStore<OrganisationData> store) {
+	public void setData(SessionStore<ChuruataOrganisationData> store) {
 		this.store = store;
 	}
 

@@ -76,7 +76,6 @@ public class AuthenticationResource{
 			name = email.split("[@]")[0];
 		else if( StringUtils.isEmpty( password ))
 			return Response.status( Status.BAD_REQUEST).build();
-
 		logger.info( "Registering " + name + "(" + email + ")");
 		Dispatcher dispatcher=  Dispatcher.getInstance();
 

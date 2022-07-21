@@ -9,7 +9,7 @@ import java.util.logging.Logger;
 import org.churuata.digital.core.AbstractChuruataEntryPoint;
 import org.churuata.digital.core.Dispatcher;
 import org.churuata.digital.core.Entries;
-import org.churuata.digital.core.data.OrganisationData;
+import org.churuata.digital.core.data.ChuruataOrganisationData;
 import org.churuata.digital.core.rest.IRestPages;
 import org.churuata.digital.session.SessionStore;
 import org.churuata.digital.ui.image.ChuruataImages;
@@ -37,7 +37,7 @@ import org.eclipse.swt.widgets.Group;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
-public class AccountEntryPoint extends AbstractChuruataEntryPoint<OrganisationData>{
+public class AccountEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrganisationData>{
 	private static final long serialVersionUID = 1L;
 
 	public static final String S_PAGE = "page";
@@ -57,10 +57,10 @@ public class AccountEntryPoint extends AbstractChuruataEntryPoint<OrganisationDa
 	@Override
 	protected boolean prepare(Composite parent) {
 		StartupParameters service = RWT.getClient().getService( StartupParameters.class );
-		IDomainProvider<SessionStore<OrganisationData>> domain = Dispatcher.getDomainProvider( service );
+		IDomainProvider<SessionStore<ChuruataOrganisationData>> domain = Dispatcher.getDomainProvider( service );
 		if( domain == null )
 			return false;
-		SessionStore<OrganisationData> store = domain.getData();
+		SessionStore<ChuruataOrganisationData> store = domain.getData();
 		if( store == null )
 			return false;
 		setData(store);
@@ -93,7 +93,7 @@ public class AccountEntryPoint extends AbstractChuruataEntryPoint<OrganisationDa
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
 				try{
-					SessionStore<OrganisationData> store = getSessionStore();
+					SessionStore<ChuruataOrganisationData> store = getSessionStore();
 					if( store.getProfile() == null )
 						return;
 					ProfileData profile = store.getProfile();
@@ -113,7 +113,7 @@ public class AccountEntryPoint extends AbstractChuruataEntryPoint<OrganisationDa
 		Config config = Config.getInstance();
 		String context = config.getServerContext();
 
-		SessionStore<OrganisationData> store = getSessionStore();
+		SessionStore<ChuruataOrganisationData> store = getSessionStore();
 		ILoginUser user = store.getLoginUser();
 		ProfileData profile = store.getProfile();
 		if( profile == null ) {
@@ -129,7 +129,7 @@ public class AccountEntryPoint extends AbstractChuruataEntryPoint<OrganisationDa
 	}
 
 	protected void onProfileEvent( EditEvent<ProfileData> event ) {
-		SessionStore<OrganisationData> store = super.getSessionStore();
+		SessionStore<ChuruataOrganisationData> store = super.getSessionStore();
 		switch( event.getType()) {
 		case INITIALISED:
 			break;
@@ -161,7 +161,7 @@ public class AccountEntryPoint extends AbstractChuruataEntryPoint<OrganisationDa
 	protected void handleTimer() {
 		try {
 			super.handleTimer();
-			SessionStore<OrganisationData> store = getSessionStore();
+			SessionStore<ChuruataOrganisationData> store = getSessionStore();
 			if(( store == null ) || ( store.getLoginUser() == null ))
 				return;
 		} catch (Exception e) {
@@ -171,7 +171,7 @@ public class AccountEntryPoint extends AbstractChuruataEntryPoint<OrganisationDa
 
 	@Override
 	protected boolean handleSessionTimeout(boolean reload) {
-		SessionStore<OrganisationData> store = super.getSessionStore();
+		SessionStore<ChuruataOrganisationData> store = super.getSessionStore();
 		store.setLoginUser(null);
 		return super.handleSessionTimeout(reload);
 	}
@@ -217,7 +217,7 @@ public class AccountEntryPoint extends AbstractChuruataEntryPoint<OrganisationDa
 		@Override
 		protected String onHandleResponse(ResponseEvent<ProfileData.Requests> event) throws IOException {
 			try {
-				SessionStore<OrganisationData> store = getSessionStore();
+				SessionStore<ChuruataOrganisationData> store = getSessionStore();
 				Gson gson = new Gson();
 				ProfileData profile = null;
 				switch( event.getRequest()){

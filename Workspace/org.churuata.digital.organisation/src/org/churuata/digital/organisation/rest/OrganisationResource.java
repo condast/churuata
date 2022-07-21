@@ -18,22 +18,25 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import org.churuata.digital.core.data.OrganisationData;
+import org.churuata.digital.core.data.ChuruataOrganisationData;
 import org.churuata.digital.core.data.simple.SimpleOrganisationData;
 import org.churuata.digital.core.location.IChuruataService;
 import org.churuata.digital.core.model.IOrganisation;
 import org.churuata.digital.organisation.core.AuthenticationDispatcher;
 import org.churuata.digital.organisation.core.Dispatcher;
 import org.churuata.digital.organisation.core.LocationComparator;
+import org.churuata.digital.organisation.model.Address;
 import org.churuata.digital.organisation.model.Organisation;
 import org.churuata.digital.organisation.model.Person;
 import org.churuata.digital.organisation.model.Service;
+import org.churuata.digital.organisation.services.AddressService;
 import org.churuata.digital.organisation.services.ContactService;
 import org.churuata.digital.organisation.services.OrganisationService;
 import org.churuata.digital.organisation.services.PersonService;
 import org.churuata.digital.organisation.services.ServicesService;
 import org.condast.commons.Utils;
 import org.condast.commons.authentication.user.ILoginUser;
+import org.condast.commons.na.data.AddressData;
 import org.condast.commons.na.data.PersonData;
 import org.condast.commons.na.model.IContact;
 import org.condast.commons.na.model.IContactPerson;
@@ -84,7 +87,7 @@ public class OrganisationResource{
 	
 		ILoginUser user = dispatcher.getLoginUser(userId, security);
 		Gson gson = new Gson();
-		OrganisationData od = gson.fromJson(data, OrganisationData.class);
+		ChuruataOrganisationData od = gson.fromJson(data, ChuruataOrganisationData.class);
 		TransactionManager t = new TransactionManager( Dispatcher.getInstance() );
 		try {
 			t.open();
@@ -100,7 +103,7 @@ public class OrganisationResource{
 			}else
 				person = persons.iterator().next();
 			Organisation organisation = os.create(person, od);
-			od = new OrganisationData(organisation);
+			od = new ChuruataOrganisationData(organisation);
 			String str = gson.toJson(od, PersonData.class);
 			return Response.ok( str ).build();
 		}
@@ -123,7 +126,7 @@ public class OrganisationResource{
 			return Response.noContent().build();
 	
 		Gson gson = new Gson();
-		OrganisationData od = gson.fromJson(data, OrganisationData.class);
+		ChuruataOrganisationData od = gson.fromJson(data, ChuruataOrganisationData.class);
 		TransactionManager t = new TransactionManager( Dispatcher.getInstance() );
 		try {
 			t.open();
@@ -132,10 +135,10 @@ public class OrganisationResource{
 			Person person = ps.find( personId); 
 			if( person == null )
 				return Response.status( Status.NOT_FOUND).build();
-			
+			od.setPrimary(true);
 			Organisation org = os.create(person, od);
-			od = new OrganisationData(org);
-			String str = gson.toJson(od, OrganisationData.class);
+			od = new ChuruataOrganisationData(org);
+			String str = gson.toJson(od, ChuruataOrganisationData.class);
 			return Response.ok( str ).build();
 		}
 		catch( Exception ex ) {
@@ -171,8 +174,8 @@ public class OrganisationResource{
 				return Response.status( Status.NOT_FOUND).build();
 			org.setLocation(latitude, longitude);		
 			os.update(org);
-			OrganisationData od = new OrganisationData(org);
-			String str = gson.toJson(od, OrganisationData.class);
+			ChuruataOrganisationData od = new ChuruataOrganisationData(org);
+			String str = gson.toJson(od, ChuruataOrganisationData.class);
 			return Response.ok( str ).build();
 		}
 		catch( Exception ex ) {
@@ -200,7 +203,7 @@ public class OrganisationResource{
 			OrganisationService os = new OrganisationService(); 
 			Organisation organisation = os.find( organisationId );
 			Gson gson = new Gson();
-			String str = gson.toJson( new OrganisationData( organisation ), OrganisationData.class);
+			String str = gson.toJson( new ChuruataOrganisationData( organisation ), ChuruataOrganisationData.class);
 			return Response.ok( str ).build();
 		}
 		catch( Exception ex ) {
@@ -229,9 +232,9 @@ public class OrganisationResource{
 		try {
 			t.open();
 			OrganisationService os = new OrganisationService(); 
-			OrganisationData[] organisations = OrganisationService.toOrganisationData( os.findAll( verify ));
+			ChuruataOrganisationData[] organisations = OrganisationService.toOrganisationData( os.findAll( verify ));
 			Gson gson = new Gson();
-			String str = gson.toJson( organisations, OrganisationData[].class);
+			String str = gson.toJson( organisations, ChuruataOrganisationData[].class);
 			return Response.ok( str ).build();
 		}
 		catch( Exception ex ) {
@@ -251,9 +254,9 @@ public class OrganisationResource{
 		try {
 			t.open();
 			OrganisationService os = new OrganisationService(); 
-			OrganisationData[] organisations = OrganisationService.toOrganisationData( os.findAll( IOrganisation.Verification.VERIFIED ));
+			ChuruataOrganisationData[] organisations = OrganisationService.toOrganisationData( os.findAll( IOrganisation.Verification.VERIFIED ));
 			Gson gson = new Gson();
-			String str = gson.toJson( organisations, OrganisationData[].class);
+			String str = gson.toJson( organisations, ChuruataOrganisationData[].class);
 			return Response.ok( str ).build();
 		}
 		catch( Exception ex ) {
@@ -327,7 +330,7 @@ public class OrganisationResource{
 			organisation.addService(service);
 			os.update(organisation);
 			Gson gson = new Gson();
-			String str = gson.toJson( new OrganisationData( organisation ), OrganisationData.class);
+			String str = gson.toJson( new ChuruataOrganisationData( organisation ), ChuruataOrganisationData.class);
 			return Response.ok( str ).build();
 		}
 		catch( Exception ex ) {
@@ -361,7 +364,7 @@ public class OrganisationResource{
 				return Response.noContent().build();
 			organisation.removeService( serviceId);
 			Gson gson = new Gson();
-			String str = gson.toJson( new OrganisationData( organisation ), OrganisationData.class);
+			String str = gson.toJson( new ChuruataOrganisationData( organisation ), ChuruataOrganisationData.class);
 			return Response.ok( str ).build();
 		}
 		catch( Exception ex ) {
@@ -398,7 +401,7 @@ public class OrganisationResource{
 				os.update(organisation);				
 			}
 			Gson gson = new Gson();
-			String str = gson.toJson( new OrganisationData( organisation ), OrganisationData.class);
+			String str = gson.toJson( new ChuruataOrganisationData( organisation ), ChuruataOrganisationData.class);
 			return Response.ok( str ).build();
 		}
 		catch( Exception ex ) {
@@ -425,11 +428,11 @@ public class OrganisationResource{
 		
 		TransactionManager t = new TransactionManager( Dispatcher.getInstance() );
 		Gson gson = new Gson();
-		OrganisationData[] organisations = gson.fromJson(data, OrganisationData[].class);
+		ChuruataOrganisationData[] organisations = gson.fromJson(data, ChuruataOrganisationData[].class);
 		try {
 			t.open();
 			OrganisationService os = new OrganisationService(); 
-			for( OrganisationData od: organisations  ){
+			for( ChuruataOrganisationData od: organisations  ){
 				Organisation organisation = os.find(od.getId());
 				if( organisation == null)
 					return Response.status(Status.NOT_FOUND).build();
@@ -441,6 +444,57 @@ public class OrganisationResource{
 					os.update(organisation);				
 				}
 			}
+			return Response.ok().build();
+		}
+		catch( Exception ex ) {
+			ex.printStackTrace();
+			return Response.serverError().build();
+		}
+		finally {
+			t.close();
+		}
+	}
+
+	@PUT
+	@Produces(MediaType.TEXT_PLAIN)
+	@Path("/set-address")
+	public Response setAddress(@QueryParam("user-id") long userId, @QueryParam("security") long security, 
+			@QueryParam("organisation-id") long organisationId, String data ) {
+
+		AuthenticationDispatcher dispatcher=  AuthenticationDispatcher.getInstance();
+		if( !dispatcher.isLoggedIn(userId, security))
+			return Response.status( Status.UNAUTHORIZED).build();
+		
+		if( StringUtils.isEmpty(data))
+			return Response.noContent().build();
+		
+		TransactionManager t = new TransactionManager( Dispatcher.getInstance() );
+		Gson gson = new Gson();
+		try {
+			t.open();
+			OrganisationService os = new OrganisationService(); 
+			Organisation organisation = null;
+			if( organisationId <=0 ) {
+				PersonService ps = new PersonService();
+				Collection<Person> cps = ps.findForLogin(userId);
+				if( Utils.assertNull(cps))
+					return Response.status( Status.NOT_FOUND).build();
+				IContactPerson cp = cps.iterator().next();
+				organisation = os.findPrincipal(cp);
+			}else
+				organisation = os.find(organisationId);
+			if( organisation == null )
+				return Response.status( Status.NOT_FOUND).build();
+			
+			AddressData ad = gson.fromJson(data, AddressData.class);
+			AddressService as = new AddressService();
+			Address address = as.find(ad.getAddressId());
+			if( address == null )
+				address = as.create(ad);
+			else
+				AddressService.update(address, ad);
+			organisation.setAddress( address );
+			os.update(organisation);
 			return Response.ok().build();
 		}
 		catch( Exception ex ) {

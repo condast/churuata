@@ -9,7 +9,7 @@ import java.util.logging.Logger;
 import org.churuata.digital.core.AbstractWizardEntryPoint;
 import org.churuata.digital.core.Dispatcher;
 import org.churuata.digital.core.Entries.Pages;
-import org.churuata.digital.core.data.OrganisationData;
+import org.churuata.digital.core.data.ChuruataOrganisationData;
 import org.churuata.digital.core.model.IOrganisation;
 import org.churuata.digital.core.rest.IRestPages;
 import org.churuata.digital.session.SessionStore;
@@ -20,6 +20,7 @@ import org.condast.commons.authentication.http.IDomainProvider;
 import org.condast.commons.authentication.user.ILoginUser;
 import org.condast.commons.messaging.http.AbstractHttpRequest;
 import org.condast.commons.messaging.http.ResponseEvent;
+import org.condast.commons.na.data.OrganisationData;
 import org.condast.commons.ui.controller.EditEvent;
 import org.condast.commons.ui.controller.IEditListener;
 import org.condast.commons.ui.session.SessionEvent;
@@ -33,21 +34,21 @@ import org.eclipse.swt.widgets.Composite;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
-public class AcceptanceEntryPoint extends AbstractWizardEntryPoint<AcceptOrganisationTableViewer, OrganisationData>{
+public class AcceptanceEntryPoint extends AbstractWizardEntryPoint<AcceptOrganisationTableViewer, ChuruataOrganisationData>{
 	private static final long serialVersionUID = 1L;
 
 	public static final String S_ADD_ACCOUNT = "Add Account";
 
 	private AcceptOrganisationTableViewer acceptTableViewer;
 
-	private IEditListener<OrganisationData> listener = e->onOrganisationEvent(e);
+	private IEditListener<ChuruataOrganisationData> listener = e->onOrganisationEvent(e);
 
 	private WebController controller;
 	
 	private Logger logger = Logger.getLogger(this.getClass().getName());
 
 	@Override
-	protected IDomainProvider<SessionStore<OrganisationData>> getDomainProvider(StartupParameters service) {
+	protected IDomainProvider<SessionStore<ChuruataOrganisationData>> getDomainProvider(StartupParameters service) {
 		return Dispatcher.getDomainProvider(service);
 	}
 
@@ -61,15 +62,15 @@ public class AcceptanceEntryPoint extends AbstractWizardEntryPoint<AcceptOrganis
 	}
 
 	@Override
-	protected boolean onPostProcess(String context, OrganisationData data, SessionStore<OrganisationData> store) {
+	protected boolean onPostProcess(String context, ChuruataOrganisationData data, SessionStore<ChuruataOrganisationData> store) {
 		controller = new WebController( store.getLoginUser());
 		controller.setInput(context, IRestPages.Pages.ORGANISATION.toPath());
 		controller.getAll( IOrganisation.Verification.ALL);
 		return true;
 	}
 
-	protected void onOrganisationEvent( EditEvent<OrganisationData> event ) {
-		OrganisationData data = event.getData();
+	protected void onOrganisationEvent( EditEvent<ChuruataOrganisationData> event ) {
+		ChuruataOrganisationData data = event.getData();
 		switch( event.getType()) {
 		case CHANGED:
 			Button btnNext = super.getBtnNext();
@@ -86,7 +87,7 @@ public class AcceptanceEntryPoint extends AbstractWizardEntryPoint<AcceptOrganis
 	}
 
 	@Override
-	protected void onButtonPressed(OrganisationData data, SessionStore<OrganisationData> store) {
+	protected void onButtonPressed(ChuruataOrganisationData data, SessionStore<ChuruataOrganisationData> store) {
 		try{
 			Dispatcher.jump( Pages.ACTIVE, store.getToken());						
 		}
@@ -96,7 +97,7 @@ public class AcceptanceEntryPoint extends AbstractWizardEntryPoint<AcceptOrganis
 	}
 
 	@Override
-	protected void onHandleTimer(SessionEvent<OrganisationData> event) {
+	protected void onHandleTimer(SessionEvent<ChuruataOrganisationData> event) {
 		try {
 			//acceptTableViewer.refresh();
 			super.handleTimer();
@@ -112,7 +113,7 @@ public class AcceptanceEntryPoint extends AbstractWizardEntryPoint<AcceptOrganis
 	}
 
 
-	private class WebController extends AbstractHttpRequest<OrganisationData.Requests>{
+	private class WebController extends AbstractHttpRequest<ChuruataOrganisationData.Requests>{
 		
 		private ILoginUser user;
 		
@@ -129,9 +130,9 @@ public class AcceptanceEntryPoint extends AbstractWizardEntryPoint<AcceptOrganis
 			Map<String, String> params = super.getParameters();
 			params.put( LoginData.Parameters.USER_ID.toString(), String.valueOf( user.getId()));
 			params.put( LoginData.Parameters.SECURITY.toString(), String.valueOf( user.getSecurity()));
-			params.put(OrganisationData.Parameters.VERIFIED.toString(), verify.name());
+			params.put(ChuruataOrganisationData.Parameters.VERIFIED.toString(), verify.name());
 			try {
-				sendGet(OrganisationData.Requests.GET_ALL, params );
+				sendGet(ChuruataOrganisationData.Requests.GET_ALL, params );
 			} catch (IOException e) {
 				logger.warning(e.getMessage());
 			}
@@ -141,16 +142,16 @@ public class AcceptanceEntryPoint extends AbstractWizardEntryPoint<AcceptOrganis
 			Map<String, String> params = super.getParameters();
 			params.put( LoginData.Parameters.USER_ID.toString(), String.valueOf( user.getId()));
 			params.put( LoginData.Parameters.SECURITY.toString(), String.valueOf( user.getSecurity()));
-			params.put(OrganisationData.Parameters.ORGANISATION_ID.toString(), String.valueOf( organisation.getId()));
-			params.put(OrganisationData.Parameters.VERIFIED.toString(), String.valueOf( organisation.isVerified()));
+			params.put(ChuruataOrganisationData.Parameters.ORGANISATION_ID.toString(), String.valueOf( organisation.getId()));
+			params.put(ChuruataOrganisationData.Parameters.VERIFIED.toString(), String.valueOf( organisation.isVerified()));
 			try {
-				sendGet(OrganisationData.Requests.SET_VERIFIED, params );
+				sendGet(ChuruataOrganisationData.Requests.SET_VERIFIED, params );
 			} catch (IOException e) {
 				logger.warning(e.getMessage());
 			}
 		}
 
-		public void removeAll( Collection<OrganisationData> organisations ) {
+		public void removeAll( Collection<ChuruataOrganisationData> organisations ) {
 			if( Utils.assertNull(organisations))
 				return;
 			Map<String, String> params = super.getParameters();
@@ -159,19 +160,19 @@ public class AcceptanceEntryPoint extends AbstractWizardEntryPoint<AcceptOrganis
 			Gson gson = new Gson();
 			String data = gson.toJson( OrganisationData.getIDs(organisations), long[].class );
 			try {
-				sendDelete(OrganisationData.Requests.REMOVE_ORGANISATIONS, params, data );
+				sendDelete(ChuruataOrganisationData.Requests.REMOVE_ORGANISATIONS, params, data );
 			} catch (IOException e) {
 				logger.warning(e.getMessage());
 			}
 		}
 
 		@Override
-		protected String onHandleResponse(ResponseEvent<OrganisationData.Requests> event) throws IOException {
+		protected String onHandleResponse(ResponseEvent<ChuruataOrganisationData.Requests> event) throws IOException {
 			try {
 				Gson gson = new Gson();
 				switch( event.getRequest()){
 				case GET_ALL:
-					OrganisationData[] data = gson.fromJson(event.getResponse(), OrganisationData[].class);
+					ChuruataOrganisationData[] data = gson.fromJson(event.getResponse(), ChuruataOrganisationData[].class);
 					acceptTableViewer.setInput( Arrays.asList(data));
 					break;
 				default:
@@ -186,7 +187,7 @@ public class AcceptanceEntryPoint extends AbstractWizardEntryPoint<AcceptOrganis
 		}
 
 		@Override
-		protected void onHandleResponseFail(HttpStatus status, ResponseEvent<OrganisationData.Requests> event) throws IOException {
+		protected void onHandleResponseFail(HttpStatus status, ResponseEvent<ChuruataOrganisationData.Requests> event) throws IOException {
 			super.onHandleResponseFail(status, event);
 		}
 	

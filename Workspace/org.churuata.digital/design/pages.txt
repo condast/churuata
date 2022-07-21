@@ -1,5 +1,5 @@
 ACCOUNT     | org.churuata.digital.entries.AccountEntryPoint     | Edit Account;
-ADDRESS     | org.churuata.digital.entries.AddressEntryPoin      | Edit Address;
+ADDRESS     | org.churuata.digital.entries.AddressEntryPoint      | Edit Address;
 BANNER      | org.churuata.digital.entries.BannerEntryPoint      | Banner;
 CONTACTS    | org.churuata.digital.entries.ContactsEntryPoint    | Edit Contact Details;
 CREATE      | org.churuata.digital.entries.CreateEntryPoint      | Create a Churuata;
