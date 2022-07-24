@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.condast.commons.parser.AbstractResourceParser;
 import org.condast.commons.strings.StringStyler;
 
-public class ChuruataServlet extends HttpServlet {
+public class CaminantesServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	//same as alias in plugin.xml
@@ -34,7 +34,18 @@ public class ChuruataServlet extends HttpServlet {
 		}				
 	}
 
-	public ChuruataServlet() {
+	//Frames
+	private enum Views{
+		BANNER,
+		HOME;
+
+		@Override
+		public String toString() {
+			return StringStyler.xmlStyleString(name());
+		}
+	}
+
+	public CaminantesServlet() {
 		super();
 	}
 
@@ -94,16 +105,17 @@ public class ChuruataServlet extends HttpServlet {
 		@Override
 		protected String onCreateFrame( Attributes attr, String[] arguments) {
 			StringBuilder builder = new StringBuilder();
-			builder.append("/"+ S_CAMINANTES + "/");
-			switch( attr ) {
+			builder.append("/" + S_CAMINANTES + "/");
+			String viewstr = StringStyler.styleToEnum(arguments[1]);
+			Views view = Views.valueOf(viewstr);
+			switch( view ) {
 			case HOME:
-				builder.append( S_HOME);
+				builder.append("map");
 				break;				
 			default:
-				builder.append(attr.toAttribute());
+				builder.append(view.toString());
 				break;								
 			}
-			builder.append("'");
 			return builder.toString();
 		}
 	}
