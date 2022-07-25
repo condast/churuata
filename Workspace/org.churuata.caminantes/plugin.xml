@@ -14,7 +14,7 @@
          point="org.eclipse.equinox.http.registry.servlets">
       <servlet
             alias="/caminantes"
-            class="org.churuata.caminantes.http.ChuruataServlet"
+            class="org.churuata.caminantes.http.CaminantesServlet"
             load-on-startup="true">
       </servlet>
    </extension>
