@@ -18,7 +18,7 @@ import org.condast.commons.config.Config;
 import org.condast.commons.messaging.http.AbstractHttpRequest;
 import org.condast.commons.messaging.http.ResponseEvent;
 import org.condast.commons.na.data.AddressData;
-import org.condast.commons.na.data.ProfileData;
+import org.condast.commons.na.profile.IProfileData;
 import org.condast.commons.ui.controller.EditEvent;
 import org.condast.commons.ui.controller.IEditListener;
 import org.condast.commons.ui.na.address.AddressComposite;
@@ -94,7 +94,7 @@ public class AddressEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrgani
 					SessionStore<ChuruataOrganisationData> store = getSessionStore();
 					if( store.getProfile() == null )
 						return;
-					ProfileData profile = store.getProfile();
+					IProfileData profile = store.getProfile();
 					controller.setAddress( profile.getAddress());
 				}
 				catch( Exception ex ){
@@ -113,7 +113,7 @@ public class AddressEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrgani
 
 		SessionStore<ChuruataOrganisationData> store = getSessionStore();
 		ILoginUser user = store.getLoginUser();
-		ProfileData profile = store.getProfile();
+		IProfileData profile = store.getProfile();
 		if( profile == null ) {
 			profile = null;//new ProfileData( selected );
 			store.setProfile(profile); 
@@ -127,7 +127,7 @@ public class AddressEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrgani
 
 	protected void onOrganisationEvent( EditEvent<AddressData> event ) {
 		SessionStore<ChuruataOrganisationData> store = getSessionStore();
-		ProfileData profile = store.getProfile();
+		IProfileData profile = store.getProfile();
 		switch( event.getType()) {
 		case CHANGED:
 			if( this.addressComposite.checkRequiredFields())

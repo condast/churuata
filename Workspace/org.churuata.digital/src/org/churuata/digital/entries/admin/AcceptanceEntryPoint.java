@@ -8,12 +8,13 @@ import java.util.logging.Logger;
 
 import org.churuata.digital.core.AbstractWizardEntryPoint;
 import org.churuata.digital.core.Dispatcher;
+import org.churuata.digital.core.Entries;
 import org.churuata.digital.core.Entries.Pages;
 import org.churuata.digital.core.data.ChuruataOrganisationData;
 import org.churuata.digital.core.model.IOrganisation;
 import org.churuata.digital.core.rest.IRestPages;
 import org.churuata.digital.session.SessionStore;
-import org.churuata.digital.ui.organisation.AcceptOrganisationTableViewer;
+import org.churuata.digital.ui.organisation.OrganisationsTableViewer;
 import org.condast.commons.Utils;
 import org.condast.commons.authentication.core.LoginData;
 import org.condast.commons.authentication.http.IDomainProvider;
@@ -34,12 +35,12 @@ import org.eclipse.swt.widgets.Composite;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
-public class AcceptanceEntryPoint extends AbstractWizardEntryPoint<AcceptOrganisationTableViewer, ChuruataOrganisationData>{
+public class AcceptanceEntryPoint extends AbstractWizardEntryPoint<OrganisationsTableViewer, ChuruataOrganisationData>{
 	private static final long serialVersionUID = 1L;
 
 	public static final String S_ADD_ACCOUNT = "Add Account";
 
-	private AcceptOrganisationTableViewer acceptTableViewer;
+	private OrganisationsTableViewer acceptTableViewer;
 
 	private IEditListener<ChuruataOrganisationData> listener = e->onOrganisationEvent(e);
 
@@ -53,9 +54,9 @@ public class AcceptanceEntryPoint extends AbstractWizardEntryPoint<AcceptOrganis
 	}
 
 	@Override
-	protected AcceptOrganisationTableViewer onCreateComposite(Composite parent, int style) {
-		acceptTableViewer = new AcceptOrganisationTableViewer(parent, SWT.NONE );
-		acceptTableViewer.setData( RWT.CUSTOM_VARIANT, S_CHURUATA );
+	protected OrganisationsTableViewer onCreateComposite(Composite parent, int style) {
+		acceptTableViewer = new OrganisationsTableViewer(parent, SWT.NONE );
+		acceptTableViewer.setData( RWT.CUSTOM_VARIANT, Entries.S_CHURUATA );
 		acceptTableViewer.setLayoutData( new GridData( SWT.FILL, SWT.FILL, true, true ));
 		acceptTableViewer.addEditListener(listener);
 		return acceptTableViewer;
@@ -70,7 +71,7 @@ public class AcceptanceEntryPoint extends AbstractWizardEntryPoint<AcceptOrganis
 	}
 
 	protected void onOrganisationEvent( EditEvent<ChuruataOrganisationData> event ) {
-		ChuruataOrganisationData data = event.getData();
+		ChuruataOrganisationData data = (ChuruataOrganisationData) event.getData();
 		switch( event.getType()) {
 		case CHANGED:
 			Button btnNext = super.getBtnNext();

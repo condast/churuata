@@ -35,8 +35,7 @@ public class ProfileServlet extends HttpServlet {
 		LOGOFF,
 		ACCOUNT,
 		ADDRESS,
-		ORGANISATION,
-		SERVICES;
+		ORGANISATIONS;
 
 		@Override
 		public String toString() {

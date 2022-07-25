@@ -6,6 +6,7 @@ import java.util.logging.Logger;
 
 import org.churuata.digital.core.AbstractWizardEntryPoint;
 import org.churuata.digital.core.Dispatcher;
+import org.churuata.digital.core.Entries;
 import org.churuata.digital.core.Entries.Pages;
 import org.churuata.digital.core.data.ChuruataOrganisationData;
 import org.churuata.digital.core.data.ServiceData;
@@ -49,7 +50,7 @@ public class LocationEntryPoint extends AbstractWizardEntryPoint<OrganisationMap
 	@Override
 	protected OrganisationMapBrowser onCreateComposite(Composite parent, int style) {
         mapComposite = new OrganisationMapBrowser( parent, SWT.NONE);
- 		mapComposite.setData( RWT.CUSTOM_VARIANT, S_CHURUATA );
+ 		mapComposite.setData( RWT.CUSTOM_VARIANT, Entries.S_CHURUATA );
 		mapComposite.addEditListener(listener);
  		return mapComposite;
 	}

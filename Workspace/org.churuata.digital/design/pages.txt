@@ -1,5 +1,3 @@
-ACCOUNT     | org.churuata.digital.entries.AccountEntryPoint     | Edit Account;
-ADDRESS     | org.churuata.digital.entries.AddressEntryPoint      | Edit Address;
 BANNER      | org.churuata.digital.entries.BannerEntryPoint      | Banner;
 CONTACTS    | org.churuata.digital.entries.ContactsEntryPoint    | Edit Contact Details;
 CREATE      | org.churuata.digital.entries.CreateEntryPoint      | Create a Churuata;
@@ -9,12 +7,17 @@ LOGIN       | org.churuata.digital.entries.LoginEntryPoint       | Login;
 LOGOFF      | org.churuata.digital.entries.LogoffEntryPoint      | Logoff;
 MAP         | org.churuata.digital.entries.BasicEntryPoint       | Map;
 ORGANISATION| org.churuata.digital.entries.OrganisationEntryPoint| Edit Organisation Details;
-SERVICES    | org.churuata.digital.entries.ServicesEntryPoint    | Edit Services;
 READY       | org.churuata.digital.entries.BasicEntryPoint       | Churuata;
 REGISTER    | org.churuata.digital.entries.BasicEntryPoint       | Register a Service
 GET_EMAIL   | org.churuata.digital.entries.BasicEntryPoint       | Get Email;
 
-## Add a Service
+#Profile
+ACCOUNT     	| org.churuata.digital.entries.AccountEntryPoint     	| Edit Account;
+ADDRESS     	| org.churuata.digital.entries.AddressEntryPoint     	| Edit Address;
+SERVICES    	| org.churuata.digital.entries.ServicesEntryPoint    	| Edit Services;
+ORGANISATIONS	| org.churuata.digital.entries.OrganisationsEntryPoint	| Show Organisations;
+
+# Add a Service
 REGISTER         | org.churuata.digital.entries.register.RegisterEntryPoint       | Register a Service;
 ADD_CONTACT      | org.churuata.digital.entries.register.AddContactEntryPoint     | Add a Contact;
 ADD_ORGANISATION | org.churuata.digital.entries.register.AddOrganisationEntryPoint| Add an Organisation;

@@ -17,7 +17,9 @@ import org.condast.commons.messaging.http.AbstractHttpRequest;
 import org.condast.commons.messaging.http.ResponseEvent;
 import org.condast.commons.na.data.ContactPersonData;
 import org.condast.commons.na.data.PersonData;
+import org.condast.commons.na.data.ProfileData;
 import org.condast.commons.na.model.IContact;
+import org.condast.commons.na.profile.IProfileData;
 import org.condast.commons.strings.StringUtils;
 import org.condast.commons.ui.controller.EditEvent;
 import org.condast.commons.ui.controller.IEditListener;
@@ -71,7 +73,7 @@ public class RegisterEntryPoint extends AbstractWizardEntryPoint<ContactPersonCo
 		try{
 			if( store.getContactPersonData() == null )
 				return;
-			PersonData person = store.getPersonData();
+			IProfileData person = store.getProfile();
 			if( person == null ) 				
 				controller.register( store.getContactPersonData());
 			else
@@ -85,7 +87,7 @@ public class RegisterEntryPoint extends AbstractWizardEntryPoint<ContactPersonCo
 	@Override
 	protected ContactPersonComposite onCreateComposite(Composite parent, int style) {
 		personComposite = new ContactPersonComposite(parent, SWT.NONE );
-		personComposite.setData( RWT.CUSTOM_VARIANT, S_CHURUATA );
+		personComposite.setData( RWT.CUSTOM_VARIANT, Entries.S_CHURUATA );
 		personComposite.setLayoutData( new GridData( SWT.FILL, SWT.FILL, true, true ));
 		personComposite.addEditListener( listener);
 		return personComposite;
@@ -95,7 +97,7 @@ public class RegisterEntryPoint extends AbstractWizardEntryPoint<ContactPersonCo
 	protected boolean onPostProcess(String context, ChuruataOrganisationData data, SessionStore<ChuruataOrganisationData> store) {
 		controller = new WebController();
 		controller.setInput(context, IRestPages.Pages.CONTACT.toPath());
-		PersonData personData = store.getPersonData();
+		IProfileData personData = store.getProfile();
 		ContactPersonData person = store.getContactPersonData();
 		if( personData != null ) {
 			person = new ContactPersonData( personData );
@@ -116,7 +118,7 @@ public class RegisterEntryPoint extends AbstractWizardEntryPoint<ContactPersonCo
 		switch( event.getType()) {
 		case ADDED:
 			store.setContactPersonData( this.personComposite.getInput());
-			PersonData person = store.getPersonData();
+			IProfileData person = store.getProfile();
 			if( person == null ) 
 				controller.register( store.getContactPersonData());
 			else
@@ -174,10 +176,12 @@ public class RegisterEntryPoint extends AbstractWizardEntryPoint<ContactPersonCo
 			try {
 				SessionStore<ChuruataOrganisationData> store = getSessionStore();
 				Gson gson = new Gson();
+				IProfileData profile = null;
 				switch( event.getRequest()){
 				case REGISTER:
 					PersonData data = gson.fromJson(event.getResponse(), PersonData.class);
-					store.setPersonData(data);
+					profile = new ProfileData( data );
+					store.setProfile(profile);
 					switch( type ) {
 					case ADDED:
 						Dispatcher.jump( Pages.CONTACTS, store.getToken());
@@ -193,8 +197,7 @@ public class RegisterEntryPoint extends AbstractWizardEntryPoint<ContactPersonCo
 					Dispatcher.redirect(Entries.Pages.ACTIVE, store.getToken());
 					break;
 				case GET_PROFILE:					
-					ChuruataProfileData profile = gson.fromJson(event.getResponse(), ChuruataProfileData.class);
-					//editComposite.setInput(profile, true);
+					profile = gson.fromJson(event.getResponse(), ChuruataProfileData.class);
 					store.setProfile(profile);
 					break;
 				default:

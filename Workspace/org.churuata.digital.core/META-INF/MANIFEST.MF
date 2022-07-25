@@ -13,6 +13,7 @@ Import-Package: org.condast.commons,
  org.condast.commons.data.latlng,
  org.condast.commons.na.data,
  org.condast.commons.na.model,
+ org.condast.commons.na.profile,
  org.condast.commons.settings,
  org.condast.commons.strings,
  org.condast.js.commons.images

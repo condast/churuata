@@ -10,6 +10,7 @@ import javax.servlet.http.HttpSession;
 
 import org.churuata.digital.core.AbstractWizardEntryPoint;
 import org.churuata.digital.core.Dispatcher;
+import org.churuata.digital.core.Entries;
 import org.churuata.digital.core.Entries.Pages;
 import org.churuata.digital.core.rest.IRestPages;
 import org.churuata.digital.session.SessionStore;
@@ -66,7 +67,7 @@ public class AdminEntryPoint extends AbstractWizardEntryPoint<AdminTableViewer, 
 	@Override
 	protected AdminTableViewer onCreateComposite(Composite parent, int style) {
 		adminTableViewer = new AdminTableViewer(parent, SWT.NONE );
-		adminTableViewer.setData( RWT.CUSTOM_VARIANT, S_CHURUATA );
+		adminTableViewer.setData( RWT.CUSTOM_VARIANT, Entries.S_CHURUATA );
 		adminTableViewer.setLayoutData( new GridData( SWT.FILL, SWT.FILL, true, true ));
 		adminTableViewer.addEditListener(listener);
 		return adminTableViewer;

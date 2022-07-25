@@ -67,7 +67,7 @@ public abstract class AbstractWizardEntryPoint<C extends Composite, D extends Ob
 		parent.setLayout(new GridLayout( 1, false ));
 		composite = onCreateComposite( parent, SWT.NONE);
 		if( composite != null ) {
-			composite.setData( RWT.CUSTOM_VARIANT, S_CHURUATA );
+			composite.setData( RWT.CUSTOM_VARIANT, Entries.S_CHURUATA );
 			composite.setLayoutData( new GridData(SWT.FILL, SWT.FILL, true, true));
 		}
 		Group group = new Group( parent, SWT.NONE );

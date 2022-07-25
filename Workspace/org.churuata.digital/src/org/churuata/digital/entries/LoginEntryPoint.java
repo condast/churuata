@@ -36,8 +36,8 @@ import org.eclipse.swt.widgets.Display;
 public class LoginEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrganisationData>{
 	private static final long serialVersionUID = 1L;
 
-	private static final String S_CHURUATA_HOME = "/" + S_CHURUATA + "/home";
-	private static final String S_CHURUATA_ACTIVE_HOME = "/" + S_CHURUATA + "/active";
+	private static final String S_CHURUATA_HOME = "/" + Entries.S_CHURUATA + "/home";
+	private static final String S_CHURUATA_ACTIVE_HOME = "/" + Entries.S_CHURUATA + "/active";
 	private static final String S_TOKEN_ARG = "?token=";
 	
 	private AuthenticationGroup group;
@@ -54,9 +54,9 @@ public class LoginEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrganisa
 		Config config = Config.getInstance();
 		group = new AuthenticationGroup(parent, SWT.NONE);
 		group.setData( RWT.CUSTOM_VARIANT, BasicApplication.S_CHURUATA_VARIANT );
-		String path = LegalUtils.createLegalPath(config.getServerContext(), S_CHURUATA, "privacy");
+		String path = LegalUtils.createLegalPath(config.getServerContext(), Entries.S_CHURUATA, "privacy");
 		group.setPrivacyPath( path);
-		path = LegalUtils.createLegalPath(config.getServerContext(), S_CHURUATA, "tos");
+		path = LegalUtils.createLegalPath(config.getServerContext(), Entries.S_CHURUATA, "tos");
 		group.setLicensePath( path);
 		group.addEditListener(elistener);
 		return group;
@@ -135,7 +135,7 @@ public class LoginEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrganisa
 			parameters.put(LoginData.Parameters.NAME.toString(), data.getNickName());
 			parameters.put(LoginData.Parameters.PASSWORD.toString(), data.getPassword());
 			parameters.put(LoginData.Parameters.EMAIL.toString(), data.getEmail());
-			parameters.put(IDomainProvider.Attributes.DOMAIN.name().toLowerCase(), S_CHURUATA );
+			parameters.put(IDomainProvider.Attributes.DOMAIN.name().toLowerCase(), Entries.S_CHURUATA );
 			sendGet( request, parameters);	
 		}
 		

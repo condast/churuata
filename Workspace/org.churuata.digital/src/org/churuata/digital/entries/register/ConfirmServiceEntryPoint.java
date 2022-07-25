@@ -21,6 +21,7 @@ import org.condast.commons.messaging.http.AbstractHttpRequest;
 import org.condast.commons.messaging.http.ResponseEvent;
 import org.condast.commons.na.data.PersonData;
 import org.condast.commons.na.data.ProfileData;
+import org.condast.commons.na.profile.IProfileData;
 import org.condast.commons.ui.controller.EditEvent;
 import org.condast.commons.ui.controller.IEditListener;
 import org.condast.commons.ui.na.person.PersonComposite;
@@ -95,9 +96,9 @@ public class ConfirmServiceEntryPoint extends AbstractChuruataEntryPoint<Churuat
 			public void widgetSelected(final SelectionEvent e) {
 				try{
 					SessionStore<ChuruataOrganisationData> store = getSessionStore();
-					if( store.getPersonData() == null )
+					if( store.getProfile() == null )
 						return;
-					controller.update( store.getPersonData());
+					controller.update( store.getProfile());
 				}
 				catch( Exception ex ){
 					ex.printStackTrace();
@@ -116,7 +117,7 @@ public class ConfirmServiceEntryPoint extends AbstractChuruataEntryPoint<Churuat
 
 		SessionStore<ChuruataOrganisationData> store = getSessionStore();
 		ILoginUser user = store.getLoginUser();
-		ProfileData profile = store.getProfile();
+		IProfileData profile = store.getProfile();
 		if( profile == null ) {
 			profile = null;//new ProfileData( selected );
 			store.setProfile(profile); 
@@ -150,7 +151,8 @@ public class ConfirmServiceEntryPoint extends AbstractChuruataEntryPoint<Churuat
 			break;
 		case COMPLETE:
 			data = event.getData();
-			store.setPersonData(data);
+			ProfileData profile = new ProfileData(  data );
+			store.setProfile(profile);
 			btnAdd.setEnabled(( data != null ));
 			break;
 		default:
@@ -205,7 +207,7 @@ public class ConfirmServiceEntryPoint extends AbstractChuruataEntryPoint<Churuat
 			}
 		}
 
-		public void update( PersonData person ) {
+		public void update( IProfileData person ) {
 			Map<String, String> params = new HashMap<>();
 			try {
 				if( person == null )

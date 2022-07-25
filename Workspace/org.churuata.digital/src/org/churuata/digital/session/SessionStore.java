@@ -1,10 +1,10 @@
 package org.churuata.digital.session;
 
+import org.churuata.digital.core.data.ChuruataProfileData;
 import org.condast.commons.authentication.session.DefaultSessionStore;
 import org.condast.commons.data.latlng.LatLng;
 import org.condast.commons.na.data.ContactPersonData;
-import org.condast.commons.na.data.PersonData;
-import org.condast.commons.na.data.ProfileData;
+import org.condast.commons.na.profile.IProfileData;
 
 public class SessionStore<D extends Object> extends DefaultSessionStore<D>{
 
@@ -14,10 +14,8 @@ public class SessionStore<D extends Object> extends DefaultSessionStore<D>{
 	
 	private LatLng selected;
 	
-	private ProfileData profile; 
+	private IProfileData profile; 
 	
-	private PersonData personData;
-
 	private ContactPersonData contactPersonData;
 
 	public SessionStore() {
@@ -50,20 +48,12 @@ public class SessionStore<D extends Object> extends DefaultSessionStore<D>{
 		this.selected = selected;
 	}
 
-	public ProfileData getProfile() {
+	public IProfileData getProfile() {
 		return profile;
 	}
 
-	public void setProfile(ProfileData profile) {
+	public void setProfile(IProfileData profile) {
 		this.profile = profile;
-	}
-
-	public PersonData getPersonData() {
-		return personData;
-	}
-
-	public void setPersonData(PersonData personData) {
-		this.personData = personData;
 	}
 
 	public ContactPersonData getContactPersonData() {

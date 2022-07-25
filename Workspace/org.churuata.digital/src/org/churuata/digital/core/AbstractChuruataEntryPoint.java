@@ -22,11 +22,6 @@ import org.eclipse.swt.widgets.Label;
 public abstract class AbstractChuruataEntryPoint<D extends Object> extends AbstractEntryPoint implements IDataEntryPoint<SessionStore<D>>, AutoCloseable{
 	private static final long serialVersionUID = 1L;
 
-	public static final String S_CHURUATA = "churuata";
-	public static final String S_PAGE = "page";
-
-	public static final String S_CHURUATA_RESOURCES = "/resources/index.html";
-
 	public static final String S_INVALID_PREPARATION = "Login first";
 
 	public static final int DEFAULT_SCHEDULE = 1000; //milliseconds
@@ -124,14 +119,14 @@ public abstract class AbstractChuruataEntryPoint<D extends Object> extends Abstr
 			parent.addDisposeListener( e->close());
 			handler = new RWTUiSessionHandler(parent.getDisplay());
 			//Set the RWT Locale
-			parent.setData( RWT.CUSTOM_VARIANT, S_CHURUATA );
+			parent.setData( RWT.CUSTOM_VARIANT, Entries.S_CHURUATA );
 			Locale locale = onSetLocale();
 			RWT.setLocale(locale);
 			RWT.getUISession().setLocale(locale);
 			Locale.setDefault( locale );
 	        parent.setLayout(new FillLayout( SWT.VERTICAL));
 			Composite composite = createComposite(parent );
-			composite.setData( RWT.CUSTOM_VARIANT, S_CHURUATA );
+			composite.setData( RWT.CUSTOM_VARIANT, Entries.S_CHURUATA );
 			composite.addDisposeListener(e->close());
 			createTimer(false, 1, TimeUnit.MILLISECONDS, this.startTime, this.rate);
 			if(!postProcess(parent)) {

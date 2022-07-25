@@ -28,9 +28,9 @@ import org.condast.commons.authentication.core.LoginData;
 import org.condast.commons.authentication.user.ILoginUser;
 import org.condast.commons.io.IOUtils;
 import org.condast.commons.na.data.PersonData;
-import org.condast.commons.na.data.ProfileData;
 import org.condast.commons.na.model.IContact;
 import org.condast.commons.na.model.IContact.ContactTypes;
+import org.condast.commons.na.profile.IProfileData;
 import org.condast.commons.persistence.service.TransactionManager;
 import org.condast.commons.na.model.IContactPerson;
 import org.condast.commons.strings.StringStyler;
@@ -258,8 +258,8 @@ public class ContactPersonResource{
 			if( person == null )
 				return Response.status( Status.NOT_FOUND).build();
 			
-			ProfileData profile = new ProfileData( user, new PersonData( person ));
-			String str = gson.toJson( profile, ProfileData.class);	
+			IProfileData profile = (IProfileData) new ChuruataProfileData( user, new PersonData( person ));
+			String str = gson.toJson( profile, ChuruataProfileData.class);	
 			return Response.ok( str ).build();
 		}
 		catch( Exception ex ) {

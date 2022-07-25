@@ -7,6 +7,13 @@ import org.condast.commons.ui.entry.AbstractEntries;
 
 public class Entries extends AbstractEntries<Entries.Pages>{
 
+	public static final String S_CHURUATA = "churuata";
+	public static final String S_CHURUATA_DIGITAL = "Churuata-Digital";
+
+	public static final String S_PAGE = "page";
+
+	public static final String S_CHURUATA_RESOURCES = "/resources/index.html";
+
 	public static final String S_HOME = "churuata";
 	
 	public enum Pages{
@@ -23,6 +30,7 @@ public class Entries extends AbstractEntries<Entries.Pages>{
 		LOGOFF,
 		MAP,
 		ORGANISATION,
+		ORGANISATIONS,
 		SERVICES,
 		READY, 
 		REGISTER,

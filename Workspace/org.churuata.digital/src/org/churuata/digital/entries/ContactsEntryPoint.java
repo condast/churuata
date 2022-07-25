@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 
 import org.churuata.digital.core.AbstractChuruataEntryPoint;
 import org.churuata.digital.core.Dispatcher;
+import org.churuata.digital.core.Entries;
 import org.churuata.digital.core.Entries.Pages;
 import org.churuata.digital.core.data.ChuruataOrganisationData;
 import org.churuata.digital.core.data.ChuruataProfileData;
@@ -20,8 +21,10 @@ import org.condast.commons.messaging.http.AbstractHttpRequest;
 import org.condast.commons.messaging.http.ResponseEvent;
 import org.condast.commons.na.data.ContactData;
 import org.condast.commons.na.data.PersonData;
+import org.condast.commons.na.data.ProfileData;
 import org.condast.commons.na.model.IContact;
 import org.condast.commons.na.model.IContact.ContactTypes;
+import org.condast.commons.na.profile.IProfileData;
 import org.condast.commons.ui.controller.EditEvent;
 import org.condast.commons.ui.controller.IEditListener;
 import org.condast.commons.ui.na.contacts.ContactWidget;
@@ -76,7 +79,7 @@ public class ContactsEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrgan
     protected Composite createComposite(Composite parent) {
         parent.setLayout(new GridLayout( 1, false ));
         contactWidget = new ContactWidget( parent, SWT.NONE);
- 		contactWidget.setData( RWT.CUSTOM_VARIANT, S_CHURUATA );
+ 		contactWidget.setData( RWT.CUSTOM_VARIANT, Entries.S_CHURUATA );
  		contactWidget.setLayoutData( new GridData(SWT.FILL, SWT.FILL, true, false));
 		Group group = new Group( parent, SWT.NONE );
 		group.setText("Add Churuata Service");
@@ -98,7 +101,7 @@ public class ContactsEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrgan
 					if( data == null )
 						return;
 					SessionStore<ChuruataOrganisationData> store = getSessionStore();
-					PersonData person = store.getPersonData();
+					IProfileData person = store.getProfile();
 					controller.addContact(data, person.getId());
 				}
 				catch( Exception ex ){
@@ -193,7 +196,8 @@ public class ContactsEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrgan
 				switch( event.getRequest()){
 				case ADD_CONTACT_TYPE:
 					PersonData data = gson.fromJson(event.getResponse(), PersonData.class);
-					store.setPersonData(data);
+					ProfileData profile = new ProfileData( data );
+					store.setProfile(profile);
 					Dispatcher.jump( Pages.REGISTER, store.getToken());
 					break;
 				default:

@@ -8,6 +8,7 @@ import javax.servlet.http.HttpSession;
 
 import org.churuata.digital.core.AbstractWizardEntryPoint;
 import org.churuata.digital.core.Dispatcher;
+import org.churuata.digital.core.Entries;
 import org.churuata.digital.core.Entries.Pages;
 import org.churuata.digital.core.rest.IRestPages;
 import org.churuata.digital.session.SessionStore;
@@ -64,7 +65,7 @@ public class EditAdminEntryPoint extends AbstractWizardEntryPoint<AdminWidget, L
 	@Override
 	protected AdminWidget onCreateComposite(Composite parent, int style) {
 		adminWidget = new AdminWidget(parent, SWT.NONE );
-		adminWidget.setData( RWT.CUSTOM_VARIANT, S_CHURUATA );
+		adminWidget.setData( RWT.CUSTOM_VARIANT, Entries.S_CHURUATA );
 		adminWidget.setLayoutData( new GridData( SWT.FILL, SWT.FILL, true, true ));
 		adminWidget.addEditListener(listener);
 		return adminWidget;

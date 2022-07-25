@@ -21,6 +21,7 @@ import org.condast.commons.messaging.http.AbstractHttpRequest;
 import org.condast.commons.messaging.http.ResponseEvent;
 import org.condast.commons.na.data.PersonData;
 import org.condast.commons.na.data.ProfileData;
+import org.condast.commons.na.profile.IProfileData;
 import org.condast.commons.ui.controller.EditEvent;
 import org.condast.commons.ui.controller.IEditListener;
 import org.condast.commons.ui.na.person.PersonComposite;
@@ -46,7 +47,7 @@ public class AddOrganisationEntryPoint extends AbstractChuruataEntryPoint<Churua
 	public static final String S_CHURUATA = "churuata";
 	public static final String S_ADD_ACCOUNT = "Add Account";
 
-	private PersonComposite editComposite;
+	private PersonComposite personComposite;
 	private Button btnAdd;
 
 	private IEditListener<PersonData> listener = e->onPersonEvent(e);
@@ -72,10 +73,10 @@ public class AddOrganisationEntryPoint extends AbstractChuruataEntryPoint<Churua
 	@Override
 	protected Composite createComposite(Composite parent) {
 		parent.setLayout( new GridLayout(1,false));
-		editComposite = new PersonComposite(parent, SWT.NONE );
-		editComposite.setData( RWT.CUSTOM_VARIANT, S_CHURUATA );
-		editComposite.setLayoutData( new GridData( SWT.FILL, SWT.FILL, true, true ));
-		editComposite.addEditListener( listener);
+		personComposite = new PersonComposite(parent, SWT.NONE );
+		personComposite.setData( RWT.CUSTOM_VARIANT, S_CHURUATA );
+		personComposite.setLayoutData( new GridData( SWT.FILL, SWT.FILL, true, true ));
+		personComposite.addEditListener( listener);
 
 		Group group = new Group( parent, SWT.NONE );
 		group.setText( S_ADD_ACCOUNT);
@@ -95,9 +96,9 @@ public class AddOrganisationEntryPoint extends AbstractChuruataEntryPoint<Churua
 			public void widgetSelected(final SelectionEvent e) {
 				try{
 					SessionStore<ChuruataOrganisationData> store = getSessionStore();
-					if( store.getPersonData() == null )
+					if( store.getProfile() == null )
 						return;
-					controller.update( store.getPersonData());
+					controller.update( store.getProfile());
 				}
 				catch( Exception ex ){
 					ex.printStackTrace();
@@ -106,7 +107,7 @@ public class AddOrganisationEntryPoint extends AbstractChuruataEntryPoint<Churua
 			}
 		});
 
-		return editComposite;
+		return personComposite;
 	}
 
 	@Override
@@ -116,7 +117,7 @@ public class AddOrganisationEntryPoint extends AbstractChuruataEntryPoint<Churua
 
 		SessionStore<ChuruataOrganisationData> store = getSessionStore();
 		ILoginUser user = store.getLoginUser();
-		ProfileData profile = store.getProfile();
+		IProfileData profile = store.getProfile();
 		if( profile == null ) {
 			profile = null;//new ProfileData( selected );
 			store.setProfile(profile); 
@@ -145,12 +146,13 @@ public class AddOrganisationEntryPoint extends AbstractChuruataEntryPoint<Churua
 			//Dispatcher.jump(BasicApplication.Pages.CREATE, store.getToken());
 			break;
 		case ADDED:
-			editComposite.getInput();
+			personComposite.getInput();
 			//Dispatcher.jump(BasicApplication.Pages.SERVICES, store.getToken());
 			break;
 		case COMPLETE:
 			data = event.getData();
-			store.setPersonData(data);
+			ProfileData profile = new ProfileData( data );
+			store.setProfile(profile);
 			btnAdd.setEnabled(( data != null ));
 			break;
 		default:
@@ -205,7 +207,7 @@ public class AddOrganisationEntryPoint extends AbstractChuruataEntryPoint<Churua
 			}
 		}
 
-		public void update( PersonData person ) {
+		public void update( IProfileData person ) {
 			Map<String, String> params = new HashMap<>();
 			try {
 				if( person == null )
@@ -230,7 +232,7 @@ public class AddOrganisationEntryPoint extends AbstractChuruataEntryPoint<Churua
 					break;
 				case GET_PROFILE:					Gson gson = new Gson();
 					ChuruataProfileData profile = gson.fromJson(event.getResponse(), ChuruataProfileData.class);
-					editComposite.setInput(profile, true);
+					personComposite.setInput(profile, true);
 					store.setProfile(profile);
 					break;
 				default:

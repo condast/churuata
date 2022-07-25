@@ -6,6 +6,7 @@ import java.util.Collection;
 import org.churuata.digital.core.data.ChuruataOrganisationData;
 import org.churuata.digital.ui.ChuruataLanguage;
 import org.condast.commons.Utils;
+import org.condast.commons.na.data.OrganisationData;
 import org.condast.commons.ui.celleditors.AbstractCheckBoxCellEditor;
 import org.condast.commons.ui.controller.EditEvent;
 import org.condast.commons.ui.controller.EditEvent.EditTypes;
@@ -23,7 +24,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 
-public class AcceptOrganisationTableViewer extends AbstractTableViewerWithDelete<ChuruataOrganisationData>{
+public class OrganisationsTableViewer extends AbstractTableViewerWithDelete<ChuruataOrganisationData>{
 	private static final long serialVersionUID = 1L;
 
 	private enum Columns{
@@ -51,7 +52,7 @@ public class AcceptOrganisationTableViewer extends AbstractTableViewerWithDelete
 		}
 	}
 
-	public AcceptOrganisationTableViewer(Composite parent,int style ) {
+	public OrganisationsTableViewer(Composite parent,int style ) {
 		super(parent,style, false );
 	}
 
@@ -64,7 +65,7 @@ public class AcceptOrganisationTableViewer extends AbstractTableViewerWithDelete
 		}
 		String deleteStr = NALanguage.getInstance().getString( Buttons.DELETE );
 		super.createDeleteColumn( Columns.values().length, deleteStr, 10 );	
-		viewer.setLabelProvider( new ServicesLabelProvider() );
+		viewer.setLabelProvider( new OrganisationLabelProvider() );
 	}
 
 	public ChuruataOrganisationData[] getInput(){
@@ -77,13 +78,13 @@ public class AcceptOrganisationTableViewer extends AbstractTableViewerWithDelete
 		return contacts.toArray( new ChuruataOrganisationData[ contacts.size() ]);
 	}
 	
-	public void setInput( Collection<ChuruataOrganisationData> contacts ){
-		super.setInput( contacts );
+	public void setInput( Collection<ChuruataOrganisationData> organisations ){
+		super.setInput( organisations );
 	}
 	
 	@Override
 	protected void onRowDoubleClick(ChuruataOrganisationData selection) {
-		/* NOTHING */
+		notifyEditEvent( new EditEvent<ChuruataOrganisationData>( this, EditTypes.SELECTED, selection));
 	}
 
 	@Override
@@ -133,7 +134,7 @@ public class AcceptOrganisationTableViewer extends AbstractTableViewerWithDelete
 		//setInput(ap);
 	}
 	
-	private class ServicesLabelProvider extends DeleteLabelProvider implements ITableLabelProvider{
+	private class OrganisationLabelProvider extends DeleteLabelProvider implements ITableLabelProvider{
 		private static final long serialVersionUID = 1L;
 
 		@SuppressWarnings("unchecked")
@@ -143,8 +144,8 @@ public class AcceptOrganisationTableViewer extends AbstractTableViewerWithDelete
 			if( retval != null )
 				return retval;
 			Columns column = Columns.values()[ columnIndex ];
-			IStoreWithDelete<ChuruataOrganisationData> swd = (IStoreWithDelete<ChuruataOrganisationData>) element;
-			ChuruataOrganisationData organisation = swd.getStore();
+			IStoreWithDelete<OrganisationData> swd = (IStoreWithDelete<OrganisationData>) element;
+			OrganisationData organisation = swd.getStore();
 			switch( column){
 			case NAME:
 				retval = organisation.getName();
@@ -156,7 +157,7 @@ public class AcceptOrganisationTableViewer extends AbstractTableViewerWithDelete
 				retval = organisation.getDescription();
 				break;
 			case TRUST:
-				retval =  String.valueOf( organisation.getScore() );
+				//retval =  String.valueOf( organisation.getScore() );
 				break;
 			default:
 				break;				
@@ -193,7 +194,7 @@ public class AcceptOrganisationTableViewer extends AbstractTableViewerWithDelete
 
 		@Override
 		protected void onToggle() {
-			ChuruataOrganisationData organisation = super.getData().getStore();
+			ChuruataOrganisationData organisation = (ChuruataOrganisationData) super.getData().getStore();
 			boolean value = organisation.isVerified();
 			organisation.setVerified( !value );
 			notifyEditEvent(new EditEvent<ChuruataOrganisationData>( this, EditTypes.CHANGED, organisation));
@@ -201,13 +202,13 @@ public class AcceptOrganisationTableViewer extends AbstractTableViewerWithDelete
 
 		@Override
 		protected Object doGetValue() {
-			ChuruataOrganisationData organisation = super.getData().getStore();
+			ChuruataOrganisationData organisation = (ChuruataOrganisationData) super.getData().getStore();
 			return organisation.isVerified();
 		}
 
 		@Override
 		protected void doSetValue( Object value ) {
-			ChuruataOrganisationData organisation = super.getData().getStore();
+			ChuruataOrganisationData organisation = (ChuruataOrganisationData) super.getData().getStore();
 			organisation.setVerified((boolean)value );
 		}
 	}
