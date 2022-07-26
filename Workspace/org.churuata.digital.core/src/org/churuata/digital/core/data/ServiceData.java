@@ -53,6 +53,7 @@ public class ServiceData implements IChuruataService {
 	public ServiceData(IChuruataService service) {
 		this.id = service.getId();
 		this.serviceType = service.getService().name();
+		this.description = service.getDescription();
 		IChuruataService.Contribution contribution = service.getContribution(); 
 		this.contribution = ( contribution == null )?Contribution.LOG.name(): contribution.name();
 		this.fromDate = service.from().getTime();
@@ -86,16 +87,12 @@ public class ServiceData implements IChuruataService {
 	}
 
 	@Override
-	public String getContributor() {
-		return this.contribution;
-	}
-
-	@Override
 	public Contribution getContribution() {
 		return Contribution.valueOf(contribution);
 	}
 	
-	public void setContribution( Contribution contribution) {
+	@Override
+	public void setContribution(Contribution contribution) {
 		this.contribution = contribution.name();
 	}
 

@@ -214,7 +214,7 @@ public class Churuata implements Comparable<Churuata>, IChuruata{
 	public IChuruataService removeType( String contributor, IChuruataService.Services type ) {
 		Collection<ChuruataType> temp = new ArrayList<>( this.types);
 		for( ChuruataType ct: temp ) {
-			if( ct.getContributor().equals(contributor) && ct.getService().equals(type)) {
+			if( ct.getContribution().equals(contributor) && ct.getService().equals(type)) {
 				this.types.remove(ct);
 				return ct;
 			}

@@ -1,14 +1,18 @@
 package org.churuata.digital.ui.views;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collection;
 
 import org.churuata.digital.core.data.ChuruataOrganisationData;
+import org.churuata.digital.core.location.IChuruataService;
 import org.condast.commons.Utils;
 import org.condast.commons.strings.StringUtils;
 import org.condast.commons.ui.controller.AbstractEntityComposite;
 import org.condast.commons.ui.controller.EditEvent;
 import org.condast.commons.ui.controller.EditEvent.EditTypes;
+import org.condast.commons.ui.controller.IEditListener;
 import org.condast.commons.ui.swt.InputField;
 import org.eclipse.rap.rwt.RWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -28,8 +32,6 @@ public class OrganisationComposite extends AbstractEntityComposite<ChuruataOrgan
 	public static final String S_NAME = "Churuata";
 	public static final String REGEXP = ("[\\ ;:,]");
 
-	public static final String S_ORGANISATION = "Churuata";
-
 	private static final String S_NAME_INFORMATION_TIP = "The Churuata name";
 	private static final String S_DESCRIPTION = "Description";
 	private static final String S_DESCRIPTOR_INFORMATION_TIP = "Describe the Churuata";
@@ -42,14 +44,21 @@ public class OrganisationComposite extends AbstractEntityComposite<ChuruataOrgan
 	
 	private ServicesTableViewer viewer;
 	
+	private IEditListener<IChuruataService> listener = e -> onViewerEvent( e );
+	
+	private Collection<IEditListener<IChuruataService>> serviceListeners;
+	
+	
 	/**
 	 * Create the dialog.
 	 * @param parentShell
 	 */
 	public OrganisationComposite( Composite parent, int style ){
 		super(parent, style );
+		this.serviceListeners = new ArrayList<>();
 		Calendar calendar = Calendar.getInstance();
 		calendar.add(Calendar.YEAR, 1);
+		viewer.addEditListener(listener);
 	}
 	
 	/**
@@ -81,9 +90,17 @@ public class OrganisationComposite extends AbstractEntityComposite<ChuruataOrgan
 
 			@Override
 			public void verifyText(VerifyEvent event) {
-				onVerifyText(event, null);
-				if( isFilled())
-					notifyInputEdited( new EditEvent<ChuruataOrganisationData>( this, EditTypes.COMPLETE, getInput()));
+				try {
+					onVerifyText(event, null);
+					EditTypes type = isFilled()?EditTypes.COMPLETE: EditTypes.CHANGED;
+					ChuruataOrganisationData input = getInput();
+					if( input == null )
+						return;
+					input.setName(event.text);
+					notifyInputEdited( new EditEvent<ChuruataOrganisationData>( this, type, input));
+				} catch (Exception e) {
+					e.printStackTrace();
+				}		
 			}
 		});
 		churuataField.setLayoutData( new GridData( SWT.FILL, SWT.FILL, true, false,2,1 ));	
@@ -100,9 +117,17 @@ public class OrganisationComposite extends AbstractEntityComposite<ChuruataOrgan
 
 			@Override
 			public void verifyText(VerifyEvent event) {
-				onVerifyText(event, null);
-				if( isFilled())
-					notifyInputEdited( new EditEvent<ChuruataOrganisationData>( this, EditTypes.COMPLETE, getInput()));
+				try {
+					onVerifyText(event, null);
+					EditTypes type = isFilled()?EditTypes.COMPLETE: EditTypes.CHANGED;
+					ChuruataOrganisationData input = getInput();
+					if( input == null )
+						return;
+					input.setDescription(event.text);
+					notifyInputEdited( new EditEvent<ChuruataOrganisationData>( this, type, input));
+				} catch (Exception e) {
+					e.printStackTrace();
+				}		
 			}
 		});
 
@@ -118,9 +143,17 @@ public class OrganisationComposite extends AbstractEntityComposite<ChuruataOrgan
 
 			@Override
 			public void verifyText(VerifyEvent event) {
-				onVerifyText(event, null);
-				if( isFilled())
-					notifyInputEdited( new EditEvent<ChuruataOrganisationData>( this, EditTypes.COMPLETE, getInput()));
+				try {
+					onVerifyText(event, null);
+					EditTypes type = isFilled()?EditTypes.COMPLETE: EditTypes.CHANGED;
+					ChuruataOrganisationData input = getInput();
+					if( input == null )
+						return;
+					input.setWebsite(event.text);
+					notifyInputEdited( new EditEvent<ChuruataOrganisationData>( this, type, input));
+				} catch (Exception e) {
+					e.printStackTrace();
+				}		
 			}
 		});
 		
@@ -131,12 +164,40 @@ public class OrganisationComposite extends AbstractEntityComposite<ChuruataOrgan
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				notifyInputEdited( new EditEvent<ChuruataOrganisationData>( this, EditTypes.ADDED, getInput()));
-				super.widgetSelected(e);
+				try {
+					notifyInputEdited( new EditEvent<ChuruataOrganisationData>( this, EditTypes.ADDED, getInput()));
+					super.widgetSelected(e);
+				} catch (Exception e1) {
+					e1.printStackTrace();
+				}
 			}
 		});
 	}
 
+	public void addServiceListener( IEditListener<IChuruataService> listener) {
+		this.serviceListeners.add(listener);
+	}
+
+	public void removeServiceListener( IEditListener<IChuruataService> listener) {
+		this.serviceListeners.remove(listener);
+	}
+
+	protected void onNotifyServiceEvent(EditEvent<IChuruataService> event ) {
+		this.serviceListeners.forEach( l-> l.notifyInputEdited(event));
+	}
+	
+	private void onViewerEvent(EditEvent<IChuruataService> event) {
+		onNotifyServiceEvent(event);
+		switch( event.getType()){
+		case SELECTED:
+			notifyInputEdited( new EditEvent<ChuruataOrganisationData>( this, event.getType(), getInput()));
+			break;
+		default:
+			break;
+		}
+	}
+
+	
 	@Override
 	protected ChuruataOrganisationData onGetInput(ChuruataOrganisationData input) {
 		if( input == null )
@@ -173,15 +234,8 @@ public class OrganisationComposite extends AbstractEntityComposite<ChuruataOrgan
 				InputField ifc = (InputField) event.widget.getData();
 				ifc.refresh();
 			}
-			if( this.isFilled() ) {
-				//OrganisationData.Types ct = OrganisationData.Types.values()[ this.comboTypes.getSelectionIndex()];
-				//OrganisationData.Contribution cot = OrganisationData.Contribution.values()[ this.contributionTypes.getSelectionIndex()];
-				//OrganisationData type = new ChuruataType( ct, this.descriptionField.getText(), cot );
-				//type.setFrom( DateUtils.getDate( this.fromField ));
-				//type.setTo( DateUtils.getDate( this.toField ));
-				//setInput(type);
-				this.notifyInputEdited( new EditEvent<ChuruataOrganisationData>( this, EditTypes.COMPLETE, getInput()));
-			}
+			EditTypes type = isFilled()?EditTypes.COMPLETE: EditTypes.CHANGED;
+			notifyInputEdited( new EditEvent<ChuruataOrganisationData>( this, type, getInput()));		
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -203,5 +257,11 @@ public class OrganisationComposite extends AbstractEntityComposite<ChuruataOrgan
 	@Override
 	public boolean checkRequiredFields() {
 		return this.isFilled();
+	}
+
+	@Override
+	public void dispose() {
+		viewer.removeEditListener(listener);
+		super.dispose();
 	}
 }

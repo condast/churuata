@@ -3,8 +3,6 @@ package org.churuata.digital.core.location;
 import java.util.Calendar;
 import java.util.Date;
 
-import org.churuata.digital.core.model.IOrganisation;
-
 @Deprecated
 public class ChuruataService implements IChuruataService, Comparable<IChuruataService>{
 
@@ -13,8 +11,6 @@ public class ChuruataService implements IChuruataService, Comparable<IChuruataSe
 	private String description;
 	
 	private Contribution contribution;
-	
-	private String contributor;
 	
 	private long fromDate;
 	private long toDate;
@@ -40,7 +36,6 @@ public class ChuruataService implements IChuruataService, Comparable<IChuruataSe
 		super();
 		this.type = type;
 		this.description = description;
-		this.contributor = "home";
 		this.contribution = contribution;
 		Calendar current = Calendar.getInstance();
 		fromDate = current.getTimeInMillis();
@@ -75,11 +70,6 @@ public class ChuruataService implements IChuruataService, Comparable<IChuruataSe
 	}
 	
 	@Override
-	public String getContributor() {
-		return contributor;
-	}	
-
-	@Override
 	public Date from() {
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTimeInMillis(fromDate);
@@ -112,5 +102,10 @@ public class ChuruataService implements IChuruataService, Comparable<IChuruataSe
 	public void setService(Services type) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public void setContribution(Contribution contribution) {
+		this.contribution = contribution;
 	}
 }

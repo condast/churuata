@@ -33,7 +33,8 @@ public class ChuruataOrganisationData extends OrganisationData implements IOrgan
 		VERIFY,
 		SET_ADDRESS,
 		SET_LOCATION,
-		SET_VERIFIED;
+		SET_VERIFIED, 
+		UPDATE_SERVICE;
 	}
 
 	public enum Parameters{

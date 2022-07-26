@@ -118,6 +118,7 @@
         <setEntry value="org.condast.commons.messaging@default:default"/>
         <setEntry value="org.condast.commons.na@default:default"/>
         <setEntry value="org.condast.commons.persistence@default:default"/>
+        <setEntry value="org.condast.commons.ui.messaging@default:default"/>
         <setEntry value="org.condast.commons.ui.na@default:default"/>
         <setEntry value="org.condast.commons.ui@default:default"/>
         <setEntry value="org.condast.commons@default:default"/>

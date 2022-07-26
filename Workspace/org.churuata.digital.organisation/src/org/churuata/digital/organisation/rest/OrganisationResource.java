@@ -19,6 +19,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.churuata.digital.core.data.ChuruataOrganisationData;
+import org.churuata.digital.core.data.ServiceData;
 import org.churuata.digital.core.data.simple.SimpleOrganisationData;
 import org.churuata.digital.core.location.IChuruataService;
 import org.churuata.digital.core.model.IOrganisation;
@@ -330,6 +331,42 @@ public class OrganisationResource{
 			organisation.addService(service);
 			os.update(organisation);
 			Gson gson = new Gson();
+			String str = gson.toJson( new ChuruataOrganisationData( organisation ), ChuruataOrganisationData.class);
+			return Response.ok( str ).build();
+		}
+		catch( Exception ex ) {
+			ex.printStackTrace();
+			return Response.serverError().build();
+		}
+		finally {
+			t.close();
+		}
+	}
+
+	@PUT
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/update-service")
+	public Response updateService( @QueryParam("user-id") long userId, @QueryParam("security") long security, 
+			@QueryParam("organisation-id") long organisationId, String data) {
+
+		AuthenticationDispatcher dispatcher=  AuthenticationDispatcher.getInstance();
+		if( !dispatcher.isLoggedIn(userId, security))
+			return Response.status( Status.UNAUTHORIZED).build();
+		
+		TransactionManager t = new TransactionManager( Dispatcher.getInstance() );
+		try {
+			t.open();
+			ServicesService cs = new ServicesService();
+			Gson gson = new Gson();
+			ServiceData serviceData = gson.fromJson(data, ServiceData.class);
+			Service service = cs.update( serviceData );
+
+			OrganisationService os = new OrganisationService(); 
+			Organisation organisation = os.find( organisationId );
+			if( organisation == null )
+				return Response.noContent().build();
+			service.setOrganisation(organisation);
+			os.update(organisation);
 			String str = gson.toJson( new ChuruataOrganisationData( organisation ), ChuruataOrganisationData.class);
 			return Response.ok( str ).build();
 		}

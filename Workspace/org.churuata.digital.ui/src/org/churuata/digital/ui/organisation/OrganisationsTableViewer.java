@@ -96,7 +96,7 @@ public class OrganisationsTableViewer extends AbstractTableViewerWithDelete<Chur
 	}
 
 	@Override
-	protected boolean onAddButtonSelected(SelectionEvent e) {
+	protected boolean onButtonSelected(Buttons buttontype, SelectionEvent e) {
 		boolean result = false;
 		try {
 			e.data = EditTypes.ADDED;

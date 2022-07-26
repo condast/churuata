@@ -119,7 +119,7 @@ public class ChuruataTableComposite extends AbstractTableViewerWithDelete<IChuru
 	}
 
 	@Override
-	protected boolean onAddButtonSelected(SelectionEvent e) {
+	protected boolean onButtonSelected(Buttons buttontype, SelectionEvent e) {
 		boolean result = false;
 		try{
 			notifyEditListeners(new EditEvent<IChuruataService>( container, EditTypes.ADDED));

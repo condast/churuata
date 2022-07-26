@@ -30,4 +30,15 @@ public class ServicesService extends AbstractEntityService<Service>{
 		return service;
 	}
 
+	public Service update(ServiceData serviceData) {
+		Service service = find( serviceData.getId());
+		service.setService( serviceData.getService());
+		service.setDescription(serviceData.getDescription());
+		service.setFrom( serviceData.from());
+		service.setTo( serviceData.to());
+		service.setContribution(serviceData.getContribution());
+		super.update(service);
+		return service;
+	}
+
 }

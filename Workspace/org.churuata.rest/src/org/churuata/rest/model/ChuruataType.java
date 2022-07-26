@@ -97,11 +97,6 @@ public class ChuruataType implements Comparable<ChuruataType>, IChuruataService{
 	}
 
 	@Override
-	public String getContributor() {
-		return contributor;
-	}
-
-	@Override
 	public String getDescription() {
 		return description;
 	}
@@ -125,6 +120,11 @@ public class ChuruataType implements Comparable<ChuruataType>, IChuruataService{
 	@Override
 	public Contribution getContribution() {
 		return Contribution.values()[contribution];
+	}
+
+	@Override
+	public void setContribution( Contribution contribution) {
+		this.contributor = contribution.name();
 	}
 
 	@Override

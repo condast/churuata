@@ -1,6 +1,6 @@
 package org.churuata.digital.session;
 
-import org.churuata.digital.core.data.ChuruataProfileData;
+import org.churuata.digital.core.location.IChuruataService;
 import org.condast.commons.authentication.session.DefaultSessionStore;
 import org.condast.commons.data.latlng.LatLng;
 import org.condast.commons.na.data.ContactPersonData;
@@ -17,6 +17,16 @@ public class SessionStore<D extends Object> extends DefaultSessionStore<D>{
 	private IProfileData profile; 
 	
 	private ContactPersonData contactPersonData;
+	
+	private IChuruataService selectedService;
+
+	public IChuruataService getSelectedService() {
+		return selectedService;
+	}
+
+	public void setSelectedService(IChuruataService selectedService) {
+		this.selectedService = selectedService;
+	}
 
 	public SessionStore() {
 		super( S_CHURUATA_ID);

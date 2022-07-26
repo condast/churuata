@@ -10,18 +10,23 @@ import org.churuata.digital.core.Dispatcher;
 import org.churuata.digital.core.Entries.Pages;
 import org.churuata.digital.core.data.ChuruataOrganisationData;
 import org.churuata.digital.core.data.ChuruataProfileData;
+import org.churuata.digital.core.location.IChuruataService;
 import org.churuata.digital.core.rest.IRestPages;
 import org.churuata.digital.session.SessionStore;
 import org.churuata.digital.ui.views.OrganisationComposite;
 import org.condast.commons.Utils;
 import org.condast.commons.authentication.http.IDomainProvider;
 import org.condast.commons.config.Config;
+import org.condast.commons.messaging.core.util.NodeData;
 import org.condast.commons.messaging.http.AbstractHttpRequest;
 import org.condast.commons.messaging.http.ResponseEvent;
 import org.condast.commons.na.data.PersonData;
 import org.condast.commons.na.profile.IProfileData;
 import org.condast.commons.ui.controller.EditEvent;
 import org.condast.commons.ui.controller.IEditListener;
+import org.condast.commons.ui.messaging.jump.JumpController;
+import org.condast.commons.ui.messaging.jump.JumpEvent;
+import org.condast.commons.ui.messaging.jump.NodeJumpEvent;
 import org.condast.commons.ui.player.PlayerImages;
 import org.condast.commons.ui.session.AbstractSessionHandler;
 import org.condast.commons.ui.session.SessionEvent;
@@ -40,22 +45,23 @@ import org.eclipse.swt.widgets.Group;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
-
 public class OrganisationEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrganisationData> {
 	private static final long serialVersionUID = 1L;
 
 	public static final String S_CHURUATA = "Churuata-Digital";
 
-	private OrganisationComposite servicesComposite;
+	private OrganisationComposite organisationComposite;
 	private Button btnNext;
 
 	private SessionHandler handler;
 	
 	private WebController controller;
 
+	private JumpEvent<ChuruataOrganisationData> event;
 	private ChuruataOrganisationData data = null;
 
 	private IEditListener<ChuruataOrganisationData> listener = e->onOrganisationEvent(e);
+	private IEditListener<IChuruataService> serviceListener = e->onServiceEvent(e);
 
 	private Logger logger = Logger.getLogger(this.getClass().getName());
 
@@ -78,9 +84,9 @@ public class OrganisationEntryPoint extends AbstractChuruataEntryPoint<ChuruataO
 	@Override
     protected Composite createComposite(Composite parent) {
         parent.setLayout(new GridLayout( 1, false ));
-        servicesComposite = new OrganisationComposite( parent, SWT.NONE);
- 		servicesComposite.setData( RWT.CUSTOM_VARIANT, S_CHURUATA );
- 		servicesComposite.setLayoutData( new GridData(SWT.FILL, SWT.FILL, true, false));
+        organisationComposite = new OrganisationComposite( parent, SWT.NONE);
+ 		organisationComposite.setData( RWT.CUSTOM_VARIANT, S_CHURUATA );
+ 		organisationComposite.setLayoutData( new GridData(SWT.FILL, SWT.FILL, true, false));
 		Group group = new Group( parent, SWT.NONE );
 		group.setText("Add Churuata Service");
 		group.setLayout( new GridLayout(5, false ));
@@ -109,7 +115,7 @@ public class OrganisationEntryPoint extends AbstractChuruataEntryPoint<ChuruataO
 			}
 		});
 
- 		return servicesComposite;
+ 		return organisationComposite;
     }
 
 	@Override
@@ -118,12 +124,22 @@ public class OrganisationEntryPoint extends AbstractChuruataEntryPoint<ChuruataO
 		String context = config.getServerContext();
 		controller = new WebController();
 		controller.setInput(context, IRestPages.Pages.ORGANISATION.toPath());
-		this.servicesComposite.addEditListener(listener);
+		this.organisationComposite.addEditListener(listener);
+		this.organisationComposite.addServiceListener(serviceListener);
+		
 		SessionStore<ChuruataOrganisationData> store = super.getSessionStore();
-		ChuruataOrganisationData organisation = store.getData();
-		if( organisation != null ) {
-			this.servicesComposite.setInput(organisation, true);
-			btnNext.setEnabled(!Utils.assertNull(organisation.getServices() ));
+		JumpController<ChuruataOrganisationData> jc = new JumpController<>();
+		event = jc.getEvent( Pages.ORGANISATION.toPath());		
+		if( event != null ) {
+			this.data = event.getData();
+			store.setData(this.data);
+		}else {
+			this.data = store.getData();
+		}
+
+		if( this.data != null ) {
+			this.organisationComposite.setInput( this.data, true);
+			btnNext.setEnabled(!Utils.assertNull( this.data.getServices() ));
 		}
 		return super.postProcess(parent);
 	}
@@ -136,10 +152,9 @@ public class OrganisationEntryPoint extends AbstractChuruataEntryPoint<ChuruataO
 		organisation.setContact((PersonData) person); 
 		switch( event.getType()) {
 		case ADDED:
-			store.setData( this.servicesComposite.getInput());
+			store.setData( this.organisationComposite.getInput());
 			controller.page = Pages.SERVICES;
-			jump( person.getId(), organisation, Pages.SERVICES);
-				
+			jump( person.getId(), organisation, Pages.SERVICES);			
 			break;
 		case COMPLETE:
 			data = event.getData();
@@ -148,6 +163,26 @@ public class OrganisationEntryPoint extends AbstractChuruataEntryPoint<ChuruataO
 			break;
 		default:
 			break;
+		}
+	}
+
+	protected void onServiceEvent( EditEvent<IChuruataService> event ) {
+		try {
+			SessionStore<ChuruataOrganisationData> store = super.getSessionStore();
+			IChuruataService sevice = event.getData();
+			switch( event.getType()) {
+			case SELECTED:
+				store.setSelectedService(sevice);
+				store.setData( this.organisationComposite.getInput());
+				controller.page = Pages.SERVICES;
+				JumpController<NodeData<ChuruataOrganisationData, IChuruataService>> jc = new JumpController<>();
+				jc.jump( new NodeJumpEvent<ChuruataOrganisationData, IChuruataService>( this, store.getToken(), Pages.SERVICES.toPath(), JumpController.Operations.UPDATE, store.getData(), sevice));			
+				break;
+			default:
+				break;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -173,7 +208,8 @@ public class OrganisationEntryPoint extends AbstractChuruataEntryPoint<ChuruataO
 
 	@Override
 	public void close() {
-		this.servicesComposite.removeEditListener(listener);
+		this.organisationComposite.removeServiceListener(serviceListener);
+		this.organisationComposite.removeEditListener(listener);
 		super.close();
 	}
 	

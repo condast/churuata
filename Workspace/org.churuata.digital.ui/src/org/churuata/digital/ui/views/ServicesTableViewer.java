@@ -43,8 +43,6 @@ public class ServicesTableViewer extends AbstractTableViewerWithDelete<IChuruata
 		}
 	}
 
-	private Button addbutton;
-
 	public ServicesTableViewer(Composite parent,int style ) {
 		super(parent,style, true );
 	}
@@ -61,10 +59,6 @@ public class ServicesTableViewer extends AbstractTableViewerWithDelete<IChuruata
 		viewer.setLabelProvider( new ServicesLabelProvider() );
 	}
 	
-	public Button getAddButton() {
-		return addbutton;
-	}
-
 	public IChuruataService[] getInput(){
 		Collection<IChuruataService> contacts = new ArrayList<IChuruataService>();
 		if( Utils.assertNull( super.getInput() ))
@@ -80,20 +74,7 @@ public class ServicesTableViewer extends AbstractTableViewerWithDelete<IChuruata
 	}
 	
 	@Override
-	protected void onRowDoubleClick(IChuruataService selection) {
-		/* NOTHING */
-	}
-
-	@Override
 	protected void onButtonCreated(Buttons type, Button button) {
-		switch( type ) {
-		case ADD:
-			this.addbutton = button;
-			this.addbutton.setEnabled(false);
-			break;
-		default:
-			break;
-		}
 		GridData gd_button = new GridData(32, 32);
 		gd_button.horizontalAlignment = SWT.RIGHT;
 		button.setLayoutData(gd_button);
@@ -101,7 +82,7 @@ public class ServicesTableViewer extends AbstractTableViewerWithDelete<IChuruata
 	}
 
 	@Override
-	protected boolean onAddButtonSelected(SelectionEvent e) {
+	protected boolean onButtonSelected(Buttons buttontype, SelectionEvent e) {
 		boolean result = false;
 		try {
 			e.data = EditTypes.ADDED;
@@ -145,7 +126,7 @@ public class ServicesTableViewer extends AbstractTableViewerWithDelete<IChuruata
 				retval = ChuruataLanguage.getInstance().getString( service.getService());
 				break;
 			case CONTRIBUTOR:
-				retval = service.getContributor();
+				retval = service.getContribution().name();
 				break;
 			case DESCRIPTION:
 				retval = service.getDescription();
@@ -160,11 +141,6 @@ public class ServicesTableViewer extends AbstractTableViewerWithDelete<IChuruata
 		@SuppressWarnings("unchecked")
 		@Override
 		public Image getColumnImage(Object arg0, int columnIndex) {
-			if( columnIndex == getDeleteColumnindex() ){
-				IStoreWithDelete<IChuruataService> swd = (IStoreWithDelete<IChuruataService>) arg0;
-				if( swd.getCount() == 1 )
-					return null;
-			}
 			return super.getColumnImage(arg0, columnIndex);
 		}
 	}

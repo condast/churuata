@@ -101,9 +101,9 @@ public interface IChuruataService {
 
 	Services getService();
 
-	String getContributor();
-	
 	Contribution getContribution();
+
+	void setContribution( Contribution contribution );
 	
 	public Date from();
 	

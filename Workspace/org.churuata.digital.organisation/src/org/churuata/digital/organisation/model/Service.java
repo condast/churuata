@@ -87,9 +87,8 @@ public class Service implements IChuruataService {
 		this.serviceType = service.name();
 	}
 
-	@Override
-	public String getContributor() {
-		return this.contributor;
+	public void setContribution( Contribution contribution) {
+		this.contributor = contribution.name();
 	}
 
 	@Override

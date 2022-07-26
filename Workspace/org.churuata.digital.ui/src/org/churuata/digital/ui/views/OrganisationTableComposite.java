@@ -111,7 +111,7 @@ public class OrganisationTableComposite extends AbstractTableViewerWithDelete<Ch
 	}
 
 	@Override
-	protected boolean onAddButtonSelected(SelectionEvent e) {
+	protected boolean onButtonSelected(Buttons buttontype, SelectionEvent e) {
 		boolean result = false;
 		try{
 			notifyEditListeners(new EditEvent<ChuruataOrganisationData>( container, EditTypes.ADDED));

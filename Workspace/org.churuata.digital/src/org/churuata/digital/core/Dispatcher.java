@@ -131,6 +131,7 @@ public class Dispatcher {
 		return RWTUtils.redirect( path );
 	}
 
+	@Deprecated //: Use org.condast.commons.messaging.ui.jump.Jumpcontroller instead
 	public static boolean jump( Entries.Pages page, long token ) {
 		if( token < 0 )
 			return false;
