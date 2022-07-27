@@ -45,16 +45,15 @@ public class EditAdminEntryPoint extends AbstractWizardEntryPoint<AdminWidget, L
 	
 	private Logger logger = Logger.getLogger(this.getClass().getName());
 
-	@SuppressWarnings("unchecked")
 	@Override
-	protected SessionStore<LoginData> createSessionStore() {
+	protected SessionStore createSessionStore() {
 		StartupParameters service = RWT.getClient().getService( StartupParameters.class );
 		IDomainProvider<?> domain = Dispatcher.getDomainProvider( service );
-		return ( domain == null )? null: (SessionStore<LoginData>) domain.getData();
+		return ( domain == null )? null: (SessionStore) domain.getData();
 	}
 
 	@Override
-	protected void onButtonPressed(LoginData data, SessionStore<LoginData> store) {
+	protected void onButtonPressed(LoginData data, SessionStore store) {
 		try{
 			Dispatcher.jump( Pages.ADMIN, store.getToken());						
 		}
@@ -73,7 +72,7 @@ public class EditAdminEntryPoint extends AbstractWizardEntryPoint<AdminWidget, L
 	}
 
 	@Override
-	protected boolean onPostProcess(String context, LoginData data, SessionStore<LoginData> store) {
+	protected boolean onPostProcess(String context, LoginData data, SessionStore store) {
 		HttpSession session = RWT.getUISession().getHttpSession();
 		LoginData client = (LoginData) session.getAttribute(AdminData.Parameters.LOGIN_USER.name());
 		adminWidget.setInput(client, true);

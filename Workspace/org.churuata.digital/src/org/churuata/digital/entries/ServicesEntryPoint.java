@@ -61,9 +61,9 @@ public class ServicesEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrgan
 	private Logger logger = Logger.getLogger(this.getClass().getName());
 
 	@Override
-	protected SessionStore<ChuruataOrganisationData> createSessionStore() {
+	protected SessionStore createSessionStore() {
 		StartupParameters service = RWT.getClient().getService( StartupParameters.class );
-		IDomainProvider<SessionStore<ChuruataOrganisationData>> domain = Dispatcher.getDomainProvider( service );
+		IDomainProvider<SessionStore> domain = Dispatcher.getDomainProvider( service );
 		return ( domain == null )? null: domain.getData();
 	}
 
@@ -71,7 +71,7 @@ public class ServicesEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrgan
 	protected boolean prepare(Composite parent) {
 		if( !super.prepare(parent))
 			return false;
-		SessionStore<ChuruataOrganisationData> store = super.getSessionStore();
+		SessionStore store = super.getSessionStore();
 		ILoginUser user = store.getLoginUser();
 		return ( user != null );
 	}
@@ -101,7 +101,7 @@ public class ServicesEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrgan
 				try{
 					if( data == null )
 						return;
-					SessionStore<ChuruataOrganisationData> store = getSessionStore();
+					SessionStore store = getSessionStore();
 					ILoginUser user = store.getLoginUser();
 					ChuruataOrganisationData organisation = store.getData();
 					if(( event == null ) || !JumpController.Operations.UPDATE.equals( event.getOperation() )) {
@@ -198,7 +198,7 @@ public class ServicesEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrgan
 		@Override
 		protected String onHandleResponse(ResponseEvent<ChuruataOrganisationData.Requests> event) throws IOException {
 			try {
-				SessionStore<ChuruataOrganisationData> store = getSessionStore();
+				SessionStore store = getSessionStore();
 				Gson gson = new Gson();
 				switch( event.getRequest()){
 				case UPDATE_SERVICE:

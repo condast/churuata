@@ -7,6 +7,7 @@ import javax.persistence.TypedQuery;
 import org.churuata.digital.organisation.core.Dispatcher;
 import org.churuata.digital.organisation.model.Contact;
 import org.churuata.digital.organisation.model.Person;
+import org.condast.commons.Utils;
 import org.condast.commons.authentication.user.ILoginUser;
 import org.condast.commons.na.data.PersonData;
 import org.condast.commons.na.model.IContact;
@@ -59,5 +60,17 @@ public class PersonService extends AbstractEntityService<Person>{
 		person.setPrefix(data.getPrefix());
 		person.setSurname(data.getSurname());
 		return person;
+	}
+
+	public boolean removeContacts( long personId, long[] ids) {
+		Person person = find( personId );
+		if(( person == null ) || Utils.assertNull(ids))
+			return false;
+		boolean result = false;
+		for( long id: ids )
+			result &= person.removeContact(id);
+		return result;
+
+		
 	}
 }

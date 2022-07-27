@@ -26,7 +26,8 @@ public class ChuruataProfileData extends PersonData implements IProfileData, Ser
 		FIND,
 		REGISTER,
 		ADD_CONTACT_TYPE,
-		UPDATE_PERSON;
+		UPDATE_PERSON, 
+		REMOVE_CONTACTS;
 	}
 
 	public enum Parameters{

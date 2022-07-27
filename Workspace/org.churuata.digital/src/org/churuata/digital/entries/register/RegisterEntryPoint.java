@@ -20,8 +20,11 @@ import org.condast.commons.na.data.PersonData;
 import org.condast.commons.na.data.ProfileData;
 import org.condast.commons.na.model.IContact;
 import org.condast.commons.na.profile.IProfileData;
+import org.condast.commons.strings.StringUtils;
 import org.condast.commons.ui.controller.EditEvent;
 import org.condast.commons.ui.controller.IEditListener;
+import org.condast.commons.ui.messaging.jump.JumpController;
+import org.condast.commons.ui.messaging.jump.JumpEvent;
 import org.condast.commons.ui.na.person.ContactPersonComposite;
 import org.condast.commons.ui.session.SessionEvent;
 import org.eclipse.rap.rwt.RWT;
@@ -37,33 +40,44 @@ import com.google.gson.JsonSyntaxException;
 public class RegisterEntryPoint extends AbstractWizardEntryPoint<ContactPersonComposite, ChuruataOrganisationData>{
 	private static final long serialVersionUID = 1L;
 
-	public static final String S_ADD_ACCOUNT = "Add Account";
-
 	private ContactPersonComposite personComposite;
 
 	private IEditListener<ContactPersonData> listener = e->onPersonEvent(e);
+	private IEditListener<IContact> contactListener = e->onContactEvent(e);
 
 	private WebController controller;
 	
 	private Logger logger = Logger.getLogger(this.getClass().getName());
 
 	@Override
-	protected SessionStore<ChuruataOrganisationData> createSessionStore() {
+	protected SessionStore createSessionStore() {
 		StartupParameters service = RWT.getClient().getService( StartupParameters.class );
-		IDomainProvider<SessionStore<ChuruataOrganisationData>> domain = Dispatcher.getDomainProvider( service );
-		return ( domain == null )? null: domain.getData();
+		String tokenStr = service.getParameter(IDomainProvider.Attributes.TOKEN.toAttribute());
+		IDomainProvider<SessionStore> domain = null;
+		if( StringUtils.isEmpty(tokenStr))
+			domain = Dispatcher.createDomain();
+		else
+			domain = Dispatcher.getDomainProvider( service );	
+		return domain.getData();
 	}
-	
+
 	@Override
-	protected void onButtonPressed(ChuruataOrganisationData data, SessionStore<ChuruataOrganisationData> store) {
+	protected boolean onPrepare(SessionStore store) {
+		return true;//always true
+	}
+
+	@Override
+	protected void onButtonPressed(ChuruataOrganisationData data, SessionStore store) {
 		try{
 			if( store.getContactPersonData() == null )
 				return;
 			IProfileData person = store.getProfile();
 			if( person == null ) 				
 				controller.register( store.getContactPersonData());
-			else
-				Dispatcher.jump( Pages.ORGANISATION, store.getToken());						
+			else {
+				JumpController<ChuruataOrganisationData> jc = new JumpController<>();
+				jc.jump( new JumpEvent<ChuruataOrganisationData>( this, store.getToken(), Pages.ORGANISATION.toPath(), JumpController.Operations.CREATE, data));			
+			}
 		}
 		catch( Exception ex ){
 			ex.printStackTrace();
@@ -76,11 +90,12 @@ public class RegisterEntryPoint extends AbstractWizardEntryPoint<ContactPersonCo
 		personComposite.setData( RWT.CUSTOM_VARIANT, Entries.S_CHURUATA );
 		personComposite.setLayoutData( new GridData( SWT.FILL, SWT.FILL, true, true ));
 		personComposite.addEditListener( listener);
+		personComposite.addContactsListener( contactListener);
 		return personComposite;
 	}
 
 	@Override
-	protected boolean onPostProcess(String context, ChuruataOrganisationData data, SessionStore<ChuruataOrganisationData> store) {
+	protected boolean onPostProcess(String context, ChuruataOrganisationData data, SessionStore store) {
 		controller = new WebController();
 		controller.setInput(context, IRestPages.Pages.CONTACT.toPath());
 		IProfileData personData = store.getProfile();
@@ -99,7 +114,7 @@ public class RegisterEntryPoint extends AbstractWizardEntryPoint<ContactPersonCo
 
 	protected void onPersonEvent( EditEvent<ContactPersonData> event ) {
 		ContactPersonData data = null;
-		SessionStore<ChuruataOrganisationData> store = super.getSessionStore();
+		SessionStore store = super.getSessionStore();
 		controller.type = event.getType();
 		switch( event.getType()) {
 		case ADDED:
@@ -107,8 +122,10 @@ public class RegisterEntryPoint extends AbstractWizardEntryPoint<ContactPersonCo
 			IProfileData person = store.getProfile();
 			if( person == null ) 
 				controller.register( store.getContactPersonData());
-			else
-				Dispatcher.jump( Pages.CONTACTS, store.getToken());
+			else {
+				JumpController<ContactPersonData> jc = new JumpController<>();
+				jc.jump( new JumpEvent<ContactPersonData>( this, store.getToken(), Pages.CONTACTS.toPath(), JumpController.Operations.UPDATE, data));			
+			}
 				
 			break;
 		case COMPLETE:
@@ -116,6 +133,19 @@ public class RegisterEntryPoint extends AbstractWizardEntryPoint<ContactPersonCo
 			store.setContactPersonData(data);
 			Button btnNext = super.getBtnNext();
 			btnNext.setEnabled(( data != null ));
+			break;
+		default:
+			break;
+		}
+	}
+
+	protected void onContactEvent( EditEvent<IContact> event ) {
+		SessionStore store = super.getSessionStore();
+		controller.type = event.getType();
+		switch( event.getType()) {
+		case DELETE:
+			IProfileData person = store.getProfile();
+			controller.remove( person, ContactPersonData.getIds( event.getBatch() ));
 			break;
 		default:
 			break;
@@ -131,7 +161,14 @@ public class RegisterEntryPoint extends AbstractWizardEntryPoint<ContactPersonCo
 			e.printStackTrace();
 		}
 	}
-	
+		
+	@Override
+	public void close() {
+		personComposite.removeEditListener(listener);
+		personComposite.removeContactsListener(contactListener);
+		super.close();
+	}
+
 	private class WebController extends AbstractHttpRequest<ChuruataProfileData.Requests>{
 		
 		private EditEvent.EditTypes type;
@@ -157,10 +194,22 @@ public class RegisterEntryPoint extends AbstractWizardEntryPoint<ContactPersonCo
 			}
 		}
 
+		public void remove(IProfileData person, long[] batch) {
+			Map<String, String> params = super.getParameters();
+			params.put( ChuruataProfileData.Parameters.PERSON_ID.toString(), String.valueOf( person.getId()));
+			Gson gson = new Gson();
+			String data = gson.toJson(batch, long[].class);
+			try {
+				sendDelete(ChuruataProfileData.Requests.REMOVE_CONTACTS, params, data );
+			} catch (IOException e) {
+				logger.warning(e.getMessage());
+			}
+		}
+
 		@Override
 		protected String onHandleResponse(ResponseEvent<ChuruataProfileData.Requests> event) throws IOException {
 			try {
-				SessionStore<ChuruataOrganisationData> store = getSessionStore();
+				SessionStore store = getSessionStore();
 				Gson gson = new Gson();
 				IProfileData profile = null;
 				switch( event.getRequest()){
@@ -168,12 +217,13 @@ public class RegisterEntryPoint extends AbstractWizardEntryPoint<ContactPersonCo
 					PersonData data = gson.fromJson(event.getResponse(), PersonData.class);
 					profile = new ProfileData( data );
 					store.setProfile(profile);
+					JumpController<PersonData> jc = new JumpController<>();
 					switch( type ) {
 					case ADDED:
-						Dispatcher.jump( Pages.CONTACTS, store.getToken());
+						jc.jump( new JumpEvent<PersonData>( this, store.getToken(), Pages.CONTACTS.toPath(), JumpController.Operations.UPDATE, data));			
 						break;
 					case COMPLETE:
-						Dispatcher.jump( Pages.ORGANISATION, store.getToken());
+						jc.jump( new JumpEvent<PersonData>( this, store.getToken(), Pages.ORGANISATION.toPath(), JumpController.Operations.UPDATE, data));			
 						break;
 					default:
 						break;

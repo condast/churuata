@@ -62,11 +62,6 @@ public class OptionsData {
 		setBoolean(OptionsData.Options.ENABLE, enabled);
 	}
 
-	public LatLng getIninitalLocation() {
-		String str = data.get( OptionsData.Options.INITIAL_LOCATION.name());
-		return null;//location;
-	}
-
 	public void setInitiallocation( LatLng location ) {
 		data.put( Options.INITIAL_LOCATION.name(), location.toLocation() );
 	}

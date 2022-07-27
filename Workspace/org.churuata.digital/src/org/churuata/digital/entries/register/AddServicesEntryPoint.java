@@ -27,8 +27,6 @@ import org.condast.commons.na.data.ProfileData;
 import org.condast.commons.na.profile.IProfileData;
 import org.condast.commons.ui.controller.EditEvent;
 import org.condast.commons.ui.controller.IEditListener;
-import org.condast.commons.ui.session.AbstractSessionHandler;
-import org.condast.commons.ui.session.SessionEvent;
 import org.eclipse.rap.rwt.RWT;
 import org.eclipse.rap.rwt.client.service.StartupParameters;
 import org.eclipse.swt.SWT;
@@ -38,7 +36,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 
 import com.google.gson.Gson;
@@ -50,8 +47,6 @@ public class AddServicesEntryPoint extends AbstractChuruataEntryPoint<ChuruataOr
 	private ServiceComposite servicesComposite;
 	private Button btnOk;
 
-	private SessionHandler handler;
-	
 	private IChuruataService data = null;
 
 	private IEditListener<IChuruataService> listener = e->onContactEvent(e);
@@ -61,10 +56,15 @@ public class AddServicesEntryPoint extends AbstractChuruataEntryPoint<ChuruataOr
 	private Logger logger = Logger.getLogger(this.getClass().getName());
 
 	@Override
-	protected SessionStore<ChuruataOrganisationData> createSessionStore() {
+	protected SessionStore createSessionStore() {
 		StartupParameters service = RWT.getClient().getService( StartupParameters.class );
-		IDomainProvider<SessionStore<ChuruataOrganisationData>> domain = Dispatcher.getDomainProvider( service );
+		IDomainProvider<SessionStore> domain = Dispatcher.getDomainProvider( service );
 		return ( domain == null )? null: domain.getData();
+	}
+
+	@Override
+	protected boolean onPrepare(SessionStore store) {
+		return true;
 	}
 
 	@Override
@@ -92,7 +92,7 @@ public class AddServicesEntryPoint extends AbstractChuruataEntryPoint<ChuruataOr
 				try{
 					if( data == null )
 						return;
-					SessionStore<ChuruataOrganisationData> store = getSessionStore();
+					SessionStore store = getSessionStore();
 					IProfileData person = store.getProfile();
 					controller.addService(data, person.getId());
 				}
@@ -122,7 +122,7 @@ public class AddServicesEntryPoint extends AbstractChuruataEntryPoint<ChuruataOr
 	protected void onContactEvent( EditEvent<IChuruataService> event ) {
 		switch( event.getType()) {
 		case COMPLETE:
-			SessionStore<ChuruataOrganisationData> store = getSessionStore();
+			SessionStore store = getSessionStore();
 			if( store.getContactPersonData() == null )
 				return;
 			data = event.getData();
@@ -139,27 +139,9 @@ public class AddServicesEntryPoint extends AbstractChuruataEntryPoint<ChuruataOr
 	}
 
 	@Override
-	protected void handleTimer() {
-		handler.addData(getSessionStore());
-		super.handleTimer();
-	}
-
-	@Override
 	public void close() {
 		this.servicesComposite.removeEditListener(listener);
 		super.close();
-	}
-	
-	private class SessionHandler extends AbstractSessionHandler<SessionStore<ChuruataOrganisationData>>{
-
-		protected SessionHandler(Display display) {
-			super(display);
-		}
-
-		@Override
-		protected void onHandleSession(SessionEvent<SessionStore<ChuruataOrganisationData>> sevent) {
-			/* NOTHING */
-		}
 	}
 	
 	private class WebController extends AbstractHttpRequest<ChuruataProfileData.Requests>{
@@ -185,7 +167,7 @@ public class AddServicesEntryPoint extends AbstractChuruataEntryPoint<ChuruataOr
 		@Override
 		protected String onHandleResponse(ResponseEvent<ChuruataProfileData.Requests> event) throws IOException {
 			try {
-				SessionStore<ChuruataOrganisationData> store = getSessionStore();
+				SessionStore store = getSessionStore();
 				Gson gson = new Gson();
 				switch( event.getRequest()){
 				case ADD_CONTACT_TYPE:

@@ -22,6 +22,7 @@ import org.condast.commons.config.Config;
 import org.condast.commons.messaging.core.util.NodeData;
 import org.condast.commons.messaging.http.AbstractHttpRequest;
 import org.condast.commons.messaging.http.ResponseEvent;
+import org.condast.commons.na.data.AddressData;
 import org.condast.commons.na.data.PersonData;
 import org.condast.commons.na.profile.IProfileData;
 import org.condast.commons.ui.controller.EditEvent;
@@ -58,17 +59,15 @@ public class OrganisationEntryPoint extends AbstractChuruataEntryPoint<ChuruataO
 
 	private WebController controller;
 
-	private JumpEvent<ChuruataOrganisationData> event;
-
 	private IEditListener<ChuruataOrganisationData> listener = e->onOrganisationEvent(e);
 	private IEditListener<IChuruataService> serviceListener = e->onServiceEvent(e);
 
 	private Logger logger = Logger.getLogger(this.getClass().getName());
 
 	@Override
-	protected SessionStore<ChuruataOrganisationData> createSessionStore() {
+	protected SessionStore createSessionStore() {
 		StartupParameters service = RWT.getClient().getService( StartupParameters.class );
-		IDomainProvider<SessionStore<ChuruataOrganisationData>> domain = Dispatcher.getDomainProvider( service );
+		IDomainProvider<SessionStore> domain = Dispatcher.getDomainProvider( service );
 		return ( domain == null )? null: domain.getData();
 	}
 
@@ -93,9 +92,10 @@ public class OrganisationEntryPoint extends AbstractChuruataEntryPoint<ChuruataO
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
 				try{
-					SessionStore<ChuruataOrganisationData> store = getSessionStore();
+					SessionStore store = getSessionStore();
 					if( store.getData() == null )
 						return;
+					JumpEvent<ChuruataOrganisationData> event = getEvent();
 					if(( event != null ) && ( JumpController.Operations.UPDATE.equals(event.getOperation()))) {
 						controller.update(store.getLoginUser(), store.getData());
 					}else {
@@ -124,9 +124,9 @@ public class OrganisationEntryPoint extends AbstractChuruataEntryPoint<ChuruataO
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
 				try{
-					SessionStore<ChuruataOrganisationData> store = getSessionStore();
-					JumpController<ChuruataOrganisationData> jc = new JumpController<>();
-					jc.jump( new JumpEvent<ChuruataOrganisationData>( this, store.getToken(), Pages.ADDRESS.toPath(), JumpController.Operations.UPDATE, store.getData()));
+					SessionStore store = getSessionStore();
+					JumpController<AddressData> jc = new JumpController<>();
+					jc.jump( new JumpEvent<AddressData>( this, store.getToken(), Pages.ADDRESS.toPath(), JumpController.Operations.CREATE, store.getData().getAddress()));
 				}
 				catch( Exception ex ){
 					ex.printStackTrace();
@@ -148,9 +148,9 @@ public class OrganisationEntryPoint extends AbstractChuruataEntryPoint<ChuruataO
 		this.organisationComposite.addEditListener(listener);
 		this.organisationComposite.addServiceListener(serviceListener);
 		
-		SessionStore<ChuruataOrganisationData> store = super.getSessionStore();
+		SessionStore store = super.getSessionStore();
 		JumpController<ChuruataOrganisationData> jc = new JumpController<>();
-		event = jc.getEvent( Pages.ORGANISATION.toPath());		
+		JumpEvent<ChuruataOrganisationData> event = jc.getEvent( Pages.ORGANISATION.toPath());		
 		if( event != null ) {
 			store.setData(event.getData());
 		}
@@ -161,7 +161,7 @@ public class OrganisationEntryPoint extends AbstractChuruataEntryPoint<ChuruataO
 	}
 
 	protected void onOrganisationEvent( EditEvent<ChuruataOrganisationData> event ) {
-		SessionStore<ChuruataOrganisationData> store = super.getSessionStore();
+		SessionStore store = super.getSessionStore();
 		IProfileData person = store.getProfile();
 
 		ChuruataOrganisationData organisation = event.getData();
@@ -183,7 +183,7 @@ public class OrganisationEntryPoint extends AbstractChuruataEntryPoint<ChuruataO
 
 	protected void onServiceEvent( EditEvent<IChuruataService> event ) {
 		try {
-			SessionStore<ChuruataOrganisationData> store = super.getSessionStore();
+			SessionStore store = super.getSessionStore();
 			IChuruataService service = event.getData();
 			ILoginUser user = store.getLoginUser();
 			switch( event.getType()) {
@@ -268,7 +268,7 @@ public class OrganisationEntryPoint extends AbstractChuruataEntryPoint<ChuruataO
 		@Override
 		protected String onHandleResponse(ResponseEvent<ChuruataOrganisationData.Requests> event) throws IOException {
 			try {
-				SessionStore<ChuruataOrganisationData> store = getSessionStore();
+				SessionStore store = getSessionStore();
 				Gson gson = new Gson();
 				ChuruataOrganisationData data = null;
 				JumpController<ChuruataOrganisationData> jc = new JumpController<>();

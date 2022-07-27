@@ -87,10 +87,15 @@ public class ShowLegalEntryPoint extends AbstractWizardEntryPoint<Browser, Churu
 	private String privacyPath;
 
 	@Override
-	protected SessionStore<ChuruataOrganisationData> createSessionStore() {
+	protected SessionStore createSessionStore() {
 		StartupParameters service = RWT.getClient().getService( StartupParameters.class );
-		IDomainProvider<SessionStore<ChuruataOrganisationData>> domain = Dispatcher.getDomainProvider( service );
+		IDomainProvider<SessionStore> domain = Dispatcher.getDomainProvider( service );
 		return ( domain == null )? null: domain.getData();
+	}
+
+	@Override
+	protected boolean onPrepare(SessionStore store) {
+		return true;
 	}
 
 	@Override
@@ -174,7 +179,7 @@ public class ShowLegalEntryPoint extends AbstractWizardEntryPoint<Browser, Churu
 	}
 
 	@Override
-	protected void onButtonPressed(ChuruataOrganisationData data, SessionStore<ChuruataOrganisationData> store) {
+	protected void onButtonPressed(ChuruataOrganisationData data, SessionStore store) {
 		store.setData(null);
 		Config config = Config.getInstance();
 		String path = config.getServerContext() + Entries.S_HOME;
@@ -182,7 +187,7 @@ public class ShowLegalEntryPoint extends AbstractWizardEntryPoint<Browser, Churu
 	}
 
 	@Override
-	protected boolean onPostProcess(String context, ChuruataOrganisationData data, SessionStore<ChuruataOrganisationData> store) {
+	protected boolean onPostProcess(String context, ChuruataOrganisationData data, SessionStore store) {
 		Button button = getBtnNext();
 		ChuruataImages images = ChuruataImages.getInstance();
 		button.setImage(images.getImage(Images.ADD));

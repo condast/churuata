@@ -12,6 +12,7 @@ import org.churuata.digital.session.SessionStore;
 import org.condast.commons.authentication.http.IDomainProvider;
 import org.condast.commons.authentication.user.ILoginUser;
 import org.condast.commons.ui.entry.IDataEntryPoint;
+import org.condast.commons.ui.messaging.jump.JumpEvent;
 import org.condast.commons.ui.session.AbstractSessionHandler;
 import org.condast.commons.ui.session.SessionEvent;
 import org.eclipse.rap.rwt.RWT;
@@ -22,7 +23,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 
-public abstract class AbstractChuruataEntryPoint<D extends Object> extends AbstractEntryPoint implements IDataEntryPoint<SessionStore<D>>, AutoCloseable{
+public abstract class AbstractChuruataEntryPoint<D extends Object> extends AbstractEntryPoint implements IDataEntryPoint<SessionStore>, AutoCloseable{
 	private static final long serialVersionUID = 1L;
 
 	public static final String S_INVALID_PREPARATION = "Login first";
@@ -34,12 +35,15 @@ public abstract class AbstractChuruataEntryPoint<D extends Object> extends Abstr
 
 	private String message;
 
-	private SessionStore<D> store;
+	private SessionStore store;
 
 	private ScheduledExecutorService timer;
 	private int startTime, rate;
 
 	private SessionHandler session;
+	
+	//Used to pass data
+	private JumpEvent<D> event;
 
 	protected AbstractChuruataEntryPoint() {
 		this( DEFAULT_SCHEDULE, DEFAULT_SCHEDULE);
@@ -52,12 +56,20 @@ public abstract class AbstractChuruataEntryPoint<D extends Object> extends Abstr
 		this.message = S_INVALID_PREPARATION;
 	}
 
-	protected SessionStore<D> getSessionStore() {
+	protected JumpEvent<D> getEvent() {
+		return event;
+	}
+
+	protected void setEvent(JumpEvent<D> event) {
+		this.event = event;
+	}
+
+	protected SessionStore getSessionStore() {
 		return store;
 	}
 
 	@Override
-	public void setData( SessionStore<D> store) {
+	public void setData( SessionStore store) {
 		this.store = store;
 		HttpSession hsession = RWT.getUISession().getHttpSession();
 		if( this.store != null )
@@ -85,16 +97,16 @@ public abstract class AbstractChuruataEntryPoint<D extends Object> extends Abstr
 	}
 
 	protected boolean prepare(Composite parent) {
-		SessionStore<D> store = createSessionStore();
+		SessionStore store = createSessionStore();
 		if( store == null )
 			return false;
 		this.store = store;
 		return onPrepare(store);
 	}
 
-	protected abstract SessionStore<D> createSessionStore();
+	protected abstract SessionStore createSessionStore();
 
-	protected boolean onPrepare( SessionStore<D> store ) {
+	protected boolean onPrepare( SessionStore store ) {
 		ILoginUser user = store.getLoginUser();
 		return ( user != null );
 	}
@@ -154,7 +166,7 @@ public abstract class AbstractChuruataEntryPoint<D extends Object> extends Abstr
 		timer.scheduleAtFixedRate(()->handleTimer(), startTime, rate, unit);
 	}
 
-	protected void activateSession( SessionStore<D> store ) {
+	protected void activateSession( SessionStore store ) {
 		this.session.addData(store);
 	}
 	
@@ -162,7 +174,7 @@ public abstract class AbstractChuruataEntryPoint<D extends Object> extends Abstr
 		session.addData(this.store);
 	}
 
-	protected void onHandleSyncTimer( SessionEvent<SessionStore<D>> sevent) {
+	protected void onHandleSyncTimer( SessionEvent<SessionStore> sevent) {
 		//DEFAULT NOTHING
 	}
 
@@ -194,14 +206,14 @@ public abstract class AbstractChuruataEntryPoint<D extends Object> extends Abstr
 		}
 	}
 
-	private class SessionHandler extends AbstractSessionHandler<SessionStore<D>>{
+	private class SessionHandler extends AbstractSessionHandler<SessionStore>{
 
 		protected SessionHandler(Display display) {
 			super(display);
 		}
 	
 		@Override
-		protected void onHandleSession(SessionEvent<SessionStore<D>> sevent) {
+		protected void onHandleSession(SessionEvent<SessionStore> sevent) {
 			onHandleSyncTimer(sevent);
 		}
 	}

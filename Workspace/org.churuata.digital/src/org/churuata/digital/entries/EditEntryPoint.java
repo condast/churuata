@@ -17,7 +17,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 
-public class EditEntryPoint extends AbstractRestEntryPoint<SessionStore<ChuruataOrganisationData>>{
+public class EditEntryPoint extends AbstractRestEntryPoint<SessionStore>{
 	private static final long serialVersionUID = 1L;
 
 	public static final String S_PAGE = "page";
@@ -39,7 +39,7 @@ public class EditEntryPoint extends AbstractRestEntryPoint<SessionStore<Churuata
 
 	@Override
 	protected boolean prepare(Composite parent) {
-		SessionStore<ChuruataOrganisationData> store = getData();
+		SessionStore store = getData();
 		if( store == null )
 			return false;
 		ILoginUser user = store.getLoginUser();
@@ -61,7 +61,7 @@ public class EditEntryPoint extends AbstractRestEntryPoint<SessionStore<Churuata
 	protected boolean postProcess(Composite parent) {
 		Config config = Config.getInstance();
 		String context = config.getServerContext();
-		SessionStore<ChuruataOrganisationData> store = getData();
+		SessionStore store = getData();
 
 		ILoginUser user = store.getLoginUser();
 		editComposite.setInput(context, user );
@@ -70,7 +70,7 @@ public class EditEntryPoint extends AbstractRestEntryPoint<SessionStore<Churuata
 	
 	protected void onRegistrationCompleted( EditEvent<ChuruataOrganisationData> event ) {
 		LatLng data = event.getData().getLocation();
-		SessionStore<ChuruataOrganisationData> store = getData();
+		SessionStore store = getData();
 		switch( event.getType()) {
 		case COMPLETE:
 			RWTUtils.redirect(Entries.Pages.READY.toPath());
@@ -92,7 +92,7 @@ public class EditEntryPoint extends AbstractRestEntryPoint<SessionStore<Churuata
 	protected void handleTimer() {
 		try {
 			super.handleTimer();
-			SessionStore<ChuruataOrganisationData> store = getData();
+			SessionStore store = getData();
 			if(( store == null ) || ( store.getLoginUser() == null ))
 				return;
 		} catch (Exception e) {
@@ -102,7 +102,7 @@ public class EditEntryPoint extends AbstractRestEntryPoint<SessionStore<Churuata
 
 	@Override
 	protected void handleSessionTimeout(boolean reload) {
-		SessionStore<ChuruataOrganisationData> store = super.getData();
+		SessionStore store = super.getData();
 		store.setLoginUser(null);
 		super.handleSessionTimeout(reload);
 	}

@@ -15,7 +15,6 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -136,12 +135,6 @@ public class ServicesTableViewer extends AbstractTableViewerWithDelete<IChuruata
 			}
 			swd.addText(retval);
 			return retval;
-		}
-
-		@SuppressWarnings("unchecked")
-		@Override
-		public Image getColumnImage(Object arg0, int columnIndex) {
-			return super.getColumnImage(arg0, columnIndex);
 		}
 	}
 }

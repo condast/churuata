@@ -60,7 +60,7 @@ public class LoginEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrganisa
 	}
 
 	@Override
-	protected SessionStore<ChuruataOrganisationData> createSessionStore() {
+	protected SessionStore createSessionStore() {
 		return null;//Not needed here
 	}
 
@@ -80,7 +80,7 @@ public class LoginEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrganisa
 
 	
 	@Override
-	protected void onHandleSyncTimer(SessionEvent<SessionStore<ChuruataOrganisationData>> sevent) {
+	protected void onHandleSyncTimer(SessionEvent<SessionStore> sevent) {
 		group.refresh();
 		super.onHandleSyncTimer(sevent);
 	}
@@ -112,7 +112,7 @@ public class LoginEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrganisa
 
 	@Override
 	protected boolean handleSessionTimeout(boolean reload) {
-		SessionStore<ChuruataOrganisationData> store = getSessionStore();
+		SessionStore store = getSessionStore();
 		store.clear();
 		Dispatcher.redirect( BasicApplication.S_CHURUATA, getToken());
 		return true;
@@ -144,7 +144,7 @@ public class LoginEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrganisa
 				AuthenticationDispatcher authentication = AuthenticationDispatcher.getInstance();
 				ILoginUser user = authentication.getLoginUser(login.getKey(), login.getValue());
 				Dispatcher dispatcher = Dispatcher.getInstance();
-				IDomainProvider<SessionStore<ChuruataOrganisationData>> domain = dispatcher.getDomain(user.getId(), user.getSecurity());
+				IDomainProvider<SessionStore> domain = dispatcher.getDomain(user.getId(), user.getSecurity());
 				if( domain == null )
 					break;
 				long token = domain.getToken();

@@ -53,9 +53,9 @@ public class OrganisationsEntryPoint extends AbstractChuruataEntryPoint<Churuata
 	private Logger logger = Logger.getLogger(this.getClass().getName());
 
 	@Override
-	protected SessionStore<ChuruataOrganisationData> createSessionStore() {
+	protected SessionStore createSessionStore() {
 		StartupParameters service = RWT.getClient().getService( StartupParameters.class );
-		IDomainProvider<SessionStore<ChuruataOrganisationData>> domain = Dispatcher.getDomainProvider( service );
+		IDomainProvider<SessionStore> domain = Dispatcher.getDomainProvider( service );
 		return ( domain == null )? null: domain.getData();
 	}
 
@@ -63,7 +63,7 @@ public class OrganisationsEntryPoint extends AbstractChuruataEntryPoint<Churuata
 	protected boolean prepare(Composite parent) {
 		if( !super.prepare(parent))
 			return false;
-		SessionStore<ChuruataOrganisationData> store = super.getSessionStore();
+		SessionStore store = super.getSessionStore();
 		ILoginUser user = store.getLoginUser();
 		return ( user != null );
 	}
@@ -87,7 +87,7 @@ public class OrganisationsEntryPoint extends AbstractChuruataEntryPoint<Churuata
 		String context = config.getServerContext();
 		controller = new WebController( context, IRestPages.Pages.ORGANISATION);
 		this.tableViewer.addEditListener(listener);
-		SessionStore<ChuruataOrganisationData> store = super.getSessionStore();
+		SessionStore store = super.getSessionStore();
 		IProfileData profile = store.getProfile();
 		if(( profile != null ) && !Utils.assertNull(profile.getOrganisation())) {
 			Collection<ChuruataOrganisationData> organisations = new ArrayList<>();
@@ -99,7 +99,7 @@ public class OrganisationsEntryPoint extends AbstractChuruataEntryPoint<Churuata
 	}
 
 	protected void onServiceEvent( EditEvent<ChuruataOrganisationData> event ) {
-		SessionStore<ChuruataOrganisationData> store = super.getSessionStore();
+		SessionStore store = super.getSessionStore();
 		IProfileData person = store.getProfile();
 
 		ChuruataOrganisationData organisation = event.getData();
@@ -151,7 +151,7 @@ public class OrganisationsEntryPoint extends AbstractChuruataEntryPoint<Churuata
 		@Override
 		protected String onHandleResponse(ResponseEvent<ChuruataOrganisationData.Requests> event) throws IOException {
 			try {
-				SessionStore<ChuruataOrganisationData> store = getSessionStore();
+				SessionStore store = getSessionStore();
 				Gson gson = new Gson();
 				switch( event.getRequest()){
 				case REGISTER:

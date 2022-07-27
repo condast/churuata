@@ -49,9 +49,9 @@ public class AcceptanceEntryPoint extends AbstractWizardEntryPoint<Organisations
 	private Logger logger = Logger.getLogger(this.getClass().getName());
 
 	@Override
-	protected SessionStore<ChuruataOrganisationData> createSessionStore() {
+	protected SessionStore createSessionStore() {
 		StartupParameters service = RWT.getClient().getService( StartupParameters.class );
-		IDomainProvider<SessionStore<ChuruataOrganisationData>> domain = Dispatcher.getDomainProvider( service );
+		IDomainProvider<SessionStore> domain = Dispatcher.getDomainProvider( service );
 		return ( domain == null )? null: domain.getData();
 	}
 
@@ -65,7 +65,7 @@ public class AcceptanceEntryPoint extends AbstractWizardEntryPoint<Organisations
 	}
 
 	@Override
-	protected boolean onPostProcess(String context, ChuruataOrganisationData data, SessionStore<ChuruataOrganisationData> store) {
+	protected boolean onPostProcess(String context, ChuruataOrganisationData data, SessionStore store) {
 		controller = new WebController( store.getLoginUser());
 		controller.setInput(context, IRestPages.Pages.ORGANISATION.toPath());
 		controller.getAll( IOrganisation.Verification.ALL);
@@ -90,7 +90,7 @@ public class AcceptanceEntryPoint extends AbstractWizardEntryPoint<Organisations
 	}
 
 	@Override
-	protected void onButtonPressed(ChuruataOrganisationData data, SessionStore<ChuruataOrganisationData> store) {
+	protected void onButtonPressed(ChuruataOrganisationData data, SessionStore store) {
 		try{
 			Dispatcher.jump( Pages.ACTIVE, store.getToken());						
 		}

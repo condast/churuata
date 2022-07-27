@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.logging.Logger;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -302,6 +303,34 @@ public class ContactPersonResource{
 			PersonData pd = new PersonData(person);
 			String str = gson.toJson(pd, PersonData.class);
 			return Response.ok( str ).build();
+		}
+		catch( Exception ex ) {
+			ex.printStackTrace();
+			return Response.serverError().build();
+		}
+		finally {
+			t.close();
+		}
+	}
+
+	@DELETE
+	@Produces(MediaType.TEXT_PLAIN)
+	@Path("/remove-contacts")
+	public Response removeContacts( @QueryParam("person-id") long personId, String data ) {
+		
+		if( StringUtils.isEmpty(data))
+			return Response.noContent().build();
+		
+		Gson gson = new Gson();
+		long[] ids = gson.fromJson(data, long[].class);
+		TransactionManager t = new TransactionManager( Dispatcher.getInstance() );
+		try {
+			t.open();
+			PersonService ps = new PersonService(); 
+			if( !ps.removeContacts( personId, ids ))
+				return Response.status( Status.NOT_FOUND).build();
+
+			return Response.ok().build();
 		}
 		catch( Exception ex ) {
 			ex.printStackTrace();

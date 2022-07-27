@@ -57,10 +57,15 @@ public class AddContactEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrg
 	private Logger logger = Logger.getLogger(this.getClass().getName());
 
 	@Override
-	protected SessionStore<ChuruataOrganisationData> createSessionStore() {
+	protected SessionStore createSessionStore() {
 		StartupParameters service = RWT.getClient().getService( StartupParameters.class );
-		IDomainProvider<SessionStore<ChuruataOrganisationData>> domain = Dispatcher.getDomainProvider( service );
+		IDomainProvider<SessionStore> domain = Dispatcher.getDomainProvider( service );
 		return ( domain == null )? null: domain.getData();
+	}
+
+	@Override
+	protected boolean onPrepare(SessionStore store) {
+		return true;
 	}
 
 	@Override
@@ -88,7 +93,7 @@ public class AddContactEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrg
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
 				try{
-					SessionStore<ChuruataOrganisationData> store = getSessionStore();
+					SessionStore store = getSessionStore();
 					if( store.getProfile() == null )
 						return;
 					controller.update( store.getProfile());
@@ -110,13 +115,8 @@ public class AddContactEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrg
 		Config config = Config.getInstance();
 		String context = config.getServerContext();
 
-		SessionStore<ChuruataOrganisationData> store = getSessionStore();
+		SessionStore store = getSessionStore();
 		ILoginUser user = store.getLoginUser();
-		IProfileData profile = store.getProfile();
-		if( profile == null ) {
-			profile = null;//new ProfileData( selected );
-			store.setProfile(profile); 
-		}
 
 		controller = new WebController();
 		controller.setInput(context, IRestPages.Pages.CONTACT.toPath());
@@ -127,22 +127,18 @@ public class AddContactEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrg
 
 	protected void onPersonEvent( EditEvent<PersonData> event ) {
 		PersonData data = null;
-		SessionStore<ChuruataOrganisationData> store = super.getSessionStore();
+		SessionStore store = super.getSessionStore();
 		switch( event.getType()) {
 		case INITIALISED:
 			break;
 		case CHANGED:
 			data = event.getData();
-			//store.setProfile(data);
 			break;
 		case SELECTED:
 			data = event.getData();
-			//store.setProfile(data);
-			//Dispatcher.jump(BasicApplication.Pages.CREATE, store.getToken());
 			break;
 		case ADDED:
 			editComposite.getInput();
-			//Dispatcher.jump(BasicApplication.Pages.SERVICES, store.getToken());
 			break;
 		case COMPLETE:
 			data = event.getData();
@@ -158,25 +154,6 @@ public class AddContactEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrg
 	@Override
 	protected void createTimer(boolean create, int nrOfThreads, TimeUnit unit, int startTime, int rate) {
 		super.createTimer(true, nrOfThreads, unit, startTime, rate);
-	}
-
-	@Override
-	protected void handleTimer() {
-		try {
-			super.handleTimer();
-			SessionStore<ChuruataOrganisationData> store = getSessionStore();
-			if(( store == null ) || ( store.getLoginUser() == null ))
-				return;
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	@Override
-	protected boolean handleSessionTimeout(boolean reload) {
-		SessionStore<ChuruataOrganisationData> store = super.getSessionStore();
-		store.setLoginUser(null);
-		return super.handleSessionTimeout(reload);
 	}
 	
 	private class WebController extends AbstractHttpRequest<ChuruataProfileData.Requests>{
@@ -220,12 +197,13 @@ public class AddContactEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrg
 		@Override
 		protected String onHandleResponse(ResponseEvent<ChuruataProfileData.Requests> event) throws IOException {
 			try {
-				SessionStore<ChuruataOrganisationData> store = getSessionStore();
+				SessionStore store = getSessionStore();
 				switch( event.getRequest()){
 				case UPDATE_PERSON:
 					Dispatcher.redirect(Entries.Pages.ACTIVE, store.getToken());
 					break;
-				case GET_PROFILE:					Gson gson = new Gson();
+				case GET_PROFILE:					
+					Gson gson = new Gson();
 					ChuruataProfileData profile = gson.fromJson(event.getResponse(), ChuruataProfileData.class);
 					editComposite.setInput(profile, true);
 					store.setProfile(profile);

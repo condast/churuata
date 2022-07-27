@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.churuata.digital.core.Entries;
-import org.churuata.digital.core.data.ChuruataOrganisationData;
 import org.churuata.digital.entries.BasicEntryPoint;
 import org.churuata.digital.session.SessionStore;
 import org.condast.commons.ui.entry.IDataEntryPoint;
@@ -31,7 +30,7 @@ public class BasicApplication implements ApplicationConfiguration {
 	public void configure(Application application) {
 		application.addStyleSheet( S_CHURUATA_THEME, S_THEME_CSS );
 		application.setOperationMode( OperationMode.SWT_COMPATIBILITY );
-		SessionStore<ChuruataOrganisationData> store = new SessionStore<ChuruataOrganisationData>();
+		SessionStore store = new SessionStore();
 		Entries entries = Entries.getInstance();
 		for( Entries.Pages page: Entries.Pages.values()) {
 			IPageEntry<Entries.Pages> entry = entries.getPageEntry(page);
@@ -53,10 +52,10 @@ public class BasicApplication implements ApplicationConfiguration {
 	
 	private class ChuruataEntryPointFactory  implements EntryPointFactory{
 
-		private SessionStore<ChuruataOrganisationData> store;
+		private SessionStore store;
 		IPageEntry<Entries.Pages> page;
 		
-		public ChuruataEntryPointFactory( SessionStore<ChuruataOrganisationData> store, IPageEntry<Entries.Pages> page) {
+		public ChuruataEntryPointFactory( SessionStore store, IPageEntry<Entries.Pages> page) {
 			super();
 			this.store = store;
 			this.page = page;
@@ -67,7 +66,7 @@ public class BasicApplication implements ApplicationConfiguration {
 		public EntryPoint create() {
 			EntryPoint entryPoint = page.getEntryPoint();
 			if( entryPoint instanceof IDataEntryPoint ) {
-				IDataEntryPoint<SessionStore<ChuruataOrganisationData>> ae = (IDataEntryPoint<SessionStore<ChuruataOrganisationData>>) entryPoint;
+				IDataEntryPoint<SessionStore> ae = (IDataEntryPoint<SessionStore>) entryPoint;
 				ae.setData(store);
 			}
 			return entryPoint;

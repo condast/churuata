@@ -55,7 +55,7 @@ public class ActiveEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrganis
 	}
 
 	@Override
-	protected SessionStore<ChuruataOrganisationData> createSessionStore() {
+	protected SessionStore createSessionStore() {
 		StartupParameters service = RWT.getClient().getService( StartupParameters.class );
 		String tokenstr = service.getParameter( IDomainProvider.Attributes.TOKEN.name().toLowerCase());
 		if(StringUtils.isEmpty(tokenstr)) 
@@ -63,7 +63,7 @@ public class ActiveEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrganis
 		
 		long token = Long.parseLong(tokenstr);
 		Dispatcher dispatcher = Dispatcher.getInstance();
-		IDomainProvider<SessionStore<ChuruataOrganisationData>> provider = dispatcher.getDomain(token );
+		IDomainProvider<SessionStore> provider = dispatcher.getDomain(token );
 		return ( provider == null )? null: provider.getData();
 	}
 
@@ -151,7 +151,7 @@ public class ActiveEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrganis
 		mapComposite.setInput(config.getServerContext());
 
 		mapComposite.locate();
-		SessionStore<ChuruataOrganisationData> store = super.getSessionStore();
+		SessionStore store = super.getSessionStore();
 		LatLng selected = store.getSelected();
 		this.btnCreate.setEnabled( selected != null );
 		this.btnEdit.setEnabled( selected != null );
@@ -160,7 +160,7 @@ public class ActiveEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrganis
 	
 	protected void onLocationChanged( EditEvent<LatLng> event ) {
 		LatLng data = event.getData();
-		SessionStore<ChuruataOrganisationData> store = super.getSessionStore();
+		SessionStore store = super.getSessionStore();
 		switch( event.getType()) {
 		case INITIALISED:
 			break;
@@ -188,7 +188,7 @@ public class ActiveEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrganis
 		try {
 			super.handleTimer();
 			//mapComposite.refresh(null);
-			SessionStore<ChuruataOrganisationData> store = super.getSessionStore();
+			SessionStore store = super.getSessionStore();
 			if(( store == null ) || ( store.getLoginUser() == null ))
 				return;
 		} catch (Exception e) {
@@ -198,7 +198,7 @@ public class ActiveEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrganis
 
 	@Override
 	protected boolean handleSessionTimeout(boolean reload) {
-		SessionStore<ChuruataOrganisationData> store = super.getSessionStore();
+		SessionStore store = super.getSessionStore();
 		store.setLoginUser(null);
 		return super.handleSessionTimeout(reload);
 	}

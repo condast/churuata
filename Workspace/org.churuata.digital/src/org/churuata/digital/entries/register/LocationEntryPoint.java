@@ -15,7 +15,6 @@ import org.churuata.digital.core.rest.IRestPages;
 import org.churuata.digital.session.SessionStore;
 import org.churuata.digital.ui.map.OrganisationMapBrowser;
 import org.condast.commons.authentication.http.IDomainProvider;
-import org.condast.commons.authentication.user.ILoginUser;
 import org.condast.commons.data.latlng.LatLng;
 import org.condast.commons.messaging.http.AbstractHttpRequest;
 import org.condast.commons.messaging.http.ResponseEvent;
@@ -31,7 +30,6 @@ import org.eclipse.swt.widgets.Composite;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
-
 public class LocationEntryPoint extends AbstractWizardEntryPoint<OrganisationMapBrowser, ChuruataOrganisationData> {
 	private static final long serialVersionUID = 1L;
 
@@ -44,19 +42,10 @@ public class LocationEntryPoint extends AbstractWizardEntryPoint<OrganisationMap
 	private Logger logger = Logger.getLogger(this.getClass().getName());
 
 	@Override
-	protected SessionStore<ChuruataOrganisationData> createSessionStore() {
+	protected SessionStore createSessionStore() {
 		StartupParameters service = RWT.getClient().getService( StartupParameters.class );
-		IDomainProvider<SessionStore<ChuruataOrganisationData>> domain = Dispatcher.getDomainProvider( service );
+		IDomainProvider<SessionStore> domain = Dispatcher.getDomainProvider( service );
 		return ( domain == null )? null: domain.getData();
-	}
-
-	@Override
-	protected boolean prepare(Composite parent) {
-		if( !super.prepare(parent))
-			return false;
-		SessionStore<ChuruataOrganisationData> store = super.getSessionStore();
-		ILoginUser user = store.getLoginUser();
-		return ( user != null );
 	}
 	
 	@Override
@@ -68,7 +57,7 @@ public class LocationEntryPoint extends AbstractWizardEntryPoint<OrganisationMap
 	}
 
 	@Override
-	protected boolean onPostProcess(String context, ChuruataOrganisationData data, SessionStore<ChuruataOrganisationData> store) {
+	protected boolean onPostProcess(String context, ChuruataOrganisationData data, SessionStore store) {
 		controller = new WebController( context, IRestPages.Pages.ORGANISATION.toPath());
 		mapComposite.setInput(context);
 		mapComposite.setInput(new SimpleOrganisationData( store.getData()));
@@ -84,7 +73,7 @@ public class LocationEntryPoint extends AbstractWizardEntryPoint<OrganisationMap
 				return null;
 			Button btnNext = getBtnNext();
 			btnNext.setEnabled(true);
-			SessionStore<ChuruataOrganisationData> store = getSessionStore();
+			SessionStore store = getSessionStore();
 			ChuruataOrganisationData data = store.getData();
 			data.setLocation(e.getData());
 			controller.update(data);
@@ -96,7 +85,7 @@ public class LocationEntryPoint extends AbstractWizardEntryPoint<OrganisationMap
 	}
 
 	@Override
-	protected void onButtonPressed(ChuruataOrganisationData data, SessionStore<ChuruataOrganisationData> store) {
+	protected void onButtonPressed(ChuruataOrganisationData data, SessionStore store) {
 		Dispatcher.jump( Pages.SHOW_LEGAL, store.getToken());
 	}
 
@@ -139,7 +128,7 @@ public class LocationEntryPoint extends AbstractWizardEntryPoint<OrganisationMap
 		@Override
 		protected String onHandleResponse(ResponseEvent<ChuruataOrganisationData.Requests> event) throws IOException {
 			try {
-				SessionStore<ChuruataOrganisationData> store = getSessionStore();
+				SessionStore store = getSessionStore();
 				Gson gson = new Gson();
 				switch( event.getRequest()){
 				case SET_LOCATION:

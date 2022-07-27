@@ -24,6 +24,7 @@ import javax.persistence.TemporalType;
 
 import org.condast.commons.na.model.IName;
 import org.condast.commons.na.model.IProfessional;
+import org.condast.commons.Utils;
 import org.condast.commons.na.model.IContact;
 import org.condast.commons.na.model.IContact.ContactTypes;
 import org.condast.commons.settings.ISettingsSupport;
@@ -216,15 +217,26 @@ public class Person implements IContactPerson, ISettingsSupport,Serializable, Cl
 	}
 
 	@Override
-	public void removeContact( IContact contact) {
-		this.contacts.remove( contact );
-	}
-
-	@Override
 	public void setContacts(IContact[] contacts) {
 		this.contacts.clear();
 		for( IContact contact: contacts )
 			addContact( contact );
+	}
+
+	@Override
+	public void removeContact( IContact contact) {
+		this.contacts.remove( contact );
+	}
+
+	public boolean removeContact(long id) {
+		if( Utils.assertNull(contacts))
+			return false;
+		Collection<IContact> temp = new ArrayList<>( this.contacts);
+		temp.forEach( c->{ 
+			if( c.getId() == id )
+				removeContact(c);
+		});
+		return false;
 	}
 
 	@Override

@@ -49,9 +49,9 @@ public class UsersEntryPoint extends AbstractWizardEntryPoint<ContactPersonCompo
 	private Logger logger = Logger.getLogger(this.getClass().getName());
 
 	@Override
-	protected SessionStore<ChuruataOrganisationData> createSessionStore() {
+	protected SessionStore createSessionStore() {
 		StartupParameters service = RWT.getClient().getService( StartupParameters.class );
-		IDomainProvider<SessionStore<ChuruataOrganisationData>> domain = Dispatcher.getDomainProvider( service );
+		IDomainProvider<SessionStore> domain = Dispatcher.getDomainProvider( service );
 		return ( domain == null )? null: domain.getData();
 	}
 
@@ -59,13 +59,13 @@ public class UsersEntryPoint extends AbstractWizardEntryPoint<ContactPersonCompo
 	protected boolean prepare(Composite parent) {
 		if( !super.prepare(parent))
 			return false;
-		SessionStore<ChuruataOrganisationData> store = super.getSessionStore();
+		SessionStore store = super.getSessionStore();
 		ILoginUser user = store.getLoginUser();
 		return ( user != null );
 	}
 	
 	@Override
-	protected void onButtonPressed(ChuruataOrganisationData data, SessionStore<ChuruataOrganisationData> store) {
+	protected void onButtonPressed(ChuruataOrganisationData data, SessionStore store) {
 		try{
 			if( store.getContactPersonData() == null )
 				return;
@@ -90,7 +90,7 @@ public class UsersEntryPoint extends AbstractWizardEntryPoint<ContactPersonCompo
 	}
 
 	@Override
-	protected boolean onPostProcess(String context, ChuruataOrganisationData data, SessionStore<ChuruataOrganisationData> store) {
+	protected boolean onPostProcess(String context, ChuruataOrganisationData data, SessionStore store) {
 		controller = new WebController();
 		controller.setInput(context, IRestPages.Pages.CONTACT.toPath());
 		IProfileData personData = store.getProfile();
@@ -109,7 +109,7 @@ public class UsersEntryPoint extends AbstractWizardEntryPoint<ContactPersonCompo
 
 	protected void onPersonEvent( EditEvent<ContactPersonData> event ) {
 		ContactPersonData data = null;
-		SessionStore<ChuruataOrganisationData> store = super.getSessionStore();
+		SessionStore store = super.getSessionStore();
 		controller.type = event.getType();
 		switch( event.getType()) {
 		case ADDED:
@@ -170,7 +170,7 @@ public class UsersEntryPoint extends AbstractWizardEntryPoint<ContactPersonCompo
 		@Override
 		protected String onHandleResponse(ResponseEvent<ChuruataProfileData.Requests> event) throws IOException {
 			try {
-				SessionStore<ChuruataOrganisationData> store = getSessionStore();
+				SessionStore store = getSessionStore();
 				Gson gson = new Gson();
 				IProfileData profile = null;
 				switch( event.getRequest()){

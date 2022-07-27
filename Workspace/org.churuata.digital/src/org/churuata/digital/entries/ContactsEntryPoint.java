@@ -27,6 +27,8 @@ import org.condast.commons.na.model.IContact.ContactTypes;
 import org.condast.commons.na.profile.IProfileData;
 import org.condast.commons.ui.controller.EditEvent;
 import org.condast.commons.ui.controller.IEditListener;
+import org.condast.commons.ui.messaging.jump.JumpController;
+import org.condast.commons.ui.messaging.jump.JumpEvent;
 import org.condast.commons.ui.na.contacts.ContactWidget;
 import org.condast.commons.ui.session.AbstractSessionHandler;
 import org.condast.commons.ui.session.SessionEvent;
@@ -62,12 +64,17 @@ public class ContactsEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrgan
 	private Logger logger = Logger.getLogger(this.getClass().getName());
 
 	@Override
-	protected SessionStore<ChuruataOrganisationData> createSessionStore() {
+	protected SessionStore createSessionStore() {
 		StartupParameters service = RWT.getClient().getService( StartupParameters.class );
-		IDomainProvider<SessionStore<ChuruataOrganisationData>> domain = Dispatcher.getDomainProvider( service );
+		IDomainProvider<SessionStore> domain = Dispatcher.getDomainProvider( service );
 		return ( domain == null )? null: domain.getData();
 	}
 
+	@Override
+	protected boolean onPrepare(SessionStore store) {
+		return true;
+	}
+	
 	@Override
     protected Composite createComposite(Composite parent) {
         parent.setLayout(new GridLayout( 1, false ));
@@ -75,7 +82,7 @@ public class ContactsEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrgan
  		contactWidget.setData( RWT.CUSTOM_VARIANT, Entries.S_CHURUATA );
  		contactWidget.setLayoutData( new GridData(SWT.FILL, SWT.FILL, true, false));
 		Group group = new Group( parent, SWT.NONE );
-		group.setText("Add Churuata Service");
+		group.setText("Add Contact");
 		group.setLayout( new GridLayout(5, false ));
 		group.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 
@@ -93,7 +100,7 @@ public class ContactsEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrgan
 				try{
 					if( data == null )
 						return;
-					SessionStore<ChuruataOrganisationData> store = getSessionStore();
+					SessionStore store = getSessionStore();
 					IProfileData person = store.getProfile();
 					controller.addContact(data, person.getId());
 				}
@@ -123,7 +130,7 @@ public class ContactsEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrgan
 	protected void onContactEvent( EditEvent<IContact> event ) {
 		switch( event.getType()) {
 		case COMPLETE:
-			SessionStore<ChuruataOrganisationData> store = getSessionStore();
+			SessionStore store = getSessionStore();
 			if( store.getContactPersonData() == null )
 				return;
 			data = event.getData();
@@ -151,14 +158,14 @@ public class ContactsEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrgan
 		super.close();
 	}
 	
-	private class SessionHandler extends AbstractSessionHandler<SessionStore<ChuruataOrganisationData>>{
+	private class SessionHandler extends AbstractSessionHandler<SessionStore>{
 
 		protected SessionHandler(Display display) {
 			super(display);
 		}
 
 		@Override
-		protected void onHandleSession(SessionEvent<SessionStore<ChuruataOrganisationData>> sevent) {
+		protected void onHandleSession(SessionEvent<SessionStore> sevent) {
 			/* NOTHING */
 		}
 	}
@@ -186,14 +193,15 @@ public class ContactsEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrgan
 		@Override
 		protected String onHandleResponse(ResponseEvent<ChuruataProfileData.Requests> event) throws IOException {
 			try {
-				SessionStore<ChuruataOrganisationData> store = getSessionStore();
+				SessionStore store = getSessionStore();
 				Gson gson = new Gson();
+				JumpController<PersonData> jc = new JumpController<>();
 				switch( event.getRequest()){
 				case ADD_CONTACT_TYPE:
 					PersonData data = gson.fromJson(event.getResponse(), PersonData.class);
 					ProfileData profile = new ProfileData( data );
 					store.setProfile(profile);
-					Dispatcher.jump( Pages.REGISTER, store.getToken());
+					jc.jump( new JumpEvent<PersonData>( this, store.getToken(), Pages.REGISTER.toPath(), JumpController.Operations.DONE, data));			
 					break;
 				default:
 					break;

@@ -1,12 +1,13 @@
 package org.churuata.digital.session;
 
+import org.churuata.digital.core.data.ChuruataOrganisationData;
 import org.churuata.digital.core.location.IChuruataService;
 import org.condast.commons.authentication.session.DefaultSessionStore;
 import org.condast.commons.data.latlng.LatLng;
 import org.condast.commons.na.data.ContactPersonData;
 import org.condast.commons.na.profile.IProfileData;
 
-public class SessionStore<D extends Object> extends DefaultSessionStore<D>{
+public class SessionStore extends DefaultSessionStore<ChuruataOrganisationData>{
 
 	private static final String S_CHURUATA_ID = "org.churuata.digital";
 

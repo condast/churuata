@@ -10,7 +10,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.churuata.digital.core.AuthenticationDispatcher;
 import org.churuata.digital.core.Dispatcher;
-import org.churuata.digital.core.data.ChuruataOrganisationData;
 import org.churuata.digital.session.SessionStore;
 import org.condast.commons.authentication.http.IDomainProvider;
 import org.condast.commons.authentication.user.IAdmin;
@@ -68,7 +67,7 @@ public class ActiveServlet extends HttpServlet {
 		if( !StringUtils.isEmpty(tokenstr)) {
 			token = Long.parseLong(tokenstr);
 			Dispatcher dispatcher = Dispatcher.getInstance();
-			IDomainProvider<SessionStore<ChuruataOrganisationData>> provider = dispatcher.getDomain(token);
+			IDomainProvider<SessionStore> provider = dispatcher.getDomain(token);
 			if(( provider != null ) && ( provider.getData() != null ))
 				user = provider.getData().getLoginUser();
 		}

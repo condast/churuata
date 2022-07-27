@@ -37,7 +37,7 @@ public abstract class AbstractWizardEntryPoint<C extends Composite, D extends Ob
 	
 	protected abstract C onCreateComposite( Composite parent, int style );
 
-	protected abstract void onButtonPressed( D data, SessionStore<D> store );
+	protected abstract void onButtonPressed( D data, SessionStore store );
 
 	@Override
 	protected org.eclipse.swt.widgets.Composite createComposite(org.eclipse.swt.widgets.Composite parent) {
@@ -63,7 +63,7 @@ public abstract class AbstractWizardEntryPoint<C extends Composite, D extends Ob
 				@Override
 				public void widgetSelected(final SelectionEvent e) {
 					try{
-						SessionStore<D> store = getSessionStore();
+						SessionStore store = getSessionStore();
 						onButtonPressed(data, store);
 					}
 					catch( Exception ex ){
@@ -76,13 +76,13 @@ public abstract class AbstractWizardEntryPoint<C extends Composite, D extends Ob
 		return composite;
 	}
 
-	protected abstract boolean onPostProcess( String context, D data, SessionStore<D> store );
+	protected abstract boolean onPostProcess( String context, D data, SessionStore store );
 
 	@Override
 	protected boolean postProcess( Composite parent) {
 		Config config = Config.getInstance();
 		String context = config.getServerContext();
-		SessionStore<D> store = getSessionStore();
+		SessionStore store = getSessionStore();
 		if( !onPostProcess(context, data, store))
 			return false;
 		return super.postProcess(parent);
@@ -102,7 +102,7 @@ public abstract class AbstractWizardEntryPoint<C extends Composite, D extends Ob
 
 	@Override
 	protected boolean handleSessionTimeout(boolean reload) {
-		SessionStore<D> store = super.getSessionStore();
+		SessionStore store = super.getSessionStore();
 		store.setLoginUser(null);
 		return super.handleSessionTimeout(reload);
 	}

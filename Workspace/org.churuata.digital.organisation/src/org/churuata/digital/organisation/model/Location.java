@@ -36,10 +36,6 @@ public class Location implements ILocation, IUpdateable, Serializable {
 	private double latitude;
 	private double longitude;
 
-	@Basic(optional = true)
-	@Column( nullable=true)
-	private Organisation organisation;
-
 	@Basic(optional = false)
 	@Column( nullable=false)
 	@Temporal(TemporalType.TIMESTAMP)
@@ -67,6 +63,22 @@ public class Location implements ILocation, IUpdateable, Serializable {
 		return id;
 	}
 
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
 	@Override
 	public LatLng getLocation() {
 		return new LatLng( this.name, this.description, this.latitude, this.longitude );
@@ -77,6 +89,22 @@ public class Location implements ILocation, IUpdateable, Serializable {
 		this.description = location.getDescription();
 		this.latitude = location.getLatitude();
 		this.longitude = location.getLongitude();
+	}
+
+	public double getLatitude() {
+		return latitude;
+	}
+
+	public void setLatitude(double latitude) {
+		this.latitude = latitude;
+	}
+
+	public double getLongitude() {
+		return longitude;
+	}
+
+	public void setLongitude(double longitude) {
+		this.longitude = longitude;
 	}
 
 	@Override

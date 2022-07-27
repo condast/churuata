@@ -52,16 +52,15 @@ public class AdminEntryPoint extends AbstractWizardEntryPoint<AdminTableViewer, 
 		super( false );
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	protected SessionStore<LoginData> createSessionStore() {
+	protected SessionStore createSessionStore() {
 		StartupParameters service = RWT.getClient().getService( StartupParameters.class );
 		IDomainProvider<?> domain = Dispatcher.getDomainProvider( service );
-		return ( domain == null )? null: (SessionStore<LoginData>) domain.getData();
+		return ( domain == null )? null: (SessionStore) domain.getData();
 	}
 
 	@Override
-	protected void onButtonPressed(LoginData data, SessionStore<LoginData> store) {
+	protected void onButtonPressed(LoginData data, SessionStore store) {
 		// NOTHING; No Button
 	}
 
@@ -75,7 +74,7 @@ public class AdminEntryPoint extends AbstractWizardEntryPoint<AdminTableViewer, 
 	}
 
 	@Override
-	protected boolean onPostProcess(String context, LoginData data, SessionStore<LoginData> store) {
+	protected boolean onPostProcess(String context, LoginData data, SessionStore store) {
 		controller = new WebController( store.getLoginUser());
 		controller.setInput(context, IRestPages.Pages.ADMIN.toPath());
 		controller.getAll( IAdmin.Roles.UNKNOWN);
@@ -83,7 +82,7 @@ public class AdminEntryPoint extends AbstractWizardEntryPoint<AdminTableViewer, 
 	}
 
 	protected void onOrganisationEvent( EditEvent<LoginData> event ) {
-		SessionStore<LoginData> store = super.getSessionStore();
+		SessionStore store = super.getSessionStore();
 		switch( event.getType()) {
 		case SELECTED:
 			HttpSession session = RWT.getUISession().getHttpSession();

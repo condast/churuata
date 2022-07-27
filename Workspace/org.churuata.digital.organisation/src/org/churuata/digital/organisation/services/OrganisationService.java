@@ -9,6 +9,7 @@ import javax.persistence.TypedQuery;
 import org.churuata.digital.core.data.ChuruataOrganisationData;
 import org.churuata.digital.core.model.IOrganisation;
 import org.churuata.digital.organisation.core.Dispatcher;
+import org.churuata.digital.organisation.model.Location;
 import org.churuata.digital.organisation.model.Organisation;
 import org.condast.commons.Utils;
 import org.condast.commons.data.latlng.LatLng;
@@ -61,8 +62,8 @@ public class OrganisationService extends AbstractEntityService<Organisation>{
 		return new ArrayList<IOrganisation>( results );
 	}
 
-	public Organisation create( IContactPerson person, String name, String description, boolean primary ) {
-		Organisation organisation = new Organisation( name, description, primary );
+	public Organisation create( IContactPerson person, Location location, boolean primary ) {
+		Organisation organisation = new Organisation( location, primary );
 		super.create(organisation);
 		return organisation;
 	}
@@ -90,7 +91,7 @@ public class OrganisationService extends AbstractEntityService<Organisation>{
 		o.setPrimary( od.isPrincipal());
 		o.setScore(od.getScore());
 		o.setVerified(od.isVerified());
-//		update(o);
+		update(o);
 		return o;
 	}
 
@@ -128,8 +129,7 @@ public class OrganisationService extends AbstractEntityService<Organisation>{
 			return result;
 		for( long id: ids )
 			result &= organisation.removeService(id);
-		return result;
-		
+		return result;	
 	}
 
 	public static ChuruataOrganisationData[] toOrganisationData( Collection<IOrganisation> input ){

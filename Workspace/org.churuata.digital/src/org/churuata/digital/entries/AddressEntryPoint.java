@@ -12,6 +12,7 @@ import org.churuata.digital.core.data.ChuruataOrganisationData;
 import org.churuata.digital.core.rest.IRestPages;
 import org.churuata.digital.session.SessionStore;
 import org.churuata.digital.ui.image.ChuruataImages;
+import org.churuata.digital.ui.views.ChuruataAddressComposite;
 import org.condast.commons.authentication.http.IDomainProvider;
 import org.condast.commons.authentication.user.ILoginUser;
 import org.condast.commons.config.Config;
@@ -21,7 +22,7 @@ import org.condast.commons.na.data.AddressData;
 import org.condast.commons.na.profile.IProfileData;
 import org.condast.commons.ui.controller.EditEvent;
 import org.condast.commons.ui.controller.IEditListener;
-import org.condast.commons.ui.na.address.AddressComposite;
+import org.condast.commons.ui.messaging.jump.JumpEvent;
 import org.eclipse.rap.rwt.RWT;
 import org.eclipse.rap.rwt.client.service.StartupParameters;
 import org.eclipse.swt.SWT;
@@ -36,14 +37,14 @@ import org.eclipse.swt.widgets.Group;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
-public class AddressEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrganisationData>{
+public class AddressEntryPoint extends AbstractChuruataEntryPoint<AddressData>{
 	private static final long serialVersionUID = 1L;
 
 	public static final String S_PAGE = "page";
 
 	public static final String S_CHURUATA = "churuata";
 
-	private AddressComposite addressComposite;
+	private ChuruataAddressComposite addressComposite;
 	private Button btnOk;
 
 	private IEditListener<AddressData> listener = e->onOrganisationEvent(e);
@@ -53,16 +54,16 @@ public class AddressEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrgani
 	private Logger logger = Logger.getLogger(this.getClass().getName());
 
 	@Override
-	protected SessionStore<ChuruataOrganisationData> createSessionStore() {
+	protected SessionStore createSessionStore() {
 		StartupParameters service = RWT.getClient().getService( StartupParameters.class );
-		IDomainProvider<SessionStore<ChuruataOrganisationData>> domain = Dispatcher.getDomainProvider( service );
+		IDomainProvider<SessionStore> domain = Dispatcher.getDomainProvider( service );
 		return ( domain == null )? null: domain.getData();
 	}
 
 	@Override
 	protected Composite createComposite(Composite parent) {
 		parent.setLayout( new GridLayout(1,false));
-		addressComposite = new AddressComposite(parent, SWT.NONE );
+		addressComposite = new ChuruataAddressComposite(parent, SWT.NONE );
 		addressComposite.setData( RWT.CUSTOM_VARIANT, S_CHURUATA );
 		addressComposite.setLayoutData( new GridData( SWT.FILL, SWT.FILL, true, true ));
 		addressComposite.addEditListener( listener);
@@ -84,7 +85,7 @@ public class AddressEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrgani
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
 				try{
-					SessionStore<ChuruataOrganisationData> store = getSessionStore();
+					SessionStore store = getSessionStore();
 					if( store.getProfile() == null )
 						return;
 					IProfileData profile = store.getProfile();
@@ -106,22 +107,24 @@ public class AddressEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrgani
 		Config config = Config.getInstance();
 		String context = config.getServerContext();
 
-		SessionStore<ChuruataOrganisationData> store = getSessionStore();
+		SessionStore store = getSessionStore();
 		ILoginUser user = store.getLoginUser();
-		IProfileData profile = store.getProfile();
-		if( profile == null ) {
-			profile = null;//new ProfileData( selected );
-			store.setProfile(profile); 
-		}
-
 		controller = new WebController();
 		controller.setInput(context, IRestPages.Pages.ORGANISATION.toPath());
 		controller.user = user;
+
+		JumpEvent<AddressData> event = super.getEvent();
+		if( event != null ) {
+			addressComposite.setInput(event.getData(), true);
+		}else {
+			IProfileData profile = store.getProfile();
+			addressComposite.setInput(profile.getAddress(), true);
+		}
 		return true;
 	}
 
 	protected void onOrganisationEvent( EditEvent<AddressData> event ) {
-		SessionStore<ChuruataOrganisationData> store = getSessionStore();
+		SessionStore store = getSessionStore();
 		IProfileData profile = store.getProfile();
 		switch( event.getType()) {
 		case CHANGED:
@@ -149,7 +152,7 @@ public class AddressEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrgani
 	protected void handleTimer() {
 		try {
 			super.handleTimer();
-			SessionStore<ChuruataOrganisationData> store = getSessionStore();
+			SessionStore store = getSessionStore();
 			if(( store == null ) || ( store.getLoginUser() == null ))
 				return;
 		} catch (Exception e) {
@@ -159,7 +162,7 @@ public class AddressEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrgani
 
 	@Override
 	protected boolean handleSessionTimeout(boolean reload) {
-		SessionStore<ChuruataOrganisationData> store = super.getSessionStore();
+		SessionStore store = super.getSessionStore();
 		store.setLoginUser(null);
 		return super.handleSessionTimeout(reload);
 	}
@@ -192,7 +195,7 @@ public class AddressEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrgani
 		@Override
 		protected String onHandleResponse(ResponseEvent<ChuruataOrganisationData.Requests> event) throws IOException {
 			try {
-				SessionStore<ChuruataOrganisationData> store = getSessionStore();
+				SessionStore store = getSessionStore();
 				switch( event.getRequest()){
 				case SET_ADDRESS:
 					Dispatcher.jump(Entries.Pages.ACTIVE, store.getToken());

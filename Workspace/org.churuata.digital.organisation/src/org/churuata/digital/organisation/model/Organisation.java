@@ -6,7 +6,6 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 
-import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -39,21 +38,18 @@ public class Organisation implements IOrganisation, Serializable, Cloneable {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
 	
-	private double latitude;
-	private double longitude;
+	@JoinColumn( nullable=true)
+	@OneToOne
+	private Location location;
 	
-	@Basic(optional = true)
-	@Column( nullable=true)
+	@JoinColumn( nullable=true)
+	@OneToOne
 	private Address address;
 
 	@JoinColumn( nullable=false)
 	@OneToOne
 	private Person contact;
-	
-	private String name;
-	
-	private String description;
-	
+		
 	private String website;
 	
 	private int type;
@@ -79,9 +75,7 @@ public class Organisation implements IOrganisation, Serializable, Cloneable {
 		this.createDate = Calendar.getInstance().getTime();
 	}
 
-	public Organisation( String name, String description, boolean principal ){
-		this.name = name;
-		this.description = description;
+	public Organisation( Location location, boolean principal ){
 		this.verified = false;
 		this.score = 0;
 		this.type = OrganisationTypes.UNKNOWN.getIndex();
@@ -90,11 +84,9 @@ public class Organisation implements IOrganisation, Serializable, Cloneable {
 		this.updateDate = Calendar.getInstance().getTime();
 	}
 
-	public Organisation( IContactPerson contact, String name, String description ){
+	public Organisation( Location location,  IContactPerson contact, String name, String description ){
 		this();
 		this.contact= (Person) contact;
-		this.name = name;
-		this.description = description;
 		this.verified = false;
 		this.score = 0;
 		this.type = OrganisationTypes.UNKNOWN.getIndex();
@@ -111,8 +103,6 @@ public class Organisation implements IOrganisation, Serializable, Cloneable {
 	public Organisation( ChuruataOrganisationData data ){
 		this();
 		this.contact= (Person) data.getContact();
-		this.name = data.getName();
-		this.description = data.getDescription();
 		this.services = new ArrayList<Service>();
 		this.type = data.getType().getIndex();
 		this.verified = data.isVerified();
@@ -134,36 +124,30 @@ public class Organisation implements IOrganisation, Serializable, Cloneable {
 
 	@Override
 	public LatLng getLocation() {
-		return new LatLng( this.name, this.description, latitude, longitude );
+		return location.getLocation();
 	}
 
 	public void setLocation( double latitude, double longitude ) {
-		this.latitude = latitude;
-		this.longitude = longitude;
+		this.location.setLatitude(latitude);
+		this.location.setLongitude(longitude);
 	}
 
 	@Override
 	public String getName() {
-		return name;
+		return this.location.getName();
 	}
 
 	public void setName(String title) {
-		this.name = title;
+		this.location.setName(title);
 	}
 
 	@Override
 	public String getDescription() {
-		return description;
+		return this.location.getDescription();
 	}
 
-	@Override
-	public IContactPerson getContact() {
-		return contact;
-	}
-	
-	
 	public void setDescription(String description) {
-		this.description = description;
+		this.location.setDescription(description);
 	}
 
 	@Override
@@ -173,6 +157,11 @@ public class Organisation implements IOrganisation, Serializable, Cloneable {
 
 	public void setWebsite(String website) {
 		this.website = website;
+	}
+
+	@Override
+	public IContactPerson getContact() {
+		return contact;
 	}
 	
 	@Override
@@ -297,7 +286,7 @@ public class Organisation implements IOrganisation, Serializable, Cloneable {
 	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
-		String str = ( name + ": ");
+		String str = ( this.location.getName() + ": ");
 		buffer.append( str );
 		buffer.append( "\n");
 		buffer.append( address );
