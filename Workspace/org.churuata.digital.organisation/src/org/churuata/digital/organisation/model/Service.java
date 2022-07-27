@@ -13,7 +13,6 @@ import javax.persistence.ManyToOne;
 
 import org.churuata.digital.core.location.IChuruataService;
 import org.churuata.digital.core.model.IOrganisation;
-import org.condast.commons.Utils;
 import org.condast.commons.strings.StringUtils;
 
 @Entity
@@ -78,7 +77,7 @@ public class Service implements IChuruataService {
 
 	@Override
 	public IChuruataService.Services getService() {
-		if( Utils.assertNull( this.serviceType ))
+		if( StringUtils.isEmpty( this.serviceType ))
 			return IChuruataService.Services.UNKNOWN;
 		return IChuruataService.Services.valueOf(this.serviceType);
 	}

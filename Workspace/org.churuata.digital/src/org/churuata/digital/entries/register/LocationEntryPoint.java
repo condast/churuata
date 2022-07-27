@@ -15,6 +15,7 @@ import org.churuata.digital.core.rest.IRestPages;
 import org.churuata.digital.session.SessionStore;
 import org.churuata.digital.ui.map.OrganisationMapBrowser;
 import org.condast.commons.authentication.http.IDomainProvider;
+import org.condast.commons.authentication.user.ILoginUser;
 import org.condast.commons.data.latlng.LatLng;
 import org.condast.commons.messaging.http.AbstractHttpRequest;
 import org.condast.commons.messaging.http.ResponseEvent;
@@ -43,8 +44,19 @@ public class LocationEntryPoint extends AbstractWizardEntryPoint<OrganisationMap
 	private Logger logger = Logger.getLogger(this.getClass().getName());
 
 	@Override
-	protected IDomainProvider<SessionStore<ChuruataOrganisationData>> getDomainProvider(StartupParameters service) {
-		return Dispatcher.getDomainProvider(service);
+	protected SessionStore<ChuruataOrganisationData> createSessionStore() {
+		StartupParameters service = RWT.getClient().getService( StartupParameters.class );
+		IDomainProvider<SessionStore<ChuruataOrganisationData>> domain = Dispatcher.getDomainProvider( service );
+		return ( domain == null )? null: domain.getData();
+	}
+
+	@Override
+	protected boolean prepare(Composite parent) {
+		if( !super.prepare(parent))
+			return false;
+		SessionStore<ChuruataOrganisationData> store = super.getSessionStore();
+		ILoginUser user = store.getLoginUser();
+		return ( user != null );
 	}
 	
 	@Override

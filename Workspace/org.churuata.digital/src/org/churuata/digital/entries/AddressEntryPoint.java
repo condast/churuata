@@ -53,19 +53,12 @@ public class AddressEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrgani
 	private Logger logger = Logger.getLogger(this.getClass().getName());
 
 	@Override
-	protected boolean prepare(Composite parent) {
+	protected SessionStore<ChuruataOrganisationData> createSessionStore() {
 		StartupParameters service = RWT.getClient().getService( StartupParameters.class );
 		IDomainProvider<SessionStore<ChuruataOrganisationData>> domain = Dispatcher.getDomainProvider( service );
-		if( domain == null )
-			return false;
-		SessionStore<ChuruataOrganisationData> store = domain.getData();
-		if( store == null )
-			return false;
-		setData(store);
-		ILoginUser user = store.getLoginUser();
-		return ( user != null );
+		return ( domain == null )? null: domain.getData();
 	}
-	
+
 	@Override
 	protected Composite createComposite(Composite parent) {
 		parent.setLayout( new GridLayout(1,false));
@@ -108,6 +101,8 @@ public class AddressEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrgani
 
 	@Override
 	protected boolean postProcess(Composite parent) {
+		if( !super.postProcess(parent))
+			return false;
 		Config config = Config.getInstance();
 		String context = config.getServerContext();
 

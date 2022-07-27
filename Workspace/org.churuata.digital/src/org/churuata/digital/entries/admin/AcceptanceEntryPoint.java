@@ -49,8 +49,10 @@ public class AcceptanceEntryPoint extends AbstractWizardEntryPoint<Organisations
 	private Logger logger = Logger.getLogger(this.getClass().getName());
 
 	@Override
-	protected IDomainProvider<SessionStore<ChuruataOrganisationData>> getDomainProvider(StartupParameters service) {
-		return Dispatcher.getDomainProvider(service);
+	protected SessionStore<ChuruataOrganisationData> createSessionStore() {
+		StartupParameters service = RWT.getClient().getService( StartupParameters.class );
+		IDomainProvider<SessionStore<ChuruataOrganisationData>> domain = Dispatcher.getDomainProvider( service );
+		return ( domain == null )? null: domain.getData();
 	}
 
 	@Override

@@ -13,6 +13,7 @@ import org.churuata.digital.core.data.ChuruataProfileData;
 import org.churuata.digital.core.rest.IRestPages;
 import org.churuata.digital.session.SessionStore;
 import org.condast.commons.authentication.http.IDomainProvider;
+import org.condast.commons.authentication.user.ILoginUser;
 import org.condast.commons.messaging.http.AbstractHttpRequest;
 import org.condast.commons.messaging.http.ResponseEvent;
 import org.condast.commons.na.data.ContactPersonData;
@@ -20,7 +21,6 @@ import org.condast.commons.na.data.PersonData;
 import org.condast.commons.na.data.ProfileData;
 import org.condast.commons.na.model.IContact;
 import org.condast.commons.na.profile.IProfileData;
-import org.condast.commons.strings.StringUtils;
 import org.condast.commons.ui.controller.EditEvent;
 import org.condast.commons.ui.controller.IEditListener;
 import org.condast.commons.ui.na.person.ContactPersonComposite;
@@ -49,24 +49,20 @@ public class UsersEntryPoint extends AbstractWizardEntryPoint<ContactPersonCompo
 	private Logger logger = Logger.getLogger(this.getClass().getName());
 
 	@Override
-	protected boolean prepare(Composite parent) {
-		boolean result = super.prepare(parent);
-		if( result )
-			return result;
+	protected SessionStore<ChuruataOrganisationData> createSessionStore() {
 		StartupParameters service = RWT.getClient().getService( StartupParameters.class );
-		String tokenStr = service.getParameter(IDomainProvider.Attributes.TOKEN.toAttribute());
-		if( !StringUtils.isEmpty(tokenStr))
-			return false;
-		IDomainProvider<SessionStore<ChuruataOrganisationData>> provider = Dispatcher.createDomain();
-		setData( provider.getData());
-		return true;
-	}
-	
-	@Override
-	protected IDomainProvider<SessionStore<ChuruataOrganisationData>> getDomainProvider(StartupParameters service) {
-		return Dispatcher.getDomainProvider(service);
+		IDomainProvider<SessionStore<ChuruataOrganisationData>> domain = Dispatcher.getDomainProvider( service );
+		return ( domain == null )? null: domain.getData();
 	}
 
+	@Override
+	protected boolean prepare(Composite parent) {
+		if( !super.prepare(parent))
+			return false;
+		SessionStore<ChuruataOrganisationData> store = super.getSessionStore();
+		ILoginUser user = store.getLoginUser();
+		return ( user != null );
+	}
 	
 	@Override
 	protected void onButtonPressed(ChuruataOrganisationData data, SessionStore<ChuruataOrganisationData> store) {

@@ -7,6 +7,7 @@ import java.util.Collection;
 
 import org.churuata.digital.core.location.IChuruataService;
 import org.churuata.digital.core.model.IOrganisation;
+import org.condast.commons.Utils;
 import org.condast.commons.data.latlng.LatLng;
 import org.condast.commons.na.data.OrganisationData;
 import org.condast.commons.na.data.PersonData;
@@ -34,7 +35,9 @@ public class ChuruataOrganisationData extends OrganisationData implements IOrgan
 		SET_ADDRESS,
 		SET_LOCATION,
 		SET_VERIFIED, 
-		UPDATE_SERVICE;
+		UPDATE_SERVICE, 
+		REMOVE_SERVICES, 
+		UPDATE;
 	}
 
 	public enum Parameters{
@@ -62,7 +65,7 @@ public class ChuruataOrganisationData extends OrganisationData implements IOrgan
 	
 	private int score;
 	
-	private boolean primary;
+	private boolean principal;
 	
 	private Collection<ServiceData> services;
 	
@@ -73,14 +76,14 @@ public class ChuruataOrganisationData extends OrganisationData implements IOrgan
 		services = new ArrayList<>();
 		this.verified = false;
 		this.score = 0;
-		this.primary = false;
+		this.principal = false;
 	}
 
 	public ChuruataOrganisationData( LatLng location ){
 		super( location );
 		this.verified = false;
 		this.score = 0;
-		this.primary = false;
+		this.principal = false;
 		services = new ArrayList<>();
 	}
 
@@ -88,7 +91,7 @@ public class ChuruataOrganisationData extends OrganisationData implements IOrgan
 		this( location );
 		this.verified = false;
 		this.score = 0;
-		this.primary = false;
+		this.principal = false;
 	}
 
 	public ChuruataOrganisationData( IOrganisation organisation ){
@@ -101,7 +104,7 @@ public class ChuruataOrganisationData extends OrganisationData implements IOrgan
 		this.type = organisation.getType();
 		this.verified = organisation.isVerified();
 		this.score = organisation.getScore();
-		this.primary = organisation.isPrimary();
+		this.principal = organisation.isPrincipal();
 		services = new ArrayList<>();
 		for( IChuruataService service: organisation.getServices())
 			services.add( new ServiceData( service ));
@@ -135,12 +138,12 @@ public class ChuruataOrganisationData extends OrganisationData implements IOrgan
 	}
 
 	@Override
-	public boolean isPrimary() {
-		return primary;
+	public boolean isPrincipal() {
+		return principal;
 	}
 
-	public void setPrimary(boolean primary) {
-		this.primary = primary;
+	public void setPrincipal(boolean primary) {
+		this.principal = primary;
 	}
 
 	public void clearServices(){
@@ -164,25 +167,38 @@ public class ChuruataOrganisationData extends OrganisationData implements IOrgan
 
 	@Override
 	public void setServices(IChuruataService[] services) {
-		// TODO Auto-generated method stub
-		
+		this.services.clear();
+		if( Utils.assertNull(services))
+			return;
+		for( IChuruataService cs: services )
+			this.services.add( (ServiceData) cs );
 	}
 
 	@Override
-	public void removeService(IChuruataService service) {
-		// TODO Auto-generated method stub
-		
+	public boolean removeService(IChuruataService service) {
+		return this.services.remove(service);
 	}
 
 	@Override
 	public void removeService(String type, String value) {
-		// TODO Auto-generated method stub
-		
+		Collection<IChuruataService> temp = new ArrayList<>( this.services );
+		temp.forEach( s-> {
+			if( s.getService().name().equals(type) && s.getDescription().equals(value))
+				this.services.remove(s);
+		});
 	}
 
 	@Override
-	public void removeService(long serviceId) {
-		// TODO Auto-generated method stub		
+	public boolean removeService(long serviceId) {
+		boolean result = false;
+		Collection<IChuruataService> temp = new ArrayList<>( this.services );
+		for( IChuruataService s: temp ){
+			if( s.getId() == serviceId ) {
+				this.services.remove(s);
+				result = true;
+			}
+		}
+		return result;
 	}
 
 	@Override

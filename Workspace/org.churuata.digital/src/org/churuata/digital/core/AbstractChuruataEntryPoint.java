@@ -10,7 +10,10 @@ import javax.servlet.http.HttpSession;
 
 import org.churuata.digital.session.SessionStore;
 import org.condast.commons.authentication.http.IDomainProvider;
+import org.condast.commons.authentication.user.ILoginUser;
 import org.condast.commons.ui.entry.IDataEntryPoint;
+import org.condast.commons.ui.session.AbstractSessionHandler;
+import org.condast.commons.ui.session.SessionEvent;
 import org.eclipse.rap.rwt.RWT;
 import org.eclipse.rap.rwt.application.AbstractEntryPoint;
 import org.eclipse.swt.SWT;
@@ -35,7 +38,9 @@ public abstract class AbstractChuruataEntryPoint<D extends Object> extends Abstr
 
 	private ScheduledExecutorService timer;
 	private int startTime, rate;
-	
+
+	private SessionHandler session;
+
 	protected AbstractChuruataEntryPoint() {
 		this( DEFAULT_SCHEDULE, DEFAULT_SCHEDULE);
 	}
@@ -54,10 +59,10 @@ public abstract class AbstractChuruataEntryPoint<D extends Object> extends Abstr
 	@Override
 	public void setData( SessionStore<D> store) {
 		this.store = store;
-		HttpSession session = RWT.getUISession().getHttpSession();
+		HttpSession hsession = RWT.getUISession().getHttpSession();
 		if( this.store != null )
-			session.setAttribute(IDomainProvider.Attributes.TOKEN.name(), store.getToken());
-		session.setMaxInactiveInterval(DEFAULT_SESSION_TIMEOUT);
+			hsession.setAttribute(IDomainProvider.Attributes.TOKEN.name(), store.getToken());
+		hsession.setMaxInactiveInterval(DEFAULT_SESSION_TIMEOUT);
 	}
 
 	/**
@@ -79,16 +84,26 @@ public abstract class AbstractChuruataEntryPoint<D extends Object> extends Abstr
 		return new Locale( "nl", "NL" );
 	}
 
-	protected abstract boolean prepare( Composite parent );
+	protected boolean prepare(Composite parent) {
+		SessionStore<D> store = createSessionStore();
+		if( store == null )
+			return false;
+		this.store = store;
+		return onPrepare(store);
+	}
+
+	protected abstract SessionStore<D> createSessionStore();
+
+	protected boolean onPrepare( SessionStore<D> store ) {
+		ILoginUser user = store.getLoginUser();
+		return ( user != null );
+	}
 
 	protected abstract Composite createComposite( Composite parent  );
 
-	protected void handleTimer() {
-		/* default nothing */
-	}
-
 	protected boolean postProcess( Composite parent ) {
 		RWT.getUISession().getHttpSession().setMaxInactiveInterval( DEFAULT_SESSION_TIMEOUT);
+		session = new SessionHandler( parent.getDisplay());
 		return true;
 	}
 
@@ -98,13 +113,6 @@ public abstract class AbstractChuruataEntryPoint<D extends Object> extends Abstr
 
 	protected void setMessage(String message) {
 		this.message = message;
-	}
-
-	protected void createTimer( boolean create, int nrOfThreads, TimeUnit unit, int startTime, int rate ) {
-		if(!create)
-			return;
-		timer = Executors.newScheduledThreadPool(nrOfThreads);
-		timer.scheduleAtFixedRate(()->handleTimer(), startTime, rate, unit);
 	}
 
 	@Override
@@ -139,6 +147,25 @@ public abstract class AbstractChuruataEntryPoint<D extends Object> extends Abstr
 		}
 	}
 
+	protected void createTimer( boolean create, int nrOfThreads, TimeUnit unit, int startTime, int rate ) {
+		if(!create)
+			return;
+		timer = Executors.newScheduledThreadPool(nrOfThreads);
+		timer.scheduleAtFixedRate(()->handleTimer(), startTime, rate, unit);
+	}
+
+	protected void activateSession( SessionStore<D> store ) {
+		this.session.addData(store);
+	}
+	
+	protected void handleTimer() {
+		session.addData(this.store);
+	}
+
+	protected void onHandleSyncTimer( SessionEvent<SessionStore<D>> sevent) {
+		//DEFAULT NOTHING
+	}
+
 	protected void stopTimer() {
 		this.timer.shutdown();
 	}
@@ -167,6 +194,18 @@ public abstract class AbstractChuruataEntryPoint<D extends Object> extends Abstr
 		}
 	}
 
+	private class SessionHandler extends AbstractSessionHandler<SessionStore<D>>{
+
+		protected SessionHandler(Display display) {
+			super(display);
+		}
+	
+		@Override
+		protected void onHandleSession(SessionEvent<SessionStore<D>> sevent) {
+			onHandleSyncTimer(sevent);
+		}
+	}
+	
 	private class RWTUiSessionHandler extends org.condast.commons.ui.rwt.AbstractRWTSessionSupport{
 
 		public RWTUiSessionHandler(Display display) {

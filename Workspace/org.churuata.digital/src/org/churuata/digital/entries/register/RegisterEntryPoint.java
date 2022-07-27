@@ -20,7 +20,6 @@ import org.condast.commons.na.data.PersonData;
 import org.condast.commons.na.data.ProfileData;
 import org.condast.commons.na.model.IContact;
 import org.condast.commons.na.profile.IProfileData;
-import org.condast.commons.strings.StringUtils;
 import org.condast.commons.ui.controller.EditEvent;
 import org.condast.commons.ui.controller.IEditListener;
 import org.condast.commons.ui.na.person.ContactPersonComposite;
@@ -49,24 +48,11 @@ public class RegisterEntryPoint extends AbstractWizardEntryPoint<ContactPersonCo
 	private Logger logger = Logger.getLogger(this.getClass().getName());
 
 	@Override
-	protected boolean prepare(Composite parent) {
-		boolean result = super.prepare(parent);
-		if( result )
-			return result;
+	protected SessionStore<ChuruataOrganisationData> createSessionStore() {
 		StartupParameters service = RWT.getClient().getService( StartupParameters.class );
-		String tokenStr = service.getParameter(IDomainProvider.Attributes.TOKEN.toAttribute());
-		if( !StringUtils.isEmpty(tokenStr))
-			return false;
-		IDomainProvider<SessionStore<ChuruataOrganisationData>> provider = Dispatcher.createDomain();
-		setData( provider.getData());
-		return true;
+		IDomainProvider<SessionStore<ChuruataOrganisationData>> domain = Dispatcher.getDomainProvider( service );
+		return ( domain == null )? null: domain.getData();
 	}
-	
-	@Override
-	protected IDomainProvider<SessionStore<ChuruataOrganisationData>> getDomainProvider(StartupParameters service) {
-		return Dispatcher.getDomainProvider(service);
-	}
-
 	
 	@Override
 	protected void onButtonPressed(ChuruataOrganisationData data, SessionStore<ChuruataOrganisationData> store) {

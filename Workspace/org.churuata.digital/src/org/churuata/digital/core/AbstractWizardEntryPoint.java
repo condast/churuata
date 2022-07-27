@@ -3,13 +3,10 @@ package org.churuata.digital.core;
 import java.util.concurrent.TimeUnit;
 
 import org.churuata.digital.session.SessionStore;
-import org.condast.commons.authentication.http.IDomainProvider;
 import org.condast.commons.config.Config;
 import org.condast.commons.ui.player.PlayerImages;
-import org.condast.commons.ui.session.AbstractSessionHandler;
 import org.condast.commons.ui.session.SessionEvent;
 import org.eclipse.rap.rwt.RWT;
-import org.eclipse.rap.rwt.client.service.StartupParameters;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -17,7 +14,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 
 public abstract class AbstractWizardEntryPoint<C extends Composite, D extends Object> extends AbstractChuruataEntryPoint<D> {
@@ -26,15 +22,10 @@ public abstract class AbstractWizardEntryPoint<C extends Composite, D extends Ob
 	private C composite;
 	private Button btnNext;
 
-	private SessionHandler handler;
-	
 	private D data = null;
 	
 	private boolean includeButton;
 
-	protected abstract IDomainProvider<SessionStore<D>> getDomainProvider( StartupParameters service );
-
-	
 	public AbstractWizardEntryPoint() {
 		this(true);
 	}
@@ -44,20 +35,6 @@ public abstract class AbstractWizardEntryPoint<C extends Composite, D extends Ob
 		this.includeButton = includeButton;
 	}
 	
-	@Override
-	protected boolean prepare(org.eclipse.swt.widgets.Composite parent) {
-		handler = new SessionHandler( parent.getDisplay());
-		StartupParameters service = RWT.getClient().getService( StartupParameters.class );
-		IDomainProvider<SessionStore<D>> domain = getDomainProvider( service );
-		if( domain == null )
-			return false;
-		SessionStore<D> store = domain.getData();
-		if( store == null )
-			return false;
-		setData(store);
-		return true;
-	}
-
 	protected abstract C onCreateComposite( Composite parent, int style );
 
 	protected abstract void onButtonPressed( D data, SessionStore<D> store );
@@ -122,29 +99,11 @@ public abstract class AbstractWizardEntryPoint<C extends Composite, D extends Ob
 
 	protected abstract void onHandleTimer( SessionEvent<D> event );
 
-	@Override
-	protected void handleTimer() {
-		SessionStore<D> store = getSessionStore();
-		handler.addData( store.getData());
-		super.handleTimer();
-	}
 
 	@Override
 	protected boolean handleSessionTimeout(boolean reload) {
 		SessionStore<D> store = super.getSessionStore();
 		store.setLoginUser(null);
 		return super.handleSessionTimeout(reload);
-	}
-
-	private class SessionHandler extends AbstractSessionHandler<D>{
-
-		protected SessionHandler(Display display) {
-			super(display);
-		}
-
-		@Override
-		protected void onHandleSession(SessionEvent<D> sevent) {
-			onHandleTimer(sevent);
-		}
 	}
 }

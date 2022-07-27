@@ -6,8 +6,8 @@ package org.churuata.digital.organisation.model;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
-import org.condast.commons.Utils;
 import org.condast.commons.na.model.IName;
+import org.condast.commons.strings.StringUtils;
 
 /**
  * @author roel
@@ -116,17 +116,17 @@ public class Name implements Comparable<IName>, IName {
 	@Override
 	public String toString() {
 		StringBuffer s = new StringBuffer();
-		if (!Utils.assertNull( firstName)) {
+		if (!StringUtils.isEmpty( firstName)) {
 			s.append(firstName.trim());
 		}
-		if (!Utils.assertNull( callingName)) {
+		if (!StringUtils.isEmpty( callingName)) {
 			s.append( " (" + callingName.trim() + ")");
 		}
-		if (!Utils.assertNull(prefix)) {
+		if (!StringUtils.isEmpty(prefix)) {
 			s.append(" ");
 			s.append(prefix.trim());
 		}
-		if (!Utils.assertNull(surname)) {
+		if (!StringUtils.isEmpty(surname)) {
 			s.append(" ");
 			s.append(surname.trim());
 		}

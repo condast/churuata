@@ -202,7 +202,7 @@ public class Organisation implements IOrganisation, Serializable, Cloneable {
 		this.score = score;
 	}
 
-	public boolean isPrimary() {
+	public boolean isPrincipal() {
 		return principal;
 	}
 
@@ -238,17 +238,21 @@ public class Organisation implements IOrganisation, Serializable, Cloneable {
 	}
 
 	@Override
-	public void removeService( IChuruataService contact) {
-		this.services.remove( contact );
+	public boolean removeService( IChuruataService contact) {
+		return this.services.remove( contact );
 	}
 
 	@Override
-	public void removeService( long serviceId) {
+	public boolean removeService( long serviceId) {
+		boolean result = false;
 		Collection<IChuruataService> temp = new ArrayList<>( this.services );
-		temp.forEach( s-> {
-			if( s.getId() == serviceId )
+		for( IChuruataService s: temp ){
+			if( s.getId() == serviceId ) {
 				this.services.remove(s);
-		});
+				result = true;
+			}
+		}
+		return result;
 	}
 
 	@Override

@@ -10,7 +10,6 @@ import org.churuata.digital.session.SessionStore;
 import org.churuata.digital.ui.image.ChuruataImages;
 import org.churuata.digital.ui.map.OrganisationMapBrowser;
 import org.condast.commons.authentication.http.IDomainProvider;
-import org.condast.commons.authentication.user.ILoginUser;
 import org.condast.commons.config.Config;
 import org.condast.commons.data.latlng.LatLng;
 import org.condast.commons.strings.StringUtils;
@@ -56,27 +55,18 @@ public class ActiveEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrganis
 	}
 
 	@Override
-	protected boolean prepare(Composite parent) {
+	protected SessionStore<ChuruataOrganisationData> createSessionStore() {
 		StartupParameters service = RWT.getClient().getService( StartupParameters.class );
 		String tokenstr = service.getParameter( IDomainProvider.Attributes.TOKEN.name().toLowerCase());
 		if(StringUtils.isEmpty(tokenstr)) 
-			return false;
+			return null;
 		
 		long token = Long.parseLong(tokenstr);
 		Dispatcher dispatcher = Dispatcher.getInstance();
 		IDomainProvider<SessionStore<ChuruataOrganisationData>> provider = dispatcher.getDomain(token );
-		if( provider == null )
-			return false;
-
-		SessionStore<ChuruataOrganisationData> store = provider.getData();
-		if( store == null )
-			return false;
-		store.setToken(token);
-		setData(store);
-		ILoginUser user = store.getLoginUser();
-		return ( user != null );
+		return ( provider == null )? null: provider.getData();
 	}
-	
+
 	@Override
 	protected Composite createComposite(Composite parent) {
 		GridLayout layout = new GridLayout(1,true);
@@ -156,6 +146,7 @@ public class ActiveEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrganis
 
 	@Override
 	protected boolean postProcess(Composite parent) {
+		super.postProcess(parent);
 		Config config = Config.getInstance();
 		mapComposite.setInput(config.getServerContext());
 

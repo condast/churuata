@@ -14,6 +14,7 @@ import org.condast.commons.ui.controller.EditEvent;
 import org.condast.commons.ui.controller.EditEvent.EditTypes;
 import org.condast.commons.ui.controller.IEditListener;
 import org.condast.commons.ui.swt.InputField;
+import org.condast.commons.ui.table.AbstractTableViewerWithDelete.Buttons;
 import org.eclipse.rap.rwt.RWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -165,7 +166,14 @@ public class OrganisationComposite extends AbstractEntityComposite<ChuruataOrgan
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				try {
-					notifyInputEdited( new EditEvent<ChuruataOrganisationData>( this, EditTypes.ADDED, getInput()));
+					Buttons button = (Buttons) e.widget.getData();
+					switch( button ) {
+					case ADD:
+						notifyInputEdited( new EditEvent<ChuruataOrganisationData>( this, EditTypes.ADDED, getInput()));
+						break;
+					default:
+						break;
+					}
 					super.widgetSelected(e);
 				} catch (Exception e1) {
 					e1.printStackTrace();

@@ -136,7 +136,7 @@ public class OrganisationResource{
 			Person person = ps.find( personId); 
 			if( person == null )
 				return Response.status( Status.NOT_FOUND).build();
-			od.setPrimary(true);
+			od.setPrincipal(true);
 			Organisation org = os.create(person, od);
 			od = new ChuruataOrganisationData(org);
 			String str = gson.toJson(od, ChuruataOrganisationData.class);
@@ -301,6 +301,40 @@ public class OrganisationResource{
 		}
 	}
 
+	@PUT
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/update")
+	public Response updateOrganisation( @QueryParam("user-id") long userId, @QueryParam("security") long security,
+			@QueryParam("organisation-id") long organisationId, String data) {
+
+		AuthenticationDispatcher dispatcher=  AuthenticationDispatcher.getInstance();
+		if( !dispatcher.isLoggedIn(userId, security))
+			return Response.status( Status.UNAUTHORIZED).build();
+
+		if( StringUtils.isEmpty(data)) 
+			return Response.status( Status.NO_CONTENT ).build();
+		
+		Gson gson = new Gson();
+		ChuruataOrganisationData od = gson.fromJson(data, ChuruataOrganisationData.class);
+		TransactionManager t = new TransactionManager( Dispatcher.getInstance() );
+		try {
+			t.open();
+			OrganisationService os = new OrganisationService(); 
+			Organisation org = os.update(od);
+			if( org == null )
+				return Response.noContent().build();
+			String str = gson.toJson( new ChuruataOrganisationData( org ), ChuruataOrganisationData.class);
+			return Response.ok( str ).build();
+		}
+		catch( Exception ex ) {
+			ex.printStackTrace();
+			return Response.serverError().build();
+		}
+		finally {
+			t.close();
+		}
+	}
+
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/add-service")
@@ -401,6 +435,42 @@ public class OrganisationResource{
 				return Response.noContent().build();
 			organisation.removeService( serviceId);
 			Gson gson = new Gson();
+			String str = gson.toJson( new ChuruataOrganisationData( organisation ), ChuruataOrganisationData.class);
+			return Response.ok( str ).build();
+		}
+		catch( Exception ex ) {
+			ex.printStackTrace();
+			return Response.serverError().build();
+		}
+		finally {
+			t.close();
+		}
+	}
+
+	@DELETE
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/remove-services")
+	public Response removeServices( @QueryParam("user-id") long userId, @QueryParam("security") long security,
+			@QueryParam("organisation-id") long organisationId, String data) {
+
+		AuthenticationDispatcher dispatcher=  AuthenticationDispatcher.getInstance();
+		if( !dispatcher.isLoggedIn(userId, security))
+			return Response.status( Status.UNAUTHORIZED).build();
+
+		if( StringUtils.isEmpty(data)) 
+			return Response.status( Status.NO_CONTENT ).build();
+		
+		Gson gson = new Gson();
+		long[] ids = gson.fromJson(data, long[].class);
+		TransactionManager t = new TransactionManager( Dispatcher.getInstance() );
+		try {
+			t.open();
+			OrganisationService os = new OrganisationService(); 
+			Organisation organisation = os.find( organisationId );
+			if( organisation == null )
+				return Response.noContent().build();
+			os.removeServices( organisation, ids );
+			os.update(organisation);
 			String str = gson.toJson( new ChuruataOrganisationData( organisation ), ChuruataOrganisationData.class);
 			return Response.ok( str ).build();
 		}

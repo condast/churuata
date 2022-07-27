@@ -9,9 +9,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
-import org.condast.commons.Utils;
 import org.condast.commons.data.latlng.LatLng;
 import org.condast.commons.na.model.IAddress;
+import org.condast.commons.strings.StringUtils;
 
 /**
  * The persistent class for the alg_tb_adres database table.
@@ -141,7 +141,7 @@ public class Address implements IAddress, Serializable {
 	}
 
 	protected boolean hasText( String text ){
-		return Utils.assertNull( text );
+		return StringUtils.isEmpty( text );
 	}
 	
 	@Override

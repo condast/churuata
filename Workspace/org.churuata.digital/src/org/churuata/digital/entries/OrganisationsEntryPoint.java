@@ -18,6 +18,7 @@ import org.churuata.digital.session.SessionStore;
 import org.churuata.digital.ui.organisation.OrganisationsTableViewer;
 import org.condast.commons.Utils;
 import org.condast.commons.authentication.http.IDomainProvider;
+import org.condast.commons.authentication.user.ILoginUser;
 import org.condast.commons.config.Config;
 import org.condast.commons.messaging.http.AbstractHttpRequest;
 import org.condast.commons.messaging.http.ResponseEvent;
@@ -26,15 +27,14 @@ import org.condast.commons.na.data.PersonData;
 import org.condast.commons.na.profile.IProfileData;
 import org.condast.commons.ui.controller.EditEvent;
 import org.condast.commons.ui.controller.IEditListener;
-import org.condast.commons.ui.session.AbstractSessionHandler;
-import org.condast.commons.ui.session.SessionEvent;
+import org.condast.commons.ui.messaging.jump.JumpController;
+import org.condast.commons.ui.messaging.jump.JumpEvent;
 import org.eclipse.rap.rwt.RWT;
 import org.eclipse.rap.rwt.client.service.StartupParameters;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 
 import com.google.gson.Gson;
@@ -45,7 +45,6 @@ public class OrganisationsEntryPoint extends AbstractChuruataEntryPoint<Churuata
 	private static final long serialVersionUID = 1L;
 
 	private OrganisationsTableViewer tableViewer;
-	private SessionHandler handler;
 	
 	private WebController controller;
 
@@ -54,19 +53,19 @@ public class OrganisationsEntryPoint extends AbstractChuruataEntryPoint<Churuata
 	private Logger logger = Logger.getLogger(this.getClass().getName());
 
 	@Override
-	protected boolean prepare(Composite parent) {
+	protected SessionStore<ChuruataOrganisationData> createSessionStore() {
 		StartupParameters service = RWT.getClient().getService( StartupParameters.class );
 		IDomainProvider<SessionStore<ChuruataOrganisationData>> domain = Dispatcher.getDomainProvider( service );
-		if( domain == null )
+		return ( domain == null )? null: domain.getData();
+	}
+
+	@Override
+	protected boolean prepare(Composite parent) {
+		if( !super.prepare(parent))
 			return false;
-		SessionStore<ChuruataOrganisationData> store = domain.getData();
-		if( store == null )
-			return false;
-		if(( store.getProfile()  == null )  && ( store.getData()  == null ))
-			return false;
-		setData(store);
-		handler = new SessionHandler( parent.getDisplay());
-		return true;
+		SessionStore<ChuruataOrganisationData> store = super.getSessionStore();
+		ILoginUser user = store.getLoginUser();
+		return ( user != null );
 	}
 
 	@Override
@@ -86,8 +85,7 @@ public class OrganisationsEntryPoint extends AbstractChuruataEntryPoint<Churuata
 	protected boolean postProcess(Composite parent) {
 		Config config = Config.getInstance();
 		String context = config.getServerContext();
-		controller = new WebController();
-		controller.setInput(context, IRestPages.Pages.ORGANISATION.toPath());
+		controller = new WebController( context, IRestPages.Pages.ORGANISATION);
 		this.tableViewer.addEditListener(listener);
 		SessionStore<ChuruataOrganisationData> store = super.getSessionStore();
 		IProfileData profile = store.getProfile();
@@ -109,21 +107,16 @@ public class OrganisationsEntryPoint extends AbstractChuruataEntryPoint<Churuata
 		switch( event.getType()) {
 		case SELECTED:
 			store.setData( organisation);
-			controller.page = Pages.SERVICES;
-			jump( person.getId(), organisation, Pages.ORGANISATION);			
+			if( organisation.getId() <= 0 ) 
+				controller.register(person.getId(), organisation);
+			else {
+				JumpController<ChuruataOrganisationData> jc = new JumpController<>();
+				jc.jump( new JumpEvent<ChuruataOrganisationData>( this, store.getToken(), Pages.ORGANISATION.toPath(), JumpController.Operations.UPDATE, organisation));			
+			}
 			break;
 		default:
 			break;
 		}
-	}
-
-	protected void jump( long personId, ChuruataOrganisationData organisation, Pages page ) {
-		SessionStore<ChuruataOrganisationData> store = super.getSessionStore();
-		if( organisation.getId() <= 0 ) { 
-			controller.register(personId, organisation);
-		}
-		else
-			Dispatcher.jump( page, store.getToken());		
 	}
 	
 	@Override
@@ -132,39 +125,15 @@ public class OrganisationsEntryPoint extends AbstractChuruataEntryPoint<Churuata
 	}
 
 	@Override
-	protected void handleTimer() {
-		handler.addData(getSessionStore());
-		super.handleTimer();
-	}
-
-	@Override
 	public void close() {
 		this.tableViewer.removeEditListener(listener);
 		super.close();
 	}
 	
-	private class SessionHandler extends AbstractSessionHandler<SessionStore<ChuruataOrganisationData>>{
-
-		protected SessionHandler(Display display) {
-			super(display);
-		}
-
-		@Override
-		protected void onHandleSession(SessionEvent<SessionStore<ChuruataOrganisationData>> sevent) {
-			/* NOTHING */
-		}
-	}
-	
 	private class WebController extends AbstractHttpRequest<ChuruataOrganisationData.Requests>{
 		
-		private Pages page;
-		
-		public WebController() {
-			super();
-		}
-
-		public void setInput(String context, String path) {
-			super.setContextPath(context + path);
+		public WebController( String context, IRestPages.Pages page) {
+			super( context, page.toPath());
 		}
 
 		public void register( long personId, ChuruataOrganisationData organisation ) {
@@ -188,16 +157,8 @@ public class OrganisationsEntryPoint extends AbstractChuruataEntryPoint<Churuata
 				case REGISTER:
 					ChuruataOrganisationData data = gson.fromJson(event.getResponse(), ChuruataOrganisationData.class);
 					store.setData(data);
-					switch( page ) {
-					case ORGANISATION:
-						Dispatcher.jump( Pages.LOCATION, store.getToken());
-						break;
-					case SERVICES:
-						Dispatcher.jump( page, store.getToken());
-						break;
-					default:
-						break;
-					}
+					JumpController<ChuruataOrganisationData> jc = new JumpController<>();
+					jc.jump( new JumpEvent<ChuruataOrganisationData>( this, store.getToken(), Pages.SERVICES.toPath(), JumpController.Operations.UPDATE, data));			
 					break;
 				default:
 					break;

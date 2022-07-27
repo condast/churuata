@@ -87,14 +87,10 @@ public class ShowLegalEntryPoint extends AbstractWizardEntryPoint<Browser, Churu
 	private String privacyPath;
 
 	@Override
-	protected IDomainProvider<SessionStore<ChuruataOrganisationData>> getDomainProvider(StartupParameters service) {
-		return Dispatcher.getDomainProvider(service);
-	}
-	
-	@Override
-	protected boolean prepare(Composite parent) {
-		super.prepare(parent);
-		return true;
+	protected SessionStore<ChuruataOrganisationData> createSessionStore() {
+		StartupParameters service = RWT.getClient().getService( StartupParameters.class );
+		IDomainProvider<SessionStore<ChuruataOrganisationData>> domain = Dispatcher.getDomainProvider( service );
+		return ( domain == null )? null: domain.getData();
 	}
 
 	@Override

@@ -54,9 +54,10 @@ public class AdminEntryPoint extends AbstractWizardEntryPoint<AdminTableViewer, 
 
 	@SuppressWarnings("unchecked")
 	@Override
-	protected IDomainProvider<SessionStore<LoginData>> getDomainProvider(StartupParameters service) {
-		IDomainProvider<?> domain = Dispatcher.getDomainProvider(service);
-		return (IDomainProvider<SessionStore<LoginData>>) domain;
+	protected SessionStore<LoginData> createSessionStore() {
+		StartupParameters service = RWT.getClient().getService( StartupParameters.class );
+		IDomainProvider<?> domain = Dispatcher.getDomainProvider( service );
+		return ( domain == null )? null: (SessionStore<LoginData>) domain.getData();
 	}
 
 	@Override

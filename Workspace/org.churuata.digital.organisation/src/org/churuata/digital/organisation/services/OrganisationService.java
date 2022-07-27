@@ -73,6 +73,27 @@ public class OrganisationService extends AbstractEntityService<Organisation>{
 		return o;
 	}
 
+	/**
+	 * Update the simple fields
+	 * @param od
+	 * @return
+	 */
+	public Organisation update(ChuruataOrganisationData od) {
+		Organisation o = find( od.getId() );
+		if( o== null )
+			return null;
+		o.setName( od.getName());
+		o.setDescription( od.getDescription());
+		o.setType(od.getType());
+		o.setWebsite(od.getWebsite());
+		
+		o.setPrimary( od.isPrincipal());
+		o.setScore(od.getScore());
+		o.setVerified(od.isVerified());
+//		update(o);
+		return o;
+	}
+
 	public Collection<Organisation> getAll( IContactPerson person ) {
 		TypedQuery<Organisation> query = super.getTypedQuery( S_QUERY_GET_ALL );
 		query.setParameter("personid", person.getContactId());
@@ -100,7 +121,17 @@ public class OrganisationService extends AbstractEntityService<Organisation>{
 		List<Organisation> organisations = query.getResultList();
 		return new ArrayList<IOrganisation>( organisations );
 	}	
-	
+
+	public boolean removeServices(Organisation organisation, long[] ids) {
+		boolean result = false;
+		if( Utils.assertNull(organisation.getServices()) || Utils.assertNull(ids))
+			return result;
+		for( long id: ids )
+			result &= organisation.removeService(id);
+		return result;
+		
+	}
+
 	public static ChuruataOrganisationData[] toOrganisationData( Collection<IOrganisation> input ){
 		Collection<ChuruataOrganisationData> results = new ArrayList<>();
 		if( Utils.assertNull(input))

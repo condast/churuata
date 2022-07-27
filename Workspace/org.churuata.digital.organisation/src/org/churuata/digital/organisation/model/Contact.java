@@ -7,8 +7,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
-import org.condast.commons.Utils;
 import org.condast.commons.na.model.IContact;
+import org.condast.commons.strings.StringUtils;
 
 @Entity
 public class Contact implements IContact, Serializable {
@@ -40,7 +40,7 @@ public class Contact implements IContact, Serializable {
 
 	@Override
 	public ContactTypes getContactType() {
-		if( Utils.assertNull( this.contactType ))
+		if( StringUtils.isEmpty( this.contactType ))
 			return ContactTypes.UNKNOWN;
 		return ContactTypes.valueOf(this.contactType);
 	}

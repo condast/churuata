@@ -61,17 +61,10 @@ public class AddServicesEntryPoint extends AbstractChuruataEntryPoint<ChuruataOr
 	private Logger logger = Logger.getLogger(this.getClass().getName());
 
 	@Override
-	protected boolean prepare(Composite parent) {
+	protected SessionStore<ChuruataOrganisationData> createSessionStore() {
 		StartupParameters service = RWT.getClient().getService( StartupParameters.class );
 		IDomainProvider<SessionStore<ChuruataOrganisationData>> domain = Dispatcher.getDomainProvider( service );
-		if( domain == null )
-			return false;
-		SessionStore<ChuruataOrganisationData> store = domain.getData();
-		if( store == null )
-			return false;
-		setData(store);
-		handler = new SessionHandler( parent.getDisplay());
-		return true;
+		return ( domain == null )? null: domain.getData();
 	}
 
 	@Override
@@ -115,6 +108,8 @@ public class AddServicesEntryPoint extends AbstractChuruataEntryPoint<ChuruataOr
 
 	@Override
 	protected boolean postProcess(Composite parent) {
+		if( !super.postProcess(parent))
+			return false;
 		Config config = Config.getInstance();
 		String context = config.getServerContext();
 		controller = new WebController( context, IRestPages.Pages.CONTACT.toPath());

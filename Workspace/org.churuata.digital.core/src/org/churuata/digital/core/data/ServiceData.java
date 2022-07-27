@@ -1,11 +1,13 @@
 package org.churuata.digital.core.data;
 
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 
 import org.churuata.digital.core.location.IChuruataService;
 import org.condast.commons.Utils;
 import org.condast.commons.strings.StringStyler;
+import org.condast.commons.strings.StringUtils;
 
 public class ServiceData implements IChuruataService {
 
@@ -77,7 +79,7 @@ public class ServiceData implements IChuruataService {
 
 	@Override
 	public IChuruataService.Services getService() {
-		if( Utils.assertNull( this.serviceType ))
+		if( StringUtils.isEmpty( this.serviceType ))
 			return IChuruataService.Services.UNKNOWN;
 		return IChuruataService.Services.valueOf(this.serviceType);
 	}
@@ -127,6 +129,17 @@ public class ServiceData implements IChuruataService {
 		buffer.append(": ");
 		buffer.append( this.contribution );
 		return buffer.toString();
+	}
+
+	public static long[] getIds( Collection<IChuruataService> batch ) {
+		int size = Utils.assertNull(batch)?0:batch.size();
+		long[] results = new long[size];
+		if( size == 0)
+			return results;
+		int i=0;
+		for( IChuruataService data: batch) 
+			results[i++] = data.getId();
+		return results;
 	}
 
 }

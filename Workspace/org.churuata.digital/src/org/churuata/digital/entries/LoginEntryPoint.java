@@ -25,13 +25,11 @@ import org.condast.commons.messaging.http.AbstractHttpRequest;
 import org.condast.commons.messaging.http.ResponseEvent;
 import org.condast.commons.ui.controller.EditEvent;
 import org.condast.commons.ui.controller.IEditListener;
-import org.condast.commons.ui.session.AbstractSessionHandler;
 import org.condast.commons.ui.session.SessionEvent;
 import org.condast.commons.ui.utils.RWTUtils;
 import org.eclipse.rap.rwt.RWT;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 
 public class LoginEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrganisationData>{
 	private static final long serialVersionUID = 1L;
@@ -47,7 +45,6 @@ public class LoginEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrganisa
 	private Logger logger = Logger.getLogger( this.getClass().getName());
 	
 	private AuthenticationController controller;
-	private SessionHandler handler;
 	
 	@Override
 	protected Composite createComposite(Composite parent) {
@@ -63,8 +60,12 @@ public class LoginEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrganisa
 	}
 
 	@Override
+	protected SessionStore<ChuruataOrganisationData> createSessionStore() {
+		return null;//Not needed here
+	}
+
+	@Override
 	protected boolean prepare(Composite parent) {
-		handler = new SessionHandler( parent.getDisplay());
 		setData(null);
 		Config config = Config.getInstance();
 		String context = config.getServerContext();
@@ -76,11 +77,12 @@ public class LoginEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrganisa
 	protected void createTimer(boolean create, int nrOfThreads, TimeUnit unit, int startTime, int rate) {
 		super.createTimer(true, nrOfThreads, unit, startTime, rate);
 	}
+
 	
 	@Override
-	protected void handleTimer() {
-		handler.addData(getSessionStore());
-		super.handleTimer();
+	protected void onHandleSyncTimer(SessionEvent<SessionStore<ChuruataOrganisationData>> sevent) {
+		group.refresh();
+		super.onHandleSyncTimer(sevent);
 	}
 
 	private void onEditEvent(EditEvent<LoginData> e) {
@@ -114,18 +116,6 @@ public class LoginEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrganisa
 		store.clear();
 		Dispatcher.redirect( BasicApplication.S_CHURUATA, getToken());
 		return true;
-	}
-
-	private class SessionHandler extends AbstractSessionHandler<SessionStore<ChuruataOrganisationData>>{
-
-		protected SessionHandler(Display display) {
-			super(display);
-		}
-
-		@Override
-		protected void onHandleSession(SessionEvent<SessionStore<ChuruataOrganisationData>> sevent) {
-			group.refresh();
-		}
 	}
 	
 	private class AuthenticationController extends AbstractHttpRequest<LoginData.Requests>{
@@ -162,7 +152,7 @@ public class LoginEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrganisa
 				next += S_TOKEN_ARG + token;
 				logger.info("Redirecting; " + next );
 				Dispatcher.redirect( next, token);
-				handler.addData(getSessionStore());
+				activateSession(getSessionStore());
 				break;
 			default:
 				break;

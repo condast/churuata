@@ -65,17 +65,17 @@ public interface IOrganisation {
 	
 	public int getScore();
 	
-	public boolean isPrimary();
+	public boolean isPrincipal();
 
 	void setServices(IChuruataService[] services);
 
 	int addService(IChuruataService service);
 
-	void removeService(IChuruataService service);
+	boolean removeService(IChuruataService service);
 
 	void removeService(String type, String value);
 
-	void removeService(long serviceId);
+	boolean removeService(long serviceId);
 
 	void clearServices();
 
