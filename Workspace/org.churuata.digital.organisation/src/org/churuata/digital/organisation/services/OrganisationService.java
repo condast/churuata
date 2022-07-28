@@ -7,10 +7,13 @@ import java.util.List;
 import javax.persistence.TypedQuery;
 
 import org.churuata.digital.core.data.ChuruataOrganisationData;
+import org.churuata.digital.core.data.ServiceData;
+import org.churuata.digital.core.location.IChuruataService;
 import org.churuata.digital.core.model.IOrganisation;
 import org.churuata.digital.organisation.core.Dispatcher;
 import org.churuata.digital.organisation.model.Location;
 import org.churuata.digital.organisation.model.Organisation;
+import org.churuata.digital.organisation.model.Service;
 import org.condast.commons.Utils;
 import org.condast.commons.data.latlng.LatLng;
 import org.condast.commons.data.plane.Field;
@@ -70,6 +73,11 @@ public class OrganisationService extends AbstractEntityService<Organisation>{
 
 	public Organisation create( IContactPerson person, ChuruataOrganisationData data ) {
 		Organisation o = new Organisation( person, data );
+		ServicesService ss = new ServicesService();
+		for( IChuruataService serviceData: data.getServices()) {
+			Service service = ss.createService((ServiceData) serviceData);
+			o.addService( service );
+		}
 		super.create(o);
 		return o;
 	}

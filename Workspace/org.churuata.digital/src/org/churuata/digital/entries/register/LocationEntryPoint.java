@@ -20,7 +20,6 @@ import org.condast.commons.messaging.http.AbstractHttpRequest;
 import org.condast.commons.messaging.http.ResponseEvent;
 import org.condast.commons.ui.controller.EditEvent;
 import org.condast.commons.ui.controller.IEditListener;
-import org.condast.commons.ui.session.SessionEvent;
 import org.eclipse.rap.rwt.RWT;
 import org.eclipse.rap.rwt.client.service.StartupParameters;
 import org.eclipse.swt.SWT;
@@ -94,16 +93,6 @@ public class LocationEntryPoint extends AbstractWizardEntryPoint<OrganisationMap
 	@Override
 	protected void onButtonPressed(ChuruataOrganisationData data, SessionStore store) {
 		Dispatcher.jump( Pages.SHOW_LEGAL, store.getToken());
-	}
-
-	
-	@Override
-	protected void onHandleTimer(SessionEvent<ChuruataOrganisationData> event) {
-		try {
-			//mapComposite.refresh(null);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 	}
 
 	@Override

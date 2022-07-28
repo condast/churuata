@@ -29,6 +29,24 @@ public interface IOrganisation {
 		public String toString() {
 			return StringStyler.prettyString( name());
 		}	
+		
+		public static OrganisationTypes getOrganisationType( int index) {
+			for( OrganisationTypes type: values()) {
+				if( type.getIndex() == index )
+					return type;
+			}
+			return OrganisationTypes.UNKNOWN;
+		}
+		
+		public static String[] getItems() {
+			String[] results = new String[ values().length];
+			int i=0;
+			for( OrganisationTypes type: values()) {
+				results[i++] =StringStyler.prettyString( type.name());
+			}
+			return results;
+		}
+
 	}
 
 	public enum Verification{

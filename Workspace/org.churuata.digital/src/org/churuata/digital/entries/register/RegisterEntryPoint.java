@@ -151,9 +151,9 @@ public class RegisterEntryPoint extends AbstractWizardEntryPoint<ContactPersonCo
 			break;
 		}
 	}
-
+	
 	@Override
-	protected void onHandleTimer(SessionEvent<ChuruataOrganisationData> event) {
+	protected void onHandleSyncTimer(SessionEvent<SessionStore> sevent) {
 		try {
 			personComposite.refresh();
 			super.handleTimer();

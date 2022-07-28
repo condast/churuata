@@ -128,12 +128,11 @@ public class UsersEntryPoint extends AbstractWizardEntryPoint<ContactPersonCompo
 			break;
 		}
 	}
-
+	
 	@Override
-	protected void onHandleTimer(SessionEvent<ChuruataOrganisationData> event) {
+	protected void onHandleSyncTimer(SessionEvent<SessionStore> sevent) {
 		try {
 			personComposite.refresh();
-			super.handleTimer();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

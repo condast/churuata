@@ -9,6 +9,7 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Import-Package: org.churuata.digital.core.data,
  org.churuata.digital.core.data.simple,
  org.churuata.digital.core.location,
+ org.churuata.digital.core.model,
  org.churuata.digital.core.rest,
  org.condast.commons,
  org.condast.commons.authentication.core,

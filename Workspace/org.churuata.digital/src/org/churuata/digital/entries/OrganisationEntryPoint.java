@@ -31,7 +31,6 @@ import org.condast.commons.ui.image.IImageProvider.ImageSize;
 import org.condast.commons.ui.messaging.jump.JumpController;
 import org.condast.commons.ui.messaging.jump.JumpEvent;
 import org.condast.commons.ui.messaging.jump.NodeJumpEvent;
-import org.condast.commons.ui.session.SessionEvent;
 import org.eclipse.rap.rwt.RWT;
 import org.eclipse.rap.rwt.client.service.StartupParameters;
 import org.eclipse.swt.SWT;
@@ -120,17 +119,13 @@ public class OrganisationEntryPoint extends AbstractWizardEntryPoint<Organisatio
 		this.organisationComposite.addEditListener(listener);
 		this.organisationComposite.addServiceListener(serviceListener);
 		
-		JumpController<ProfileData> jc = new JumpController<>();
-		JumpEvent<ProfileData> event = jc.getEvent( Pages.ORGANISATION.toPath());		
-		if( event != null ) {
-			store.setProfile(event.getData());
-		}
-
-		if( store.getProfile() != null )
+		if( store.getData() != null ) {
 			this.organisationComposite.setInput( store.getData(), true);
+			Button btnNext = super.getBtnNext();
+			btnNext.setEnabled(this.organisationComposite.checkRequiredFields());
+		}
 		return true;
 	}
-
 
 	@Override
 	protected void onButtonPressed(ChuruataOrganisationData data, SessionStore store) {
@@ -155,11 +150,6 @@ public class OrganisationEntryPoint extends AbstractWizardEntryPoint<Organisatio
 		}
 	}
 
-	@Override
-	protected void onHandleTimer(SessionEvent<ChuruataOrganisationData> event) {
-		// NOTHING		
-	}
-
 	protected void onOrganisationEvent( EditEvent<ChuruataOrganisationData> event ) {
 		SessionStore store = super.getSessionStore();
 		IProfileData person = store.getProfile();
@@ -168,7 +158,7 @@ public class OrganisationEntryPoint extends AbstractWizardEntryPoint<Organisatio
 		organisation.setContact((ContactPersonData) person); 
 		switch( event.getType()) {
 		case ADDED:
-			store.setData( this.organisationComposite.getInput());
+			store.setData( event.getData());
 			JumpController<NodeData<ChuruataOrganisationData, IChuruataService>> jc = new JumpController<>();
 			jc.jump( new NodeJumpEvent<ChuruataOrganisationData,IChuruataService>( this, store.getToken(), Pages.SERVICES.toPath(), JumpController.Operations.CREATE, organisation, null));
 			break;
@@ -287,7 +277,7 @@ public class OrganisationEntryPoint extends AbstractWizardEntryPoint<Organisatio
 				case REMOVE_SERVICES:
 					data = gson.fromJson(event.getResponse(), ChuruataOrganisationData.class);
 					store.setData(data);
-					organisationComposite.setInput(data);
+					organisationComposite.setInput(data, true);
 					break;
 				default:
 					break;

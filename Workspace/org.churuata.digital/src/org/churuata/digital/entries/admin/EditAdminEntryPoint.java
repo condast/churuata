@@ -21,7 +21,6 @@ import org.condast.commons.messaging.http.AbstractHttpRequest;
 import org.condast.commons.messaging.http.ResponseEvent;
 import org.condast.commons.ui.controller.EditEvent;
 import org.condast.commons.ui.controller.IEditListener;
-import org.condast.commons.ui.session.SessionEvent;
 import org.eclipse.rap.rwt.RWT;
 import org.eclipse.rap.rwt.client.service.StartupParameters;
 import org.eclipse.swt.SWT;
@@ -97,16 +96,6 @@ public class EditAdminEntryPoint extends AbstractWizardEntryPoint<AdminWidget, L
 		}
 	}
 
-	@Override
-	protected void onHandleTimer(SessionEvent<LoginData> event) {
-		try {
-			//acceptTableViewer.refresh();
-			super.handleTimer();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-		
 	@Override
 	public void close() {
 		this.adminWidget.removeEditListener(listener);

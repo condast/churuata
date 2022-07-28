@@ -102,13 +102,10 @@ public class Organisation implements IOrganisation, Serializable, Cloneable {
 	
 	public Organisation( ChuruataOrganisationData data ){
 		this();
-		this.contact= (Person) data.getContact();
 		this.services = new ArrayList<Service>();
 		this.type = data.getType().getIndex();
 		this.verified = data.isVerified();
 		this.score = data.getScore();
-		for( IChuruataService service: data.getServices())
-			this.services.add((Service) service);
 		this.createDate = Calendar.getInstance().getTime();
 		this.updateDate = Calendar.getInstance().getTime();
 	}
@@ -134,7 +131,7 @@ public class Organisation implements IOrganisation, Serializable, Cloneable {
 
 	@Override
 	public String getName() {
-		return this.location.getName();
+		return ( this.location == null )? null: this.location.getName();
 	}
 
 	public void setName(String title) {
@@ -143,7 +140,7 @@ public class Organisation implements IOrganisation, Serializable, Cloneable {
 
 	@Override
 	public String getDescription() {
-		return this.location.getDescription();
+		return ( this.location == null )? null: this.location.getDescription();
 	}
 
 	public void setDescription(String description) {

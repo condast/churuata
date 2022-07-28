@@ -28,7 +28,6 @@ import org.condast.commons.ui.controller.IEditListener;
 import org.condast.commons.ui.messaging.jump.JumpController;
 import org.condast.commons.ui.messaging.jump.JumpEvent;
 import org.condast.commons.ui.messaging.jump.NodeJumpEvent;
-import org.condast.commons.ui.session.SessionEvent;
 import org.eclipse.rap.rwt.RWT;
 import org.eclipse.rap.rwt.client.service.StartupParameters;
 import org.eclipse.swt.SWT;
@@ -100,10 +99,10 @@ public class ServicesEntryPoint extends AbstractWizardEntryPoint<ServiceComposit
 		event = (NodeJumpEvent<ChuruataOrganisationData, IChuruataService>) jc.getEvent( Pages.SERVICES.toPath());		
 		if( event != null ) {
 			this.data = event.getChild();
-			this.servicesComposite.setInput(this.data);
+			store.setData(event.getParent());
+			store.setToken(event.getToken());
 		}
-		store.setData(event.getParent());
-		store.setToken(event.getToken());
+		this.servicesComposite.setInput(this.data);
 		return true;
 	}
 
@@ -125,7 +124,6 @@ public class ServicesEntryPoint extends AbstractWizardEntryPoint<ServiceComposit
 					controller.updateService(user, organisation, data);
 				}
 			}
-
 		}
 		catch( Exception ex ){
 			ex.printStackTrace();
@@ -142,11 +140,6 @@ public class ServicesEntryPoint extends AbstractWizardEntryPoint<ServiceComposit
 		default:
 			break;
 		}
-	}
-
-	@Override
-	protected void onHandleTimer(SessionEvent<ChuruataOrganisationData> event) {
-		// TODO Auto-generated method stub		
 	}
 
 	@Override

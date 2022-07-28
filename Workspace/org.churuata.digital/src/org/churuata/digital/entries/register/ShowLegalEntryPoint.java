@@ -16,7 +16,6 @@ import org.condast.commons.legal.LegalUtils.Version;
 import org.condast.commons.na.model.IContactPerson;
 import org.condast.commons.parser.AbstractResourceParser;
 import org.condast.commons.strings.StringStyler;
-import org.condast.commons.ui.session.SessionEvent;
 import org.condast.commons.ui.utils.RWTUtils;
 import org.eclipse.rap.rwt.RWT;
 import org.eclipse.rap.rwt.client.service.StartupParameters;
@@ -217,11 +216,6 @@ public class ShowLegalEntryPoint extends AbstractWizardEntryPoint<Browser, Churu
 			ex.printStackTrace();
 		}
 		return true;
-	}
-
-	@Override
-	protected void onHandleTimer(SessionEvent<ChuruataOrganisationData> event) {
-		// NOTHING
 	}
 
 	private class FileParser extends AbstractResourceParser{

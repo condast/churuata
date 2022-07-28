@@ -5,7 +5,6 @@ import java.util.concurrent.TimeUnit;
 import org.churuata.digital.session.SessionStore;
 import org.condast.commons.config.Config;
 import org.condast.commons.ui.player.PlayerImages;
-import org.condast.commons.ui.session.SessionEvent;
 import org.eclipse.rap.rwt.RWT;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -106,9 +105,6 @@ public abstract class AbstractWizardEntryPoint<C extends Composite, D extends Ob
 	protected void createTimer(boolean create, int nrOfThreads, TimeUnit unit, int startTime, int rate) {
 		super.createTimer(true, nrOfThreads, unit, startTime, 10000);
 	}
-
-	protected abstract void onHandleTimer( SessionEvent<D> event );
-
 
 	@Override
 	protected boolean handleSessionTimeout(boolean reload) {

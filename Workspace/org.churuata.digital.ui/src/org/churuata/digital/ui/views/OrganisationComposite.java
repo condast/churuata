@@ -2,10 +2,10 @@ package org.churuata.digital.ui.views;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Collection;
 import org.churuata.digital.core.data.ChuruataOrganisationData;
 import org.churuata.digital.core.location.IChuruataService;
+import org.churuata.digital.core.model.IOrganisation;
 import org.churuata.digital.ui.core.IChuruataThemes;
 import org.condast.commons.Utils;
 import org.condast.commons.strings.StringUtils;
@@ -24,9 +24,11 @@ import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
 
 public class OrganisationComposite extends AbstractEntityComposite<ChuruataOrganisationData>
 {
@@ -41,17 +43,18 @@ public class OrganisationComposite extends AbstractEntityComposite<ChuruataOrgan
 	private static final String S_WEBSITE = "Website";
 	private static final String S_WEBSITE_INFORMATION_TIP = "Add the Web site";
 	private static final String S_INCORRECT_WEBSITE = "Incorrect Website";
+	private static final String S_ORGANISATION_TYPE = "Type";
 	
 	private InputField churuataField;
 	private InputField descriptionField;
 	private InputField websiteField;
+	private Combo orgTypeCombo;
 	
 	private ServicesTableViewer viewer;
 	
 	private IEditListener<IChuruataService> listener = e -> onViewerEvent( e );
 	
 	private Collection<IEditListener<IChuruataService>> serviceListeners;
-	
 	
 	/**
 	 * Create the dialog.
@@ -60,9 +63,9 @@ public class OrganisationComposite extends AbstractEntityComposite<ChuruataOrgan
 	public OrganisationComposite( Composite parent, int style ){
 		super(parent, style );
 		this.serviceListeners = new ArrayList<>();
-		Calendar calendar = Calendar.getInstance();
-		calendar.add(Calendar.YEAR, 1);
 		viewer.addEditListener(listener);
+		this.orgTypeCombo.setItems( IOrganisation.OrganisationTypes.getItems());
+		this.orgTypeCombo.select(0);
 	}
 	
 	/**
@@ -81,7 +84,7 @@ public class OrganisationComposite extends AbstractEntityComposite<ChuruataOrgan
 		grpFillIn.setText("Organisation:");
 		grpFillIn.setData( RWT.CUSTOM_VARIANT, IChuruataThemes.RWT_CHURUATA);
 		grpFillIn.setLayout(new GridLayout(2, false));
-		grpFillIn.setLayoutData( new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1 ));	
+		grpFillIn.setLayoutData( new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1 ));	
 				
 		churuataField = new InputField( grpFillIn, SWT.NONE );
 		churuataField.setBackgroundControl(1);
@@ -160,7 +163,33 @@ public class OrganisationComposite extends AbstractEntityComposite<ChuruataOrgan
 				}		
 			}
 		});
+
+		Label typeLabel = new Label( grpFillIn, SWT.NONE );
+		typeLabel.setText(S_ORGANISATION_TYPE);
+		GridData gridData = new GridData( SWT.FILL, SWT.FILL, false, false);
+		gridData.widthHint = 120;
+		typeLabel.setLayoutData(gridData);
 		
+		orgTypeCombo = new Combo(grpFillIn, SWT.NONE);
+		orgTypeCombo.addSelectionListener( new SelectionAdapter() {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				try {
+					EditTypes type = isFilled()?EditTypes.COMPLETE: EditTypes.CHANGED;
+					ChuruataOrganisationData input = getInput();
+					if( input == null )
+						return;
+					notifyInputEdited( new EditEvent<ChuruataOrganisationData>( this, type, input));
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}		
+				super.widgetSelected(e);
+			}		
+		});
+		orgTypeCombo.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+
  		viewer = new ServicesTableViewer( this, SWT.NONE );
 		viewer.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		viewer.addSelectionListener( new SelectionAdapter() {
@@ -208,7 +237,6 @@ public class OrganisationComposite extends AbstractEntityComposite<ChuruataOrgan
 		}
 	}
 
-	
 	@Override
 	protected ChuruataOrganisationData onGetInput(ChuruataOrganisationData input) {
 		if( input == null )
@@ -216,6 +244,7 @@ public class OrganisationComposite extends AbstractEntityComposite<ChuruataOrgan
 		input.setDescription(this.descriptionField.getText());
 		input.setName( this.churuataField.getText());
 		input.setWebsite(this.websiteField.getText());
+		input.setType( IOrganisation.OrganisationTypes.values()[ orgTypeCombo.getSelectionIndex() ]);
 		if( Utils.assertNull( viewer.getInput()))
 			return input;
 		input.setChuruataServices( viewer.getInput());
@@ -229,13 +258,9 @@ public class OrganisationComposite extends AbstractEntityComposite<ChuruataOrgan
 		this.descriptionField.setText( input.getDescription());
 		this.churuataField.setText( input.getName());
 		this.websiteField.setText(input.getWebsite());
+		orgTypeCombo.select( input.getType().getIndex());
 		viewer.setInput( Arrays.asList( input.getServices()));
 	}
-
-	public void setInput( ChuruataOrganisationData input ){
-		super.setInput( input, false );
-	}
-
 
 	public boolean isFilled(){
 		boolean filled = !StringUtils.isEmpty( churuataField.getText());

@@ -38,11 +38,6 @@ public class Service implements IChuruataService {
 	public Service() {}
 
 	public Service( IChuruataService.Services type, String description ){
-		this( -1, type, description );
-	}
-	
-	public Service( long id, IChuruataService.Services type, String description ){
-		this.id = id;
 		this.serviceType = type.name();
 		this.description = description;
 		this.contributor = Contribution.LOG.name();

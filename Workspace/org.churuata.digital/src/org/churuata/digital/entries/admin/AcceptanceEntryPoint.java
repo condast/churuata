@@ -24,7 +24,6 @@ import org.condast.commons.messaging.http.ResponseEvent;
 import org.condast.commons.na.data.OrganisationData;
 import org.condast.commons.ui.controller.EditEvent;
 import org.condast.commons.ui.controller.IEditListener;
-import org.condast.commons.ui.session.SessionEvent;
 import org.eclipse.rap.rwt.RWT;
 import org.eclipse.rap.rwt.client.service.StartupParameters;
 import org.eclipse.swt.SWT;
@@ -100,16 +99,6 @@ public class AcceptanceEntryPoint extends AbstractWizardEntryPoint<Organisations
 		}
 		catch( Exception ex ){
 			ex.printStackTrace();
-		}
-	}
-
-	@Override
-	protected void onHandleTimer(SessionEvent<ChuruataOrganisationData> event) {
-		try {
-			//acceptTableViewer.refresh();
-			super.handleTimer();
-		} catch (Exception e) {
-			e.printStackTrace();
 		}
 	}
 
