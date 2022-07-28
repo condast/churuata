@@ -9,7 +9,7 @@ import org.churuata.digital.core.Dispatcher;
 import org.churuata.digital.core.Entries;
 import org.churuata.digital.core.Entries.Pages;
 import org.churuata.digital.core.data.ChuruataOrganisationData;
-import org.churuata.digital.core.data.ChuruataProfileData;
+import org.churuata.digital.core.data.ProfileData;
 import org.churuata.digital.core.rest.IRestPages;
 import org.churuata.digital.session.SessionStore;
 import org.condast.commons.authentication.http.IDomainProvider;
@@ -17,8 +17,6 @@ import org.condast.commons.authentication.user.ILoginUser;
 import org.condast.commons.messaging.http.AbstractHttpRequest;
 import org.condast.commons.messaging.http.ResponseEvent;
 import org.condast.commons.na.data.ContactPersonData;
-import org.condast.commons.na.data.PersonData;
-import org.condast.commons.na.data.ProfileData;
 import org.condast.commons.na.model.IContact;
 import org.condast.commons.na.profile.IProfileData;
 import org.condast.commons.ui.controller.EditEvent;
@@ -38,7 +36,7 @@ import com.google.gson.JsonSyntaxException;
 public class UsersEntryPoint extends AbstractWizardEntryPoint<ContactPersonComposite, ChuruataOrganisationData>{
 	private static final long serialVersionUID = 1L;
 
-	public static final String S_ADD_ACCOUNT = "Add Account";
+	public static final String S_TITLE = "Users";
 
 	private ContactPersonComposite personComposite;
 
@@ -47,6 +45,10 @@ public class UsersEntryPoint extends AbstractWizardEntryPoint<ContactPersonCompo
 	private WebController controller;
 	
 	private Logger logger = Logger.getLogger(this.getClass().getName());
+
+	public UsersEntryPoint() {
+		super(S_TITLE);
+	}
 
 	@Override
 	protected SessionStore createSessionStore() {
@@ -67,11 +69,11 @@ public class UsersEntryPoint extends AbstractWizardEntryPoint<ContactPersonCompo
 	@Override
 	protected void onButtonPressed(ChuruataOrganisationData data, SessionStore store) {
 		try{
-			if( store.getContactPersonData() == null )
+			if( store.getProfile() == null )
 				return;
-			IProfileData person = store.getProfile();
+			ProfileData person = (ProfileData) store.getProfile();
 			if( person == null ) 				
-				controller.register( store.getContactPersonData());
+				controller.register( person );
 			else
 				Dispatcher.jump( Pages.ORGANISATION, store.getToken());						
 		}
@@ -93,17 +95,14 @@ public class UsersEntryPoint extends AbstractWizardEntryPoint<ContactPersonCompo
 	protected boolean onPostProcess(String context, ChuruataOrganisationData data, SessionStore store) {
 		controller = new WebController();
 		controller.setInput(context, IRestPages.Pages.CONTACT.toPath());
-		IProfileData personData = store.getProfile();
-		ContactPersonData person = store.getContactPersonData();
-		if( personData != null ) {
-			person = new ContactPersonData( personData );
+		ProfileData person = store.getProfile();
+		if( person != null ) {
 			person.clearContacts();
-			for( IContact contact: personData.getContacts() )
+			for( IContact contact: person.getContacts() )
 				person.addContact(contact);
-			store.setContactPersonData(person);
 		}
 		if( person != null )
-			personComposite.setInput(store.getContactPersonData(), true);
+			personComposite.setInput(person, true);
 		return true;
 	}
 
@@ -113,17 +112,15 @@ public class UsersEntryPoint extends AbstractWizardEntryPoint<ContactPersonCompo
 		controller.type = event.getType();
 		switch( event.getType()) {
 		case ADDED:
-			store.setContactPersonData( this.personComposite.getInput());
 			IProfileData person = store.getProfile();
 			if( person == null ) 
-				controller.register( store.getContactPersonData());
+				controller.register( event.getData());
 			else
 				Dispatcher.jump( Pages.CONTACTS, store.getToken());
 				
 			break;
 		case COMPLETE:
 			data = event.getData();
-			store.setContactPersonData(data);
 			Button btnNext = super.getBtnNext();
 			btnNext.setEnabled(( data != null ));
 			break;
@@ -142,7 +139,7 @@ public class UsersEntryPoint extends AbstractWizardEntryPoint<ContactPersonCompo
 		}
 	}
 	
-	private class WebController extends AbstractHttpRequest<ChuruataProfileData.Requests>{
+	private class WebController extends AbstractHttpRequest<ProfileData.Requests>{
 		
 		private EditEvent.EditTypes type;
 		
@@ -156,26 +153,26 @@ public class UsersEntryPoint extends AbstractWizardEntryPoint<ContactPersonCompo
 
 		public void register( ContactPersonData person ) {
 			Map<String, String> params = super.getParameters();
-			params.put(ChuruataProfileData.Parameters.NAME.toString(), person.getName());
-			params.put(ChuruataProfileData.Parameters.PREFIX.toString(), person.getPrefix());
-			params.put(ChuruataProfileData.Parameters.SURNAME.toString(), person.getSurname());
-			params.put(ChuruataProfileData.Parameters.EMAIL.toString(), person.getEmail());
+			params.put(ProfileData.Parameters.NAME.toString(), person.getName());
+			params.put(ProfileData.Parameters.PREFIX.toString(), person.getPrefix());
+			params.put(ProfileData.Parameters.SURNAME.toString(), person.getSurname());
+			params.put(ProfileData.Parameters.EMAIL.toString(), person.getEmail());
 			try {
-				sendGet(ChuruataProfileData.Requests.REGISTER, params );
+				sendGet(ProfileData.Requests.REGISTER, params );
 			} catch (IOException e) {
 				logger.warning(e.getMessage());
 			}
 		}
 
 		@Override
-		protected String onHandleResponse(ResponseEvent<ChuruataProfileData.Requests> event) throws IOException {
+		protected String onHandleResponse(ResponseEvent<ProfileData.Requests> event) throws IOException {
 			try {
 				SessionStore store = getSessionStore();
 				Gson gson = new Gson();
-				IProfileData profile = null;
+				ProfileData profile = null;
 				switch( event.getRequest()){
 				case REGISTER:
-					PersonData data = gson.fromJson(event.getResponse(), PersonData.class);
+					ContactPersonData data = gson.fromJson(event.getResponse(), ContactPersonData.class);
 					profile = new ProfileData( data );
 					store.setProfile(profile);
 					switch( type ) {
@@ -193,7 +190,7 @@ public class UsersEntryPoint extends AbstractWizardEntryPoint<ContactPersonCompo
 					Dispatcher.redirect(Entries.Pages.ACTIVE, store.getToken());
 					break;
 				case GET_PROFILE:					
-					profile = gson.fromJson(event.getResponse(), ChuruataProfileData.class);
+					profile = gson.fromJson(event.getResponse(), ProfileData.class);
 					//editComposite.setInput(profile, true);
 					store.setProfile(profile);
 					break;
@@ -209,7 +206,7 @@ public class UsersEntryPoint extends AbstractWizardEntryPoint<ContactPersonCompo
 		}
 
 		@Override
-		protected void onHandleResponseFail(HttpStatus status, ResponseEvent<ChuruataProfileData.Requests> event) throws IOException {
+		protected void onHandleResponseFail(HttpStatus status, ResponseEvent<ProfileData.Requests> event) throws IOException {
 			super.onHandleResponseFail(status, event);
 		}
 	

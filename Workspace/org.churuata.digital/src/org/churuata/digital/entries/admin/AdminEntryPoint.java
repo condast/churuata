@@ -37,7 +37,7 @@ import com.google.gson.JsonSyntaxException;
 public class AdminEntryPoint extends AbstractWizardEntryPoint<AdminTableViewer, LoginData>{
 	private static final long serialVersionUID = 1L;
 
-	public static final String S_ADD_ACCOUNT = "Add Account";
+	public static final String S_ADMIN = "Administration";
 
 	private AdminTableViewer adminTableViewer;
 
@@ -49,7 +49,7 @@ public class AdminEntryPoint extends AbstractWizardEntryPoint<AdminTableViewer, 
 
 	
 	public AdminEntryPoint() {
-		super( false );
+		super(S_ADMIN);
 	}
 
 	@Override

@@ -10,7 +10,7 @@ import org.churuata.digital.core.location.IChuruataService;
 import org.churuata.digital.core.model.IOrganisation;
 import org.churuata.digital.core.model.IOrganisation.OrganisationTypes;
 import org.condast.commons.data.latlng.LatLng;
-import org.condast.commons.na.data.PersonData;
+import org.condast.commons.na.data.ContactPersonData;
 import org.condast.commons.na.model.IContactPerson;
 
 /**
@@ -28,7 +28,7 @@ public class SimpleOrganisationData implements Serializable, Cloneable {
 	
 	private String address;
 
-	private PersonData contact;
+	private ContactPersonData contact;
 	
 	private String name;
 	
@@ -74,7 +74,7 @@ public class SimpleOrganisationData implements Serializable, Cloneable {
 		LatLng location = organisation.getLocation();
 		this.latitude = location.getLatitude();
 		this.longitude = location.getLongitude();		
-		this.contact= new PersonData( organisation.getContact());
+		this.contact= new ContactPersonData( organisation.getContact());
 		this.name = organisation.getName();
 		this.description = organisation.getDescription();
 		this.website = organisation.getWebsite();

@@ -10,17 +10,17 @@ import org.churuata.digital.core.AbstractChuruataEntryPoint;
 import org.churuata.digital.core.Dispatcher;
 import org.churuata.digital.core.Entries;
 import org.churuata.digital.core.data.ChuruataOrganisationData;
-import org.churuata.digital.core.data.ChuruataProfileData;
+import org.churuata.digital.core.data.ProfileData;
 import org.churuata.digital.core.rest.IRestPages;
 import org.churuata.digital.session.SessionStore;
 import org.churuata.digital.ui.image.ChuruataImages;
+import org.condast.commons.authentication.core.LoginData;
 import org.condast.commons.authentication.http.IDomainProvider;
 import org.condast.commons.authentication.user.ILoginUser;
 import org.condast.commons.config.Config;
 import org.condast.commons.messaging.http.AbstractHttpRequest;
 import org.condast.commons.messaging.http.ResponseEvent;
-import org.condast.commons.na.data.PersonData;
-import org.condast.commons.na.data.ProfileData;
+import org.condast.commons.na.data.ContactPersonData;
 import org.condast.commons.na.profile.IProfileData;
 import org.condast.commons.ui.controller.EditEvent;
 import org.condast.commons.ui.controller.IEditListener;
@@ -50,7 +50,7 @@ public class AddServiceContactEntryPoint extends AbstractChuruataEntryPoint<Chur
 	private PersonComposite editComposite;
 	private Button btnAdd;
 
-	private IEditListener<PersonData> listener = e->onPersonEvent(e);
+	private IEditListener<ContactPersonData> listener = e->onPersonEvent(e);
 
 	private WebController controller;
 	
@@ -74,7 +74,7 @@ public class AddServiceContactEntryPoint extends AbstractChuruataEntryPoint<Chur
 		editComposite = new PersonComposite(parent, SWT.NONE );
 		editComposite.setData( RWT.CUSTOM_VARIANT, S_CHURUATA );
 		editComposite.setLayoutData( new GridData( SWT.FILL, SWT.FILL, true, true ));
-		editComposite.addEditListener( listener);
+		//editComposite.addEditListener( listener);
 
 		Group group = new Group( parent, SWT.NONE );
 		group.setText( S_ADD_ACCOUNT);
@@ -117,7 +117,7 @@ public class AddServiceContactEntryPoint extends AbstractChuruataEntryPoint<Chur
 
 		SessionStore store = getSessionStore();
 		ILoginUser user = store.getLoginUser();
-		IProfileData profile = store.getProfile();
+		ProfileData profile = store.getProfile();
 		if( profile == null ) {
 			profile = null;//new ProfileData( selected );
 			store.setProfile(profile); 
@@ -130,8 +130,8 @@ public class AddServiceContactEntryPoint extends AbstractChuruataEntryPoint<Chur
 		return true;
 	}
 
-	protected void onPersonEvent( EditEvent<PersonData> event ) {
-		PersonData data = null;
+	protected void onPersonEvent( EditEvent<ContactPersonData> event ) {
+		ContactPersonData data = null;
 		SessionStore store = super.getSessionStore();
 		switch( event.getType()) {
 		case INITIALISED:
@@ -184,7 +184,7 @@ public class AddServiceContactEntryPoint extends AbstractChuruataEntryPoint<Chur
 		return super.handleSessionTimeout(reload);
 	}
 	
-	private class WebController extends AbstractHttpRequest<ChuruataProfileData.Requests>{
+	private class WebController extends AbstractHttpRequest<ProfileData.Requests>{
 		
 		private ILoginUser user;
 		
@@ -199,9 +199,9 @@ public class AddServiceContactEntryPoint extends AbstractChuruataEntryPoint<Chur
 		public void get() {
 			Map<String, String> params = super.getParameters();
 			try {
-				params.put(ChuruataProfileData.Parameters.USER_ID.toString(), String.valueOf( user.getId()));
-				params.put(ChuruataProfileData.Parameters.SECURITY.toString(), String.valueOf( user.getSecurity() ));
-				sendGet(ChuruataProfileData.Requests.GET_PROFILE, params );
+				params.put(LoginData.Parameters.USER_ID.toString(), String.valueOf( user.getId()));
+				params.put(LoginData.Parameters.SECURITY.toString(), String.valueOf( user.getSecurity() ));
+				sendGet(ProfileData.Requests.GET_PROFILE, params );
 			} catch (IOException e) {
 				logger.warning(e.getMessage());
 			}
@@ -212,18 +212,18 @@ public class AddServiceContactEntryPoint extends AbstractChuruataEntryPoint<Chur
 			try {
 				if( person == null )
 					return;
-				params.put(ChuruataProfileData.Parameters.USER_ID.toString(), String.valueOf( user.getId()));
-				params.put(ChuruataProfileData.Parameters.SECURITY.toString(), String.valueOf( user.getSecurity() ));
+				params.put(LoginData.Parameters.USER_ID.toString(), String.valueOf( user.getId()));
+				params.put(LoginData.Parameters.SECURITY.toString(), String.valueOf( user.getSecurity() ));
 				Gson gson = new Gson();
-				String str = gson.toJson( person, ChuruataProfileData.class);
-				sendPut(ChuruataProfileData.Requests.UPDATE_PERSON, params, str );
+				String str = gson.toJson( person, ProfileData.class);
+				sendPut(ProfileData.Requests.UPDATE_PERSON, params, str );
 			} catch (IOException e) {
 				logger.warning(e.getMessage());
 			}
 		}
 
 		@Override
-		protected String onHandleResponse(ResponseEvent<ChuruataProfileData.Requests> event) throws IOException {
+		protected String onHandleResponse(ResponseEvent<ProfileData.Requests> event) throws IOException {
 			try {
 				SessionStore store = getSessionStore();
 				switch( event.getRequest()){
@@ -231,8 +231,8 @@ public class AddServiceContactEntryPoint extends AbstractChuruataEntryPoint<Chur
 					Dispatcher.redirect(Entries.Pages.ACTIVE, store.getToken());
 					break;
 				case GET_PROFILE:					Gson gson = new Gson();
-					ChuruataProfileData profile = gson.fromJson(event.getResponse(), ChuruataProfileData.class);
-					editComposite.setInput(profile, true);
+					ProfileData profile = gson.fromJson(event.getResponse(), ProfileData.class);
+					//editComposite.setInput(profile, true);
 					store.setProfile(profile);
 					break;
 				default:
@@ -247,7 +247,7 @@ public class AddServiceContactEntryPoint extends AbstractChuruataEntryPoint<Chur
 		}
 
 		@Override
-		protected void onHandleResponseFail(HttpStatus status, ResponseEvent<ChuruataProfileData.Requests> event) throws IOException {
+		protected void onHandleResponseFail(HttpStatus status, ResponseEvent<ProfileData.Requests> event) throws IOException {
 			super.onHandleResponseFail(status, event);
 		}
 	

@@ -9,8 +9,8 @@ import org.churuata.digital.core.location.IChuruataService;
 import org.churuata.digital.core.model.IOrganisation;
 import org.condast.commons.Utils;
 import org.condast.commons.data.latlng.LatLng;
+import org.condast.commons.na.data.ContactPersonData;
 import org.condast.commons.na.data.OrganisationData;
-import org.condast.commons.na.data.PersonData;
 import org.condast.commons.strings.StringStyler;
 
 /**
@@ -97,7 +97,7 @@ public class ChuruataOrganisationData extends OrganisationData implements IOrgan
 	public ChuruataOrganisationData( IOrganisation organisation ){
 		super.setOrganisationId( organisation.getId());
 		super.setLocation( organisation.getLocation());
-		super.setContact( new PersonData( organisation.getContact()));
+		super.setContact( new ContactPersonData( organisation.getContact()));
 		super.setName( organisation.getName());
 		super.setDescription( organisation.getDescription());
 		super.setWebsite( organisation.getWebsite());

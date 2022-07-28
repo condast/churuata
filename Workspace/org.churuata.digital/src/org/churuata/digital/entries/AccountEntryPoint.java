@@ -10,16 +10,16 @@ import org.churuata.digital.core.AbstractChuruataEntryPoint;
 import org.churuata.digital.core.Dispatcher;
 import org.churuata.digital.core.Entries;
 import org.churuata.digital.core.data.ChuruataOrganisationData;
-import org.churuata.digital.core.data.ChuruataProfileData;
+import org.churuata.digital.core.data.ProfileData;
 import org.churuata.digital.core.rest.IRestPages;
 import org.churuata.digital.session.SessionStore;
 import org.churuata.digital.ui.image.ChuruataImages;
+import org.condast.commons.authentication.core.LoginData;
 import org.condast.commons.authentication.http.IDomainProvider;
 import org.condast.commons.authentication.user.ILoginUser;
 import org.condast.commons.config.Config;
 import org.condast.commons.messaging.http.AbstractHttpRequest;
 import org.condast.commons.messaging.http.ResponseEvent;
-import org.condast.commons.na.data.ProfileData;
 import org.condast.commons.na.profile.IProfileData;
 import org.condast.commons.strings.StringUtils;
 import org.condast.commons.ui.controller.EditEvent;
@@ -111,7 +111,7 @@ public class AccountEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrgani
 
 		SessionStore store = getSessionStore();
 		ILoginUser user = store.getLoginUser();
-		IProfileData profile = store.getProfile();
+		ProfileData profile = store.getProfile();
 		if( profile == null ) {
 			profile = null;//new ProfileData( selected );
 			store.setProfile(profile); 
@@ -134,7 +134,7 @@ public class AccountEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrgani
 			if( !isFilled( event.getData()))
 				return;
 			btnAdd.setEnabled(true);
-			store.setProfile(event.getData());
+			store.setProfile((ProfileData) event.getData());
 			break;
 		default:
 			break;
@@ -172,7 +172,7 @@ public class AccountEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrgani
 		return super.handleSessionTimeout(reload);
 	}
 	
-	private class WebController extends AbstractHttpRequest<ChuruataProfileData.Requests>{
+	private class WebController extends AbstractHttpRequest<ProfileData.Requests>{
 		
 		private ILoginUser user;
 		
@@ -187,9 +187,9 @@ public class AccountEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrgani
 		public void get() {
 			Map<String, String> params = super.getParameters();
 			try {
-				params.put(ChuruataProfileData.Parameters.USER_ID.toString(), String.valueOf( user.getId()));
-				params.put(ChuruataProfileData.Parameters.SECURITY.toString(), String.valueOf( user.getSecurity() ));
-				sendGet(ChuruataProfileData.Requests.GET_PROFILE, params );
+				params.put(LoginData.Parameters.USER_ID.toString(), String.valueOf( user.getId()));
+				params.put(LoginData.Parameters.SECURITY.toString(), String.valueOf( user.getSecurity() ));
+				sendGet(ProfileData.Requests.GET_PROFILE, params );
 			} catch (IOException e) {
 				logger.warning(e.getMessage());
 			}
@@ -200,30 +200,30 @@ public class AccountEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrgani
 			try {
 				if( person == null )
 					return;
-				params.put(ChuruataProfileData.Parameters.USER_ID.toString(), String.valueOf( user.getId()));
-				params.put(ChuruataProfileData.Parameters.SECURITY.toString(), String.valueOf( user.getSecurity() ));
+				params.put(LoginData.Parameters.USER_ID.toString(), String.valueOf( user.getId()));
+				params.put(LoginData.Parameters.SECURITY.toString(), String.valueOf( user.getSecurity() ));
 				Gson gson = new Gson();
 				String str = gson.toJson( person, ProfileData.class);
-				sendPut(ChuruataProfileData.Requests.UPDATE_PERSON, params, str );
+				sendPut(ProfileData.Requests.UPDATE_PERSON, params, str );
 			} catch (IOException e) {
 				logger.warning(e.getMessage());
 			}
 		}
 
 		@Override
-		protected String onHandleResponse(ResponseEvent<ChuruataProfileData.Requests> event) throws IOException {
+		protected String onHandleResponse(ResponseEvent<ProfileData.Requests> event) throws IOException {
 			try {
 				SessionStore store = getSessionStore();
 				Gson gson = new Gson();
-				IProfileData profile = null;
+				ProfileData profile = null;
 				switch( event.getRequest()){
 				case UPDATE_PERSON:
-					profile = gson.fromJson(event.getResponse(), ChuruataProfileData.class);
+					profile = gson.fromJson(event.getResponse(), ProfileData.class);
 					store.setProfile(profile);
 					Dispatcher.redirect(Entries.Pages.ACTIVE, store.getToken());
 					break;
 				case GET_PROFILE:					
-					profile = gson.fromJson(event.getResponse(), ChuruataProfileData.class);
+					profile = gson.fromJson(event.getResponse(), ProfileData.class);
 					profileComposite.setInput(profile, true);
 					store.setProfile(profile);
 					break;
@@ -239,7 +239,7 @@ public class AccountEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrgani
 		}
 
 		@Override
-		protected void onHandleResponseFail(HttpStatus status, ResponseEvent<ChuruataProfileData.Requests> event) throws IOException {
+		protected void onHandleResponseFail(HttpStatus status, ResponseEvent<ProfileData.Requests> event) throws IOException {
 			super.onHandleResponseFail(status, event);
 		}	
 	}

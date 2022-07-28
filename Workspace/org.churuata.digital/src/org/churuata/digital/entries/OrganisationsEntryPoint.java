@@ -12,7 +12,7 @@ import org.churuata.digital.core.Dispatcher;
 import org.churuata.digital.core.Entries;
 import org.churuata.digital.core.Entries.Pages;
 import org.churuata.digital.core.data.ChuruataOrganisationData;
-import org.churuata.digital.core.data.ChuruataProfileData;
+import org.churuata.digital.core.data.ProfileData;
 import org.churuata.digital.core.rest.IRestPages;
 import org.churuata.digital.session.SessionStore;
 import org.churuata.digital.ui.organisation.OrganisationsTableViewer;
@@ -22,8 +22,8 @@ import org.condast.commons.authentication.user.ILoginUser;
 import org.condast.commons.config.Config;
 import org.condast.commons.messaging.http.AbstractHttpRequest;
 import org.condast.commons.messaging.http.ResponseEvent;
+import org.condast.commons.na.data.ContactPersonData;
 import org.condast.commons.na.data.OrganisationData;
-import org.condast.commons.na.data.PersonData;
 import org.condast.commons.na.profile.IProfileData;
 import org.condast.commons.ui.controller.EditEvent;
 import org.condast.commons.ui.controller.IEditListener;
@@ -103,7 +103,7 @@ public class OrganisationsEntryPoint extends AbstractChuruataEntryPoint<Churuata
 		IProfileData person = store.getProfile();
 
 		ChuruataOrganisationData organisation = event.getData();
-		organisation.setContact((PersonData) person); 
+		organisation.setContact((ContactPersonData) person); 
 		switch( event.getType()) {
 		case SELECTED:
 			store.setData( organisation);
@@ -138,7 +138,7 @@ public class OrganisationsEntryPoint extends AbstractChuruataEntryPoint<Churuata
 
 		public void register( long personId, ChuruataOrganisationData organisation ) {
 			Map<String, String> params = super.getParameters();
-			params.put(ChuruataProfileData.Parameters.PERSON_ID.toString(), String.valueOf( personId ));
+			params.put(ProfileData.Parameters.PERSON_ID.toString(), String.valueOf( personId ));
 			Gson gson = new Gson();
 			String data = gson.toJson(organisation, ChuruataOrganisationData.class);
 			try {

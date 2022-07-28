@@ -11,7 +11,7 @@ import org.churuata.digital.core.Dispatcher;
 import org.churuata.digital.core.Entries;
 import org.churuata.digital.core.Entries.Pages;
 import org.churuata.digital.core.data.ChuruataOrganisationData;
-import org.churuata.digital.core.data.ChuruataProfileData;
+import org.churuata.digital.core.data.ProfileData;
 import org.churuata.digital.core.data.ServiceData;
 import org.churuata.digital.core.location.IChuruataService;
 import org.churuata.digital.core.rest.IRestPages;
@@ -22,8 +22,7 @@ import org.condast.commons.authentication.http.IDomainProvider;
 import org.condast.commons.config.Config;
 import org.condast.commons.messaging.http.AbstractHttpRequest;
 import org.condast.commons.messaging.http.ResponseEvent;
-import org.condast.commons.na.data.PersonData;
-import org.condast.commons.na.data.ProfileData;
+import org.condast.commons.na.data.ContactPersonData;
 import org.condast.commons.na.profile.IProfileData;
 import org.condast.commons.ui.controller.EditEvent;
 import org.condast.commons.ui.controller.IEditListener;
@@ -122,9 +121,6 @@ public class AddServicesEntryPoint extends AbstractChuruataEntryPoint<ChuruataOr
 	protected void onContactEvent( EditEvent<IChuruataService> event ) {
 		switch( event.getType()) {
 		case COMPLETE:
-			SessionStore store = getSessionStore();
-			if( store.getContactPersonData() == null )
-				return;
 			data = event.getData();
 			btnOk.setEnabled( data != null);
 			break;
@@ -144,7 +140,7 @@ public class AddServicesEntryPoint extends AbstractChuruataEntryPoint<ChuruataOr
 		super.close();
 	}
 	
-	private class WebController extends AbstractHttpRequest<ChuruataProfileData.Requests>{
+	private class WebController extends AbstractHttpRequest<ProfileData.Requests>{
 		
 		public WebController(String context, String path) {
 			super();
@@ -158,20 +154,20 @@ public class AddServicesEntryPoint extends AbstractChuruataEntryPoint<ChuruataOr
 			params.put(ServiceData.Parameters.TYPE.toString(), service.getDescription());
 			params.put(ServiceData.Parameters.NAME.toString(), service.getDescription());
 			try {
-				sendGet(ChuruataProfileData.Requests.ADD_CONTACT_TYPE, params );
+				sendGet(ProfileData.Requests.ADD_CONTACT_TYPE, params );
 			} catch (IOException e) {
 				logger.warning(e.getMessage());
 			}
 		}
 
 		@Override
-		protected String onHandleResponse(ResponseEvent<ChuruataProfileData.Requests> event) throws IOException {
+		protected String onHandleResponse(ResponseEvent<ProfileData.Requests> event) throws IOException {
 			try {
 				SessionStore store = getSessionStore();
 				Gson gson = new Gson();
 				switch( event.getRequest()){
 				case ADD_CONTACT_TYPE:
-					PersonData data = gson.fromJson(event.getResponse(), PersonData.class);
+					ContactPersonData data = gson.fromJson(event.getResponse(), ContactPersonData.class);
 					ProfileData profile = new ProfileData(  data );
 					store.setProfile(profile);
 					Dispatcher.jump( Pages.REGISTER, store.getToken());
@@ -188,7 +184,7 @@ public class AddServicesEntryPoint extends AbstractChuruataEntryPoint<ChuruataOr
 		}
 
 		@Override
-		protected void onHandleResponseFail(HttpStatus status, ResponseEvent<ChuruataProfileData.Requests> event) throws IOException {
+		protected void onHandleResponseFail(HttpStatus status, ResponseEvent<ProfileData.Requests> event) throws IOException {
 			super.onHandleResponseFail(status, event);
 		}
 	

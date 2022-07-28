@@ -124,7 +124,7 @@ public class Organisation implements IOrganisation, Serializable, Cloneable {
 
 	@Override
 	public LatLng getLocation() {
-		return location.getLocation();
+		return ( location == null )?null: location.getLocation();
 	}
 
 	public void setLocation( double latitude, double longitude ) {

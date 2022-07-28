@@ -9,7 +9,7 @@ import org.churuata.digital.organisation.model.Contact;
 import org.churuata.digital.organisation.model.Person;
 import org.condast.commons.Utils;
 import org.condast.commons.authentication.user.ILoginUser;
-import org.condast.commons.na.data.PersonData;
+import org.condast.commons.na.data.ContactPersonData;
 import org.condast.commons.na.model.IContact;
 import org.condast.commons.na.model.IContact.ContactTypes;
 import org.condast.commons.persistence.service.AbstractEntityService;
@@ -52,7 +52,7 @@ public class PersonService extends AbstractEntityService<Person>{
 		return persons;
 	}
 	
-	public Person update( PersonData data ) {
+	public Person update( ContactPersonData data ) {
 		Person person = find( data.getId());
 		if( person == null )
 			return null;

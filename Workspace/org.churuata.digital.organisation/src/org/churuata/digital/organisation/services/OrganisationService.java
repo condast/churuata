@@ -97,14 +97,14 @@ public class OrganisationService extends AbstractEntityService<Organisation>{
 
 	public Collection<Organisation> getAll( IContactPerson person ) {
 		TypedQuery<Organisation> query = super.getTypedQuery( S_QUERY_GET_ALL );
-		query.setParameter("personid", person.getContactId());
+		query.setParameter("personid", person.getId());
 		List<Organisation> organisation = query.getResultList();
 		return organisation;
 	}
 
 	public Organisation findPrincipal( IContactPerson person ) {
 		TypedQuery<Organisation> query = super.getTypedQuery( S_QUERY_FIND_PRIMARY );
-		query.setParameter("personid", person.getContactId());
+		query.setParameter("personid", person.getId());
 		List<Organisation> organisations = query.getResultList();
 		return Utils.assertNull(organisations)?null: organisations.iterator().next();
 	}

@@ -38,7 +38,7 @@ import org.churuata.digital.organisation.services.ServicesService;
 import org.condast.commons.Utils;
 import org.condast.commons.authentication.user.ILoginUser;
 import org.condast.commons.na.data.AddressData;
-import org.condast.commons.na.data.PersonData;
+import org.condast.commons.na.data.ContactPersonData;
 import org.condast.commons.na.model.IContact;
 import org.condast.commons.na.model.IContactPerson;
 import org.condast.commons.persistence.service.TransactionManager;
@@ -105,7 +105,7 @@ public class OrganisationResource{
 				person = persons.iterator().next();
 			Organisation organisation = os.create(person, od);
 			od = new ChuruataOrganisationData(organisation);
-			String str = gson.toJson(od, PersonData.class);
+			String str = gson.toJson(od, ContactPersonData.class);
 			return Response.ok( str ).build();
 		}
 		catch( Exception ex ) {

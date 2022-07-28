@@ -34,6 +34,8 @@ import org.eclipse.swt.widgets.Link;
 public class ShowLegalEntryPoint extends AbstractWizardEntryPoint<Browser, ChuruataOrganisationData>{
 	private static final long serialVersionUID = 1L;
 
+	public static final String S_TITLE = "Legal issues";
+
 	public static final String S_RESOURCE_FILE = "/resources/ChuruataRegistration.html";
 
 	public static final String S_CHURUATA_LEGAL = "churuata-legal";
@@ -85,6 +87,11 @@ public class ShowLegalEntryPoint extends AbstractWizardEntryPoint<Browser, Churu
 
 	private String licensePath;
 	private String privacyPath;
+
+	
+	public ShowLegalEntryPoint() {
+		super(S_TITLE);
+	}
 
 	@Override
 	protected SessionStore createSessionStore() {

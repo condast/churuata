@@ -21,21 +21,28 @@ public abstract class AbstractWizardEntryPoint<C extends Composite, D extends Ob
 
 	private C composite;
 	private Button btnNext;
+	private String title;
 
 	private D data = null;
 	
+	private Group buttonBar;
 	private boolean includeButton;
 
-	public AbstractWizardEntryPoint() {
-		this(true);
+	protected AbstractWizardEntryPoint( String title ) {
+		this( title, true);
 	}
 
-	public AbstractWizardEntryPoint( boolean includeButton) {
+	public AbstractWizardEntryPoint( String title, boolean includeButton) {
 		super();
+		this.title = title;
 		this.includeButton = includeButton;
 	}
 	
 	protected abstract C onCreateComposite( Composite parent, int style );
+
+	protected void onSetupButtonBar( Group buttonBar ) {
+		//DEFAULT NOTHING
+	}
 
 	protected abstract void onButtonPressed( D data, SessionStore store );
 
@@ -47,13 +54,15 @@ public abstract class AbstractWizardEntryPoint<C extends Composite, D extends Ob
 			composite.setData( RWT.CUSTOM_VARIANT, Entries.S_CHURUATA );
 			composite.setLayoutData( new GridData(SWT.FILL, SWT.FILL, true, true));
 		}
-		Group group = new Group( parent, SWT.NONE );
-		group.setText("Add Churuata Service");
-		group.setLayout( new GridLayout(5, false ));
-		group.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+		
+		buttonBar = new Group( parent, SWT.NONE );
+		buttonBar.setText(title + ":");
+		buttonBar.setLayout( new GridLayout(5, false ));
+		buttonBar.setData( RWT.CUSTOM_VARIANT, Entries.S_CHURUATA );
+		buttonBar.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 
 		if( this.includeButton) {
-			btnNext = new Button(group, SWT.NONE);
+			btnNext = new Button(buttonBar, SWT.NONE);
 			btnNext.setEnabled(false);
 			btnNext.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true));
 			btnNext.setImage( PlayerImages.getImage( PlayerImages.Images.NEXT));
@@ -73,6 +82,7 @@ public abstract class AbstractWizardEntryPoint<C extends Composite, D extends Ob
 				}
 			});
 		}
+		onSetupButtonBar(buttonBar);
 		return composite;
 	}
 

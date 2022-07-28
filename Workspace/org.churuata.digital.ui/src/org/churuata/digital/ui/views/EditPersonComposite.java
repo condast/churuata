@@ -1,6 +1,6 @@
 package org.churuata.digital.ui.views;
 
-import org.churuata.digital.core.data.ChuruataProfileData;
+import org.churuata.digital.core.data.ProfileData;
 import org.churuata.digital.core.location.ChuruataData;
 import org.condast.commons.Utils;
 import org.condast.commons.strings.StringUtils;
@@ -19,7 +19,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 
-public class EditPersonComposite extends AbstractEntityComposite<ChuruataProfileData>
+public class EditPersonComposite extends AbstractEntityComposite<ProfileData>
 {
 	private static final long serialVersionUID = 7782765745284140623L;
 
@@ -140,16 +140,16 @@ public class EditPersonComposite extends AbstractEntityComposite<ChuruataProfile
 
 		this.organisationTable = new OrganisationTableComposite(container, SWT.NONE);
 		this.organisationTable.setLayoutData( new GridData(SWT.FILL, SWT.FILL, true, true ));	
-		this.organisationTable.addEditListener(e->notifyInputEdited(new EditEvent<ChuruataProfileData>( this, EditTypes.ADDED)));
+		this.organisationTable.addEditListener(e->notifyInputEdited(new EditEvent<ProfileData>( this, EditTypes.ADDED)));
 	}
 
 	@Override
 	public void update(){
-		ChuruataProfileData result = super.getInput();
+		ProfileData result = super.getInput();
 	}
 
 	@Override
-	protected ChuruataProfileData onGetInput(ChuruataProfileData input) {
+	protected ProfileData onGetInput(ProfileData input) {
 		//input.setName(this.nameField.getText());
 		//input.setDescription( this.descriptionField.getText());
 		//input.setWebsite( this.txtURL.getText());
@@ -157,22 +157,22 @@ public class EditPersonComposite extends AbstractEntityComposite<ChuruataProfile
 	}
 
 	@Override
-	protected void onSetInput(ChuruataProfileData input, boolean overwrite) {
+	protected void onSetInput(ProfileData input, boolean overwrite) {
 		//latlngLabel.setText(input.getLocation().toLocation());
 		this.nameField.setText(input.getName());
-		this.descriptionField.setText(input.getDescription());
+		//this.descriptionField.setText(input.getDescription());
 		//this.txtURL.setText(input.getWebsite());
 		//this.churuataTypesTable.setInput(input);
 	}
 
-	public void setInput( ChuruataProfileData input ){
+	public void setInput( ProfileData input ){
 		super.setInput( input, false );
 	}
 
 	protected void onNotifyTableEvent( TableEvent<ChuruataData> event ) {
 		switch( event.getTableEvent()) {
 		case DELETE:
-			ChuruataProfileData model = getInput();
+			ProfileData model = getInput();
 			//Collection<Churuata> remove = (Collection<Churuata>) event.getData();
 			//database.removeOnDescriptorId(remove.getID(), model.getData().getID());
 			break;
@@ -195,7 +195,7 @@ public class EditPersonComposite extends AbstractEntityComposite<ChuruataProfile
 				
 			this.enableWidgets( event, attribute );
 			if( this.isFilled() )
-				this.notifyInputEdited( new EditEvent<ChuruataProfileData>( this, EditTypes.COMPLETE, getInput()));
+				this.notifyInputEdited( new EditEvent<ProfileData>( this, EditTypes.COMPLETE, getInput()));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

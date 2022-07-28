@@ -33,6 +33,8 @@ import com.google.gson.JsonSyntaxException;
 public class LocationEntryPoint extends AbstractWizardEntryPoint<OrganisationMapBrowser, ChuruataOrganisationData> {
 	private static final long serialVersionUID = 1L;
 
+	public static final String S_TITLE = "Enter location";
+	
 	private OrganisationMapBrowser mapComposite;
 
 	private IEditListener<LatLng> listener = e->onEditEvent( e );
@@ -40,6 +42,11 @@ public class LocationEntryPoint extends AbstractWizardEntryPoint<OrganisationMap
 	private WebController controller;
 	
 	private Logger logger = Logger.getLogger(this.getClass().getName());
+
+	
+	public LocationEntryPoint() {
+		super(S_TITLE);
+	}
 
 	@Override
 	protected SessionStore createSessionStore() {

@@ -7,6 +7,7 @@ import java.util.Set;
 
 import org.churuata.digital.core.data.ServiceData;
 import org.churuata.digital.core.location.IChuruataService;
+import org.churuata.digital.ui.core.IChuruataThemes;
 import org.condast.commons.strings.StringUtils;
 import org.condast.commons.ui.controller.AbstractEntityComposite;
 import org.condast.commons.ui.controller.EditEvent;
@@ -84,7 +85,8 @@ public class ServiceComposite extends AbstractEntityComposite<IChuruataService>
 		setData( RWT.CUSTOM_ITEM_HEIGHT, Integer.valueOf( 10 ));
 				
 		Group grpFillIn = new Group(container, SWT.NONE);
-		grpFillIn.setText("Churuata:");
+		grpFillIn.setData( RWT.CUSTOM_VARIANT, IChuruataThemes.RWT_CHURUATA);
+		grpFillIn.setText("Churuata Service:");
 		grpFillIn.setLayout(new GridLayout(2, false));
 		grpFillIn.setLayoutData( new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1 ));	
 		
@@ -95,13 +97,13 @@ public class ServiceComposite extends AbstractEntityComposite<IChuruataService>
 		this.serviceField.setIconSize(17);
 		this.serviceField.setInformationMessage( S_CHURUATA_INFORMATION_TIP);
 		
-		GridData gd_scope = new GridData(SWT.LEFT, SWT.CENTER, true, false, 2, 1);
+		GridData gd_scope = new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1);
 		gd_scope.widthHint = 295;
 		gd_scope.heightHint = 40;
 		this.serviceField.setLayoutData(gd_scope);
 
 		serviceTypes = new Combo(this.serviceField, SWT.BORDER);
-		GridData gd_comboScope = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
+		GridData gd_comboScope = new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1);
 		gd_comboScope.widthHint = 149;
 		serviceTypes.setLayoutData(gd_comboScope);
 		serviceTypes.addSelectionListener(new SelectionAdapter() {

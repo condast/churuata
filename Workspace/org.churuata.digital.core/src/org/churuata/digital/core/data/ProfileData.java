@@ -7,8 +7,8 @@ import java.util.Collection;
 import org.condast.commons.authentication.core.LoginData;
 import org.condast.commons.authentication.user.ILoginUser;
 import org.condast.commons.na.data.AddressData;
+import org.condast.commons.na.data.ContactPersonData;
 import org.condast.commons.na.data.OrganisationData;
-import org.condast.commons.na.data.PersonData;
 import org.condast.commons.na.model.IContactPerson;
 import org.condast.commons.na.profile.IProfileData;
 import org.condast.commons.strings.StringStyler;
@@ -16,9 +16,9 @@ import org.condast.commons.strings.StringStyler;
 /**
  * The persistent class for the eet_tb_persoon database table.
  */
-public class ChuruataProfileData extends PersonData implements IProfileData, Serializable, Cloneable {
+public class ProfileData extends ContactPersonData implements Serializable, Cloneable, IProfileData {
 	private static final long serialVersionUID = 1L;
-
+	
 	public enum Requests{
 		CREATE,
 		GET,
@@ -55,46 +55,54 @@ public class ChuruataProfileData extends PersonData implements IProfileData, Ser
 	
 	private AddressData address;
 	
-	private Collection<ChuruataOrganisationData> organisations;
+	private Collection<OrganisationData> organisations;
 
-	public ChuruataProfileData( IContactPerson person ){
+	public ProfileData( IContactPerson person ){
 		super( person );
 		this.organisations = new ArrayList<>();
 	}
 
-	public ChuruataProfileData( ILoginUser user, IContactPerson person ){
+	public ProfileData( ILoginUser user, IContactPerson person ){
 		super( person );
-		this.user = new LoginData( user );
+		this.user = ( user == null )?null: new LoginData( user );
 		this.organisations = new ArrayList<>();
 	}
 
-	public ChuruataProfileData( LoginData user, IContactPerson person ){
+	public ProfileData( LoginData user, IContactPerson person ){
 		super( person );
 		this.user = user;
 		this.organisations = new ArrayList<>();
 	}
 
+	@Override
 	public LoginData getLoginUser() {
 		return user;
 	}
 
+	@Override
 	public AddressData getAddress() {
 		return address;
 	}
 
+	@Override
 	public void setAddress(AddressData address) {
 		this.address = address;
 	}
 
+	@Override
 	public void addOrganisation( OrganisationData organisation ) {
-		this.organisations.add((ChuruataOrganisationData) organisation);
+		this.organisations.add(organisation);
 	}
 
+	@Override
 	public void removeOrganisation( OrganisationData organisation ) {
 		this.organisations.remove(organisation);
 	}
 
-	public ChuruataOrganisationData[] getOrganisation() {
-		return organisations.toArray( new ChuruataOrganisationData[ this.organisations.size()]);
+	@Override
+	public OrganisationData[] getOrganisation() {
+		return organisations.toArray( new OrganisationData[ this.organisations.size()]);
 	}
+	
+	
 }

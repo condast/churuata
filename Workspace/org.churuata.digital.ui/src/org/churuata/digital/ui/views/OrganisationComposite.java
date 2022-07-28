@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
-
 import org.churuata.digital.core.data.ChuruataOrganisationData;
 import org.churuata.digital.core.location.IChuruataService;
+import org.churuata.digital.ui.core.IChuruataThemes;
 import org.condast.commons.Utils;
 import org.condast.commons.strings.StringUtils;
 import org.condast.commons.ui.controller.AbstractEntityComposite;
@@ -15,6 +15,8 @@ import org.condast.commons.ui.controller.EditEvent.EditTypes;
 import org.condast.commons.ui.controller.IEditListener;
 import org.condast.commons.ui.swt.InputField;
 import org.condast.commons.ui.table.AbstractTableViewerWithDelete.Buttons;
+import org.condast.commons.ui.verification.VerificationUtils;
+import org.condast.commons.verification.IVerification.VerificationTypes;
 import org.eclipse.rap.rwt.RWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -38,6 +40,7 @@ public class OrganisationComposite extends AbstractEntityComposite<ChuruataOrgan
 	private static final String S_DESCRIPTOR_INFORMATION_TIP = "Describe the Churuata";
 	private static final String S_WEBSITE = "Website";
 	private static final String S_WEBSITE_INFORMATION_TIP = "Add the Web site";
+	private static final String S_INCORRECT_WEBSITE = "Incorrect Website";
 	
 	private InputField churuataField;
 	private InputField descriptionField;
@@ -76,6 +79,7 @@ public class OrganisationComposite extends AbstractEntityComposite<ChuruataOrgan
 				
 		Group grpFillIn = new Group(container, SWT.NONE);
 		grpFillIn.setText("Organisation:");
+		grpFillIn.setData( RWT.CUSTOM_VARIANT, IChuruataThemes.RWT_CHURUATA);
 		grpFillIn.setLayout(new GridLayout(2, false));
 		grpFillIn.setLayoutData( new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1 ));	
 				
@@ -92,7 +96,6 @@ public class OrganisationComposite extends AbstractEntityComposite<ChuruataOrgan
 			@Override
 			public void verifyText(VerifyEvent event) {
 				try {
-					onVerifyText(event, null);
 					EditTypes type = isFilled()?EditTypes.COMPLETE: EditTypes.CHANGED;
 					ChuruataOrganisationData input = getInput();
 					if( input == null )
@@ -119,7 +122,6 @@ public class OrganisationComposite extends AbstractEntityComposite<ChuruataOrgan
 			@Override
 			public void verifyText(VerifyEvent event) {
 				try {
-					onVerifyText(event, null);
 					EditTypes type = isFilled()?EditTypes.COMPLETE: EditTypes.CHANGED;
 					ChuruataOrganisationData input = getInput();
 					if( input == null )
@@ -145,7 +147,8 @@ public class OrganisationComposite extends AbstractEntityComposite<ChuruataOrgan
 			@Override
 			public void verifyText(VerifyEvent event) {
 				try {
-					onVerifyText(event, null);
+					if( !VerificationUtils.defaultVerificationAction( event.text, websiteField.getControl(), VerificationTypes.WEBSITE, S_INCORRECT_WEBSITE))
+						return;
 					EditTypes type = isFilled()?EditTypes.COMPLETE: EditTypes.CHANGED;
 					ChuruataOrganisationData input = getInput();
 					if( input == null )
@@ -221,6 +224,8 @@ public class OrganisationComposite extends AbstractEntityComposite<ChuruataOrgan
 
 	@Override
 	protected void onSetInput(ChuruataOrganisationData input, boolean overwrite) {
+		if( input == null )
+			return;
 		this.descriptionField.setText( input.getDescription());
 		this.churuataField.setText( input.getName());
 		this.websiteField.setText(input.getWebsite());
@@ -231,23 +236,6 @@ public class OrganisationComposite extends AbstractEntityComposite<ChuruataOrgan
 		super.setInput( input, false );
 	}
 
-	/**
-	 * Response to a changed attribute
-	 * @param event
-	 * @param attribute
-	 */
-	protected void onVerifyText( VerifyEvent event, String attribute ){
-		try {
-			if( event.widget.getData() instanceof InputField ){
-				InputField ifc = (InputField) event.widget.getData();
-				ifc.refresh();
-			}
-			EditTypes type = isFilled()?EditTypes.COMPLETE: EditTypes.CHANGED;
-			notifyInputEdited( new EditEvent<ChuruataOrganisationData>( this, type, getInput()));		
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
 
 	public boolean isFilled(){
 		boolean filled = !StringUtils.isEmpty( churuataField.getText());

@@ -2,23 +2,24 @@ package org.churuata.digital.entries;
 
 import java.io.IOException;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
-import org.churuata.digital.core.AbstractChuruataEntryPoint;
+import org.churuata.digital.core.AbstractWizardEntryPoint;
 import org.churuata.digital.core.Dispatcher;
+import org.churuata.digital.core.Entries;
 import org.churuata.digital.core.Entries.Pages;
 import org.churuata.digital.core.data.ChuruataOrganisationData;
+import org.churuata.digital.core.data.ProfileData;
 import org.churuata.digital.core.data.ServiceData;
 import org.churuata.digital.core.location.IChuruataService;
 import org.churuata.digital.core.rest.IRestPages;
 import org.churuata.digital.session.SessionStore;
 import org.churuata.digital.ui.image.ChuruataImages;
+import org.churuata.digital.ui.image.ChuruataImages.Images;
 import org.churuata.digital.ui.views.ServiceComposite;
 import org.condast.commons.authentication.core.LoginData;
 import org.condast.commons.authentication.http.IDomainProvider;
 import org.condast.commons.authentication.user.ILoginUser;
-import org.condast.commons.config.Config;
 import org.condast.commons.messaging.core.util.NodeData;
 import org.condast.commons.messaging.http.AbstractHttpRequest;
 import org.condast.commons.messaging.http.ResponseEvent;
@@ -27,11 +28,10 @@ import org.condast.commons.ui.controller.IEditListener;
 import org.condast.commons.ui.messaging.jump.JumpController;
 import org.condast.commons.ui.messaging.jump.JumpEvent;
 import org.condast.commons.ui.messaging.jump.NodeJumpEvent;
+import org.condast.commons.ui.session.SessionEvent;
 import org.eclipse.rap.rwt.RWT;
 import org.eclipse.rap.rwt.client.service.StartupParameters;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -41,15 +41,12 @@ import org.eclipse.swt.widgets.Group;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
-public class ServicesEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrganisationData> {
+public class ServicesEntryPoint extends AbstractWizardEntryPoint<ServiceComposite, ChuruataOrganisationData> {
 	private static final long serialVersionUID = 1L;
 
-	public static final String S_CHURUATA = "Churuata-Digital";
-
-	public static final String S_CHURUATA_PAGE = "/churuata";
+	public static final String S_ADD_SERVICE = "Add Service";
 
 	private ServiceComposite servicesComposite;
-	private Button btnAdd;
 
 	private WebController controller;
 
@@ -60,6 +57,11 @@ public class ServicesEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrgan
 
 	private Logger logger = Logger.getLogger(this.getClass().getName());
 
+	
+	public ServicesEntryPoint() {
+		super(S_ADD_SERVICE);
+	}
+
 	@Override
 	protected SessionStore createSessionStore() {
 		StartupParameters service = RWT.getClient().getService( StartupParameters.class );
@@ -69,62 +71,28 @@ public class ServicesEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrgan
 
 	@Override
 	protected boolean prepare(Composite parent) {
-		if( !super.prepare(parent))
-			return false;
-		SessionStore store = super.getSessionStore();
-		ILoginUser user = store.getLoginUser();
-		return ( user != null );
+		return true;
 	}
 
 	@Override
-    protected ServiceComposite createComposite(Composite parent) {
+	protected ServiceComposite onCreateComposite(Composite parent, int style) {
         parent.setLayout(new GridLayout( 1, false ));
         servicesComposite = new ServiceComposite( parent, SWT.NONE);
- 		servicesComposite.setData( RWT.CUSTOM_VARIANT, S_CHURUATA );
+ 		servicesComposite.setData( RWT.CUSTOM_VARIANT, Entries.S_CHURUATA );
  		servicesComposite.setLayoutData( new GridData(SWT.FILL, SWT.FILL, true, false));
-		Group group = new Group( parent, SWT.NONE );
-		group.setText("Add Churuata Service");
-		group.setLayout( new GridLayout(5, false ));
-		group.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
-
-		ChuruataImages images = ChuruataImages.getInstance();
-
-		btnAdd = new Button(group, SWT.NONE);
-		btnAdd.setEnabled(false);
-		btnAdd.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true));
-		btnAdd.setImage( images.getImage( ChuruataImages.Images.ADD));
-		btnAdd.addSelectionListener( new SelectionAdapter(){
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				try{
-					if( data == null )
-						return;
-					SessionStore store = getSessionStore();
-					ILoginUser user = store.getLoginUser();
-					ChuruataOrganisationData organisation = store.getData();
-					if(( event == null ) || !JumpController.Operations.UPDATE.equals( event.getOperation() )) {
-						controller.addService( organisation, data);
-					}else {
-						controller.updateService(user, organisation, data);
-					}
-					
-				}
-				catch( Exception ex ){
-					ex.printStackTrace();
-				}
-				super.widgetSelected(e);
-			}
-		});
-
  		return servicesComposite;
     }
 
 	@Override
-	protected boolean postProcess(Composite parent) {
-		Config config = Config.getInstance();
-		String context = config.getServerContext();
+	protected void onSetupButtonBar(Group buttonBar) {
+		ChuruataImages images = ChuruataImages.getInstance();
+		Button btnAdd = getBtnNext();
+		btnAdd.setImage( images.getImage(Images.ADD));
+		super.onSetupButtonBar(buttonBar);
+	}
+
+	@Override
+	protected boolean onPostProcess(String context, ChuruataOrganisationData data, SessionStore store) {
 		controller = new WebController(context, IRestPages.Pages.ORGANISATION.toPath());
 		this.servicesComposite.addEditListener(listener);
 
@@ -134,13 +102,41 @@ public class ServicesEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrgan
 			this.data = event.getChild();
 			this.servicesComposite.setInput(this.data);
 		}
-		return super.postProcess(parent);
+		store.setData(event.getParent());
+		store.setToken(event.getToken());
+		return true;
+	}
+
+	@Override
+	protected void onButtonPressed(ChuruataOrganisationData org, SessionStore store) {
+		try{
+			if( data == null )
+				return;
+			ILoginUser user = store.getLoginUser();
+			ChuruataOrganisationData organisation = store.getData();
+			if( organisation.getId() < 0) {
+				organisation.addService(data);
+				JumpController<ProfileData> jc = new JumpController<>();
+				jc.jump( new JumpEvent<ProfileData>( this, store.getToken(), Pages.ORGANISATION.toPath(), JumpController.Operations.DONE, store.getProfile()));							
+			}else {
+				if(( event == null ) || !JumpController.Operations.UPDATE.equals( event.getOperation() )) {
+					controller.addService( organisation, data);
+				}else {
+					controller.updateService(user, organisation, data);
+				}
+			}
+
+		}
+		catch( Exception ex ){
+			ex.printStackTrace();
+		}
 	}
 
 	protected void onServiceEvent( EditEvent<IChuruataService> event ) {
 		switch( event.getType()) {
 		case COMPLETE:
 			data = event.getData();
+			Button btnAdd = super.getBtnNext();
 			btnAdd.setEnabled( data != null);
 			break;
 		default:
@@ -149,8 +145,8 @@ public class ServicesEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrgan
 	}
 
 	@Override
-	protected void createTimer(boolean create, int nrOfThreads, TimeUnit unit, int startTime, int rate) {
-		super.createTimer(true, nrOfThreads, unit, startTime, 10000);
+	protected void onHandleTimer(SessionEvent<ChuruataOrganisationData> event) {
+		// TODO Auto-generated method stub		
 	}
 
 	@Override

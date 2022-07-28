@@ -82,22 +82,16 @@ public class Person implements IContactPerson, ISettingsSupport,Serializable, Cl
 	}
 
 	@Override
-	public long getContactId() {
-		return this.id;
-	}
-
-	@Override
 	public long getId() {
 		return this.id;
 	}
 
-	public void setPersonId( long personId) {
-		this.id = personId;
-	}
-
-	@Override
 	public long getUserId() {
 		return userId;
+	}
+
+	public void setPersonId( long personId) {
+		this.id = personId;
 	}
 
 	@Override
@@ -109,18 +103,8 @@ public class Person implements IContactPerson, ISettingsSupport,Serializable, Cl
 		this.name = name;
 	}
 
-	@Override
-	public String getDescription() {
-		return surName;
-	}
-
 	public void setDescription(String description) {
 		this.surName = description;
-	}
-
-	@Override
-	public String getTitle() {
-		return prefix;
 	}
 
 	public void setTitle(String title) {
@@ -149,9 +133,10 @@ public class Person implements IContactPerson, ISettingsSupport,Serializable, Cl
 	public Map<String, String> getSettings(){
 		return settings;
 	}
-
-	public Date getCreateDate() {
-		return createDate;
+	
+	@Override
+	public long getCreateDate() {
+		return this.createDate.getTime();
 	}
 
 	@Override

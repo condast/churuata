@@ -35,7 +35,7 @@ import com.google.gson.JsonSyntaxException;
 public class EditAdminEntryPoint extends AbstractWizardEntryPoint<AdminWidget, LoginData>{
 	private static final long serialVersionUID = 1L;
 
-	public static final String S_ADD_ACCOUNT = "Add Account";
+	public static final String S_EDIT_ADMIN = "Edit Administration";
 
 	private AdminWidget adminWidget;
 
@@ -44,6 +44,10 @@ public class EditAdminEntryPoint extends AbstractWizardEntryPoint<AdminWidget, L
 	private WebController controller;
 	
 	private Logger logger = Logger.getLogger(this.getClass().getName());
+
+	public EditAdminEntryPoint() {
+		super(S_EDIT_ADMIN);
+	}
 
 	@Override
 	protected SessionStore createSessionStore() {

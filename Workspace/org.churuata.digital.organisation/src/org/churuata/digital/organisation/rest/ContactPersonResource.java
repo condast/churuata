@@ -16,7 +16,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.churuata.digital.core.data.ChuruataOrganisationData;
-import org.churuata.digital.core.data.ChuruataProfileData;
+import org.churuata.digital.core.data.ProfileData;
 import org.churuata.digital.organisation.core.AuthenticationDispatcher;
 import org.churuata.digital.organisation.core.Dispatcher;
 import org.churuata.digital.organisation.model.Organisation;
@@ -28,10 +28,9 @@ import org.condast.commons.Utils;
 import org.condast.commons.authentication.core.LoginData;
 import org.condast.commons.authentication.user.ILoginUser;
 import org.condast.commons.io.IOUtils;
-import org.condast.commons.na.data.PersonData;
+import org.condast.commons.na.data.ContactPersonData;
 import org.condast.commons.na.model.IContact;
 import org.condast.commons.na.model.IContact.ContactTypes;
-import org.condast.commons.na.profile.IProfileData;
 import org.condast.commons.persistence.service.TransactionManager;
 import org.condast.commons.na.model.IContactPerson;
 import org.condast.commons.strings.StringStyler;
@@ -94,8 +93,8 @@ public class ContactPersonResource{
 			person = ps.create(-1, name, surname, prefix, contact);
 			
 			Gson gson = new Gson();
-			PersonData pd = new PersonData(person);
-			String str = gson.toJson(pd, PersonData.class);
+			ContactPersonData pd = new ContactPersonData(person);
+			String str = gson.toJson(pd, ContactPersonData.class);
 			return Response.ok( str ).build();
 		}
 		catch( Exception ex ) {
@@ -147,8 +146,8 @@ public class ContactPersonResource{
 			person = ps.create(userid, name, title, description, contact);
 			
 			Gson gson = new Gson();
-			PersonData pd = new PersonData(person);
-			String str = gson.toJson(pd, PersonData.class);
+			ContactPersonData pd = new ContactPersonData(person);
+			String str = gson.toJson(pd, ContactPersonData.class);
 			return Response.ok( str ).build();
 		}
 		catch( Exception ex ) {
@@ -177,10 +176,10 @@ public class ContactPersonResource{
 			Collection<Person> persons = ps.findForLogin( userId );
 			if( Utils.assertNull(persons))
 				return Response.noContent().build();
-			Collection<PersonData> data = new ArrayList<>();
-			persons.forEach(p->data.add( new PersonData(p)));
+			Collection<ContactPersonData> data = new ArrayList<>();
+			persons.forEach(p->data.add( new ContactPersonData(p)));
 			Gson gson = new Gson();
-			String str = gson.toJson(data.toArray( new PersonData[ data.size()]), PersonData.class);
+			String str = gson.toJson(data.toArray( new ContactPersonData[ data.size()]), ContactPersonData.class);
 			return Response.ok( str ).build();
 		}
 		catch( Exception ex ) {
@@ -217,10 +216,10 @@ public class ContactPersonResource{
 				person = persons.iterator().next();
 				orgs = os.getAll(person);
 			}
-			ChuruataProfileData profile = new ChuruataProfileData( new LoginData( user ), person );
+			ProfileData profile = new ProfileData( new LoginData( user ), person );
 			orgs.forEach(o->profile.addOrganisation( new ChuruataOrganisationData(o)));
 			Gson gson = new Gson();
-			String str = gson.toJson(profile, ChuruataProfileData.class);
+			String str = gson.toJson(profile, ProfileData.class);
 			return Response.ok( str ).build();
 		}
 		catch( Exception ex ) {
@@ -236,31 +235,33 @@ public class ContactPersonResource{
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/update-person")
-	public Response updatePerson( @QueryParam("user-id") long userId, @QueryParam("security") long security, String data) {
-		logger.info( "ATTEMPT Get " );
-
-		AuthenticationDispatcher adispatcher=  AuthenticationDispatcher.getInstance();
-		if( !adispatcher.isLoggedIn(userId, security))
-			return Response.status( Status.UNAUTHORIZED).build();
-
-		ILoginUser user = adispatcher.getLoginUser(userId, security);
-		if( user == null )
-			return Response.status( Status.UNAUTHORIZED ).build();
+	public Response updatePerson( @QueryParam("user-id") long userId, @QueryParam("security") long security, @QueryParam("person-id") long personId, String data) {
+		logger.fine( "ATTEMPT Update " );
 		
 		TransactionManager t = new TransactionManager( dispatcher );
 		try {
 			t.open();
-			PersonService ps = new PersonService(); 
-			
+
+			AuthenticationDispatcher adispatcher=  AuthenticationDispatcher.getInstance();
+			ILoginUser user = adispatcher.getLoginUser(userId, security);
+
 			Gson gson = new Gson();
-			PersonData personData = gson.fromJson(data, PersonData.class);
-			
-			IContactPerson person = ps.update(personData );
+			ContactPersonData personData = gson.fromJson(data, ContactPersonData.class);
+			if( personData.getId() != personId)
+				return Response.status( Status.BAD_REQUEST).build();
+
+			PersonService ps = new PersonService(); 
+			Person person = ps.find(personId);
 			if( person == null )
 				return Response.status( Status.NOT_FOUND).build();
 			
-			IProfileData profile = (IProfileData) new ChuruataProfileData( user, new PersonData( person ));
-			String str = gson.toJson( profile, ChuruataProfileData.class);	
+			
+			person = ps.update(personData );
+			if( person == null )
+				return Response.status( Status.NOT_FOUND).build();
+			
+			ProfileData profile = new ProfileData( user, new ContactPersonData( person ));
+			String str = gson.toJson( profile, ProfileData.class);	
 			return Response.ok( str ).build();
 		}
 		catch( Exception ex ) {
@@ -300,8 +301,8 @@ public class ContactPersonResource{
 			IContact contact = cs.createContact(ct, value);
 			person.addContact(contact);
 			Gson gson = new Gson();
-			PersonData pd = new PersonData(person);
-			String str = gson.toJson(pd, PersonData.class);
+			ContactPersonData pd = new ContactPersonData(person);
+			String str = gson.toJson(pd, ContactPersonData.class);
 			return Response.ok( str ).build();
 		}
 		catch( Exception ex ) {

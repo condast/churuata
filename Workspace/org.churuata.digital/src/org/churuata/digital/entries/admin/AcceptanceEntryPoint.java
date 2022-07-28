@@ -47,6 +47,10 @@ public class AcceptanceEntryPoint extends AbstractWizardEntryPoint<Organisations
 	private WebController controller;
 	
 	private Logger logger = Logger.getLogger(this.getClass().getName());
+	
+	public AcceptanceEntryPoint() {
+		super(S_ADD_ACCOUNT);
+	}
 
 	@Override
 	protected SessionStore createSessionStore() {
