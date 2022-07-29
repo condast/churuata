@@ -14,6 +14,14 @@
          point="org.eclipse.equinox.http.registry.servlets">
       <servlet
             alias="/caminantes"
+            class="org.churuata.caminantes.http.HomeServlet"
+            load-on-startup="true">
+      </servlet>
+   </extension>
+   <extension
+         point="org.eclipse.equinox.http.registry.servlets">
+      <servlet
+            alias="/map"
             class="org.churuata.caminantes.http.CaminantesServlet"
             load-on-startup="true">
       </servlet>
