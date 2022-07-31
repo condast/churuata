@@ -202,6 +202,7 @@ public class AccountEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrgani
 					return;
 				params.put(LoginData.Parameters.USER_ID.toString(), String.valueOf( user.getId()));
 				params.put(LoginData.Parameters.SECURITY.toString(), String.valueOf( user.getSecurity() ));
+				params.put(ProfileData.Parameters.PERSON_ID.toString(), String.valueOf( person.getId() ));
 				Gson gson = new Gson();
 				String str = gson.toJson( person, ProfileData.class);
 				sendPut(ProfileData.Requests.UPDATE_PERSON, params, str );

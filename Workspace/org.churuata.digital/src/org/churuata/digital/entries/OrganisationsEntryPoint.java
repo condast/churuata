@@ -22,7 +22,6 @@ import org.condast.commons.authentication.user.ILoginUser;
 import org.condast.commons.config.Config;
 import org.condast.commons.messaging.http.AbstractHttpRequest;
 import org.condast.commons.messaging.http.ResponseEvent;
-import org.condast.commons.na.data.ContactPersonData;
 import org.condast.commons.na.data.OrganisationData;
 import org.condast.commons.na.profile.IProfileData;
 import org.condast.commons.ui.controller.EditEvent;
@@ -103,14 +102,16 @@ public class OrganisationsEntryPoint extends AbstractChuruataEntryPoint<Churuata
 		IProfileData person = store.getProfile();
 
 		ChuruataOrganisationData organisation = event.getData();
-		organisation.setContact((ContactPersonData) person); 
+		JumpController<ChuruataOrganisationData> jc = new JumpController<>();
 		switch( event.getType()) {
+		case ADDED:
+			jc.jump( new JumpEvent<ChuruataOrganisationData>( this, store.getToken(), Pages.ORGANISATION.toPath(), JumpController.Operations.UPDATE, organisation));			
+			break;
 		case SELECTED:
 			store.setData( organisation);
 			if( organisation.getId() <= 0 ) 
 				controller.register(person.getId(), organisation);
 			else {
-				JumpController<ChuruataOrganisationData> jc = new JumpController<>();
 				jc.jump( new JumpEvent<ChuruataOrganisationData>( this, store.getToken(), Pages.ORGANISATION.toPath(), JumpController.Operations.UPDATE, organisation));			
 			}
 			break;

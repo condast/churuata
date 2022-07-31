@@ -227,6 +227,6 @@
 	<plugin id="org.apache.felix.gogo.runtime"/>
 	<plugin id="org.apache.felix.gogo.shell"/>
 	<plugin id="javax.activation"/>
-	<plugin id="jakarta.xml.bind-api"/>
+	<plugin id="javax.xml.bind"/>
 </includeBundles>
 </target>

@@ -53,7 +53,7 @@ public class OrganisationsTableViewer extends AbstractTableViewerWithDelete<Chur
 	}
 
 	public OrganisationsTableViewer(Composite parent,int style ) {
-		super(parent,style, false );
+		super(parent,style, true );
 	}
 
 	@Override
@@ -96,12 +96,23 @@ public class OrganisationsTableViewer extends AbstractTableViewerWithDelete<Chur
 	}
 
 	@Override
-	protected boolean onButtonSelected(Buttons buttontype, SelectionEvent e) {
+	protected boolean onButtonSelected(Buttons buttonType, SelectionEvent e) {
 		boolean result = false;
 		try {
-			e.data = EditTypes.ADDED;
-			notifyWidgetSelected( e );
-			result = true;
+			switch( buttonType ) {
+			case ADD:
+				e.data = EditTypes.ADDED;
+				notifyWidgetSelected( e );
+				EditEvent<ChuruataOrganisationData> event = new EditEvent<ChuruataOrganisationData>( this, EditTypes.ADDED);
+				result = true;
+				notifyEditEvent( event);
+				break;
+			default:
+				e.data = EditTypes.ADDED;
+				notifyWidgetSelected( e );
+				result = true;
+				break;
+			}
 		} catch (Exception e1) {
 			e1.printStackTrace();
 		}

@@ -72,8 +72,10 @@ public class SimpleOrganisationData implements Serializable, Cloneable {
 	public SimpleOrganisationData( IOrganisation organisation ){
 		this.organisationId = organisation.getId();
 		LatLng location = organisation.getLocation();
-		this.latitude = location.getLatitude();
-		this.longitude = location.getLongitude();		
+		if( location != null ) {
+			this.latitude = location.getLatitude();
+			this.longitude = location.getLongitude();	
+		}
 		this.contact= new ContactPersonData( organisation.getContact());
 		this.name = organisation.getName();
 		this.description = organisation.getDescription();

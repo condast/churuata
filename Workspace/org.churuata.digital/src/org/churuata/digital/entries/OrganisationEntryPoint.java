@@ -134,14 +134,14 @@ public class OrganisationEntryPoint extends AbstractWizardEntryPoint<Organisatio
 				return;
 			JumpEvent<ChuruataOrganisationData> event = getEvent();
 			if(( event != null ) && ( JumpController.Operations.UPDATE.equals(event.getOperation()))) {
-				controller.update(store.getLoginUser(), store.getData());
+				controller.update(store.getLoginUser(), data);
 			}else {
 				IProfileData person = store.getProfile();
 				if( store.getData().getId() <= 0 )
 					controller.register(person.getId(), store.getData());
 				else {
-					JumpController<NodeData<ChuruataOrganisationData, IChuruataService>> jc = new JumpController<>();
-					jc.jump( new NodeJumpEvent<ChuruataOrganisationData,IChuruataService>( this, store.getToken(), Pages.LOCATION.toPath(), JumpController.Operations.UPDATE, store.getData(), null));
+					ILoginUser user = store.getLoginUser();
+					controller.update(user, data);
 				}
 			}
 		}
