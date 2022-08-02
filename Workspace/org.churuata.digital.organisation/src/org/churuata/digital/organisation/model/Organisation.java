@@ -133,22 +133,20 @@ public class Organisation implements IOrganisation, Serializable, Cloneable {
 
 	@Override
 	public String getName() {
-		return ( this.location == null )? null: this.location.getName();
+		return this.name;
 	}
 
-	public void setName(String title) {
-		if( location != null )
-			this.location.setName(title);
+	public void setName(String name) {
+		this.name  = name;
 	}
 
 	@Override
 	public String getDescription() {
-		return ( this.location == null )? null: this.location.getDescription();
+		return this.description;
 	}
 
 	public void setDescription(String description) {
-		if( location != null )
-			this.location.setDescription(description);
+		this.description = description;
 	}
 
 	@Override
