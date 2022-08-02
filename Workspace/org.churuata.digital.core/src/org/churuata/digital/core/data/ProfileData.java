@@ -53,9 +53,10 @@ public class ProfileData extends ContactPersonData implements Serializable, Clon
 
 	private LoginData user;
 	
+	//Principle address
 	private AddressData address;
 	
-	private Collection<OrganisationData> organisations;
+	private Collection<ChuruataOrganisationData> organisations;
 
 	public ProfileData( IContactPerson person ){
 		super( person );
@@ -91,7 +92,7 @@ public class ProfileData extends ContactPersonData implements Serializable, Clon
 
 	@Override
 	public void addOrganisation( OrganisationData organisation ) {
-		this.organisations.add(organisation);
+		this.organisations.add((ChuruataOrganisationData) organisation);
 	}
 
 	@Override

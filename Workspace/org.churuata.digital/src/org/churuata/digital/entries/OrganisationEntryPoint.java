@@ -53,7 +53,7 @@ public class OrganisationEntryPoint extends AbstractWizardEntryPoint<Organisatio
 	public static final String S_CHURUATA = "Churuata-Digital";
 
 	private OrganisationComposite organisationComposite;
-	private Button btnAddress;
+	private Button btnLocate;
 
 	private WebController controller;
 
@@ -91,18 +91,19 @@ public class OrganisationEntryPoint extends AbstractWizardEntryPoint<Organisatio
 	
 	@Override
 	protected void onSetupButtonBar(Group buttonBar) {
-		btnAddress = new Button(buttonBar, SWT.NONE);
-		btnAddress.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true));
-		btnAddress.setImage( DashboardImages.getImage( DashboardImages.Images.LOCATE, ImageSize.NORMAL));
-		btnAddress.addSelectionListener( new SelectionAdapter(){
+		btnLocate = new Button(buttonBar, SWT.NONE);
+		btnLocate.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true));
+		btnLocate.setImage( DashboardImages.getImage( DashboardImages.Images.LOCATE, ImageSize.NORMAL));
+		btnLocate.addSelectionListener( new SelectionAdapter(){
 			private static final long serialVersionUID = 1L;
 
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
 				try{
 					SessionStore store = getSessionStore();
-					JumpController<AddressData> jc = new JumpController<>();
-					jc.jump( new JumpEvent<AddressData>( this, store.getToken(), Pages.ADDRESS.toPath(), JumpController.Operations.CREATE, store.getData().getAddress()));
+					JumpController<NodeData<ChuruataOrganisationData, AddressData>> jc = new JumpController<>();
+					ChuruataOrganisationData org = store.getOrganisation();
+					jc.jump( new NodeJumpEvent<ChuruataOrganisationData, AddressData>( this, store.getToken(), Pages.LOCATION.toPath(), JumpController.Operations.CREATE, org, org.getAddress()));
 				}
 				catch( Exception ex ){
 					ex.printStackTrace();
@@ -120,7 +121,7 @@ public class OrganisationEntryPoint extends AbstractWizardEntryPoint<Organisatio
 		this.organisationComposite.addServiceListener(serviceListener);
 		
 		if( store.getData() != null ) {
-			this.organisationComposite.setInput( store.getData(), true);
+			this.organisationComposite.setInput( store.getOrganisation(), true);
 			Button btnNext = super.getBtnNext();
 			btnNext.setEnabled(this.organisationComposite.checkRequiredFields());
 		}
@@ -130,18 +131,18 @@ public class OrganisationEntryPoint extends AbstractWizardEntryPoint<Organisatio
 	@Override
 	protected void onButtonPressed(ChuruataOrganisationData data, SessionStore store) {
 		try{
-			if( store.getData() == null )
+			if( store.getOrganisation() == null )
 				return;
 			JumpEvent<ChuruataOrganisationData> event = getEvent();
 			if(( event != null ) && ( JumpController.Operations.UPDATE.equals(event.getOperation()))) {
 				controller.update(store.getLoginUser(), data);
 			}else {
-				IProfileData person = store.getProfile();
+				IProfileData person = store.getData();
 				if( store.getData().getId() <= 0 )
-					controller.register(person.getId(), store.getData());
+					controller.register(person.getId(), store.getOrganisation());
 				else {
 					ILoginUser user = store.getLoginUser();
-					controller.update(user, data);
+					controller.update(user, store.getOrganisation());
 				}
 			}
 		}
@@ -152,18 +153,18 @@ public class OrganisationEntryPoint extends AbstractWizardEntryPoint<Organisatio
 
 	protected void onOrganisationEvent( EditEvent<ChuruataOrganisationData> event ) {
 		SessionStore store = super.getSessionStore();
-		IProfileData person = store.getProfile();
+		IProfileData person = store.getData();
 
 		ChuruataOrganisationData organisation = event.getData();
 		organisation.setContact((ContactPersonData) person); 
 		switch( event.getType()) {
 		case ADDED:
-			store.setData( event.getData());
+			store.setOrganisation(organisation);
 			JumpController<NodeData<ChuruataOrganisationData, IChuruataService>> jc = new JumpController<>();
 			jc.jump( new NodeJumpEvent<ChuruataOrganisationData,IChuruataService>( this, store.getToken(), Pages.SERVICES.toPath(), JumpController.Operations.CREATE, organisation, null));
 			break;
 		case COMPLETE:
-			store.setData(event.getData());
+			store.setOrganisation(organisation);
 			Button button = super.getBtnNext();
 			button.setEnabled(( event.getData() != null ));
 			break;
@@ -180,12 +181,12 @@ public class OrganisationEntryPoint extends AbstractWizardEntryPoint<Organisatio
 			switch( event.getType()) {
 			case SELECTED:
 				store.setSelectedService(service);
-				store.setData( this.organisationComposite.getInput());
+				store.setOrganisation(null);
 				JumpController<NodeData<ChuruataOrganisationData, IChuruataService>> jc = new JumpController<>();
-				jc.jump( new NodeJumpEvent<ChuruataOrganisationData, IChuruataService>( this, store.getToken(), Pages.SERVICES.toPath(), JumpController.Operations.UPDATE, store.getData(), service));			
+				jc.jump( new NodeJumpEvent<ChuruataOrganisationData, IChuruataService>( this, store.getToken(), Pages.SERVICES.toPath(), JumpController.Operations.UPDATE, store.getOrganisation(), service));			
 				break;
 			case DELETE:
-				controller.remove( user, store.getData(), ServiceData.getIds( event.getBatch() ));
+				controller.remove( user, store.getOrganisation(), ServiceData.getIds( event.getBatch() ));
 				break;
 			default:
 				break;
@@ -266,17 +267,17 @@ public class OrganisationEntryPoint extends AbstractWizardEntryPoint<Organisatio
 				switch( event.getRequest()){
 				case REGISTER:
 					data = gson.fromJson(event.getResponse(), ChuruataOrganisationData.class);
-					store.setData(data);
+					store.setOrganisation(data);
 					jc.jump( new JumpEvent<ChuruataOrganisationData>( this, store.getToken(), Pages.ACTIVE.toPath(), JumpController.Operations.DONE, data));			
 					break;
 				case UPDATE:
 					data = gson.fromJson(event.getResponse(), ChuruataOrganisationData.class);
-					store.setData(data);
+					store.setOrganisation(data);
 					jc.jump( new JumpEvent<ChuruataOrganisationData>( this, store.getToken(), Pages.ORGANISATIONS.toPath(), JumpController.Operations.DONE, data));			
 					break;
 				case REMOVE_SERVICES:
 					data = gson.fromJson(event.getResponse(), ChuruataOrganisationData.class);
-					store.setData(data);
+					store.setOrganisation(data);
 					organisationComposite.setInput(data, true);
 					break;
 				default:

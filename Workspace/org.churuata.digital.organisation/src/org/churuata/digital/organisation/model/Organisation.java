@@ -38,6 +38,10 @@ public class Organisation implements IOrganisation, Serializable, Cloneable {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
 	
+	String name;
+	
+	String description;
+	
 	@JoinColumn( nullable=true)
 	@OneToOne
 	private Location location;
@@ -73,26 +77,17 @@ public class Organisation implements IOrganisation, Serializable, Cloneable {
 
 	public Organisation( ){
 		this.createDate = Calendar.getInstance().getTime();
+		this.updateDate = Calendar.getInstance().getTime();
 	}
 
 	public Organisation( Location location, boolean principal ){
+		this();
+		this.name = location.getName();
+		this.description = location.getDescription();
 		this.verified = false;
 		this.score = 0;
 		this.type = OrganisationTypes.UNKNOWN.getIndex();
 		this.principal = principal;
-		this.createDate = Calendar.getInstance().getTime();
-		this.updateDate = Calendar.getInstance().getTime();
-	}
-
-	public Organisation( Location location,  IContactPerson contact, String name, String description ){
-		this();
-		this.contact= (Person) contact;
-		this.verified = false;
-		this.score = 0;
-		this.type = OrganisationTypes.UNKNOWN.getIndex();
-		this.services = new ArrayList<Service>();
-		this.createDate = Calendar.getInstance().getTime();
-		this.updateDate = Calendar.getInstance().getTime();
 	}
 
 	public Organisation( IContactPerson contact, ChuruataOrganisationData data ){
@@ -102,6 +97,9 @@ public class Organisation implements IOrganisation, Serializable, Cloneable {
 	
 	public Organisation( ChuruataOrganisationData data ){
 		this();
+		this.name = data.getName();
+		this.description = data.getDescription();
+		this.website = data.getWebsite();
 		this.services = new ArrayList<Service>();
 		this.type = data.getType().getIndex();
 		this.verified = data.isVerified();
@@ -129,13 +127,18 @@ public class Organisation implements IOrganisation, Serializable, Cloneable {
 		this.location.setLongitude(longitude);
 	}
 
+	public void setLocation(Location location) {
+		this.location = location;
+	}
+
 	@Override
 	public String getName() {
 		return ( this.location == null )? null: this.location.getName();
 	}
 
 	public void setName(String title) {
-		this.location.setName(title);
+		if( location != null )
+			this.location.setName(title);
 	}
 
 	@Override
@@ -144,7 +147,8 @@ public class Organisation implements IOrganisation, Serializable, Cloneable {
 	}
 
 	public void setDescription(String description) {
-		this.location.setDescription(description);
+		if( location != null )
+			this.location.setDescription(description);
 	}
 
 	@Override

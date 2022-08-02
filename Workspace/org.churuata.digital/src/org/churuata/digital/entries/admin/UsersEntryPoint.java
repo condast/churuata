@@ -69,9 +69,9 @@ public class UsersEntryPoint extends AbstractWizardEntryPoint<ContactPersonCompo
 	@Override
 	protected void onButtonPressed(ChuruataOrganisationData data, SessionStore store) {
 		try{
-			if( store.getProfile() == null )
+			if( store.getData() == null )
 				return;
-			ProfileData person = (ProfileData) store.getProfile();
+			ProfileData person = (ProfileData) store.getData();
 			if( person == null ) 				
 				controller.register( person );
 			else
@@ -95,7 +95,7 @@ public class UsersEntryPoint extends AbstractWizardEntryPoint<ContactPersonCompo
 	protected boolean onPostProcess(String context, ChuruataOrganisationData data, SessionStore store) {
 		controller = new WebController();
 		controller.setInput(context, IRestPages.Pages.CONTACT.toPath());
-		ProfileData person = store.getProfile();
+		ProfileData person = store.getData();
 		if( person != null ) {
 			person.clearContacts();
 			for( IContact contact: person.getContacts() )
@@ -112,7 +112,7 @@ public class UsersEntryPoint extends AbstractWizardEntryPoint<ContactPersonCompo
 		controller.type = event.getType();
 		switch( event.getType()) {
 		case ADDED:
-			IProfileData person = store.getProfile();
+			IProfileData person = store.getData();
 			if( person == null ) 
 				controller.register( event.getData());
 			else
@@ -173,7 +173,7 @@ public class UsersEntryPoint extends AbstractWizardEntryPoint<ContactPersonCompo
 				case REGISTER:
 					ContactPersonData data = gson.fromJson(event.getResponse(), ContactPersonData.class);
 					profile = new ProfileData( data );
-					store.setProfile(profile);
+					store.setData(profile);
 					switch( type ) {
 					case ADDED:
 						Dispatcher.jump( Pages.CONTACTS, store.getToken());
@@ -191,7 +191,7 @@ public class UsersEntryPoint extends AbstractWizardEntryPoint<ContactPersonCompo
 				case GET_PROFILE:					
 					profile = gson.fromJson(event.getResponse(), ProfileData.class);
 					//editComposite.setInput(profile, true);
-					store.setProfile(profile);
+					store.setData(profile);
 					break;
 				default:
 					break;

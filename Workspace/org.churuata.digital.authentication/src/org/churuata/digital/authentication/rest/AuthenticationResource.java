@@ -161,7 +161,7 @@ public class AuthenticationResource{
 			logger.info( "Login " + name );
 
 			LoginService service = new LoginService( dispatcher );
-			Login user = (Login) service.login(name, password);//new AnonymousUser( name, password);
+			Login user = (Login) service.login(name, password);
 
 			if( user == null )
 				return Response.status( Status.NOT_FOUND).build();
@@ -171,7 +171,7 @@ public class AuthenticationResource{
 			try {
 				Properties props = MailUtils.createProperties(getClass().getResourceAsStream(MailUtils.S_DEFAULT_MAIL_RESOURCE));
 				InputStream in = this.getClass().getResourceAsStream(MailUtils.S_RESOURCE_CONFIRM_CODE);
-				MailUtils.sendConfirmCodeMail( in, props, user, Dispatcher.S_CHURUATA );
+				//MailUtils.sendConfirmCodeMail( in, props, user, Dispatcher.S_CHURUATA );
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

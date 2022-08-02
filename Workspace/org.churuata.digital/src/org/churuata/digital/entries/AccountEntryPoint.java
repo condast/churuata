@@ -89,9 +89,9 @@ public class AccountEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrgani
 			public void widgetSelected(final SelectionEvent e) {
 				try{
 					SessionStore store = getSessionStore();
-					if( store.getProfile() == null )
+					if( store.getData() == null )
 						return;
-					IProfileData profile = store.getProfile();
+					IProfileData profile = store.getData();
 					controller.update( profile);
 				}
 				catch( Exception ex ){
@@ -111,10 +111,10 @@ public class AccountEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrgani
 
 		SessionStore store = getSessionStore();
 		ILoginUser user = store.getLoginUser();
-		ProfileData profile = store.getProfile();
+		ProfileData profile = store.getData();
 		if( profile == null ) {
 			profile = null;//new ProfileData( selected );
-			store.setProfile(profile); 
+			store.setData(profile); 
 		}
 
 		controller = new WebController();
@@ -134,7 +134,7 @@ public class AccountEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrgani
 			if( !isFilled( event.getData()))
 				return;
 			btnAdd.setEnabled(true);
-			store.setProfile((ProfileData) event.getData());
+			store.setData((ProfileData) event.getData());
 			break;
 		default:
 			break;
@@ -220,13 +220,13 @@ public class AccountEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrgani
 				switch( event.getRequest()){
 				case UPDATE_PERSON:
 					profile = gson.fromJson(event.getResponse(), ProfileData.class);
-					store.setProfile(profile);
+					store.setData(profile);
 					Dispatcher.redirect(Entries.Pages.ACTIVE, store.getToken());
 					break;
 				case GET_PROFILE:					
 					profile = gson.fromJson(event.getResponse(), ProfileData.class);
 					profileComposite.setInput(profile, true);
-					store.setProfile(profile);
+					store.setData(profile);
 					break;
 				default:
 					break;

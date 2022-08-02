@@ -16,9 +16,11 @@ import org.churuata.digital.ui.image.ChuruataImages;
 import org.churuata.digital.ui.views.ChuruataAddressComposite;
 import org.condast.commons.authentication.http.IDomainProvider;
 import org.condast.commons.authentication.user.ILoginUser;
+import org.condast.commons.messaging.core.util.NodeData;
 import org.condast.commons.messaging.http.AbstractHttpRequest;
 import org.condast.commons.messaging.http.ResponseEvent;
 import org.condast.commons.na.data.AddressData;
+import org.condast.commons.na.data.OrganisationData;
 import org.condast.commons.na.profile.IProfileData;
 import org.condast.commons.ui.controller.EditEvent;
 import org.condast.commons.ui.controller.IEditListener;
@@ -36,7 +38,7 @@ import org.eclipse.swt.widgets.Group;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
-public class AddressEntryPoint extends AbstractWizardEntryPoint<ChuruataAddressComposite,AddressData>{
+public class AddressEntryPoint extends AbstractWizardEntryPoint<ChuruataAddressComposite,NodeData<ChuruataOrganisationData, AddressData>>{
 	private static final long serialVersionUID = 1L;
 
 	public static final String S_ADD_ADDRESS = "Add Address";
@@ -85,17 +87,19 @@ public class AddressEntryPoint extends AbstractWizardEntryPoint<ChuruataAddressC
 	}
 
 	@Override
-	protected boolean onPostProcess(String context, AddressData data, SessionStore store) {
+	protected boolean onPostProcess(String context, NodeData<ChuruataOrganisationData, AddressData> data, SessionStore store) {
 		ILoginUser user = store.getLoginUser();
 		controller = new WebController();
 		controller.setInput(context, IRestPages.Pages.ORGANISATION.toPath());
 		controller.user = user;
-
-		JumpEvent<AddressData> event = super.getEvent();
+		
+		if( data != null )
+			store.setOrganisation(data.getData());
+		JumpEvent<NodeData<ChuruataOrganisationData, AddressData>> event = super.getEvent();
 		if( event != null ) {
-			addressComposite.setInput(event.getData(), true);
+			addressComposite.setInput(event.getData().getChild(), true);
 		}else {
-			IProfileData profile = store.getProfile();
+			IProfileData profile = store.getData();
 			addressComposite.setInput(profile.getAddress(), true);
 		}
 		return true;
@@ -103,12 +107,17 @@ public class AddressEntryPoint extends AbstractWizardEntryPoint<ChuruataAddressC
 
 	
 	@Override
-	protected void onButtonPressed(AddressData data, SessionStore store) {
+	protected void onButtonPressed(NodeData<ChuruataOrganisationData, AddressData> data, SessionStore store) {
 		try{
-			if( store.getProfile() == null )
+			if( store.getData() == null )
 				return;
-			IProfileData profile = store.getProfile();
-			controller.setAddress( profile.getAddress());
+			IProfileData profile = store.getData();
+			OrganisationData organisation = store.getOrganisation();
+			if( organisation == null ) {
+				organisation = (OrganisationData) profile.getOrganisation()[0];
+				profile.getAddress().setPrincipal(true);
+			}
+			controller.setAddress( organisation.getId(), profile.getAddress());
 		}
 		catch( Exception ex ){
 			ex.printStackTrace();
@@ -117,7 +126,7 @@ public class AddressEntryPoint extends AbstractWizardEntryPoint<ChuruataAddressC
 
 	protected void onOrganisationEvent( EditEvent<AddressData> event ) {
 		SessionStore store = getSessionStore();
-		IProfileData profile = store.getProfile();
+		IProfileData profile = store.getData();
 		Button btnOk = getBtnNext();
 		switch( event.getType()) {
 		case CHANGED:
@@ -148,11 +157,12 @@ public class AddressEntryPoint extends AbstractWizardEntryPoint<ChuruataAddressC
 			super.setContextPath(context + path);
 		}
 
-		public void setAddress( AddressData address) {
+		public void setAddress( long organisationId, AddressData address) {
 			Map<String, String> params = super.getParameters();
 			try {
 				params.put(ChuruataOrganisationData.Parameters.USER_ID.toString(), String.valueOf( user.getId()));
 				params.put(ChuruataOrganisationData.Parameters.SECURITY.toString(), String.valueOf( user.getSecurity() ));
+				params.put(ChuruataOrganisationData.Parameters.ORGANISATION_ID.toString(), String.valueOf( organisationId));
 				Gson gson = new Gson();
 				String data = gson.toJson(address, AddressData.class);
 				sendPut(ChuruataOrganisationData.Requests.SET_ADDRESS, params, data );
@@ -168,7 +178,7 @@ public class AddressEntryPoint extends AbstractWizardEntryPoint<ChuruataAddressC
 				switch( event.getRequest()){
 				case SET_ADDRESS:
 					JumpController<ProfileData> jc = new JumpController<>();
-					jc.jump( new JumpEvent<ProfileData>( this, store.getToken(), Pages.ORGANISATION.toPath(), JumpController.Operations.DONE, store.getProfile()));							
+					jc.jump( new JumpEvent<ProfileData>( this, store.getToken(), Pages.ORGANISATION.toPath(), JumpController.Operations.DONE, store.getData()));							
 					break;
 				default:
 					break;

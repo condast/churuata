@@ -87,7 +87,7 @@ public class OrganisationsEntryPoint extends AbstractChuruataEntryPoint<Churuata
 		controller = new WebController( context, IRestPages.Pages.ORGANISATION);
 		this.tableViewer.addEditListener(listener);
 		SessionStore store = super.getSessionStore();
-		IProfileData profile = store.getProfile();
+		IProfileData profile = store.getData();
 		if(( profile != null ) && !Utils.assertNull(profile.getOrganisation())) {
 			Collection<ChuruataOrganisationData> organisations = new ArrayList<>();
 			for( OrganisationData organisation: profile.getOrganisation())
@@ -99,7 +99,7 @@ public class OrganisationsEntryPoint extends AbstractChuruataEntryPoint<Churuata
 
 	protected void onServiceEvent( EditEvent<ChuruataOrganisationData> event ) {
 		SessionStore store = super.getSessionStore();
-		IProfileData person = store.getProfile();
+		IProfileData person = store.getData();
 
 		ChuruataOrganisationData organisation = event.getData();
 		JumpController<ChuruataOrganisationData> jc = new JumpController<>();
@@ -108,7 +108,7 @@ public class OrganisationsEntryPoint extends AbstractChuruataEntryPoint<Churuata
 			jc.jump( new JumpEvent<ChuruataOrganisationData>( this, store.getToken(), Pages.ORGANISATION.toPath(), JumpController.Operations.UPDATE, organisation));			
 			break;
 		case SELECTED:
-			store.setData( organisation);
+			store.setOrganisation(organisation);
 			if( organisation.getId() <= 0 ) 
 				controller.register(person.getId(), organisation);
 			else {
@@ -157,7 +157,7 @@ public class OrganisationsEntryPoint extends AbstractChuruataEntryPoint<Churuata
 				switch( event.getRequest()){
 				case REGISTER:
 					ChuruataOrganisationData data = gson.fromJson(event.getResponse(), ChuruataOrganisationData.class);
-					store.setData(data);
+					store.setOrganisation(data);
 					JumpController<ChuruataOrganisationData> jc = new JumpController<>();
 					jc.jump( new JumpEvent<ChuruataOrganisationData>( this, store.getToken(), Pages.SERVICES.toPath(), JumpController.Operations.UPDATE, data));			
 					break;

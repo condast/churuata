@@ -76,7 +76,7 @@ public class RegisterEntryPoint extends AbstractWizardEntryPoint<ContactPersonCo
 	@Override
 	protected void onButtonPressed(ChuruataOrganisationData org, SessionStore store) {
 		try{
-			ProfileData person = store.getProfile();
+			ProfileData person = store.getData();
 			if(( person == null ) || ( person.getId() <0))
 				controller.register( this.data );
 			else
@@ -102,7 +102,7 @@ public class RegisterEntryPoint extends AbstractWizardEntryPoint<ContactPersonCo
 	protected boolean onPostProcess(String context, ChuruataOrganisationData data, SessionStore store) {
 		controller = new WebController();
 		controller.setInput(context, IRestPages.Pages.CONTACT.toPath());
-		ProfileData profile = store.getProfile();
+		ProfileData profile = store.getData();
 		if( profile != null ) {
 			personComposite.setInput(profile, true);
 			Button btnNext = super.getBtnNext();
@@ -121,7 +121,7 @@ public class RegisterEntryPoint extends AbstractWizardEntryPoint<ContactPersonCo
 			btnNext.setEnabled( personComposite.checkRequiredFields());
 			break;
 		case ADDED:
-			IProfileData person = store.getProfile();
+			IProfileData person = store.getData();
 			if( person == null ) 
 				controller.register( event.getData());
 			else {
@@ -143,7 +143,7 @@ public class RegisterEntryPoint extends AbstractWizardEntryPoint<ContactPersonCo
 		controller.type = event.getType();
 		switch( event.getType()) {
 		case DELETE:
-			IProfileData person = store.getProfile();
+			IProfileData person = store.getData();
 			person.removeContact(event.getData());
 			controller.remove( person, ContactPersonData.getIds( event.getBatch() ));
 			break;
@@ -230,7 +230,7 @@ public class RegisterEntryPoint extends AbstractWizardEntryPoint<ContactPersonCo
 				case REGISTER:
 					data = gson.fromJson(event.getResponse(), ContactPersonData.class);
 					profile = new ProfileData( data );
-					store.setProfile(profile);
+					store.setData(profile);
 					switch( type ) {
 					case ADDED:
 						jc.jump( new JumpEvent<ProfileData>( this, store.getToken(), Pages.CONTACTS.toPath(), JumpController.Operations.UPDATE, profile));			
@@ -245,12 +245,12 @@ public class RegisterEntryPoint extends AbstractWizardEntryPoint<ContactPersonCo
 				case UPDATE_PERSON:
 					data = gson.fromJson(event.getResponse(), ContactPersonData.class);
 					profile = new ProfileData( data );
-					store.setProfile(profile);
+					store.setData(profile);
 					jc.jump( new JumpEvent<ProfileData>( this, store.getToken(), Pages.ORGANISATION.toPath(), JumpController.Operations.UPDATE, profile));			
 					break;
 				case GET_PROFILE:					
 					profile = gson.fromJson(event.getResponse(), ProfileData.class);
-					store.setProfile(profile);
+					store.setData(profile);
 					break;
 				default:
 					break;

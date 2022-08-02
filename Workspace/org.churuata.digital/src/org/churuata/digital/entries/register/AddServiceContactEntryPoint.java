@@ -94,9 +94,9 @@ public class AddServiceContactEntryPoint extends AbstractChuruataEntryPoint<Chur
 			public void widgetSelected(final SelectionEvent e) {
 				try{
 					SessionStore store = getSessionStore();
-					if( store.getProfile() == null )
+					if( store.getData() == null )
 						return;
-					controller.update( store.getProfile());
+					controller.update( store.getData());
 				}
 				catch( Exception ex ){
 					ex.printStackTrace();
@@ -117,10 +117,10 @@ public class AddServiceContactEntryPoint extends AbstractChuruataEntryPoint<Chur
 
 		SessionStore store = getSessionStore();
 		ILoginUser user = store.getLoginUser();
-		ProfileData profile = store.getProfile();
+		ProfileData profile = store.getData();
 		if( profile == null ) {
 			profile = null;//new ProfileData( selected );
-			store.setProfile(profile); 
+			store.setData(profile); 
 		}
 
 		controller = new WebController();
@@ -152,7 +152,7 @@ public class AddServiceContactEntryPoint extends AbstractChuruataEntryPoint<Chur
 		case COMPLETE:
 			data = event.getData();
 			ProfileData profile = new ProfileData(  data );
-			store.setProfile(profile);
+			store.setData(profile);
 			btnAdd.setEnabled(( data != null ));
 			break;
 		default:
@@ -233,7 +233,7 @@ public class AddServiceContactEntryPoint extends AbstractChuruataEntryPoint<Chur
 				case GET_PROFILE:					Gson gson = new Gson();
 					ProfileData profile = gson.fromJson(event.getResponse(), ProfileData.class);
 					//editComposite.setInput(profile, true);
-					store.setProfile(profile);
+					store.setData(profile);
 					break;
 				default:
 					break;

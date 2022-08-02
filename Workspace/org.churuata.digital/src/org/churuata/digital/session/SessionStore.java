@@ -6,7 +6,7 @@ import org.churuata.digital.core.location.IChuruataService;
 import org.condast.commons.authentication.session.DefaultSessionStore;
 import org.condast.commons.data.latlng.LatLng;
 
-public class SessionStore extends DefaultSessionStore<ChuruataOrganisationData>{
+public class SessionStore extends DefaultSessionStore<ProfileData>{
 
 	private static final String S_CHURUATA_ID = "org.churuata.digital";
 
@@ -14,7 +14,7 @@ public class SessionStore extends DefaultSessionStore<ChuruataOrganisationData>{
 	
 	private LatLng selected;
 	
-	private ProfileData profile; 
+	private ChuruataOrganisationData organisation; 
 	
 	private IChuruataService selectedService;
 
@@ -56,11 +56,11 @@ public class SessionStore extends DefaultSessionStore<ChuruataOrganisationData>{
 		this.selected = selected;
 	}
 
-	public ProfileData getProfile() {
-		return profile;
+	public ChuruataOrganisationData getOrganisation() {
+		return organisation;
 	}
 
-	public void setProfile(ProfileData profile) {
-		this.profile = profile;
+	public void setOrganisation(ChuruataOrganisationData organisation) {
+		this.organisation = organisation;
 	}
 }

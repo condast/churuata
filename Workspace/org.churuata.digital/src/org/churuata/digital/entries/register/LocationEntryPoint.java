@@ -53,7 +53,12 @@ public class LocationEntryPoint extends AbstractWizardEntryPoint<OrganisationMap
 		IDomainProvider<SessionStore> domain = Dispatcher.getDomainProvider( service );
 		return ( domain == null )? null: domain.getData();
 	}
-	
+
+	@Override
+	protected boolean onPrepare(SessionStore store) {
+		return true;//always true, because this does not require login
+	}
+
 	@Override
 	protected OrganisationMapBrowser onCreateComposite(Composite parent, int style) {
         mapComposite = new OrganisationMapBrowser( parent, SWT.NONE);
@@ -66,7 +71,7 @@ public class LocationEntryPoint extends AbstractWizardEntryPoint<OrganisationMap
 	protected boolean onPostProcess(String context, ChuruataOrganisationData data, SessionStore store) {
 		controller = new WebController( context, IRestPages.Pages.ORGANISATION.toPath());
 		mapComposite.setInput(context);
-		mapComposite.setInput(new SimpleOrganisationData( store.getData()));
+		mapComposite.setInput(new SimpleOrganisationData( store.getOrganisation()));
 		getBtnNext().setEnabled(false);
 		mapComposite.locate();
 		return true;
@@ -80,7 +85,7 @@ public class LocationEntryPoint extends AbstractWizardEntryPoint<OrganisationMap
 			Button btnNext = getBtnNext();
 			btnNext.setEnabled(true);
 			SessionStore store = getSessionStore();
-			ChuruataOrganisationData data = store.getData();
+			ChuruataOrganisationData data = store.getOrganisation();
 			data.setLocation(e.getData());
 			controller.update(data);
 			break;
@@ -129,7 +134,7 @@ public class LocationEntryPoint extends AbstractWizardEntryPoint<OrganisationMap
 				switch( event.getRequest()){
 				case SET_LOCATION:
 					ChuruataOrganisationData data = gson.fromJson(event.getResponse(), ChuruataOrganisationData.class);
-					store.setData(data);
+					store.setOrganisation(data);
 					break;
 				default:
 					break;

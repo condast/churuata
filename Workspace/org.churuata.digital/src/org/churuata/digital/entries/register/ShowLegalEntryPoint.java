@@ -206,7 +206,7 @@ public class ShowLegalEntryPoint extends AbstractWizardEntryPoint<Browser, Churu
 
 		if( store.getData() == null )
 			return false;
-		FileParser parser = new FileParser( store.getData(), 0 );
+		FileParser parser = new FileParser( store.getOrganisation(), 0 );
 		String str =null;
 		try{
 			str = parser.parse( this.getClass().getResourceAsStream(S_RESOURCE_FILE) );

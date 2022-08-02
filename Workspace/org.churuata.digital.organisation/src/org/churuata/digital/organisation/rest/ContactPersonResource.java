@@ -2,6 +2,7 @@ package org.churuata.digital.organisation.rest;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.logging.Logger;
 
 import javax.ws.rs.Consumes;
@@ -28,6 +29,7 @@ import org.condast.commons.Utils;
 import org.condast.commons.authentication.core.LoginData;
 import org.condast.commons.authentication.user.ILoginUser;
 import org.condast.commons.io.IOUtils;
+import org.condast.commons.na.data.AddressData;
 import org.condast.commons.na.data.ContactPersonData;
 import org.condast.commons.na.model.IContact;
 import org.condast.commons.na.model.IContact.ContactTypes;
@@ -209,15 +211,22 @@ public class ContactPersonResource{
 			PersonService ps = new PersonService(); 
 			OrganisationService os = new OrganisationService(); 
 			Collection<Person> persons = ps.findForLogin( userId );
-			Collection<Organisation> orgs = new ArrayList<>();
+			List<Organisation> orgs = new ArrayList<>();
+			int principal = 0;
 			if( Utils.assertNull(persons)) {
 				person = ps.create( user);
 			}else {
 				person = persons.iterator().next();
-				orgs = os.getAll(person);
+				orgs = new ArrayList<>( os.getAll(person));
 			}
 			ProfileData profile = new ProfileData( new LoginData( user ), person );
-			orgs.forEach(o->profile.addOrganisation( new ChuruataOrganisationData(o)));
+			for( Organisation o: orgs ){
+				if( o.isPrincipal())
+					principal = orgs.indexOf(o);
+				profile.addOrganisation( new ChuruataOrganisationData(o));
+			}
+			if( !Utils.assertNull(orgs))
+				profile.setAddress(new AddressData( orgs.get(principal).getAddress()));
 			Gson gson = new Gson();
 			String str = gson.toJson(profile, ProfileData.class);
 			return Response.ok( str ).build();

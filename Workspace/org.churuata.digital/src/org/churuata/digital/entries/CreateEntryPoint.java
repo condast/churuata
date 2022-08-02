@@ -88,7 +88,7 @@ public class CreateEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrganis
 					SessionStore store = getSessionStore();
 					if( store.getData() == null )
 						return;
-					controller.create( store.getData());
+					controller.create( store.getOrganisation());
 				}
 				catch( Exception ex ){
 					ex.printStackTrace();
@@ -111,10 +111,10 @@ public class CreateEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrganis
 		ILoginUser user = store.getLoginUser();
 		editComposite.setInput(context, user);
 		LatLng selected = store.getSelected();
-		ChuruataOrganisationData organisation = store.getData();
+		ChuruataOrganisationData organisation = store.getOrganisation();
 		if( organisation == null ) {
 			organisation = new ChuruataOrganisationData( selected );
-			store.setData(organisation); 
+			store.setOrganisation(organisation); 
 		}
 		editComposite.setInput( organisation );
 

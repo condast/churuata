@@ -92,7 +92,7 @@ public class AddServicesEntryPoint extends AbstractChuruataEntryPoint<ChuruataOr
 					if( data == null )
 						return;
 					SessionStore store = getSessionStore();
-					IProfileData person = store.getProfile();
+					IProfileData person = store.getData();
 					controller.addService(data, person.getId());
 				}
 				catch( Exception ex ){
@@ -169,7 +169,7 @@ public class AddServicesEntryPoint extends AbstractChuruataEntryPoint<ChuruataOr
 				case ADD_CONTACT_TYPE:
 					ContactPersonData data = gson.fromJson(event.getResponse(), ContactPersonData.class);
 					ProfileData profile = new ProfileData(  data );
-					store.setProfile(profile);
+					store.setData(profile);
 					Dispatcher.jump( Pages.REGISTER, store.getToken());
 					break;
 				default:

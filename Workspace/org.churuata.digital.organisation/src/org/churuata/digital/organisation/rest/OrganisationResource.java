@@ -27,16 +27,19 @@ import org.churuata.digital.organisation.core.AuthenticationDispatcher;
 import org.churuata.digital.organisation.core.Dispatcher;
 import org.churuata.digital.organisation.core.LocationComparator;
 import org.churuata.digital.organisation.model.Address;
+import org.churuata.digital.organisation.model.Location;
 import org.churuata.digital.organisation.model.Organisation;
 import org.churuata.digital.organisation.model.Person;
 import org.churuata.digital.organisation.model.Service;
 import org.churuata.digital.organisation.services.AddressService;
 import org.churuata.digital.organisation.services.ContactService;
+import org.churuata.digital.organisation.services.LocationService;
 import org.churuata.digital.organisation.services.OrganisationService;
 import org.churuata.digital.organisation.services.PersonService;
 import org.churuata.digital.organisation.services.ServicesService;
 import org.condast.commons.Utils;
 import org.condast.commons.authentication.user.ILoginUser;
+import org.condast.commons.data.latlng.LatLng;
 import org.condast.commons.na.data.AddressData;
 import org.condast.commons.na.data.ContactPersonData;
 import org.condast.commons.na.model.IContact;
@@ -173,7 +176,16 @@ public class OrganisationResource{
 			Organisation org = os.find(organisationId);
 			if( org == null )
 				return Response.status( Status.NOT_FOUND).build();
-			org.setLocation(latitude, longitude);		
+			
+			LocationService ls = new LocationService();
+			LatLng latlng = new LatLng( org.getName(), org.getDescription(), latitude, longitude );
+			Collection<Location> locations = ls.findLocation( latlng );
+			Location location = null;
+			if( Utils.assertNull(locations)) {
+				location = ls.create( latlng );
+			}else
+				location = locations.iterator().next();
+			org.setLocation(location);		
 			os.update(org);
 			ChuruataOrganisationData od = new ChuruataOrganisationData(org);
 			String str = gson.toJson(od, ChuruataOrganisationData.class);

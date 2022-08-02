@@ -99,7 +99,7 @@ public class ServicesEntryPoint extends AbstractWizardEntryPoint<ServiceComposit
 		event = (NodeJumpEvent<ChuruataOrganisationData, IChuruataService>) jc.getEvent( Pages.SERVICES.toPath());		
 		if( event != null ) {
 			this.data = event.getChild();
-			store.setData(event.getParent());
+			store.setOrganisation(data);
 			store.setToken(event.getToken());
 		}
 		this.servicesComposite.setInput(this.data);
@@ -112,11 +112,11 @@ public class ServicesEntryPoint extends AbstractWizardEntryPoint<ServiceComposit
 			if( data == null )
 				return;
 			ILoginUser user = store.getLoginUser();
-			ChuruataOrganisationData organisation = store.getData();
+			ChuruataOrganisationData organisation = store.getOrganisation();
 			if( organisation.getId() < 0) {
 				organisation.addService(data);
 				JumpController<ProfileData> jc = new JumpController<>();
-				jc.jump( new JumpEvent<ProfileData>( this, store.getToken(), Pages.ORGANISATION.toPath(), JumpController.Operations.DONE, store.getProfile()));							
+				jc.jump( new JumpEvent<ProfileData>( this, store.getToken(), Pages.ORGANISATION.toPath(), JumpController.Operations.DONE, store.getData()));							
 			}else {
 				if(( event == null ) || !JumpController.Operations.UPDATE.equals( event.getOperation() )) {
 					controller.addService( organisation, data);
@@ -193,7 +193,7 @@ public class ServicesEntryPoint extends AbstractWizardEntryPoint<ServiceComposit
 				case UPDATE_SERVICE:
 				case ADD_SERVICE:
 					ChuruataOrganisationData data = gson.fromJson(event.getResponse(), ChuruataOrganisationData.class);
-					store.setData(data);
+					store.setOrganisation(data);
 					JumpController<ChuruataOrganisationData> jc = new JumpController<>();
 					jc.jump( new JumpEvent<ChuruataOrganisationData>( this, store.getToken(), Pages.ORGANISATION.toPath(), JumpController.Operations.UPDATE, data));			
 					break;

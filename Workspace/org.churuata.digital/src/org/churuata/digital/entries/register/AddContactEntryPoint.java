@@ -94,9 +94,9 @@ public class AddContactEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrg
 			public void widgetSelected(final SelectionEvent e) {
 				try{
 					SessionStore store = getSessionStore();
-					if( store.getProfile() == null )
+					if( store.getData() == null )
 						return;
-					controller.update( store.getProfile());
+					controller.update( store.getData());
 				}
 				catch( Exception ex ){
 					ex.printStackTrace();
@@ -143,7 +143,7 @@ public class AddContactEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrg
 		case COMPLETE:
 			data = event.getData();
 			ProfileData profile = new ProfileData(  data );
-			store.setProfile(profile);
+			store.setData(profile);
 			btnAdd.setEnabled(( data != null ));
 			break;
 		default:
@@ -206,7 +206,7 @@ public class AddContactEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrg
 					Gson gson = new Gson();
 					ProfileData profile = gson.fromJson(event.getResponse(), ProfileData.class);
 					//editComposite.setInput(profile, true);
-					store.setProfile(profile);
+					store.setData(profile);
 					break;
 				default:
 					break;

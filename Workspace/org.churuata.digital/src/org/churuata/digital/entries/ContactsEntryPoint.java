@@ -100,7 +100,7 @@ public class ContactsEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrgan
 					if( data == null )
 						return;
 					SessionStore store = getSessionStore();
-					IProfileData person = store.getProfile();
+					IProfileData person = store.getData();
 					controller.addContact(data, person.getId());
 				}
 				catch( Exception ex ){
@@ -196,7 +196,7 @@ public class ContactsEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrgan
 				case ADD_CONTACT_TYPE:
 					ContactPersonData data = gson.fromJson(event.getResponse(), ContactPersonData.class);
 					ProfileData profile = new ProfileData( data );
-					store.setProfile(profile);
+					store.setData(profile);
 					jc.jump( new JumpEvent<ContactPersonData>( this, store.getToken(), Pages.REGISTER.toPath(), JumpController.Operations.DONE, data));			
 					break;
 				default:
