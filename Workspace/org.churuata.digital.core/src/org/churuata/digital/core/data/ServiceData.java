@@ -6,7 +6,6 @@ import java.util.Date;
 
 import org.churuata.digital.core.location.IChuruataService;
 import org.condast.commons.Utils;
-import org.condast.commons.data.latlng.ILocation;
 import org.condast.commons.data.latlng.LatLng;
 import org.condast.commons.na.data.AddressData;
 import org.condast.commons.na.model.IAddress;
@@ -114,8 +113,9 @@ public class ServiceData implements IChuruataService {
 	}
 
 	@Override
-	public void setLocation(ILocation location) {
-		this.location = location.getLocation();	}
+	public void setLocation( LatLng location) {
+		this.location = location;
+	}
 
 	@Override
 	public IAddress getAddress() {

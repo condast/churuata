@@ -17,7 +17,6 @@ import javax.persistence.TemporalType;
 
 import org.churuata.digital.core.location.IChuruataService;
 import org.condast.commons.authentication.user.ILoginUser;
-import org.condast.commons.data.latlng.ILocation;
 import org.condast.commons.data.latlng.LatLng;
 import org.condast.commons.na.model.IAddress;
 
@@ -179,7 +178,7 @@ public class ChuruataType implements Comparable<ChuruataType>, IChuruataService{
 	}
 
 	@Override
-	public void setLocation(ILocation location) {
+	public void setLocation(LatLng location) {
 		// TODO Auto-generated method stub
 		
 	}

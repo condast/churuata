@@ -9,6 +9,7 @@ import org.churuata.digital.core.Dispatcher;
 import org.churuata.digital.core.Entries.Pages;
 import org.churuata.digital.core.data.ChuruataOrganisationData;
 import org.churuata.digital.core.data.ProfileData;
+import org.churuata.digital.core.data.ServiceData;
 import org.churuata.digital.core.location.IChuruataService;
 import org.churuata.digital.core.rest.IRestPages;
 import org.churuata.digital.session.SessionStore;
@@ -101,11 +102,10 @@ public class OrganisationEntryPoint extends AbstractWizardEntryPoint<Organisatio
 				try{
 					SessionStore store = getSessionStore();
 					ILoginUser user = store.getLoginUser();
-					JumpController<ChuruataOrganisationData> jc = new JumpController<>();
-					ProfileData profile= store.getData();
-					ChuruataOrganisationData org = (ChuruataOrganisationData) profile.getOrganisation()[0];
 					JumpController.Operations operation = ( user==null)?Operations.CREATE: Operations.UPDATE;
-					jc.jump( new JumpEvent<ChuruataOrganisationData>( this, Pages.ORGANISATION.name(), store.getToken(), Pages.LOCATION.toPath(), operation, org));
+					JumpController<NodeData<ChuruataOrganisationData, IChuruataService>> jc = new JumpController<>();
+					ChuruataOrganisationData org = getCache();
+					jc.jump( new NodeJumpEvent<ChuruataOrganisationData, IChuruataService>( this, Pages.ORGANISATION.name(), store.getToken(), Pages.LOCATION.toPath(), operation, org));
 				}
 				catch( Exception ex ){
 					ex.printStackTrace();
@@ -116,6 +116,7 @@ public class OrganisationEntryPoint extends AbstractWizardEntryPoint<Organisatio
 		super.onSetupButtonBar(buttonBar);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected boolean onPostProcess(String context, SessionStore store) {
 		controller = new WebController(context, IRestPages.Pages.ORGANISATION);
@@ -131,12 +132,17 @@ public class OrganisationEntryPoint extends AbstractWizardEntryPoint<Organisatio
 		
 		JumpController<?> jc = new JumpController<>();
 		JumpEvent<?> event = jc.getEvent( Pages.ORGANISATION.toPath());
+		ILoginUser user = store.getLoginUser();
 		if( event != null ) {
 			Pages source = Pages.valueOf(event.getIdentifier());
 			switch( source ) {
 			case ADDRESS:
-				ILoginUser user = store.getLoginUser();
 				controller.setAddress(user, organisation, (AddressData) event.getData());
+				break;
+			case LOCATION:
+				NodeData<ChuruataOrganisationData, IChuruataService> node = (NodeData<ChuruataOrganisationData, IChuruataService>) event.getData();
+				organisation = (ChuruataOrganisationData) node.getData();
+				controller.setLocation(organisation);
 				break;
 			default:
 				break;
@@ -150,7 +156,7 @@ public class OrganisationEntryPoint extends AbstractWizardEntryPoint<Organisatio
 		try{
 			if( store.getData() == null )
 				return;
-			JumpEvent<ChuruataOrganisationData> event = null;//getEvent();
+			JumpEvent<ChuruataOrganisationData> event = null;
 			if(( event != null ) && ( JumpController.Operations.UPDATE.equals(event.getOperation()))) {
 				controller.update(store.getLoginUser(), data);
 			}else {
@@ -241,6 +247,19 @@ public class OrganisationEntryPoint extends AbstractWizardEntryPoint<Organisatio
 				Gson gson = new Gson();
 				String data = gson.toJson(address, AddressData.class);
 				sendPut(ChuruataOrganisationData.Requests.SET_ADDRESS, params, data );
+			} catch (IOException e) {
+				logger.warning(e.getMessage());
+			}
+		}
+
+		public void setLocation( ChuruataOrganisationData data ) {
+			Map<String, String> params = super.getParameters();
+			params.put(ServiceData.Parameters.PERSON_ID.toString(), String.valueOf(data.getContact().getId()));
+			params.put(ServiceData.Parameters.ORGANISATION_ID.toString(), String.valueOf( data.getId()));
+			params.put(ServiceData.Parameters.LATITUDE.toString(), String.valueOf(data.getLocation().getLatitude()));
+			params.put(ServiceData.Parameters.LONGITUDE.toString(), String.valueOf( data.getLocation().getLongitude()));
+			try {
+				super.sendGet(ChuruataOrganisationData.Requests.SET_LOCATION, params);
 			} catch (IOException e) {
 				logger.warning(e.getMessage());
 			}

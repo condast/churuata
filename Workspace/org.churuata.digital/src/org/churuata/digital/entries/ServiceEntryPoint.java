@@ -55,7 +55,7 @@ public class ServiceEntryPoint extends AbstractWizardEntryPoint<ServiceComposite
 
 	private ServiceComposite servicesComposite;
 
-	private JumpEvent<?> event;
+	private JumpEvent<NodeData<?, ?>> event;
 	private WebController controller;
 
 	private Button btnLocate;
@@ -100,14 +100,15 @@ public class ServiceEntryPoint extends AbstractWizardEntryPoint<ServiceComposite
 		btnLocate.addSelectionListener( new SelectionAdapter(){
 			private static final long serialVersionUID = 1L;
 
+			@SuppressWarnings("unchecked")
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
 				try{
 					SessionStore store = getSessionStore();
-					ILoginUser user = store.getLoginUser();
-					JumpController.Operations operation = ( user==null)?Operations.CREATE: Operations.UPDATE;
-					JumpController<IChuruataService> jc = new JumpController<>();
-					jc.jump( new JumpEvent<IChuruataService>( this, Pages.SERVICE.name(), store.getToken(), Pages.LOCATION.toPath(), operation, getCache()));
+					JumpController<NodeData<ChuruataOrganisationData, IChuruataService>> jc = new JumpController<>();
+					NodeData<ChuruataOrganisationData, IChuruataService> node = (NodeData<ChuruataOrganisationData, IChuruataService>) event.getData();
+					ChuruataOrganisationData org = ( node == null )?null: node.getData();
+					jc.jump( new NodeJumpEvent<ChuruataOrganisationData,IChuruataService>( this, Pages.SERVICE.name(), store.getToken(), Pages.LOCATION.toPath(), operation, org, getCache()));
 				}
 				catch( Exception ex ){
 					ex.printStackTrace();
@@ -152,7 +153,7 @@ public class ServiceEntryPoint extends AbstractWizardEntryPoint<ServiceComposite
 
 		JumpController<?> jc = new JumpController<>();
 		if( jc != null ) {
-			event = jc.getEvent( Pages.SERVICE.toPath());		
+			event = (JumpEvent<NodeData<?, ?>>) jc.getEvent( Pages.SERVICE.toPath());		
 			if( event != null ) {
 				Pages source = Pages.valueOf(event.getIdentifier());
 				switch( source) {

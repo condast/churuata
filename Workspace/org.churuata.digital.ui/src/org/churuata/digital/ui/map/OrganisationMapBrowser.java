@@ -50,8 +50,16 @@ public class OrganisationMapBrowser extends Browser {
 	}
 
 	private OpenLayerController mapController;
+
+	private FieldData fieldData;
 	
-	private Collection<SimpleOrganisationData> organisations;
+	private SimpleOrganisationData input;
+	
+	private IChuruataService service; 
+	
+	private IEvaluationListener<Object> listener = e->onNotifyEvaluation(e);
+
+	private Logger logger = Logger.getLogger( this.getClass().getName() );
 
 	private Collection<IEditListener<LatLng>> listeners;
 	
@@ -74,16 +82,6 @@ public class OrganisationMapBrowser extends Browser {
 		}
 	};
 
-	private Collection<SimpleOrganisationData> churuatas;
-	
-	private FieldData fieldData;
-	
-	private SimpleOrganisationData input;
-	
-	private IEvaluationListener<Object> listener = e->onNotifyEvaluation(e);
-
-	private Logger logger = Logger.getLogger( this.getClass().getName() );
-
 	public OrganisationMapBrowser(Composite parent, int style) {
 		super(parent, style);
 		this.located = false;
@@ -92,8 +90,6 @@ public class OrganisationMapBrowser extends Browser {
 		this.mapController = new OpenLayerController( this, location, 11 );
 		this.mapController.addEvaluationListener( listener);
 		this.listeners = new ArrayList<>();
-		this.organisations = new ArrayList<>();
-		churuatas = new ArrayList<>();
 	}
 
 	public void addEditListener( IEditListener<LatLng> listener ) {
@@ -167,11 +163,11 @@ public class OrganisationMapBrowser extends Browser {
 				}else {
 					Object[] coords = (Object[]) event.getData()[2];
 					LatLng latlng = new LatLng(( Double) coords[1], (Double)coords[0]);				
-					IconsView icons = new IconsView( mapController );
-					if( input != null )
+					if( this.service != null ) {
+						service.setLocation(latlng);
+					}else if( input != null )
 						input.setLocation(latlng);
-					icons.clearIcons();		
-					createIcon(icons, input);
+					refresh();
 					notifyEditListeners( new EditEvent<LatLng>( this, EditTypes.SELECTED, latlng ));
 				}
 			}
@@ -193,20 +189,11 @@ public class OrganisationMapBrowser extends Browser {
 		onNavigation();
 	}
 	
-	public void setInput(SimpleOrganisationData input) {
+	public void setInput(SimpleOrganisationData input, IChuruataService service) {
 		this.input = input;
+		this.service = service;
 		GeoView geo = new GeoView( this.mapController);
 		geo.setLocation(this.input.getLocation());
-	}
-
-	public void setInput( SimpleOrganisationData[] input) {
-		try {
-			this.organisations.addAll(Arrays.asList(input));
-			//updateMap();
-			//onNavigation();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}		
 	}
 
 	private void onNavigation() {
@@ -214,30 +201,27 @@ public class OrganisationMapBrowser extends Browser {
 			if( located )
 				return;
 			logger.info("Requesting geo location");
-			//NavigationView navigation = new NavigationView(mapController);
-			//navigation.getLocation();
-			//Only needed to enforce a refresh
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
 	public void refresh() {
-		if( mapController.isExecuting())
-			return;
-		IconsView icons = new IconsView( mapController );
-		icons.clearIcons();
-		
-		createIcon(icons, input);
-		updateMarkers(icons);
-
-		if( Utils.assertNull(churuatas))
-			return;
-		
-		//for( SimpleOrganisationData mt: churuatas ) {
-		//	Markers marker = IChuruataService.Services.getMarker( IChuruataService.Services.values()[ mt.getMaxLeaves()]);
-		//	icons.addMarker(mt.getLocation(), marker, mt.getLocation().getId().charAt(0));
-		//}
+		try {
+			if( mapController.isExecuting())
+				return;
+			IconsView icons = new IconsView( mapController );
+			icons.clearIcons();
+			
+			createIcon(icons, input);	
+			
+			if(( this.service != null ) && ( this.service.getLocation()!= null)) {
+				char chr = 'S';
+				icons.addMarker(service.getLocation(), Markers.PURPLE, chr);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void dispose() {
@@ -247,24 +231,23 @@ public class OrganisationMapBrowser extends Browser {
 		super.dispose();
 	}
 
-	public void updateMarkers( IconsView icons) {
-		if( Utils.assertNull( this.organisations ))
-			return;
-		for( SimpleOrganisationData churuata: this.organisations) {
-			createIcon(icons, churuata);
-		}		
-	}
-
 	protected static void createIcon( IconsView icons, SimpleOrganisationData data ) {
 		Markers marker = Markers.RED;
 		if(( data == null ) || (data.getLocation()==null))
 			return;
-		
-		if( Utils.assertNull(data.getServices())) {
-			icons.addMarker(data.getLocation(), marker, 'H');
+
+		char chr = 'H';
+		icons.addMarker(data.getLocation(), marker, chr);
+
+		for( IChuruataService service: data.getServices())
+			createIcon( icons, service );
+	}
+
+	protected static void createIcon( IconsView icons, IChuruataService service ) {
+		Markers marker = Markers.RED;
+		if(( service == null ) || ( service.getLocation() == null ))
 			return;
-		}
-		IChuruataService service = data.getServices()[0];
+		
 		switch( service.getService()) {
 		case FOOD:
 			marker = Markers.GREEN;
@@ -291,7 +274,7 @@ public class OrganisationMapBrowser extends Browser {
 			break;
 		}
 		char chr = service.getService().name().charAt(0);
-		icons.addMarker(data.getLocation(), marker, chr);
+		icons.addMarker(service.getLocation(), marker, chr);
 	}
 
 	public static String createMarker( IconsView icons, IChuruata churuata, boolean newEntry ) {

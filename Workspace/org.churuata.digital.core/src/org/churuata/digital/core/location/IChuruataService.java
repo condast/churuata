@@ -2,7 +2,6 @@ package org.churuata.digital.core.location;
 
 import java.util.Date;
 
-import org.condast.commons.data.latlng.ILocation;
 import org.condast.commons.data.latlng.LatLng;
 import org.condast.commons.na.model.IAddress;
 import org.condast.commons.strings.StringStyler;
@@ -120,7 +119,7 @@ public interface IChuruataService {
 
 	LatLng getLocation();
 
-	void setLocation(ILocation location);
+	void setLocation( LatLng location);
 
 	IAddress getAddress();
 

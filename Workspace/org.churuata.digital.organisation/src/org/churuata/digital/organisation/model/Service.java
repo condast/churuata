@@ -15,7 +15,6 @@ import javax.persistence.OneToOne;
 
 import org.churuata.digital.core.location.IChuruataService;
 import org.churuata.digital.core.model.IOrganisation;
-import org.condast.commons.data.latlng.ILocation;
 import org.condast.commons.data.latlng.LatLng;
 import org.condast.commons.na.model.IAddress;
 import org.condast.commons.strings.StringUtils;
@@ -99,9 +98,13 @@ public class Service implements IChuruataService {
 		return ( location == null )?null: location.getLocation();
 	}
 
+	public void setLocation(Location location) {
+		this.location = location;
+	}
+
 	@Override
-	public void setLocation(ILocation location) {
-		this.location = (Location) location;
+	public void setLocation(LatLng location) {
+		//this.location = null;//(Location) location;
 	}
 
 	public void setContribution( Contribution contribution) {
