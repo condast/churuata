@@ -1,7 +1,6 @@
 package org.churuata.digital.organisation.model;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,6 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 import org.condast.commons.data.latlng.LatLng;
+import org.condast.commons.na.data.AddressData;
 import org.condast.commons.na.model.IAddress;
 import org.condast.commons.strings.StringUtils;
 
@@ -35,7 +35,10 @@ public class Address implements IAddress, Serializable {
 	private String street;
 	
 	private String street_ext;
-	
+
+	@Column(nullable=false)
+	private String number;
+
 	@Column(nullable=false)
 	private String country;
 	
@@ -52,20 +55,28 @@ public class Address implements IAddress, Serializable {
 		this.country = Countries.THE_NETHERLANDS.name();
 	}
 	
-	public Address( String straatnaam, String postcode, String plaats ){
+	public Address( String straatnaam, String number, String postcode, String plaats ){
 		this.street = straatnaam;
 		this.postcode = postcode;
+		this.number = number;
 		this.town = plaats;
 		this.country = Countries.THE_NETHERLANDS.name();
 	}
-	
-	public Address( String straatnaam, String postcode, 
-			String plaats, BigDecimal lon, BigDecimal lat){
-		this.street = straatnaam;
-		this.postcode = postcode;
-		this.town = plaats;
+
+	public Address( AddressData address ){
+		this.name = address.getName();
+		this.street = address.getStreet();
+		this.street_ext = address.getStreetExtension();
+		this.postcode = address.getPostcode();
+		this.number = address.getHouseNumber();
+		this.town = address.getTown();
+		this.country = address.getCountry();
+		if( address.getLocation() != null ) {
+			this.latitude = address.getLocation().getLatitude();
+			this.longitude = address.getLocation().getLongitude();
+		}
 	}
-	
+
 	@Override
 	public long getAddressId() {
 		return this.id;
@@ -82,6 +93,16 @@ public class Address implements IAddress, Serializable {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	@Override
+	public void setNumber(String number) {
+		this.number = number;
+	}
+
+	@Override
+	public String getHouseNumber() {
+		return number;
 	}
 
 	@Override
@@ -168,18 +189,6 @@ public class Address implements IAddress, Serializable {
 			s.append("]");
 		}
 		return s.toString();
-	}
-
-	@Override
-	public void setNumber(String number) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public String getHouseNumber() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	@Override

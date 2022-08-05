@@ -6,6 +6,10 @@ import java.util.Date;
 
 import org.churuata.digital.core.location.IChuruataService;
 import org.condast.commons.Utils;
+import org.condast.commons.data.latlng.ILocation;
+import org.condast.commons.data.latlng.LatLng;
+import org.condast.commons.na.data.AddressData;
+import org.condast.commons.na.model.IAddress;
 import org.condast.commons.strings.StringStyler;
 import org.condast.commons.strings.StringUtils;
 
@@ -34,6 +38,10 @@ public class ServiceData implements IChuruataService {
 	
 	private String contribution;
 	
+	private LatLng location;
+	
+	private AddressData address;
+	
 	private long fromDate;
 	
 	private long toDate;
@@ -58,6 +66,8 @@ public class ServiceData implements IChuruataService {
 		this.description = service.getDescription();
 		IChuruataService.Contribution contribution = service.getContribution(); 
 		this.contribution = ( contribution == null )?Contribution.LOG.name(): contribution.name();
+		this.location = service.getLocation();
+		this.address = ( service.getAddress()==null )? null: new AddressData( service.getAddress());
 		this.fromDate = service.from().getTime();
 		this.toDate = service.to().getTime();
 	}
@@ -96,6 +106,20 @@ public class ServiceData implements IChuruataService {
 	@Override
 	public void setContribution(Contribution contribution) {
 		this.contribution = contribution.name();
+	}
+
+	@Override
+	public LatLng getLocation() {
+		return location;
+	}
+
+	@Override
+	public void setLocation(ILocation location) {
+		this.location = location.getLocation();	}
+
+	@Override
+	public IAddress getAddress() {
+		return address;
 	}
 
 	@Override

@@ -16,8 +16,6 @@ import org.condast.commons.strings.StringStyler;
 import org.condast.commons.strings.StringUtils;
 import org.condast.commons.ui.controller.EditEvent;
 import org.condast.commons.ui.controller.IEditListener;
-import org.condast.commons.ui.session.AbstractSessionHandler;
-import org.condast.commons.ui.session.SessionEvent;
 import org.condast.commons.ui.controller.EditEvent.EditTypes;
 import org.condast.js.commons.eval.EvaluationEvent;
 import org.condast.js.commons.eval.IEvaluationListener;
@@ -26,7 +24,6 @@ import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.browser.ProgressEvent;
 import org.eclipse.swt.browser.ProgressListener;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.openlayer.map.control.GeoView;
 import org.openlayer.map.control.IconsView;
 import org.openlayer.map.control.NavigationView;
@@ -77,7 +74,6 @@ public class OrganisationMapBrowser extends Browser {
 		}
 	};
 
-	private SessionHandler handler;
 	private Collection<SimpleOrganisationData> churuatas;
 	
 	private FieldData fieldData;
@@ -98,7 +94,6 @@ public class OrganisationMapBrowser extends Browser {
 		this.listeners = new ArrayList<>();
 		this.organisations = new ArrayList<>();
 		churuatas = new ArrayList<>();
-		this.handler = new SessionHandler(getDisplay());
 	}
 
 	public void addEditListener( IEditListener<LatLng> listener ) {
@@ -145,7 +140,7 @@ public class OrganisationMapBrowser extends Browser {
 					geo.setFieldData(fieldData);
 					geo.jump();
 					logger.info("Jumped to geo location");
-					notifyEditListeners( new EditEvent<LatLng>( this, EditTypes.SELECTED, home ));
+					notifyEditListeners( new EditEvent<LatLng>( this, EditTypes.INITIALISED, home ));
 					return;
 				}
 			}
@@ -209,7 +204,6 @@ public class OrganisationMapBrowser extends Browser {
 			this.organisations.addAll(Arrays.asList(input));
 			//updateMap();
 			//onNavigation();
-			handler.addData(input);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}		
@@ -222,14 +216,13 @@ public class OrganisationMapBrowser extends Browser {
 			logger.info("Requesting geo location");
 			//NavigationView navigation = new NavigationView(mapController);
 			//navigation.getLocation();
-			handler.addData(null);
 			//Only needed to enforce a refresh
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	protected void updateMap() {
+	public void refresh() {
 		if( mapController.isExecuting())
 			return;
 		IconsView icons = new IconsView( mapController );
@@ -246,7 +239,7 @@ public class OrganisationMapBrowser extends Browser {
 		//	icons.addMarker(mt.getLocation(), marker, mt.getLocation().getId().charAt(0));
 		//}
 	}
-	
+
 	public void dispose() {
 		this.mapController.removeEvaluationListener( listener );
 		this.mapController.dispose();
@@ -318,23 +311,5 @@ public class OrganisationMapBrowser extends Browser {
 			result = icons.addMarker(churuata.getLocation(), marker, chr);				
 		}
 		return result;
-	}
-	
-	private class SessionHandler extends AbstractSessionHandler<SimpleOrganisationData[]>{
-
-		protected SessionHandler(Display display) {
-			super(display);
-		}
-
-		@Override
-		protected void onHandleSession(SessionEvent<SimpleOrganisationData[]> sevent) {
-			if( sevent.getData() != null ) {
-				SimpleOrganisationData[] data = sevent.getData();
-				organisations.clear();
-				for( SimpleOrganisationData service: data)
-					organisations.add( service );
-			}
-			updateMap();		
-		}	
 	}
 }

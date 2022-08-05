@@ -11,6 +11,7 @@ import org.churuata.digital.core.Dispatcher;
 import org.churuata.digital.core.Entries;
 import org.churuata.digital.core.data.ChuruataOrganisationData;
 import org.churuata.digital.core.data.ChuruataOrganisationData.Requests;
+import org.churuata.digital.core.data.ProfileData;
 import org.churuata.digital.core.rest.IRestPages;
 import org.churuata.digital.session.SessionStore;
 import org.churuata.digital.ui.image.ChuruataImages;
@@ -88,7 +89,8 @@ public class CreateEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrganis
 					SessionStore store = getSessionStore();
 					if( store.getData() == null )
 						return;
-					controller.create( store.getOrganisation());
+					ProfileData profile = store.getData();
+					controller.create( (ChuruataOrganisationData) profile.getOrganisation()[0]);
 				}
 				catch( Exception ex ){
 					ex.printStackTrace();
@@ -111,10 +113,11 @@ public class CreateEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrganis
 		ILoginUser user = store.getLoginUser();
 		editComposite.setInput(context, user);
 		LatLng selected = store.getSelected();
-		ChuruataOrganisationData organisation = store.getOrganisation();
+		ProfileData profile= store.getData();
+		ChuruataOrganisationData organisation = (ChuruataOrganisationData) profile.getOrganisation()[0];
 		if( organisation == null ) {
 			organisation = new ChuruataOrganisationData( selected );
-			store.setOrganisation(organisation); 
+			profile.addOrganisation(organisation); 
 		}
 		editComposite.setInput( organisation );
 

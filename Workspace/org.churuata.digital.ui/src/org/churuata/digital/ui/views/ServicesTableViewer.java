@@ -6,6 +6,7 @@ import java.util.Collection;
 import org.churuata.digital.core.location.IChuruataService;
 import org.churuata.digital.ui.ChuruataLanguage;
 import org.condast.commons.Utils;
+import org.condast.commons.ui.controller.EditEvent;
 import org.condast.commons.ui.controller.EditEvent.EditTypes;
 import org.condast.commons.ui.na.NALanguage;
 import org.condast.commons.ui.table.AbstractTableViewerWithDelete;
@@ -23,8 +24,10 @@ public class ServicesTableViewer extends AbstractTableViewerWithDelete<IChuruata
 	private static final long serialVersionUID = 1L;
 
 	private enum Columns{
-		SERVICE,
-		CONTRIBUTOR, DESCRIPTION;
+		SERVICE, 
+		DESCRIPTION,
+		FROM,
+		TO;
 
 		@Override
 		public String toString() {
@@ -33,9 +36,10 @@ public class ServicesTableViewer extends AbstractTableViewerWithDelete<IChuruata
 
 		public static int getWeight( Columns column ){
 			switch( column ){
-			case CONTRIBUTOR:
 			case SERVICE:
 				return 30;
+			case DESCRIPTION:
+				return 50;
 			default:
 				return 10;
 			}
@@ -81,12 +85,19 @@ public class ServicesTableViewer extends AbstractTableViewerWithDelete<IChuruata
 	}
 
 	@Override
-	protected boolean onButtonSelected(Buttons buttontype, SelectionEvent e) {
+	protected boolean onButtonSelected(Buttons buttonType, SelectionEvent e) {
 		boolean result = false;
 		try {
-			e.data = EditTypes.ADDED;
-			notifyWidgetSelected( e );
-			result = true;
+			switch( buttonType) {
+			case ADD:
+				e.data = EditTypes.ADDED;
+				notifyWidgetSelected( e );
+				notifyEditEvent( new EditEvent<IChuruataService>( this, EditTypes.ADDED));
+				result = true;
+				break;
+			default:
+				break;
+			}
 		} catch (Exception e1) {
 			e1.printStackTrace();
 		}
@@ -124,11 +135,14 @@ public class ServicesTableViewer extends AbstractTableViewerWithDelete<IChuruata
 			case SERVICE:
 				retval = ChuruataLanguage.getInstance().getString( service.getService());
 				break;
-			case CONTRIBUTOR:
-				retval = service.getContribution().name();
-				break;
 			case DESCRIPTION:
 				retval = service.getDescription();
+				break;
+			case FROM:
+				retval = org.condast.commons.date.DateUtils.getFormatted( service.from());
+				break;
+			case TO:
+				retval = org.condast.commons.date.DateUtils.getFormatted( service.to());
 				break;
 			default:
 				break;				

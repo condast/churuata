@@ -9,10 +9,12 @@ import org.churuata.digital.core.Dispatcher;
 import org.churuata.digital.core.Entries;
 import org.churuata.digital.core.Entries.Pages;
 import org.churuata.digital.core.data.ChuruataOrganisationData;
+import org.churuata.digital.core.data.ProfileData;
 import org.churuata.digital.core.data.ServiceData;
 import org.churuata.digital.core.data.simple.SimpleOrganisationData;
 import org.churuata.digital.core.rest.IRestPages;
 import org.churuata.digital.session.SessionStore;
+import org.churuata.digital.ui.image.ChuruataImages;
 import org.churuata.digital.ui.map.OrganisationMapBrowser;
 import org.condast.commons.authentication.http.IDomainProvider;
 import org.condast.commons.data.latlng.LatLng;
@@ -20,13 +22,16 @@ import org.condast.commons.messaging.http.AbstractHttpRequest;
 import org.condast.commons.messaging.http.ResponseEvent;
 import org.condast.commons.ui.controller.EditEvent;
 import org.condast.commons.ui.controller.IEditListener;
+import org.condast.commons.ui.messaging.jump.JumpController;
+import org.condast.commons.ui.messaging.jump.JumpEvent;
+import org.condast.commons.ui.session.SessionEvent;
 import org.eclipse.rap.rwt.RWT;
 import org.eclipse.rap.rwt.client.service.StartupParameters;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Group;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
 public class LocationEntryPoint extends AbstractWizardEntryPoint<OrganisationMapBrowser, ChuruataOrganisationData> {
@@ -40,6 +45,8 @@ public class LocationEntryPoint extends AbstractWizardEntryPoint<OrganisationMap
 
 	private WebController controller;
 	
+	private JumpEvent<ChuruataOrganisationData> event;
+
 	private Logger logger = Logger.getLogger(this.getClass().getName());
 
 	
@@ -55,11 +62,6 @@ public class LocationEntryPoint extends AbstractWizardEntryPoint<OrganisationMap
 	}
 
 	@Override
-	protected boolean onPrepare(SessionStore store) {
-		return true;//always true, because this does not require login
-	}
-
-	@Override
 	protected OrganisationMapBrowser onCreateComposite(Composite parent, int style) {
         mapComposite = new OrganisationMapBrowser( parent, SWT.NONE);
  		mapComposite.setData( RWT.CUSTOM_VARIANT, Entries.S_CHURUATA );
@@ -68,13 +70,27 @@ public class LocationEntryPoint extends AbstractWizardEntryPoint<OrganisationMap
 	}
 
 	@Override
-	protected boolean onPostProcess(String context, ChuruataOrganisationData data, SessionStore store) {
+	protected boolean onPostProcess(String context, SessionStore store) {
+		JumpController<ChuruataOrganisationData> jc = new JumpController<>();
+		event = jc.getEvent( Pages.LOCATION.toPath());		
+		
 		controller = new WebController( context, IRestPages.Pages.ORGANISATION.toPath());
-		mapComposite.setInput(context);
-		mapComposite.setInput(new SimpleOrganisationData( store.getOrganisation()));
-		getBtnNext().setEnabled(false);
 		mapComposite.locate();
+		mapComposite.setInput(context);
+
+		ProfileData profile= store.getData();
+		ChuruataOrganisationData organisation = (ChuruataOrganisationData) profile.getOrganisation()[0];
+		mapComposite.setInput(new SimpleOrganisationData( organisation ));
 		return true;
+	}
+
+	@Override
+	protected void onSetupButtonBar(Group buttonBar) {
+		ChuruataImages images = ChuruataImages.getInstance();
+		Button button = getBtnNext();
+		button.setEnabled(false);
+		button.setImage( images.getImage( ChuruataImages.Images.CHECK));
+		super.onSetupButtonBar(buttonBar);
 	}
 
 	private Object onEditEvent(EditEvent<LatLng> e) {
@@ -82,12 +98,11 @@ public class LocationEntryPoint extends AbstractWizardEntryPoint<OrganisationMap
 		case SELECTED:
 			if( e.getData() == null )
 				return null;
-			Button btnNext = getBtnNext();
-			btnNext.setEnabled(true);
 			SessionStore store = getSessionStore();
-			ChuruataOrganisationData data = store.getOrganisation();
-			data.setLocation(e.getData());
-			controller.update(data);
+			ProfileData profile= store.getData();
+			ChuruataOrganisationData organisation = (ChuruataOrganisationData) profile.getOrganisation()[0];
+			organisation.setLocation(e.getData());
+			controller.update(organisation);
 			break;
 		default:
 			break;
@@ -97,7 +112,22 @@ public class LocationEntryPoint extends AbstractWizardEntryPoint<OrganisationMap
 
 	@Override
 	protected void onButtonPressed(ChuruataOrganisationData data, SessionStore store) {
-		Dispatcher.jump( Pages.SHOW_LEGAL, store.getToken());
+		JumpController<ChuruataOrganisationData> jc = new JumpController<>();
+		switch( event.getOperation()) {
+		case UPDATE:
+			jc.jump( new JumpEvent<ChuruataOrganisationData>( this, Pages.LOCATION.name(), store.getToken(), Pages.ORGANISATION.toPath(), JumpController.Operations.DONE, data));			
+			break;
+		default:
+			jc.jump( new JumpEvent<ChuruataOrganisationData>( this, Pages.LOCATION.name(), store.getToken(), Pages.SHOW_LEGAL.toPath(), JumpController.Operations.CREATE, data));			
+			break;
+		}
+	}
+
+	
+	@Override
+	protected void onHandleSyncTimer(SessionEvent<SessionStore> sevent) {
+		this.mapComposite.refresh();
+		super.onHandleSyncTimer(sevent);
 	}
 
 	@Override
@@ -129,12 +159,10 @@ public class LocationEntryPoint extends AbstractWizardEntryPoint<OrganisationMap
 		@Override
 		protected String onHandleResponse(ResponseEvent<ChuruataOrganisationData.Requests> event) throws IOException {
 			try {
-				SessionStore store = getSessionStore();
-				Gson gson = new Gson();
 				switch( event.getRequest()){
 				case SET_LOCATION:
-					ChuruataOrganisationData data = gson.fromJson(event.getResponse(), ChuruataOrganisationData.class);
-					store.setOrganisation(data);
+					Button btnNext = getBtnNext();
+					btnNext.setEnabled(true);
 					break;
 				default:
 					break;

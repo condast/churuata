@@ -14,6 +14,7 @@ public class HomeServlet extends HttpServlet {
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		resp.setHeader("Content-Disposition","inline; filename=Los Caminantes");
 		resp.sendRedirect(req.getContextPath() + S_HOME_PATH);
 	}
 }

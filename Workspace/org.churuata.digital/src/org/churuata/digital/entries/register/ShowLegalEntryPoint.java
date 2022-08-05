@@ -6,6 +6,7 @@ import org.churuata.digital.core.AbstractWizardEntryPoint;
 import org.churuata.digital.core.Dispatcher;
 import org.churuata.digital.core.Entries;
 import org.churuata.digital.core.data.ChuruataOrganisationData;
+import org.churuata.digital.core.data.ProfileData;
 import org.churuata.digital.session.SessionStore;
 import org.churuata.digital.ui.image.ChuruataImages;
 import org.churuata.digital.ui.image.ChuruataImages.Images;
@@ -193,7 +194,7 @@ public class ShowLegalEntryPoint extends AbstractWizardEntryPoint<Browser, Churu
 	}
 
 	@Override
-	protected boolean onPostProcess(String context, ChuruataOrganisationData data, SessionStore store) {
+	protected boolean onPostProcess(String context, SessionStore store) {
 		Button button = getBtnNext();
 		ChuruataImages images = ChuruataImages.getInstance();
 		button.setImage(images.getImage(Images.ADD));
@@ -206,7 +207,10 @@ public class ShowLegalEntryPoint extends AbstractWizardEntryPoint<Browser, Churu
 
 		if( store.getData() == null )
 			return false;
-		FileParser parser = new FileParser( store.getOrganisation(), 0 );
+		ProfileData profile= store.getData();
+		ChuruataOrganisationData organisation = (ChuruataOrganisationData) profile.getOrganisation()[0];
+	
+		FileParser parser = new FileParser( organisation, 0 );
 		String str =null;
 		try{
 			str = parser.parse( this.getClass().getResourceAsStream(S_RESOURCE_FILE) );

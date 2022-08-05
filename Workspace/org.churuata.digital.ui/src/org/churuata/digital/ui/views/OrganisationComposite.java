@@ -1,20 +1,13 @@
 package org.churuata.digital.ui.views;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import org.churuata.digital.core.data.ChuruataOrganisationData;
-import org.churuata.digital.core.location.IChuruataService;
 import org.churuata.digital.core.model.IOrganisation;
 import org.churuata.digital.ui.core.IChuruataThemes;
-import org.condast.commons.Utils;
 import org.condast.commons.strings.StringUtils;
 import org.condast.commons.ui.controller.AbstractEntityComposite;
 import org.condast.commons.ui.controller.EditEvent;
 import org.condast.commons.ui.controller.EditEvent.EditTypes;
-import org.condast.commons.ui.controller.IEditListener;
 import org.condast.commons.ui.swt.InputField;
-import org.condast.commons.ui.table.AbstractTableViewerWithDelete.Buttons;
 import org.condast.commons.ui.verification.VerificationUtils;
 import org.condast.commons.verification.IVerification.VerificationTypes;
 import org.eclipse.rap.rwt.RWT;
@@ -50,20 +43,12 @@ public class OrganisationComposite extends AbstractEntityComposite<ChuruataOrgan
 	private InputField websiteField;
 	private Combo orgTypeCombo;
 	
-	private ServicesTableViewer viewer;
-	
-	private IEditListener<IChuruataService> listener = e -> onViewerEvent( e );
-	
-	private Collection<IEditListener<IChuruataService>> serviceListeners;
-	
 	/**
 	 * Create the dialog.
 	 * @param parentShell
 	 */
 	public OrganisationComposite( Composite parent, int style ){
 		super(parent, style );
-		this.serviceListeners = new ArrayList<>();
-		viewer.addEditListener(listener);
 		this.orgTypeCombo.setItems( IOrganisation.OrganisationTypes.getItems());
 		this.orgTypeCombo.select(0);
 	}
@@ -189,54 +174,8 @@ public class OrganisationComposite extends AbstractEntityComposite<ChuruataOrgan
 			}		
 		});
 		orgTypeCombo.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
-
- 		viewer = new ServicesTableViewer( this, SWT.NONE );
-		viewer.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		viewer.addSelectionListener( new SelectionAdapter() {
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				try {
-					Buttons button = (Buttons) e.widget.getData();
-					switch( button ) {
-					case ADD:
-						notifyInputEdited( new EditEvent<ChuruataOrganisationData>( this, EditTypes.ADDED, getInput()));
-						break;
-					default:
-						break;
-					}
-					super.widgetSelected(e);
-				} catch (Exception e1) {
-					e1.printStackTrace();
-				}
-			}
-		});
-	}
-
-	public void addServiceListener( IEditListener<IChuruataService> listener) {
-		this.serviceListeners.add(listener);
-	}
-
-	public void removeServiceListener( IEditListener<IChuruataService> listener) {
-		this.serviceListeners.remove(listener);
-	}
-
-	protected void onNotifyServiceEvent(EditEvent<IChuruataService> event ) {
-		this.serviceListeners.forEach( l-> l.notifyInputEdited(event));
 	}
 	
-	private void onViewerEvent(EditEvent<IChuruataService> event) {
-		onNotifyServiceEvent(event);
-		switch( event.getType()){
-		case SELECTED:
-			notifyInputEdited( new EditEvent<ChuruataOrganisationData>( this, event.getType(), getInput()));
-			break;
-		default:
-			break;
-		}
-	}
-
 	@Override
 	protected ChuruataOrganisationData onGetInput(ChuruataOrganisationData input) {
 		if( input == null )
@@ -245,9 +184,6 @@ public class OrganisationComposite extends AbstractEntityComposite<ChuruataOrgan
 		input.setName( this.churuataField.getText());
 		input.setWebsite(this.websiteField.getText());
 		input.setType( IOrganisation.OrganisationTypes.values()[ orgTypeCombo.getSelectionIndex() ]);
-		if( Utils.assertNull( viewer.getInput()))
-			return input;
-		input.setChuruataServices( viewer.getInput());
 		return input;
 	}
 
@@ -259,7 +195,6 @@ public class OrganisationComposite extends AbstractEntityComposite<ChuruataOrgan
 		this.churuataField.setText( input.getName());
 		this.websiteField.setText(input.getWebsite());
 		orgTypeCombo.select( input.getType().getIndex());
-		viewer.setInput( Arrays.asList( input.getServices()));
 	}
 
 	public boolean isFilled(){
@@ -269,10 +204,7 @@ public class OrganisationComposite extends AbstractEntityComposite<ChuruataOrgan
 		filled = !StringUtils.isEmpty( this.websiteField.getText());
 		if( !filled )
 			return false;
-		filled = !StringUtils.isEmpty( this.descriptionField.getText());
-		if( !filled )
-			return false;
-		return !Utils.assertNull( this.viewer.getInput());
+		return !StringUtils.isEmpty( this.descriptionField.getText());
 	}
 
 	@Override
@@ -282,7 +214,6 @@ public class OrganisationComposite extends AbstractEntityComposite<ChuruataOrgan
 
 	@Override
 	public void dispose() {
-		viewer.removeEditListener(listener);
 		super.dispose();
 	}
 }

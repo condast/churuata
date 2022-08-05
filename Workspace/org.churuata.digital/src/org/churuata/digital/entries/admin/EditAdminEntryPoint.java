@@ -75,7 +75,7 @@ public class EditAdminEntryPoint extends AbstractWizardEntryPoint<AdminWidget, L
 	}
 
 	@Override
-	protected boolean onPostProcess(String context, LoginData data, SessionStore store) {
+	protected boolean onPostProcess(String context, SessionStore store) {
 		HttpSession session = RWT.getUISession().getHttpSession();
 		LoginData client = (LoginData) session.getAttribute(AdminData.Parameters.LOGIN_USER.name());
 		adminWidget.setInput(client, true);

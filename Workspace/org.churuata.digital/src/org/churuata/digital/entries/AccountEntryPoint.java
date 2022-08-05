@@ -111,11 +111,6 @@ public class AccountEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrgani
 
 		SessionStore store = getSessionStore();
 		ILoginUser user = store.getLoginUser();
-		ProfileData profile = store.getData();
-		if( profile == null ) {
-			profile = null;//new ProfileData( selected );
-			store.setData(profile); 
-		}
 
 		controller = new WebController();
 		controller.setInput(context, IRestPages.Pages.CONTACT.toPath());

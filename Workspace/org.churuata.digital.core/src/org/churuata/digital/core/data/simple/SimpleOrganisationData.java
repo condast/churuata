@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 
+import org.churuata.digital.core.data.ChuruataOrganisationData;
 import org.churuata.digital.core.data.ServiceData;
 import org.churuata.digital.core.location.IChuruataService;
 import org.churuata.digital.core.model.IOrganisation;
@@ -70,6 +71,25 @@ public class SimpleOrganisationData implements Serializable, Cloneable {
 	}
 
 	public SimpleOrganisationData( IOrganisation organisation ){
+		this.organisationId = organisation.getId();
+		LatLng location = organisation.getLocation();
+		if( location != null ) {
+			this.latitude = location.getLatitude();
+			this.longitude = location.getLongitude();	
+		}
+		this.contact= new ContactPersonData( organisation.getContact());
+		this.name = organisation.getName();
+		this.description = organisation.getDescription();
+		this.website = organisation.getWebsite();
+		this.type = organisation.getType();
+		this.verified = organisation.isVerified();
+		this.score = organisation.getScore();
+		services = new ArrayList<>();
+		for( IChuruataService service: organisation.getServices())
+			services.add( new ServiceData( service ));
+	}
+
+	public SimpleOrganisationData( ChuruataOrganisationData organisation ){
 		this.organisationId = organisation.getId();
 		LatLng location = organisation.getLocation();
 		if( location != null ) {

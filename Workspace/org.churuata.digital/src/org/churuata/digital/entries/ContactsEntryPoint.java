@@ -197,7 +197,8 @@ public class ContactsEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrgan
 					ContactPersonData data = gson.fromJson(event.getResponse(), ContactPersonData.class);
 					ProfileData profile = new ProfileData( data );
 					store.setData(profile);
-					jc.jump( new JumpEvent<ContactPersonData>( this, store.getToken(), Pages.REGISTER.toPath(), JumpController.Operations.DONE, data));			
+					jc.jump( new JumpEvent<ContactPersonData>( this, Pages.CONTACTS.name(), store.getToken(), Pages.REGISTER.toPath(), 
+							JumpController.Operations.DONE, data));			
 					break;
 				default:
 					break;

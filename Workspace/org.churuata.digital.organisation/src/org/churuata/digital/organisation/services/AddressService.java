@@ -14,9 +14,8 @@ public class AddressService extends AbstractEntityService<Address>{
 	}
 
 	public Address create( AddressData ad ) {
-		Address address = new Address();
+		Address address = new Address( ad );
 		super.create(address);
-		update( address, ad );
 		return address;
 	}
 	
@@ -28,6 +27,7 @@ public class AddressService extends AbstractEntityService<Address>{
 		address.setTown(ad.getTown());
 		address.setCountry(ad.getCountry());
 		address.setName(ad.getLocation().getId());
+		address.setNumber(ad.getHouseNumber());
 		address.setLocation(ad.getLocation().getLatitude(), ad.getLocation().getLongitude());
 		return address;
 	}

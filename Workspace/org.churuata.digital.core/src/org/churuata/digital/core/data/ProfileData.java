@@ -1,8 +1,6 @@
 package org.churuata.digital.core.data;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
 
 import org.condast.commons.authentication.core.LoginData;
 import org.condast.commons.authentication.user.ILoginUser;
@@ -56,23 +54,24 @@ public class ProfileData extends ContactPersonData implements Serializable, Clon
 	//Principle address
 	private AddressData address;
 	
-	private Collection<ChuruataOrganisationData> organisations;
+	private ChuruataOrganisationData organisation;
+
+	public ProfileData() {
+		super();
+	}
 
 	public ProfileData( IContactPerson person ){
 		super( person );
-		this.organisations = new ArrayList<>();
 	}
 
 	public ProfileData( ILoginUser user, IContactPerson person ){
 		super( person );
 		this.user = ( user == null )?null: new LoginData( user );
-		this.organisations = new ArrayList<>();
 	}
 
 	public ProfileData( LoginData user, IContactPerson person ){
 		super( person );
 		this.user = user;
-		this.organisations = new ArrayList<>();
 	}
 
 	@Override
@@ -92,17 +91,19 @@ public class ProfileData extends ContactPersonData implements Serializable, Clon
 
 	@Override
 	public void addOrganisation( OrganisationData organisation ) {
-		this.organisations.add((ChuruataOrganisationData) organisation);
+		this.organisation = (ChuruataOrganisationData) organisation;
 	}
 
 	@Override
 	public void removeOrganisation( OrganisationData organisation ) {
-		this.organisations.remove(organisation);
+		this.organisation = null;
 	}
 
 	@Override
 	public OrganisationData[] getOrganisation() {
-		return organisations.toArray( new OrganisationData[ this.organisations.size()]);
+		OrganisationData[] result = new OrganisationData[1];
+		result[0] = this.organisation;
+		return result;
 	}
 	
 	

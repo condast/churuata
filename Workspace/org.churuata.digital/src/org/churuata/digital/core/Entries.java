@@ -32,6 +32,7 @@ public class Entries extends AbstractEntries<Entries.Pages>{
 		ORGANISATION,
 		ORGANISATIONS,
 		SERVICES,
+		SERVICE,
 		READY, 
 		REGISTER,
 		GET_EMAIL,

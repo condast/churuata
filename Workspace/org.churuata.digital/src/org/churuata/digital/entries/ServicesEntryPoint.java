@@ -1,6 +1,7 @@
 package org.churuata.digital.entries;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -16,7 +17,7 @@ import org.churuata.digital.core.rest.IRestPages;
 import org.churuata.digital.session.SessionStore;
 import org.churuata.digital.ui.image.ChuruataImages;
 import org.churuata.digital.ui.image.ChuruataImages.Images;
-import org.churuata.digital.ui.views.ServiceComposite;
+import org.churuata.digital.ui.views.ServicesTableViewer;
 import org.condast.commons.authentication.core.LoginData;
 import org.condast.commons.authentication.http.IDomainProvider;
 import org.condast.commons.authentication.user.ILoginUser;
@@ -40,25 +41,21 @@ import org.eclipse.swt.widgets.Group;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
-public class ServicesEntryPoint extends AbstractWizardEntryPoint<ServiceComposite, ChuruataOrganisationData> {
+public class ServicesEntryPoint extends AbstractWizardEntryPoint<ServicesTableViewer, IChuruataService> {
 	private static final long serialVersionUID = 1L;
 
-	public static final String S_ADD_SERVICE = "Add Service";
+	public static final String S_EDIT_SERVICES = "Edit Services";
 
-	private ServiceComposite servicesComposite;
+	private ServicesTableViewer servicesTable;
 
 	private WebController controller;
 
-	private NodeJumpEvent<ChuruataOrganisationData, IChuruataService> event;
-	private IChuruataService data = null;
-
-	private IEditListener<IChuruataService> listener = e->onServiceEvent(e);
-
+	private IEditListener<IChuruataService> listener = e -> onServiceEvent( e );
+	
 	private Logger logger = Logger.getLogger(this.getClass().getName());
 
-	
 	public ServicesEntryPoint() {
-		super(S_ADD_SERVICE);
+		super(S_EDIT_SERVICES, false);
 	}
 
 	@Override
@@ -69,17 +66,13 @@ public class ServicesEntryPoint extends AbstractWizardEntryPoint<ServiceComposit
 	}
 
 	@Override
-	protected boolean prepare(Composite parent) {
-		return true;
-	}
-
-	@Override
-	protected ServiceComposite onCreateComposite(Composite parent, int style) {
+	protected ServicesTableViewer onCreateComposite(Composite parent, int style) {
         parent.setLayout(new GridLayout( 1, false ));
-        servicesComposite = new ServiceComposite( parent, SWT.NONE);
- 		servicesComposite.setData( RWT.CUSTOM_VARIANT, Entries.S_CHURUATA );
- 		servicesComposite.setLayoutData( new GridData(SWT.FILL, SWT.FILL, true, false));
- 		return servicesComposite;
+        servicesTable = new ServicesTableViewer( parent, SWT.NONE);
+ 		servicesTable.setData( RWT.CUSTOM_VARIANT, Entries.S_CHURUATA );
+ 		servicesTable.setLayoutData( new GridData(SWT.FILL, SWT.FILL, true, false));
+ 		servicesTable.addEditListener(listener);
+ 		return servicesTable;
     }
 
 	@Override
@@ -91,39 +84,20 @@ public class ServicesEntryPoint extends AbstractWizardEntryPoint<ServiceComposit
 	}
 
 	@Override
-	protected boolean onPostProcess(String context, ChuruataOrganisationData data, SessionStore store) {
+	protected boolean onPostProcess(String context, SessionStore store) {
 		controller = new WebController(context, IRestPages.Pages.ORGANISATION.toPath());
-		this.servicesComposite.addEditListener(listener);
+		this.servicesTable.addEditListener(listener);
 
-		JumpController<NodeData<ChuruataOrganisationData, IChuruataService>> jc = new JumpController<>();
-		event = (NodeJumpEvent<ChuruataOrganisationData, IChuruataService>) jc.getEvent( Pages.SERVICES.toPath());		
-		if( event != null ) {
-			this.data = event.getChild();
-			store.setOrganisation(data);
-			store.setToken(event.getToken());
-		}
-		this.servicesComposite.setInput(this.data);
+		ChuruataOrganisationData org = (ChuruataOrganisationData) store.getData().getOrganisation()[0];
+		this.servicesTable.setInput(Arrays.asList( org.getServices()));
 		return true;
 	}
 
 	@Override
-	protected void onButtonPressed(ChuruataOrganisationData org, SessionStore store) {
+	protected void onButtonPressed(IChuruataService org, SessionStore store) {
 		try{
-			if( data == null )
-				return;
-			ILoginUser user = store.getLoginUser();
-			ChuruataOrganisationData organisation = store.getOrganisation();
-			if( organisation.getId() < 0) {
-				organisation.addService(data);
-				JumpController<ProfileData> jc = new JumpController<>();
-				jc.jump( new JumpEvent<ProfileData>( this, store.getToken(), Pages.ORGANISATION.toPath(), JumpController.Operations.DONE, store.getData()));							
-			}else {
-				if(( event == null ) || !JumpController.Operations.UPDATE.equals( event.getOperation() )) {
-					controller.addService( organisation, data);
-				}else {
-					controller.updateService(user, organisation, data);
-				}
-			}
+			if( org == null )
+				return;			
 		}
 		catch( Exception ex ){
 			ex.printStackTrace();
@@ -131,20 +105,35 @@ public class ServicesEntryPoint extends AbstractWizardEntryPoint<ServiceComposit
 	}
 
 	protected void onServiceEvent( EditEvent<IChuruataService> event ) {
-		switch( event.getType()) {
-		case COMPLETE:
-			data = event.getData();
-			Button btnAdd = super.getBtnNext();
-			btnAdd.setEnabled( data != null);
-			break;
-		default:
-			break;
+		try {
+			SessionStore store = super.getSessionStore();
+			IChuruataService service = event.getData();
+			ILoginUser user = store.getLoginUser();
+			ProfileData profile= store.getData();
+			ChuruataOrganisationData organisation = (ChuruataOrganisationData) profile.getOrganisation()[0];
+			JumpController<NodeData<ChuruataOrganisationData, IChuruataService>> jc = new JumpController<>();
+			switch( event.getType()) {
+			case ADDED:
+				jc.jump( new NodeJumpEvent<ChuruataOrganisationData, IChuruataService>( this, Pages.SERVICES.name(), store.getToken(), Pages.SERVICE.toPath(), JumpController.Operations.UPDATE, organisation, service));			
+				break;
+			case SELECTED:
+				setCache(service);
+				jc.jump( new NodeJumpEvent<ChuruataOrganisationData, IChuruataService>( this, Pages.SERVICES.name(), store.getToken(), Pages.SERVICE.toPath(), JumpController.Operations.UPDATE, organisation, service));			
+				break;
+			case DELETE:
+				controller.remove( user, organisation, ServiceData.getIds( event.getBatch() ));
+				break;
+			default:
+				break;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 
 	@Override
 	public void close() {
-		this.servicesComposite.removeEditListener(listener);
+		this.servicesTable.removeEditListener(listener);
 		super.close();
 	}
 		
@@ -154,31 +143,15 @@ public class ServicesEntryPoint extends AbstractWizardEntryPoint<ServiceComposit
 			super( context, path);
 		}
 
-		public void addService( ChuruataOrganisationData organisation, IChuruataService service ) {
+		public void remove(ILoginUser user, ChuruataOrganisationData organisation, long[] batch) {
 			Map<String, String> params = super.getParameters();
-			params.put(ServiceData.Parameters.PERSON_ID.toString(), String.valueOf( organisation.getContact().getId()));
-			params.put(ServiceData.Parameters.ORGANISATION_ID.toString(), String.valueOf( organisation.getId()));
-			params.put(ServiceData.Parameters.NAME.toString(), service.getContribution().toString());
-			params.put(ServiceData.Parameters.TYPE.toString(),  service.getService().name());
-			params.put(ServiceData.Parameters.DESCRIPTION.toString(), service.getDescription());
-			params.put(ServiceData.Parameters.FROM_DATE.toString(),  String.valueOf( service.from().getTime()));
-			params.put(ServiceData.Parameters.TO_DATE.toString(),  String.valueOf( service.to().getTime()));
+			params.put( LoginData.Parameters.USER_ID.toString(), String.valueOf( user.getId()));
+			params.put( LoginData.Parameters.SECURITY.toString(), String.valueOf( user.getSecurity() ));
+			params.put( ChuruataOrganisationData.Parameters.ORGANISATION_ID.toString(), String.valueOf( organisation.getId() ));
+			Gson gson = new Gson();
+			String data = gson.toJson(batch, long[].class);
 			try {
-				sendGet(ChuruataOrganisationData.Requests.ADD_SERVICE, params );
-			} catch (IOException e) {
-				logger.warning(e.getMessage());
-			}
-		}
-
-		public void updateService( ILoginUser user, ChuruataOrganisationData organisation, IChuruataService service ) {
-			Map<String, String> params = super.getParameters();
-			params.put(ServiceData.Parameters.ORGANISATION_ID.toString(), String.valueOf( organisation.getId()));
-			params.put(LoginData.Parameters.USER_ID.toString(), String.valueOf( user.getId()));
-			params.put(LoginData.Parameters.SECURITY.toString(), String.valueOf( user.getSecurity()));
-			try {
-				Gson gson = new Gson();
-				String data = gson.toJson(service, ServiceData.class);
-				sendPut(ChuruataOrganisationData.Requests.UPDATE_SERVICE, params, data );
+				sendDelete(ChuruataOrganisationData.Requests.REMOVE_SERVICES, params, data );
 			} catch (IOException e) {
 				logger.warning(e.getMessage());
 			}
@@ -188,14 +161,16 @@ public class ServicesEntryPoint extends AbstractWizardEntryPoint<ServiceComposit
 		protected String onHandleResponse(ResponseEvent<ChuruataOrganisationData.Requests> event) throws IOException {
 			try {
 				SessionStore store = getSessionStore();
+				ProfileData profile = store.getData();
 				Gson gson = new Gson();
 				switch( event.getRequest()){
 				case UPDATE_SERVICE:
 				case ADD_SERVICE:
+					ChuruataOrganisationData org = gson.fromJson(event.getResponse(), ChuruataOrganisationData.class);
+					profile.addOrganisation(org);
 					ChuruataOrganisationData data = gson.fromJson(event.getResponse(), ChuruataOrganisationData.class);
-					store.setOrganisation(data);
 					JumpController<ChuruataOrganisationData> jc = new JumpController<>();
-					jc.jump( new JumpEvent<ChuruataOrganisationData>( this, store.getToken(), Pages.ORGANISATION.toPath(), JumpController.Operations.UPDATE, data));			
+					jc.jump( new JumpEvent<ChuruataOrganisationData>( this, Pages.SERVICES.name(), store.getToken(), Pages.ORGANISATION.toPath(), JumpController.Operations.UPDATE, data));			
 					break;
 				default:
 					break;

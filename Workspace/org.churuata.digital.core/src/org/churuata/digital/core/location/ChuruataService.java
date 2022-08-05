@@ -3,6 +3,10 @@ package org.churuata.digital.core.location;
 import java.util.Calendar;
 import java.util.Date;
 
+import org.condast.commons.data.latlng.ILocation;
+import org.condast.commons.data.latlng.LatLng;
+import org.condast.commons.na.model.IAddress;
+
 @Deprecated
 public class ChuruataService implements IChuruataService, Comparable<IChuruataService>{
 
@@ -107,5 +111,23 @@ public class ChuruataService implements IChuruataService, Comparable<IChuruataSe
 	@Override
 	public void setContribution(Contribution contribution) {
 		this.contribution = contribution;
+	}
+
+	@Override
+	public LatLng getLocation() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setLocation(ILocation location) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public IAddress getAddress() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

@@ -30,11 +30,12 @@ public class ProfileServlet extends HttpServlet {
 	public static final String S_RESOURCE_FILE = "/resources/active.html";
 
 	private enum Pages{
-		ACTIVE,
 		LOGOFF,
+		MAP,
 		ACCOUNT,
+		ORGANISATION,
 		ADDRESS,
-		ORGANISATIONS;
+		SERVICES;
 
 		@Override
 		public String toString() {
@@ -221,7 +222,7 @@ public class ProfileServlet extends HttpServlet {
 			Pages page = Pages.getPage(id);
 			String result = null;
 			switch( page ) {
-			case ACTIVE:
+			case MAP:
 				result = StringStyler.xmlStyleString( this.active.name()) + "?"  +
 						ILoginUser.Attributes.USERNAME.name().toLowerCase() + "=" + user.getUserName() + 
 						IDomainProvider.Attributes.TOKEN.name().toLowerCase() + "=" + token;

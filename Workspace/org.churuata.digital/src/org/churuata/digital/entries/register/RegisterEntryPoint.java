@@ -99,7 +99,7 @@ public class RegisterEntryPoint extends AbstractWizardEntryPoint<ContactPersonCo
 	}
 
 	@Override
-	protected boolean onPostProcess(String context, ChuruataOrganisationData data, SessionStore store) {
+	protected boolean onPostProcess(String context, SessionStore store) {
 		controller = new WebController();
 		controller.setInput(context, IRestPages.Pages.CONTACT.toPath());
 		ProfileData profile = store.getData();
@@ -126,7 +126,7 @@ public class RegisterEntryPoint extends AbstractWizardEntryPoint<ContactPersonCo
 				controller.register( event.getData());
 			else {
 				JumpController<ContactPersonData> jc = new JumpController<>();
-				jc.jump( new JumpEvent<ContactPersonData>( this, store.getToken(), Pages.CONTACTS.toPath(), JumpController.Operations.UPDATE, data));			
+				jc.jump( new JumpEvent<ContactPersonData>( this, Pages.REGISTER.name(), store.getToken(), Pages.CONTACTS.toPath(), JumpController.Operations.UPDATE, data));			
 			}
 				
 			break;
@@ -233,10 +233,10 @@ public class RegisterEntryPoint extends AbstractWizardEntryPoint<ContactPersonCo
 					store.setData(profile);
 					switch( type ) {
 					case ADDED:
-						jc.jump( new JumpEvent<ProfileData>( this, store.getToken(), Pages.CONTACTS.toPath(), JumpController.Operations.UPDATE, profile));			
+						jc.jump( new JumpEvent<ProfileData>( this, Pages.REGISTER.name(), store.getToken(), Pages.CONTACTS.toPath(), JumpController.Operations.UPDATE, profile));			
 						break;
 					case COMPLETE:
-						jc.jump( new JumpEvent<ProfileData>( this, store.getToken(), Pages.ORGANISATION.toPath(), JumpController.Operations.UPDATE, profile));			
+						jc.jump( new JumpEvent<ProfileData>( this, Pages.REGISTER.name(), store.getToken(), Pages.ORGANISATION.toPath(), JumpController.Operations.UPDATE, profile));			
 						break;
 					default:
 						break;
@@ -246,7 +246,7 @@ public class RegisterEntryPoint extends AbstractWizardEntryPoint<ContactPersonCo
 					data = gson.fromJson(event.getResponse(), ContactPersonData.class);
 					profile = new ProfileData( data );
 					store.setData(profile);
-					jc.jump( new JumpEvent<ProfileData>( this, store.getToken(), Pages.ORGANISATION.toPath(), JumpController.Operations.UPDATE, profile));			
+					jc.jump( new JumpEvent<ProfileData>( this, Pages.REGISTER.name(), store.getToken(), Pages.ORGANISATION.toPath(), JumpController.Operations.UPDATE, profile));			
 					break;
 				case GET_PROFILE:					
 					profile = gson.fromJson(event.getResponse(), ProfileData.class);

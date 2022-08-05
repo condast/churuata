@@ -347,6 +347,57 @@ public class OrganisationResource{
 		}
 	}
 
+	@PUT
+	@Produces(MediaType.TEXT_PLAIN)
+	@Path("/set-address")
+	public Response setAddress(@QueryParam("user-id") long userId, @QueryParam("security") long security, 
+			@QueryParam("organisation-id") long organisationId, String data ) {
+
+		AuthenticationDispatcher dispatcher=  AuthenticationDispatcher.getInstance();
+		if( !dispatcher.isLoggedIn(userId, security))
+			return Response.status( Status.UNAUTHORIZED).build();
+		
+		if( StringUtils.isEmpty(data))
+			return Response.noContent().build();
+		
+		TransactionManager t = new TransactionManager( Dispatcher.getInstance() );
+		Gson gson = new Gson();
+		try {
+			t.open();
+			OrganisationService os = new OrganisationService(); 
+			Organisation organisation = null;
+			if( organisationId <=0 ) {
+				PersonService ps = new PersonService();
+				Collection<Person> cps = ps.findForLogin(userId);
+				if( Utils.assertNull(cps))
+					return Response.status( Status.NOT_FOUND).build();
+				IContactPerson cp = cps.iterator().next();
+				organisation = os.findPrincipal(cp);
+			}else
+				organisation = os.find(organisationId);
+			if( organisation == null )
+				return Response.status( Status.NOT_FOUND).build();
+			
+			AddressData ad = gson.fromJson(data, AddressData.class);
+			AddressService as = new AddressService();
+			Address address = as.find(ad.getAddressId());
+			if( address == null )
+				address = as.create(ad);
+			else
+				AddressService.update(address, ad);
+			organisation.setAddress( address );
+			os.update(organisation);
+			return Response.ok().build();
+		}
+		catch( Exception ex ) {
+			ex.printStackTrace();
+			return Response.serverError().build();
+		}
+		finally {
+			t.close();
+		}
+	}
+
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/add-service")
@@ -495,6 +546,84 @@ public class OrganisationResource{
 		}
 	}
 
+	@PUT
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/set-service-address")
+	public Response setServiceAddress(@QueryParam("user-id") long userId, @QueryParam("security") long security, 
+			@QueryParam("service-id") long serviceId, String data ) {
+
+		AuthenticationDispatcher dispatcher=  AuthenticationDispatcher.getInstance();
+		if( !dispatcher.isLoggedIn(userId, security))
+			return Response.status( Status.UNAUTHORIZED).build();
+		
+		if( StringUtils.isEmpty(data))
+			return Response.noContent().build();
+		
+		TransactionManager t = new TransactionManager( Dispatcher.getInstance() );
+		Gson gson = new Gson();
+		try {
+			t.open();
+			ServicesService ss = new ServicesService(); 
+			Service service = ss.find(serviceId);
+			if( service == null )
+				return Response.status( Status.NOT_FOUND).build();
+			
+			AddressData ad = gson.fromJson(data, AddressData.class);
+			AddressService as = new AddressService();
+			Address address = as.find(ad.getAddressId());
+			if( address == null )
+				address = as.create(ad);
+			else
+				AddressService.update(address, ad);
+			service.setAddress( address );
+			ss.update(service);
+			
+			ServiceData sd = new ServiceData( service );
+			String result = gson.toJson(sd, ServiceData.class);
+			return Response.ok( result ).build();
+		}
+		catch( Exception ex ) {
+			ex.printStackTrace();
+			return Response.serverError().build();
+		}
+		finally {
+			t.close();
+		}
+	}
+
+	@GET
+	@Produces(MediaType.TEXT_PLAIN)
+	@Path("/remove-service-by-name")
+	public Response removeService( @QueryParam("user-id") long userId, @QueryParam("security") long security,
+			@QueryParam("organisation-id") long organisationId, @QueryParam("type") String type, @QueryParam("name") String name) {
+
+		AuthenticationDispatcher dispatcher=  AuthenticationDispatcher.getInstance();
+		if( !dispatcher.isLoggedIn(userId, security))
+			return Response.status( Status.UNAUTHORIZED).build();
+
+		if( StringUtils.isEmpty(name) || StringUtils.isEmpty( type )) 
+			return Response.notModified( ErrorMessages.NO_NAME_OR_TYPE.name()).build();
+		
+		TransactionManager t = new TransactionManager( Dispatcher.getInstance() );
+		try {
+			t.open();
+			OrganisationService os = new OrganisationService(); 
+			Organisation organisation = os.find( organisationId );
+			if( organisation == null )
+				return Response.noContent().build();
+			organisation.removeService( type, name);
+			return Response.ok().build();
+		}
+		catch( Exception ex ) {
+			ex.printStackTrace();
+			return Response.serverError().build();
+		}
+		finally {
+			t.close();
+		}
+	}
+
 	@GET
 	@Produces(MediaType.TEXT_PLAIN)
 	@Path("/set-verified")
@@ -563,89 +692,6 @@ public class OrganisationResource{
 					os.update(organisation);				
 				}
 			}
-			return Response.ok().build();
-		}
-		catch( Exception ex ) {
-			ex.printStackTrace();
-			return Response.serverError().build();
-		}
-		finally {
-			t.close();
-		}
-	}
-
-	@PUT
-	@Produces(MediaType.TEXT_PLAIN)
-	@Path("/set-address")
-	public Response setAddress(@QueryParam("user-id") long userId, @QueryParam("security") long security, 
-			@QueryParam("organisation-id") long organisationId, String data ) {
-
-		AuthenticationDispatcher dispatcher=  AuthenticationDispatcher.getInstance();
-		if( !dispatcher.isLoggedIn(userId, security))
-			return Response.status( Status.UNAUTHORIZED).build();
-		
-		if( StringUtils.isEmpty(data))
-			return Response.noContent().build();
-		
-		TransactionManager t = new TransactionManager( Dispatcher.getInstance() );
-		Gson gson = new Gson();
-		try {
-			t.open();
-			OrganisationService os = new OrganisationService(); 
-			Organisation organisation = null;
-			if( organisationId <=0 ) {
-				PersonService ps = new PersonService();
-				Collection<Person> cps = ps.findForLogin(userId);
-				if( Utils.assertNull(cps))
-					return Response.status( Status.NOT_FOUND).build();
-				IContactPerson cp = cps.iterator().next();
-				organisation = os.findPrincipal(cp);
-			}else
-				organisation = os.find(organisationId);
-			if( organisation == null )
-				return Response.status( Status.NOT_FOUND).build();
-			
-			AddressData ad = gson.fromJson(data, AddressData.class);
-			AddressService as = new AddressService();
-			Address address = as.find(ad.getAddressId());
-			if( address == null )
-				address = as.create(ad);
-			else
-				AddressService.update(address, ad);
-			organisation.setAddress( address );
-			os.update(organisation);
-			return Response.ok().build();
-		}
-		catch( Exception ex ) {
-			ex.printStackTrace();
-			return Response.serverError().build();
-		}
-		finally {
-			t.close();
-		}
-	}
-
-	@GET
-	@Produces(MediaType.TEXT_PLAIN)
-	@Path("/remove-service-by-name")
-	public Response removeService( @QueryParam("user-id") long userId, @QueryParam("security") long security,
-			@QueryParam("organisation-id") long organisationId, @QueryParam("type") String type, @QueryParam("name") String name) {
-
-		AuthenticationDispatcher dispatcher=  AuthenticationDispatcher.getInstance();
-		if( !dispatcher.isLoggedIn(userId, security))
-			return Response.status( Status.UNAUTHORIZED).build();
-
-		if( StringUtils.isEmpty(name) || StringUtils.isEmpty( type )) 
-			return Response.notModified( ErrorMessages.NO_NAME_OR_TYPE.name()).build();
-		
-		TransactionManager t = new TransactionManager( Dispatcher.getInstance() );
-		try {
-			t.open();
-			OrganisationService os = new OrganisationService(); 
-			Organisation organisation = os.find( organisationId );
-			if( organisation == null )
-				return Response.noContent().build();
-			organisation.removeService( type, name);
 			return Response.ok().build();
 		}
 		catch( Exception ex ) {

@@ -22,19 +22,19 @@ public abstract class AbstractWizardEntryPoint<C extends Composite, D extends Ob
 	private Button btnNext;
 	private String title;
 
-	private D data = null;
+	private D cache = null;
 	
 	private Group buttonBar;
-	private boolean includeButton;
+	private boolean includeButtonBar;
 
 	protected AbstractWizardEntryPoint( String title ) {
 		this( title, true);
 	}
 
-	public AbstractWizardEntryPoint( String title, boolean includeButton) {
+	public AbstractWizardEntryPoint( String title, boolean includeButtonBar) {
 		super();
 		this.title = title;
-		this.includeButton = includeButton;
+		this.includeButtonBar = includeButtonBar;
 	}
 	
 	protected abstract C onCreateComposite( Composite parent, int style );
@@ -42,8 +42,6 @@ public abstract class AbstractWizardEntryPoint<C extends Composite, D extends Ob
 	protected void onSetupButtonBar( Group buttonBar ) {
 		//DEFAULT NOTHING
 	}
-
-	protected abstract void onButtonPressed( D data, SessionStore store );
 
 	@Override
 	protected org.eclipse.swt.widgets.Composite createComposite(org.eclipse.swt.widgets.Composite parent) {
@@ -53,14 +51,14 @@ public abstract class AbstractWizardEntryPoint<C extends Composite, D extends Ob
 			composite.setData( RWT.CUSTOM_VARIANT, Entries.S_CHURUATA );
 			composite.setLayoutData( new GridData(SWT.FILL, SWT.FILL, true, true));
 		}
-		
-		buttonBar = new Group( parent, SWT.NONE );
-		buttonBar.setText(title + ":");
-		buttonBar.setLayout( new GridLayout(5, false ));
-		buttonBar.setData( RWT.CUSTOM_VARIANT, Entries.S_CHURUATA );
-		buttonBar.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 
-		if( this.includeButton) {
+		if( this.includeButtonBar) {
+			buttonBar = new Group( parent, SWT.NONE );
+			buttonBar.setText(title + ":");
+			buttonBar.setLayout( new GridLayout(5, false ));
+			buttonBar.setData( RWT.CUSTOM_VARIANT, Entries.S_CHURUATA );
+			buttonBar.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+
 			btnNext = new Button(buttonBar, SWT.NONE);
 			btnNext.setEnabled(false);
 			btnNext.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true));
@@ -72,7 +70,7 @@ public abstract class AbstractWizardEntryPoint<C extends Composite, D extends Ob
 				public void widgetSelected(final SelectionEvent e) {
 					try{
 						SessionStore store = getSessionStore();
-						onButtonPressed(data, store);
+						onButtonPressed(cache, store);
 					}
 					catch( Exception ex ){
 						ex.printStackTrace();
@@ -80,21 +78,31 @@ public abstract class AbstractWizardEntryPoint<C extends Composite, D extends Ob
 					super.widgetSelected(e);
 				}
 			});
+			onSetupButtonBar(buttonBar);
 		}
-		onSetupButtonBar(buttonBar);
 		return composite;
 	}
 
-	protected abstract boolean onPostProcess( String context, D data, SessionStore store );
+	protected abstract boolean onPostProcess( String context, SessionStore store );
+
+	protected abstract void onButtonPressed( D data, SessionStore store );
 
 	@Override
 	protected boolean postProcess( Composite parent) {
 		Config config = Config.getInstance();
 		String context = config.getServerContext();
 		SessionStore store = getSessionStore();
-		if( !onPostProcess(context, data, store))
+		if( !onPostProcess(context, store))
 			return false;
 		return super.postProcess(parent);
+	}
+
+	protected D getCache() {
+		return cache;
+	}
+
+	protected void setCache(D data) {
+		this.cache = data;
 	}
 
 	protected Button getBtnNext() {
