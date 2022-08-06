@@ -4,14 +4,13 @@ import org.churuata.digital.core.location.ChuruataData;
 import org.churuata.digital.core.location.ChuruataService;
 import org.churuata.digital.core.location.IChuruata;
 import org.churuata.digital.core.location.IChuruataService;
-import org.churuata.digital.ui.image.ChuruataImages;
 import org.churuata.digital.ui.image.ImageUtils;
-import org.churuata.digital.ui.image.ChuruataImages.Images;
 import org.condast.commons.Utils;
 import org.condast.commons.data.latlng.LatLng;
 import org.condast.commons.strings.StringUtils;
 import org.condast.commons.ui.controller.AbstractEntityComposite;
 import org.condast.commons.ui.controller.EditEvent;
+import org.condast.commons.ui.image.DashboardImages;
 import org.condast.commons.ui.swt.AttributeFieldComposite;
 import org.condast.commons.ui.swt.InputField;
 import org.condast.commons.ui.table.TableEvent;
@@ -183,9 +182,7 @@ public class ShowChuruatasComposite extends AbstractEntityComposite<IChuruata>
 		Button addButton = new Button( grpFillIn, SWT.None );
 		addButton.setLayoutData(new GridData( SWT.RIGHT, SWT.FILL, false, false));
 		try {
-			ChuruataImages ci = ChuruataImages.getInstance();
-			Image image = ci.getImage( Images.ADD);
-			addButton.setImage(image);
+			addButton.setImage( DashboardImages.getImage( DashboardImages.Images.ADD));
 		} catch (Exception e1) {
 			addButton.setText("Add");
 			e1.printStackTrace();

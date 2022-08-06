@@ -15,6 +15,7 @@ import org.condast.commons.data.latlng.LatLng;
 import org.condast.commons.strings.StringUtils;
 import org.condast.commons.ui.controller.EditEvent;
 import org.condast.commons.ui.controller.IEditListener;
+import org.condast.commons.ui.image.DashboardImages;
 import org.condast.commons.ui.utils.RWTUtils;
 import org.eclipse.rap.rwt.RWT;
 import org.eclipse.rap.rwt.client.service.StartupParameters;
@@ -83,11 +84,9 @@ public class ActiveEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrganis
 		group.setLayout( new GridLayout(5, false ));
 		group.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 
-		ChuruataImages images = ChuruataImages.getInstance();
-
 		btnLocate = new Button(group, SWT.NONE);
 		btnLocate.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true));
-		btnLocate.setImage( images.getImage( ChuruataImages.Images.LOCATE));
+		btnLocate.setImage( DashboardImages.getImage( DashboardImages.Images.LOCATE, 32));
 		btnLocate.addSelectionListener( new SelectionAdapter(){
 			private static final long serialVersionUID = 1L;
 
@@ -105,7 +104,7 @@ public class ActiveEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrganis
 
 		btnCreate = new Button(group, SWT.NONE);
 		btnCreate.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true));
-		btnCreate.setImage( images.getImage( ChuruataImages.Images.CHURUATA));
+		btnCreate.setImage( ChuruataImages.getImage( ChuruataImages.Images.CHURUATA, 32));
 		btnCreate.setEnabled(false);
 		btnCreate.addSelectionListener( new SelectionAdapter(){
 			private static final long serialVersionUID = 1L;
@@ -124,7 +123,7 @@ public class ActiveEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrganis
 
 		btnEdit = new Button(group, SWT.NONE);
 		btnEdit.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true));
-		btnEdit.setImage( images.getImage( ChuruataImages.Images.BUILDER));
+		btnEdit.setImage( ChuruataImages.getImage( ChuruataImages.Images.BUILDER, 32));
 		btnEdit.setEnabled(false);
 		btnEdit.addSelectionListener( new SelectionAdapter(){
 			private static final long serialVersionUID = 1L;

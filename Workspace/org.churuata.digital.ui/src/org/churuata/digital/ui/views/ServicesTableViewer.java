@@ -8,7 +8,11 @@ import org.churuata.digital.ui.ChuruataLanguage;
 import org.condast.commons.Utils;
 import org.condast.commons.ui.controller.EditEvent;
 import org.condast.commons.ui.controller.EditEvent.EditTypes;
+import org.condast.commons.ui.image.DashboardImages;
+import org.condast.commons.ui.image.DashboardImages.Images;
+import org.condast.commons.ui.image.IImageProvider.ImageSize;
 import org.condast.commons.ui.na.NALanguage;
+import org.condast.commons.ui.na.images.NAImages;
 import org.condast.commons.ui.table.AbstractTableViewerWithDelete;
 import org.condast.commons.ui.widgets.IStoreWithDelete;
 import org.eclipse.jface.viewers.ITableLabelProvider;
@@ -16,6 +20,7 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -27,7 +32,9 @@ public class ServicesTableViewer extends AbstractTableViewerWithDelete<IChuruata
 		SERVICE, 
 		DESCRIPTION,
 		FROM,
-		TO;
+		TO,
+		ADDRESS,
+		LOCATION;
 
 		@Override
 		public String toString() {
@@ -150,5 +157,33 @@ public class ServicesTableViewer extends AbstractTableViewerWithDelete<IChuruata
 			swd.addText(retval);
 			return retval;
 		}
+
+		@SuppressWarnings("unchecked")
+		@Override
+		public Image getColumnImage(Object arg0, int columnIndex) {
+			Image image = super.getColumnImage(arg0, columnIndex);
+			
+			if( image != null )
+				return image;
+			Columns column = Columns.values()[ columnIndex ];
+			IStoreWithDelete<IChuruataService> swd = (IStoreWithDelete<IChuruataService>) arg0;
+			IChuruataService service = swd.getStore();
+			switch( column){
+			case ADDRESS:
+				if( service.getAddress() != null )
+					image = NAImages.getImage( NAImages.Images.ADDRESS, ImageSize.SMALL);
+				break;
+			case LOCATION:
+				if( service.getLocation() != null )
+					image = DashboardImages.getImage( Images.LOCATE, ImageSize.SMALL);
+				break;
+			default:
+				break;				
+			}
+			
+			return image;
+		}
+		
+		
 	}
 }

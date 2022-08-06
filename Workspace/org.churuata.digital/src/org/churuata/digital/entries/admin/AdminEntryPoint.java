@@ -45,10 +45,9 @@ public class AdminEntryPoint extends AbstractWizardEntryPoint<AdminTableViewer, 
 	private WebController controller;
 	
 	private Logger logger = Logger.getLogger(this.getClass().getName());
-
 	
 	public AdminEntryPoint() {
-		super(S_ADMIN);
+		super(S_ADMIN, false);
 	}
 
 	@Override

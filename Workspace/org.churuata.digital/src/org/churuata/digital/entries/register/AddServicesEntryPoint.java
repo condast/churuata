@@ -16,7 +16,6 @@ import org.churuata.digital.core.data.ServiceData;
 import org.churuata.digital.core.location.IChuruataService;
 import org.churuata.digital.core.rest.IRestPages;
 import org.churuata.digital.session.SessionStore;
-import org.churuata.digital.ui.image.ChuruataImages;
 import org.churuata.digital.ui.views.ServiceComposite;
 import org.condast.commons.authentication.http.IDomainProvider;
 import org.condast.commons.config.Config;
@@ -26,6 +25,7 @@ import org.condast.commons.na.data.ContactPersonData;
 import org.condast.commons.na.profile.IProfileData;
 import org.condast.commons.ui.controller.EditEvent;
 import org.condast.commons.ui.controller.IEditListener;
+import org.condast.commons.ui.image.DashboardImages;
 import org.eclipse.rap.rwt.RWT;
 import org.eclipse.rap.rwt.client.service.StartupParameters;
 import org.eclipse.swt.SWT;
@@ -77,12 +77,10 @@ public class AddServicesEntryPoint extends AbstractChuruataEntryPoint<ChuruataOr
 		group.setLayout( new GridLayout(5, false ));
 		group.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 
-		ChuruataImages images = ChuruataImages.getInstance();
-
 		btnOk = new Button(group, SWT.NONE);
 		btnOk.setEnabled(false);
 		btnOk.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true));
-		btnOk.setImage( images.getImage( ChuruataImages.Images.ADD));
+		btnOk.setImage( DashboardImages.getImage( DashboardImages.Images.ADD, 32));
 		btnOk.addSelectionListener( new SelectionAdapter(){
 			private static final long serialVersionUID = 1L;
 

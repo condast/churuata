@@ -9,13 +9,13 @@ import org.churuata.digital.core.data.ProfileData;
 import org.churuata.digital.core.data.simple.SimpleOrganisationData;
 import org.churuata.digital.core.location.IChuruataService;
 import org.churuata.digital.session.SessionStore;
-import org.churuata.digital.ui.image.ChuruataImages;
 import org.churuata.digital.ui.map.OrganisationMapBrowser;
 import org.condast.commons.authentication.http.IDomainProvider;
 import org.condast.commons.data.latlng.LatLng;
 import org.condast.commons.messaging.core.util.NodeData;
 import org.condast.commons.ui.controller.EditEvent;
 import org.condast.commons.ui.controller.IEditListener;
+import org.condast.commons.ui.image.DashboardImages;
 import org.condast.commons.ui.messaging.jump.JumpController;
 import org.condast.commons.ui.messaging.jump.JumpEvent;
 import org.condast.commons.ui.messaging.jump.NodeJumpEvent;
@@ -75,10 +75,9 @@ public class LocationEntryPoint extends AbstractWizardEntryPoint<OrganisationMap
 
 	@Override
 	protected void onSetupButtonBar(Group buttonBar) {
-		ChuruataImages images = ChuruataImages.getInstance();
 		Button button = getBtnNext();
 		button.setEnabled(false);
-		button.setImage( images.getImage( ChuruataImages.Images.CHECK));
+		button.setImage( DashboardImages.getImage( DashboardImages.Images.CHECK, 32));
 		super.onSetupButtonBar(buttonBar);
 	}
 

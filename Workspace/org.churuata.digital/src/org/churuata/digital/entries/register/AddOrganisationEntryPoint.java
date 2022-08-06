@@ -13,7 +13,6 @@ import org.churuata.digital.core.data.ChuruataOrganisationData;
 import org.churuata.digital.core.data.ProfileData;
 import org.churuata.digital.core.rest.IRestPages;
 import org.churuata.digital.session.SessionStore;
-import org.churuata.digital.ui.image.ChuruataImages;
 import org.condast.commons.authentication.core.LoginData;
 import org.condast.commons.authentication.http.IDomainProvider;
 import org.condast.commons.authentication.user.ILoginUser;
@@ -21,9 +20,11 @@ import org.condast.commons.config.Config;
 import org.condast.commons.messaging.http.AbstractHttpRequest;
 import org.condast.commons.messaging.http.ResponseEvent;
 import org.condast.commons.na.data.ContactPersonData;
+import org.condast.commons.na.data.PersonData;
 import org.condast.commons.na.profile.IProfileData;
 import org.condast.commons.ui.controller.EditEvent;
 import org.condast.commons.ui.controller.IEditListener;
+import org.condast.commons.ui.image.DashboardImages;
 import org.condast.commons.ui.na.person.PersonComposite;
 import org.eclipse.rap.rwt.RWT;
 import org.eclipse.rap.rwt.client.service.StartupParameters;
@@ -50,7 +51,7 @@ public class AddOrganisationEntryPoint extends AbstractChuruataEntryPoint<Churua
 	private PersonComposite personComposite;
 	private Button btnAdd;
 
-	private IEditListener<ContactPersonData> listener = e->onPersonEvent(e);
+	private IEditListener<PersonData> listener = e->onPersonEvent(e);
 
 	private WebController controller;
 	
@@ -74,19 +75,17 @@ public class AddOrganisationEntryPoint extends AbstractChuruataEntryPoint<Churua
 		personComposite = new PersonComposite(parent, SWT.NONE );
 		personComposite.setData( RWT.CUSTOM_VARIANT, S_CHURUATA );
 		personComposite.setLayoutData( new GridData( SWT.FILL, SWT.FILL, true, true ));
-		//personComposite.addEditListener( listener);
+		personComposite.addEditListener( listener);
 
 		Group group = new Group( parent, SWT.NONE );
 		group.setText( S_ADD_ACCOUNT);
 		group.setLayout( new GridLayout(5, false ));
 		group.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 
-		ChuruataImages images = ChuruataImages.getInstance();
-
 		btnAdd = new Button(group, SWT.NONE);
 		btnAdd.setEnabled(false);
 		btnAdd.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true));
-		btnAdd.setImage( images.getImage( ChuruataImages.Images.ADD));
+		btnAdd.setImage( DashboardImages.getImage( DashboardImages.Images.ADD, 32));
 		btnAdd.addSelectionListener( new SelectionAdapter(){
 			private static final long serialVersionUID = 1L;
 
@@ -130,7 +129,7 @@ public class AddOrganisationEntryPoint extends AbstractChuruataEntryPoint<Churua
 		return true;
 	}
 
-	protected void onPersonEvent( EditEvent<ContactPersonData> event ) {
+	protected void onPersonEvent( EditEvent<PersonData> event ) {
 		ContactPersonData data = null;
 		SessionStore store = super.getSessionStore();
 		switch( event.getType()) {

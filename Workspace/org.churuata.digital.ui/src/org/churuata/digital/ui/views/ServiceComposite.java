@@ -87,19 +87,13 @@ public class ServiceComposite extends AbstractEntityComposite<IChuruataService>
 
 		this.serviceField = new AttributeFieldComposite( grpFillIn, SWT.NONE );
 		this.serviceField.setLabel( S_SERVICES + ": ");
-		this.serviceField.setLabelWidth(115);
+		this.serviceField.setLabelWidth(95);
 		this.serviceField.setIconSize(17);
-		this.serviceField.setInformationMessage( S_CHURUATA_INFORMATION_TIP);
-		
-		GridData gd_scope = new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1);
-		gd_scope.widthHint = 295;
-		gd_scope.heightHint = 40;
-		this.serviceField.setLayoutData(gd_scope);
+		this.serviceField.setInformationMessage( S_CHURUATA_INFORMATION_TIP);		
+		this.serviceField.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1));
 
 		serviceTypes = new Combo(this.serviceField, SWT.BORDER);
-		GridData gd_comboScope = new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1);
-		gd_comboScope.widthHint = 149;
-		serviceTypes.setLayoutData(gd_comboScope);
+		serviceTypes.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
 		serviceTypes.addSelectionListener(new SelectionAdapter() {
 			private static final long serialVersionUID = 1L;
 	
@@ -119,7 +113,7 @@ public class ServiceComposite extends AbstractEntityComposite<IChuruataService>
 		churuataField = new InputField( grpFillIn, SWT.NONE );
 		churuataField.setBackgroundControl(1);
 		churuataField.setLabel( S_NAME + ": ");
-		churuataField.setLabelWidth(85);
+		churuataField.setLabelWidth(65);
 		churuataField.setInformationMessage( S_NAME_INFORMATION_TIP );
 		churuataField.setBackgroundControl(0);
 		this.churuataField.addVerifyListener( new VerifyListener()
@@ -145,12 +139,14 @@ public class ServiceComposite extends AbstractEntityComposite<IChuruataService>
 		gridData_2.widthHint = 295;
 		gridData_2.heightHint = 40;
 		churuataField.setLayoutData(gridData_2);	
-										
+				
+		GridData labelWidth = new GridData( SWT.FILL, SWT.FILL, false, true);
+		labelWidth.widthHint = 95;
 		Label fromLabel = new Label( grpFillIn, SWT.NONE);
-		fromLabel.setLayoutData( new GridData( SWT.FILL, SWT.FILL, false, true));
+		fromLabel.setLayoutData( labelWidth);
 		fromLabel.setText( S_FROM);
 		
-		this.fromField = new DateTime( grpFillIn, SWT.BORDER);
+		this.fromField = new DateTime( grpFillIn,  SWT.DROP_DOWN | SWT.BORDER);
 		this.fromField.setLayoutData( new GridData( SWT.FILL, SWT.FILL, false, true));
 		this.fromField.addSelectionListener( new SelectionAdapter() {
 			private static final long serialVersionUID = 1L;
@@ -167,10 +163,10 @@ public class ServiceComposite extends AbstractEntityComposite<IChuruataService>
 		});
 
 		Label toLabel = new Label( grpFillIn, SWT.NONE);
-		toLabel.setLayoutData(new GridData( SWT.FILL, SWT.FILL, false, true));
+		toLabel.setLayoutData(labelWidth);
 		toLabel.setText( S_TO);
 		
-		this.toField = new DateTime( grpFillIn, SWT.BORDER);
+		this.toField = new DateTime( grpFillIn, SWT.BORDER | SWT.DROP_DOWN);
 		this.toField.setLayoutData( new GridData( SWT.FILL, SWT.FILL, false, true));
 		this.toField.addSelectionListener( new SelectionAdapter() {
 			private static final long serialVersionUID = 1L;

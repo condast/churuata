@@ -593,6 +593,48 @@ public class OrganisationResource{
 	}
 
 	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/set-service-location")
+	public Response setServiceLocation(@QueryParam("user-id") long userId, @QueryParam("security") long security, 
+			@QueryParam("service-id") long serviceId, @QueryParam("latitude") double latitude, @QueryParam("longitude") double longitude ) {
+
+		AuthenticationDispatcher dispatcher=  AuthenticationDispatcher.getInstance();
+		if( !dispatcher.isLoggedIn(userId, security))
+			return Response.status( Status.UNAUTHORIZED).build();
+
+		if(( latitude < 0 ) || ( longitude<0))
+			return Response.status( Status.BAD_REQUEST).build();
+
+		TransactionManager t = new TransactionManager( Dispatcher.getInstance() );
+		Gson gson = new Gson();
+		try {
+			t.open();
+			ServicesService ss = new ServicesService(); 
+			Service service = ss.find(serviceId);
+			if( service == null )
+				return Response.status( Status.NOT_FOUND).build();
+			
+			LocationService ls = new LocationService();
+			LatLng latlng = new LatLng( service.getService().name(), service.getDescription(), latitude, longitude );
+			Collection<Location> locations = ls.findLocation( latlng);
+			Location location = Utils.assertNull( locations)? ls.create(latlng): locations.iterator().next();
+			service.setLocation( location );
+			ss.update(service);
+			
+			ServiceData sd = new ServiceData( service );
+			String result = gson.toJson(sd, ServiceData.class);
+			return Response.ok( result ).build();
+		}
+		catch( Exception ex ) {
+			ex.printStackTrace();
+			return Response.serverError().build();
+		}
+		finally {
+			t.close();
+		}
+	}
+
+	@GET
 	@Produces(MediaType.TEXT_PLAIN)
 	@Path("/remove-service-by-name")
 	public Response removeService( @QueryParam("user-id") long userId, @QueryParam("security") long security,

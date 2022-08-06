@@ -78,10 +78,20 @@ public class LoginEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrganisa
 		super.createTimer(true, nrOfThreads, unit, startTime, rate);
 	}
 
-	
 	@Override
 	protected void onHandleSyncTimer(SessionEvent<SessionStore> sevent) {
 		group.refresh();
+		SessionStore store = sevent.getData();
+		if( store != null ) {
+			long token = store.getToken();
+			ILoginUser user = store.getLoginUser();
+			if( user != null ) {
+				String next = ( user == null )?S_CHURUATA_HOME: S_CHURUATA_ACTIVE_HOME;
+				next += S_TOKEN_ARG + token;
+				logger.info("Redirecting; " + next );
+				Dispatcher.redirect( next, token);
+			}
+		}
 		super.onHandleSyncTimer(sevent);
 	}
 
@@ -147,11 +157,7 @@ public class LoginEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrganisa
 				IDomainProvider<SessionStore> domain = dispatcher.getDomain(user.getId(), user.getSecurity());
 				if( domain == null )
 					break;
-				long token = domain.getToken();
-				String next = ( user == null )?S_CHURUATA_HOME: S_CHURUATA_ACTIVE_HOME;
-				next += S_TOKEN_ARG + token;
-				logger.info("Redirecting; " + next );
-				Dispatcher.redirect( next, token);
+				setData(domain.getData());
 				activateSession(getSessionStore());
 				break;
 			default:

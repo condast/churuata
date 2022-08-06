@@ -15,6 +15,7 @@ import org.condast.commons.strings.StringUtils;
 public class ServiceData implements IChuruataService {
 
 	public enum Parameters{
+		SERVICE_ID,
 		PERSON_ID,
 		ORGANISATION_ID,
 		TYPE,

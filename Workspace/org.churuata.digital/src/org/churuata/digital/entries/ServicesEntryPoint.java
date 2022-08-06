@@ -15,8 +15,6 @@ import org.churuata.digital.core.data.ServiceData;
 import org.churuata.digital.core.location.IChuruataService;
 import org.churuata.digital.core.rest.IRestPages;
 import org.churuata.digital.session.SessionStore;
-import org.churuata.digital.ui.image.ChuruataImages;
-import org.churuata.digital.ui.image.ChuruataImages.Images;
 import org.churuata.digital.ui.views.ServicesTableViewer;
 import org.condast.commons.authentication.core.LoginData;
 import org.condast.commons.authentication.http.IDomainProvider;
@@ -26,6 +24,8 @@ import org.condast.commons.messaging.http.AbstractHttpRequest;
 import org.condast.commons.messaging.http.ResponseEvent;
 import org.condast.commons.ui.controller.EditEvent;
 import org.condast.commons.ui.controller.IEditListener;
+import org.condast.commons.ui.image.DashboardImages;
+import org.condast.commons.ui.image.IImageProvider.ImageSize;
 import org.condast.commons.ui.messaging.jump.JumpController;
 import org.condast.commons.ui.messaging.jump.JumpEvent;
 import org.condast.commons.ui.messaging.jump.NodeJumpEvent;
@@ -77,9 +77,8 @@ public class ServicesEntryPoint extends AbstractWizardEntryPoint<ServicesTableVi
 
 	@Override
 	protected void onSetupButtonBar(Group buttonBar) {
-		ChuruataImages images = ChuruataImages.getInstance();
 		Button btnAdd = getBtnNext();
-		btnAdd.setImage( images.getImage(Images.ADD));
+		btnAdd.setImage( DashboardImages.getImage(DashboardImages.Images.ADD, ImageSize.NORMAL));
 		super.onSetupButtonBar(buttonBar);
 	}
 
@@ -94,15 +93,7 @@ public class ServicesEntryPoint extends AbstractWizardEntryPoint<ServicesTableVi
 	}
 
 	@Override
-	protected void onButtonPressed(IChuruataService org, SessionStore store) {
-		try{
-			if( org == null )
-				return;			
-		}
-		catch( Exception ex ){
-			ex.printStackTrace();
-		}
-	}
+	protected void onButtonPressed(IChuruataService org, SessionStore store) {/* NOTHING */}
 
 	protected void onServiceEvent( EditEvent<IChuruataService> event ) {
 		try {

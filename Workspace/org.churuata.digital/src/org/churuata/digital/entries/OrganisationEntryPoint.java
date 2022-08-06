@@ -13,7 +13,6 @@ import org.churuata.digital.core.data.ServiceData;
 import org.churuata.digital.core.location.IChuruataService;
 import org.churuata.digital.core.rest.IRestPages;
 import org.churuata.digital.session.SessionStore;
-import org.churuata.digital.ui.image.ChuruataImages;
 import org.churuata.digital.ui.views.OrganisationComposite;
 import org.condast.commons.authentication.core.LoginData;
 import org.condast.commons.authentication.http.IDomainProvider;
@@ -86,10 +85,9 @@ public class OrganisationEntryPoint extends AbstractWizardEntryPoint<Organisatio
 	
 	@Override
 	protected void onSetupButtonBar(Group buttonBar) {
-		ChuruataImages images = ChuruataImages.getInstance();
 		Button button = getBtnNext();
 		button.setEnabled(false);
-		button.setImage( images.getImage( ChuruataImages.Images.CHECK));
+		button.setImage( DashboardImages.getImage( DashboardImages.Images.CHECK, ImageSize.NORMAL));
 		
 		btnLocate = new Button(buttonBar, SWT.NONE);
 		btnLocate.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true));

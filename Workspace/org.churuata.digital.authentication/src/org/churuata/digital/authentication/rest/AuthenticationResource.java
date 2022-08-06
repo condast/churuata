@@ -70,7 +70,7 @@ public class AuthenticationResource{
 		logger.info( "ATTEMPT Register " + name );
 		if( StringUtils.isEmpty(name) || StringUtils.isEmpty( email )) 
 			return Response.notModified( ErrorMessages.NO_USERNAME_OR_EMAIL.name()).build();
-		else if( !IVerification.VerificationTypes.verify(VerificationTypes.EMAIL, email))
+		else if( !IVerification.VerificationTypes.verify(VerificationTypes.EMAIL, email.trim()))
 			return Response.notModified( ErrorMessages.NO_USERNAME_OR_EMAIL.name()).build();
 		else if( StringUtils.isEmpty( name ))
 			name = email.split("[@]")[0];

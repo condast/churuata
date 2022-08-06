@@ -14,8 +14,6 @@ import org.churuata.digital.core.data.ServiceData;
 import org.churuata.digital.core.location.IChuruataService;
 import org.churuata.digital.core.rest.IRestPages;
 import org.churuata.digital.session.SessionStore;
-import org.churuata.digital.ui.image.ChuruataImages;
-import org.churuata.digital.ui.image.ChuruataImages.Images;
 import org.churuata.digital.ui.views.ServiceComposite;
 import org.condast.commons.authentication.core.LoginData;
 import org.condast.commons.authentication.http.IDomainProvider;
@@ -88,11 +86,10 @@ public class ServiceEntryPoint extends AbstractWizardEntryPoint<ServiceComposite
 
 	@Override
 	protected void onSetupButtonBar(Group buttonBar) {
-		ChuruataImages images = ChuruataImages.getInstance();
 		Button btnAdd = getBtnNext();
 		JumpController.Operations operation = (event==null)?JumpController.Operations.UPDATE: event.getOperation();
-		Images image =  JumpController.Operations.CREATE.equals( operation )?Images.ADD: Images.CHECK; 
-		btnAdd.setImage( images.getImage(image));
+		DashboardImages.Images image =  JumpController.Operations.CREATE.equals( operation )?DashboardImages.Images.ADD: DashboardImages.Images.CHECK; 
+		btnAdd.setImage( DashboardImages.getImage( image, ImageSize.NORMAL));
 
 		btnLocate = new Button(buttonBar, SWT.NONE);
 		btnLocate.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true));
@@ -154,6 +151,8 @@ public class ServiceEntryPoint extends AbstractWizardEntryPoint<ServiceComposite
 		JumpController<?> jc = new JumpController<>();
 		if( jc != null ) {
 			event = (JumpEvent<NodeData<?, ?>>) jc.getEvent( Pages.SERVICE.toPath());		
+			ILoginUser user = store.getLoginUser();
+			IChuruataService service = null;
 			if( event != null ) {
 				Pages source = Pages.valueOf(event.getIdentifier());
 				switch( source) {
@@ -162,11 +161,16 @@ public class ServiceEntryPoint extends AbstractWizardEntryPoint<ServiceComposite
 					setCache( oNode.getChild());
 					break;
 				case ADDRESS:
-					ILoginUser user = store.getLoginUser();
 					NodeData<IChuruataService, AddressData> anode = (NodeData<IChuruataService, AddressData>) event.getData();
-					IChuruataService service = anode.getData();
+					service = anode.getData();
 					setCache( service);
 					controller.setAddress(user, service, (AddressData) anode.getChild());
+					break;
+				case LOCATION:
+					NodeData<ChuruataOrganisationData, IChuruataService> lNode = (NodeData<ChuruataOrganisationData,IChuruataService>) event.getData();
+					service = lNode.getChild();
+					setCache( service);
+					controller.setLocation(user, service);
 					break;
 				default:
 					break;
@@ -189,7 +193,7 @@ public class ServiceEntryPoint extends AbstractWizardEntryPoint<ServiceComposite
 			if( user == null ) {
 				organisation.addService(service);
 				JumpController<ProfileData> jc = new JumpController<>();
-				jc.jump( new JumpEvent<ProfileData>( this, Pages.SERVICE.name(), store.getToken(), Pages.ORGANISATION.toPath(), JumpController.Operations.DONE, store.getData()));							
+				jc.jump( new JumpEvent<ProfileData>( this, Pages.SERVICE.name(), store.getToken(), Pages.SERVICES.toPath(), JumpController.Operations.DONE, store.getData()));							
 			}else {
 				if(( event == null ) || !JumpController.Operations.UPDATE.equals( event.getOperation() )) {
 					controller.addService( organisation, service);
@@ -271,12 +275,27 @@ public class ServiceEntryPoint extends AbstractWizardEntryPoint<ServiceComposite
 			}
 		}
 
+		public void setLocation( ILoginUser user,  IChuruataService service ) {
+			Map<String, String> params = super.getParameters();
+			params.put(ChuruataOrganisationData.Parameters.USER_ID.toString(), String.valueOf( user.getId()));
+			params.put(ChuruataOrganisationData.Parameters.SECURITY.toString(), String.valueOf( user.getSecurity() ));
+			params.put(ServiceData.Parameters.SERVICE_ID.toString(), String.valueOf(service.getId()));
+			params.put(ServiceData.Parameters.LATITUDE.toString(), String.valueOf(service.getLocation().getLatitude()));
+			params.put(ServiceData.Parameters.LONGITUDE.toString(), String.valueOf( service.getLocation().getLongitude()));
+			try {
+				super.sendGet(ChuruataOrganisationData.Requests.SET_SERVICE_LOCATION, params);
+			} catch (IOException e) {
+				logger.warning(e.getMessage());
+			}
+		}
+
 		@Override
 		protected String onHandleResponse(ResponseEvent<ChuruataOrganisationData.Requests> event) throws IOException {
 			try {
 				SessionStore store = getSessionStore();
 				ProfileData profile = store.getData();
 				Gson gson = new Gson();
+				ServiceData service = null;
 				switch( event.getRequest()){
 				case UPDATE_SERVICE:
 				case ADD_SERVICE:
@@ -286,8 +305,14 @@ public class ServiceEntryPoint extends AbstractWizardEntryPoint<ServiceComposite
 					jc.jump( new JumpEvent<ChuruataOrganisationData>( this, Pages.SERVICE.name(), store.getToken(), Pages.SERVICES.toPath(), JumpController.Operations.UPDATE, data));			
 					break;
 				case SET_SERVICE_ADDRESS:
-					ServiceData service = gson.fromJson(event.getResponse(), ServiceData.class);
+					service = gson.fromJson(event.getResponse(), ServiceData.class);
 					setCache(service);
+					getBtnNext().setEnabled(true);
+					break;
+				case SET_SERVICE_LOCATION:
+					service = gson.fromJson(event.getResponse(), ServiceData.class);
+					setCache(service);
+					getBtnNext().setEnabled(true);
 					break;
 				default:
 					break;

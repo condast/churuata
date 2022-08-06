@@ -8,8 +8,6 @@ import org.churuata.digital.core.Entries;
 import org.churuata.digital.core.data.ChuruataOrganisationData;
 import org.churuata.digital.core.data.ProfileData;
 import org.churuata.digital.session.SessionStore;
-import org.churuata.digital.ui.image.ChuruataImages;
-import org.churuata.digital.ui.image.ChuruataImages.Images;
 import org.condast.commons.authentication.http.IDomainProvider;
 import org.condast.commons.config.Config;
 import org.condast.commons.legal.LegalUtils;
@@ -17,6 +15,7 @@ import org.condast.commons.legal.LegalUtils.Version;
 import org.condast.commons.na.model.IContactPerson;
 import org.condast.commons.parser.AbstractResourceParser;
 import org.condast.commons.strings.StringStyler;
+import org.condast.commons.ui.image.DashboardImages;
 import org.condast.commons.ui.utils.RWTUtils;
 import org.eclipse.rap.rwt.RWT;
 import org.eclipse.rap.rwt.client.service.StartupParameters;
@@ -196,8 +195,7 @@ public class ShowLegalEntryPoint extends AbstractWizardEntryPoint<Browser, Churu
 	@Override
 	protected boolean onPostProcess(String context, SessionStore store) {
 		Button button = getBtnNext();
-		ChuruataImages images = ChuruataImages.getInstance();
-		button.setImage(images.getImage(Images.ADD));
+		button.setImage(DashboardImages.getImage( DashboardImages.Images.ADD, 32));
 		
 		String root = context + S_CHURUATA_LEGAL;
 		Locale locale = Locale.getDefault();

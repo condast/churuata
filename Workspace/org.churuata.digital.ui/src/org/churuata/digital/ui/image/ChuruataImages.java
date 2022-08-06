@@ -1,21 +1,8 @@
 package org.churuata.digital.ui.image;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import org.churuata.digital.ui.Activator;
 import org.condast.commons.ui.image.AbstractImages;
-import org.eclipse.rap.rwt.RWT;
-import org.eclipse.rap.rwt.service.ResourceManager;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.ImageData;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Label;
 
 /**
  * @see: https://www.iconfinder.com/savlon
@@ -104,9 +91,42 @@ public class ChuruataImages extends AbstractImages{
 			}
 			return buffer.toString();
 		}
+		
+		/**
+		 * A filename by this method is going to be fetched out of the
+		 * root of the resources directory.
+		 * The extensions are now only used as subdir of the resources dir
+		 * ...and of course as extension of the filename.
+		 * @param image
+		 * @return str the filename
+		 */
+		public static String getFileName( Images image ){
+			String str = null;
+			switch( image ){
+			default:
+				str = image.name().toLowerCase() + "-32";
+				break;
+			}
+			str += ".png";
+			return str;
+		}
+
+		/**
+		 * The filenames by this method are going to be fetched out of a
+		 * subdir of the resources directory.
+		 * The extensions are now only used as subdir of the resources dir and ...
+		 * ...as extension of the filename.
+		 * @param image enumimages like Images.ADD, DELETE and so on
+		 * @param imageSize the enumsize of the image like ImageSize.TINY
+		 * @return str the subdir with filename
+		 */
+		public static String getFileName( Images image, ImageSize imageSize ){
+			//get location, filename and size from super
+			String str = ImageSize.getLocation( image.name(), imageSize );
+			return str;
+		}
+
 	}
-	
-	private static Logger logger = Logger.getLogger( ChuruataImages.class.getName() );
 	
 	private static ChuruataImages images = new ChuruataImages();
 	
@@ -119,86 +139,48 @@ public class ChuruataImages extends AbstractImages{
 	}
 	
 	@Override
-	public void initialise(){
-		for( Images image: Images.values())
-			setImage( Images.getResource(image) );
-	}
-
-	public Image getImage( Images image ){
-		return super.getImageFromName( Images.getResource( image ));
-	}
-
-	protected void setImage( Images image ){
-		super.setImage( Images.getResource(image));
-	}
-	
-	/**
-	 * Register the resource with the given name
-	 * @param name
-	 */
-	public static void registerImage( Images image ){
-		registerImage( image.name().toLowerCase(), Images.getResource(image));
-	}
-	
-	/**
-	 * Register the resource with the given name
-	 * @param name
-	 */
-	public static void registerImage( String name, String file ){
-		ResourceManager resourceManager = RWT.getResourceManager();
-		if( !resourceManager.isRegistered( name ) ) {
-			InputStream inputStream = ChuruataImages.class.getClassLoader().getResourceAsStream( file );
-			try {
-				resourceManager.register( name, inputStream );
-			} finally {
-				try {
-					inputStream.close();
-				} catch (IOException e) {
-					logger.log( Level.SEVERE, name + ": " + file );
-					e.printStackTrace();
-				}
+	public void initialise() {
+		for( Images img: Images.values() ) {
+			for( ImageSize imsi : ImageSize.values() ) {
+				setImage( Images.getFileName( img, imsi ) );
 			}
-		}		
-	}
-	
-	/**
-	 * Get the image with the given name
-	 * @param name
-	 * @return
-	 */
-	public static String getImageString( ImageSize size, Images image ){
-		return Images.getResource(image); 
-	}
-	
-	/**
-	 * Set the image for the given control
-	 * @param widget
-	 * @param name
-	 */
-	public static void setImage( Control widget, Images image ){
-		widget.setData( RWT.MARKUP_ENABLED, Boolean.TRUE );
-		//registerImage( image );
-		if( widget instanceof Label ){
-			  Label label = (Label) widget;
-			  String src = getImageString( ImageSize.NORMAL, image );
-			  label.setText( "Hello<img width='24' height='24' src='" + src + "'/> there " );
-			}
-		if( widget instanceof Button ){
-		  Button button = (Button) widget;
-		  String src = getImageString( ImageSize.NORMAL, image );
-		  button.setText( "<img width='24' height='24' src='" + src + "'/>" );
 		}
 	}
-	
+
 	/**
-	 * Get the screen aver and size it to fit the parent
-	 * @param parent
-	 * @return
+	 * Get the image
+	 * @param descr the descriptor like Images.ADD, DELETE and so on
+	 * @return image
 	 */
-	public static Image getScreenSaver( Composite parent ){
-		ImageData imageData = new ImageData( ChuruataImages.class.getResourceAsStream( S_RESOURCES + Images.getResource( Images.BACKGROUND ) ));
-		ImageData scaledData = imageData.scaledTo( parent.getBounds().width, parent.getBounds().height );
-		return new Image(Display.getCurrent(), scaledData );
+	public static Image getImage( Images descr ){
+		Image image = images.getImageFromName( Images.getFileName( descr ) );
+		return image;
 	}
 
+	/**
+	 * @param descr the descriptor like Images.ADD, DELETE and so on
+	 * @param imageSize, a size like Abstractimages.ImageSizes.SMALL, NORMAL, LARGE, TILE
+	 * @return the image in the wanted size
+	 */
+	public static Image getImage( Images descr, ImageSize imageSize ){
+		Image image = images.getImageFromName( Images.getFileName( descr, imageSize ) );
+		return image;
+	}
+
+	/**
+	 * @param descr the descriptor of the image
+	 * @param size a size like 16, 24, 32, 48, 64, 128, any other value is changed in 32
+	 * @return the image in the wanted size
+	 */
+	public static Image getImage( Images descr, int size ){
+		if( size==16 || size==24 || size==32 || size==48 || size==64 || size==128 ) {
+			//the size is ok
+		}
+		else {
+			size = 32;//standard size
+		}
+		ImageSize imageSize = AbstractImages.ImageSize.getImageSize( size );
+		Image image = images.getImageFromName( Images.getFileName( descr, imageSize ) );
+		return image;
+	}
 }

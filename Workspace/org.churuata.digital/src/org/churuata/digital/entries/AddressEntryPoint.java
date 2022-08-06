@@ -5,7 +5,6 @@ import org.churuata.digital.core.Dispatcher;
 import org.churuata.digital.core.Entries;
 import org.churuata.digital.core.Entries.Pages;
 import org.churuata.digital.session.SessionStore;
-import org.churuata.digital.ui.image.ChuruataImages;
 import org.churuata.digital.ui.views.ChuruataAddressComposite;
 import org.condast.commons.authentication.http.IDomainProvider;
 import org.condast.commons.messaging.core.util.NodeData;
@@ -14,6 +13,7 @@ import org.condast.commons.na.data.OrganisationData;
 import org.condast.commons.na.profile.IProfileData;
 import org.condast.commons.ui.controller.EditEvent;
 import org.condast.commons.ui.controller.IEditListener;
+import org.condast.commons.ui.image.DashboardImages;
 import org.condast.commons.ui.messaging.jump.JumpController;
 import org.condast.commons.ui.messaging.jump.JumpEvent;
 import org.condast.commons.ui.messaging.jump.NodeJumpEvent;
@@ -60,9 +60,8 @@ public class AddressEntryPoint extends AbstractWizardEntryPoint<ChuruataAddressC
 
 	@Override
 	protected void onSetupButtonBar(Group buttonBar) {
-		ChuruataImages images = ChuruataImages.getInstance();
 		Button btnOk = getBtnNext();
-		btnOk.setImage( images.getImage( ChuruataImages.Images.CHECK));
+		btnOk.setImage(DashboardImages.getImage( DashboardImages.Images.CHECK, 32));
 		super.onSetupButtonBar(buttonBar);
 	}
 
