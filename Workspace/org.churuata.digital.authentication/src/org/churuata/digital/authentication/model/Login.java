@@ -72,9 +72,6 @@ public class Login implements ILoginUser, Serializable {
 		return id;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.fgf.animal.count.authentication.model.ILoginUser#getUserName()
-	 */
 	@Override
 	public String getUserName() {
 		return userName;
@@ -93,9 +90,6 @@ public class Login implements ILoginUser, Serializable {
 		this.password = password;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.fgf.animal.count.authentication.model.ILoginUser#getEmail()
-	 */
 	@Override
 	public String getEmail() {
 		return email;

@@ -1,12 +1,14 @@
 package org.churuata.digital.http;
 
 import java.io.IOException;
+import java.util.Locale;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.churuata.digital.core.Entries;
 import org.condast.commons.parser.AbstractResourceParser;
 import org.condast.commons.strings.StringStyler;
 
@@ -51,7 +53,8 @@ public class ChuruataServlet extends HttpServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		FileParser parser = new FileParser( Pages.LOGIN, -1);
+		String locale = req.getParameter( Entries.S_LOCALE);
+		FileParser parser = new FileParser( Pages.LOGIN, -1, locale);
 		String str = parser.parse( this.getClass().getResourceAsStream(S_RESOURCE_FILE) );
 		resp.getWriter().write( str );
 	}
@@ -60,11 +63,13 @@ public class ChuruataServlet extends HttpServlet {
 
 		private long token;
 		private Pages active;
+		private String locale;
 		
-		public FileParser(Pages active, long token) {
+		public FileParser(Pages active, long token, String locale) {
 			super();
 			this.token = token;
 			this.active = active;
+			this.locale = ( locale == null )?Locale.getDefault().toString(): locale;
 		}
 
 		@Override
@@ -120,6 +125,7 @@ public class ChuruataServlet extends HttpServlet {
 				builder.append(view.toString());
 				break;								
 			}
+			builder.append("?locale=" + locale);
 			builder.append("'");
 			return builder.toString();
 		}

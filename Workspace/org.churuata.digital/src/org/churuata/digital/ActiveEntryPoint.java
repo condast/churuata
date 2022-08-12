@@ -144,7 +144,7 @@ public class ActiveEntryPoint extends AbstractRestEntryPoint<SessionStore>{
 		Config config = Config.getInstance();
 		mapComposite.setInput(config.getServerContext());
 		SessionStore store = super.getData();
-		LatLng selected = store.getSelected();
+		LatLng selected = null;//TODO store.getSelected();
 		this.btnCreate.setEnabled( selected != null );
 		this.btnEdit.setEnabled( selected != null );
 		return true;
@@ -157,7 +157,7 @@ public class ActiveEntryPoint extends AbstractRestEntryPoint<SessionStore>{
 		case INITIALISED:
 			break;
 		case CHANGED:
-			store.setSelected( data);
+			//store.setSelected( data);
 			this.btnCreate.setEnabled( data != null );
 			this.btnEdit.setEnabled( data != null );
 			break;

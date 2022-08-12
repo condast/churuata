@@ -1,26 +1,31 @@
 package org.churuata.digital.entries;
 
 import java.io.IOException;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 import javax.servlet.http.HttpSession;
 
+import org.churuata.digital.core.Entries;
 import org.churuata.digital.core.data.ChuruataOrganisationData;
 import org.churuata.digital.core.data.simple.SimpleOrganisationData;
 import org.churuata.digital.core.model.IOrganisation;
 import org.churuata.digital.core.rest.IRestPages;
 import org.churuata.digital.ui.map.MapBrowser;
+import org.condast.commons.authentication.http.IDomainProvider;
 import org.condast.commons.config.Config;
 import org.condast.commons.data.latlng.LatLng;
 import org.condast.commons.messaging.http.AbstractHttpRequest;
 import org.condast.commons.messaging.http.ResponseEvent;
+import org.condast.commons.strings.StringUtils;
 import org.condast.commons.ui.controller.EditEvent;
 import org.condast.commons.ui.controller.EditEvent.EditTypes;
 import org.condast.commons.ui.controller.IEditListener;
 import org.condast.commons.ui.entry.AbstractRestEntryPoint;
 import org.eclipse.rap.rwt.RWT;
+import org.eclipse.rap.rwt.client.service.StartupParameters;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -48,6 +53,16 @@ public class BasicEntryPoint extends AbstractRestEntryPoint<ChuruataOrganisation
 	@Override
 	protected boolean prepare(Composite parent) {
 		return true;
+	}
+
+	@Override
+	protected Locale onSetLocale() {
+		Locale locale = super.onSetLocale();
+		StartupParameters service = RWT.getClient().getService( StartupParameters.class );
+		String localeStr = service.getParameter( Entries.S_LOCALE );
+		if( !StringUtils.isEmpty(localeStr))
+			locale = Locale.forLanguageTag(localeStr);
+		return locale;
 	}
 
 	@Override

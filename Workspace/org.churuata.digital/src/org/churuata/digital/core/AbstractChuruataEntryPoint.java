@@ -81,7 +81,7 @@ public abstract class AbstractChuruataEntryPoint<D extends Object> extends Abstr
 	}
 	
 	protected Locale onSetLocale() {
-		return new Locale( "nl", "NL" );
+		return Locale.getDefault();
 	}
 
 	protected boolean prepare(Composite parent) {

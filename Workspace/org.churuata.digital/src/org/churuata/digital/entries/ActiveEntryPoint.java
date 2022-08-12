@@ -151,9 +151,8 @@ public class ActiveEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrganis
 
 		mapComposite.locate();
 		SessionStore store = super.getSessionStore();
-		LatLng selected = store.getSelected();
-		this.btnCreate.setEnabled( selected != null );
-		this.btnEdit.setEnabled( selected != null );
+		this.btnCreate.setEnabled( false);
+		this.btnEdit.setEnabled( false );
 		return true;
 	}
 	
@@ -164,12 +163,10 @@ public class ActiveEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrganis
 		case INITIALISED:
 			break;
 		case CHANGED:
-			store.setSelected( data);
 			this.btnCreate.setEnabled( data != null );
 			this.btnEdit.setEnabled( data != null );
 			break;
 		case SELECTED:
-			store.setSelected( data);
 			Dispatcher.jump(Entries.Pages.CREATE, store.getToken());
 			break;
 		default:

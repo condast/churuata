@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="style.css">
+<title>Churuata Digital</title>
+<script src='https://api.mapbox.com/mapbox-gl-js/v2.8.1/mapbox-gl.js'></script>
+<link href='https://api.mapbox.com/mapbox-gl-js/v2.8.1/mapbox-gl.css'
+	rel='stylesheet' />
+</head>
+
+<body>
+	<!-- Header -->
+	<section id="header">
+		<div class="header container">
+			<div class="nav-bar">
+				<div class="brand">
+					<a href="#home"> <img src="img/logo2-64.png" alt="logo">
+					</a>
+				</div>
+				<div class="nav-list">
+					<div class="hamburger">
+						<div class="bar"></div>
+					</div>
+					<ul>
+						<li><a href="showOrganisation.html" data-after="Organisation">Organisatie</a></li>
+						<li><a href="organisation.html" data-after="Organisation">add
+								Organisatie/a></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</section>
+	<!-- End Header -->
+
+	<!-- Register -->
+	<section id="organisation">
+		<div class="organisation container">
+			<form action="/registered" method="POST">
+				<h1>Organisatie</h1>
+				<div class="form-groups">
+					<label for="organisationName">naam van de organisatie</label> <input
+						type="text" class="form-control" id="organisationName"
+						aria-describedby="emailHelp" placeholder="Organisator name">
+				</div>
+				<div class="form-groups">
+					<label for="Contact">Contact</label> <input type="text"
+						class="form-control" id="Contact" placeholder="Contact">
+				</div>
+				<div class="form-groups">
+					<label for="PhoneNumber">Telefoonnummer</label> <input type="text"
+						class="form-control" id="PhoneNumber" placeholder="Phone number">
+				</div>
+				<div class="form-groups">
+					<label for="E-mail">E-mail</label> <input type="text"
+						class="form-control" id="E-mail" placeholder="E-mail">
+				</div>
+				<div class="form-groups">
+					<label for="Services">Services</label> <input type="text"
+						class="form-control" id="Services" placeholder="Services">
+				</div>
+				<button type="submit" class="btn btn-primary">Aanmelden</button>
+	</section>
+	<!-- End Register -->
+
+	<!-- Footer -->
+	<section id="footer">
+		<div class="footer container">
+			<div class="brand">
+				<h1>Churuata Digital</h1>
+			</div>
+			<h2>Volg ons op</h2>
+			<div class="social-icon">
+				<div class="social-item">
+					<a href="#"><img
+						src="https://img.icons8.com/bubbles/100/000000/facebook-new.png" /></a>
+				</div>
+				<div class="social-item">
+					<a href="#"><img
+						src="https://img.icons8.com/bubbles/100/000000/instagram-new.png" /></a>
+				</div>
+				<div class="social-item">
+					<a href="#"><img
+						src="https://img.icons8.com/bubbles/100/000000/twitter.png" /></a>
+				</div>
+				<div class="social-item">
+					<a href="#"><img
+						src="https://img.icons8.com/color/48/000000/linkedin.png" /></a>
+				</div>
+			</div>
+			<p>Copyright © 2022 comakership. All rights reserved</p>
+		</div>
+	</section>
+
+	<!-- End Footer -->
+	<script
+		src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"
+		type="text/javascript"></script>
+	<script src="app.js"></script>
+</body>
+
+</html>

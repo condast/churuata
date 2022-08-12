@@ -110,7 +110,7 @@ public class CreateEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrganis
 		SessionStore store = getSessionStore();
 		ILoginUser user = store.getLoginUser();
 		editComposite.setInput(context, user);
-		LatLng selected = store.getSelected();
+		LatLng selected = null;//TODO
 		ProfileData profile= store.getData();
 		ChuruataOrganisationData organisation = (ChuruataOrganisationData) profile.getOrganisation()[0];
 		if( organisation == null ) {
@@ -133,11 +133,11 @@ public class CreateEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrganis
 			break;
 		case CHANGED:
 			data = event.getData().getLocation();
-			store.setSelected( data);
+			//store.setSelected( data);
 			break;
 		case SELECTED:
 			data = event.getData().getLocation();
-			store.setSelected( data);
+			//store.setSelected( data);
 			Dispatcher.jump(Entries.Pages.CREATE, store.getToken());
 			break;
 		case ADDED:
@@ -146,7 +146,7 @@ public class CreateEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrganis
 			break;
 		case COMPLETE:
 			data = event.getData().getLocation();
-			store.setSelected( data);
+			//store.setSelected( data);
 			btnAdd.setEnabled(true);
 			break;
 		default:

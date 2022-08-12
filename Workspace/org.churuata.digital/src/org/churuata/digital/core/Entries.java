@@ -15,6 +15,7 @@ public class Entries extends AbstractEntries<Entries.Pages>{
 	public static final String S_CHURUATA_RESOURCES = "/resources/index.html";
 
 	public static final String S_HOME = "churuata";
+	public static final String S_LOCALE = "locale";
 	
 	public enum Pages{
 		ACCOUNT,

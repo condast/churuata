@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <title>Churuata Digital</title>
+</head>
+<script>
+
+</script>
+
+<body>
+  <!-- Header -->
+  <section id="header">
+    <div class="header container">
+      <div class="nav-bar">
+        <div class="brand">
+          <a href="#home" >
+            <img src="img/logo2-64.png" alt="logo">
+          </a>
+        </div>
+        <div class="nav-list">
+          <div class="hamburger">
+            <div class="bar"></div>
+          </div>
+          <ul>
+            <li><a href="index.html#home" data-after="Home">Home</a></li>
+            <li><a href="index.html#information" data-after="information">Information</a></li>
+            <li><a href="diensten.html" data-after="#diensten">Services</a></li>
+            <li><a href="login.html" data-after="login">Login</a></li>
+            <li><a href="register.html" data-after="register">Register</a></li>
+            <li><a href="index.html#contact" data-after="contact">Contact</a></li>
+            <li><a href="security.html" data-after="security">Security measures</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- End Header -->
+
+
+  <!-- Home Section  -->
+  <section id="home">
+    <div class="home container">
+      <div>
+        <h1 class="section-title">Churuata Digital</h1>
+        <a href="diensten.html" type="button" class="cta">Need help?</a>
+        <a href="/churuata?locale=es-ES" type="button" class="cta">Want to help?</a>
+      </div>
+    </div>
+  </section>
+  <!-- End Home Section  -->
+
+  <!-- information Section -->
+  <section id="information">
+    <div class="information container">
+      <div class="service-top">
+        <h1 class="section-title">What do we do?</h1>
+        <p>Refugiados Unidos is itself an RLO that is able to fund other RLO's, thanks to donations from people who want
+          their money to help the people who really need it, and want to minimise the costs of overhead of large NGO's.
+          They proposed an online platform, the _churuata digital_, that aims to inform refugees about possible help in
+          their immediate area, but which at the same time allows every RLO to become an information hub of other
+          possible forms of aid that they could get. A refugee is usually not really helped with an occasional meal or a
+          band-aid, if other needs are not addressed as well. Churuata Digital aims to present an immediate overview of
+          relevant aid that especially refugee families can find in the vicinity. As most families do have a mobile
+          phone, the platform should be simple, and optimised for mobile use.
+          In february 2022, just when the _Million Dollar Challenge_ was published, Condast as able to offer the
+          Churuata Digital as a project to three second-year students ICT at the Windesheim University of Applied
+          Science in Almere, the Netherlands. They have been working on the platform ever since, and will keep on doing
+          so until the end of the school term. The aim is to develop a demonstrator, that can be used as a base for an
+          actual platform for refugees. The source code is made available under an Apache 2 open source license.
+          Because of organisational issues, Refugiados Unidos is not the principal owner of the platform, but is part of
+          the creative process. When the Ukrainian War broke out, it was decided to design the platform for this group,
+          as most Venezuelan refugees have currently settled, and are no longer on the move.</p>
+      </div>
+      <div class="information-bottom">
+        <div class="information-item">
+          <div class="icon"><img src="https://img.icons8.com/bubbles/100/000000/services.png" /></div>
+          <h2>Main reason</h2>
+          <p>The main reason why this application, despite its apparent simplicity, needs a graph database, is because
+            of the enormous differentiation of services that can be offered, and which is difficult to implement in a
+            tradional SQL database.</p>
+        </div>
+        <div class="information-item">
+          <div class="icon"><img src="https://img.icons8.com/bubbles/100/000000/services.png" /></div>
+          <h2>Example</h2>
+          <p>For instance, even a simple service, such as food may have to be expanded, such as food -> fruit, if a
+            refugee is passing through a region where pineapples are grown, and there is a likelihood that many RLO's
+            are offering the same fruit. </p>
+        </div>
+        <div class="information-item">
+          <div class="icon"><img src="https://img.icons8.com/bubbles/100/000000/services.png" /></div>
+          <h2>Example</h2>
+          <p>For instance, a family may require a different form of shelter than someone travelling alone. Pairing
+            refugees to available services poses a well-known fundamental problem of matching, that we eventually want
+            to address with machine-learning algorithms.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section id="contact">
+    <div class="contact container">
+      <div>
+        <h1 class="section-title">Contact</h1>
+      </div>
+      <div class="contact-items">
+        <div class="contact-item">
+          <div class="icon"><img src="https://img.icons8.com/bubbles/100/000000/phone.png" /></div>
+          <div class="contact-info">
+            <h1>Phone</h1>
+            <h2>+31313131</h2>
+          </div>
+        </div>
+        <div class="contact-item">
+          <div class="icon"><img src="https://img.icons8.com/bubbles/100/000000/new-post.png" /></div>
+          <div class="contact-info">
+            <h1>Email</h1>
+            <h2>info@refugiadosunidos.org</h2>
+          </div>
+        </div>
+        <div class="contact-item">
+          <div class="icon"><img src="https://img.icons8.com/bubbles/100/000000/map-marker.png" /></div>
+          <div class="contact-info">
+            <h1>Address</h1>
+            <h2>Amsterdam</h2>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- End Contact Section -->
+
+  <!-- Footer -->
+  <section id="footer">
+    <div class="footer container">
+      <div class="brand">
+        <h1>Churuata Digital</h1>
+      </div>
+      <h2>Volg ons op</h2>
+      <div class="social-icon">
+        <div class="social-item">
+          <a href="#"><img src="https://img.icons8.com/bubbles/100/000000/facebook-new.png" /></a>
+        </div>
+        <div class="social-item">
+          <a href="#"><img src="https://img.icons8.com/bubbles/100/000000/instagram-new.png" /></a>
+        </div>
+        <div class="social-item">
+          <a href="#"><img src="https://img.icons8.com/color/48/000000/linkedin.png" /></a>
+        </div>
+      </div>
+      <p>Copyright © 2022 comakership. All rights reserved</p>
+    </div>
+  </section>
+  <!-- End Footer -->
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+  <script src="app.js"></script>
+</body>
+
+</html>

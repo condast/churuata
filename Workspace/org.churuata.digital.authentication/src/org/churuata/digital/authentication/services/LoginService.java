@@ -17,6 +17,7 @@ import org.condast.commons.strings.StringUtils;
 
 public class LoginService extends AbstractEntityService<Login>{
 
+	//Entity name is case semnsitive; needs to be exactly the same as in persistence.xml
 	private static final String SELECT = "SELECT l FROM Login l ";
 	private static final String SELECT_USER = SELECT + "WHERE l.userName=:userName AND l.password=:password";
 	private static final String SELECT_EMAIL = SELECT + "WHERE l.email=:email";

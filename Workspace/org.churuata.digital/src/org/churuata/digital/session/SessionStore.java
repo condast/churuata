@@ -12,7 +12,7 @@ public class SessionStore extends DefaultSessionStore<ProfileData>{
 	private long token;
 	
 	private LatLng selected;
-	
+		
 	private IChuruataService selectedService;
 
 	public IChuruataService getSelectedService() {
@@ -43,13 +43,5 @@ public class SessionStore extends DefaultSessionStore<ProfileData>{
 
 	public void setToken(long token) {
 		this.token = token;
-	}
-
-	public LatLng getSelected() {
-		return selected;
-	}
-
-	public void setSelected(LatLng selected) {
-		this.selected = selected;
 	}
 }

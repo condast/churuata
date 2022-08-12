@@ -12,6 +12,7 @@
 package org.churuata.digital.authentication;
 
 import org.glassfish.jersey.*;
+import org.eclipse.persistence.*;
 
 @SuppressWarnings("unused")
 public interface IHiddenPackages {
