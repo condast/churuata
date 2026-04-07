@@ -10,7 +10,7 @@ import org.churuata.digital.session.SessionStore;
 import org.churuata.digital.ui.image.ChuruataImages;
 import org.churuata.digital.ui.image.ChuruataImages.Images;
 import org.condast.commons.authentication.http.IDomainProvider;
-import org.condast.commons.config.Config;
+import org.condast.commons.preferences.config.Config;
 import org.condast.commons.legal.LegalUtils;
 import org.condast.commons.legal.LegalUtils.Version;
 import org.condast.commons.na.model.IContactPerson;
@@ -285,6 +285,18 @@ public class ShowLegalEntryPoint extends AbstractWizardEntryPoint<Browser, Churu
 		protected String onCreateLink(String link, String page, String arguments) {
 			String result = "";
 			return result;
+		}
+
+		@Override
+		protected String onHandleApplication() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		protected String onHandleBody(String body, Attributes attr) {
+			// TODO Auto-generated method stub
+			return null;
 		}
 	}
 

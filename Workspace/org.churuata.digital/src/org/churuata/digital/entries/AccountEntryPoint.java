@@ -17,7 +17,7 @@ import org.churuata.digital.ui.image.ChuruataImages;
 import org.condast.commons.authentication.core.LoginData;
 import org.condast.commons.authentication.http.IDomainProvider;
 import org.condast.commons.authentication.user.ILoginUser;
-import org.condast.commons.config.Config;
+import org.condast.commons.preferences.config.Config;
 import org.condast.commons.messaging.http.AbstractHttpRequest;
 import org.condast.commons.messaging.http.ResponseEvent;
 import org.condast.commons.na.profile.IProfileData;

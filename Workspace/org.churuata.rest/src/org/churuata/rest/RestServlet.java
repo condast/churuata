@@ -1,7 +1,7 @@
 package org.churuata.rest;
 
-import javax.servlet.Servlet;
-import javax.ws.rs.ApplicationPath;
+import jakarta.servlet.Servlet;
+import jakarta.ws.rs.ApplicationPath;
 
 import org.churuata.rest.resources.CaminantesResource;
 import org.churuata.rest.resources.ChuruataResource;

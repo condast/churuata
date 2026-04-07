@@ -6,12 +6,12 @@ import org.churuata.digital.session.SessionStore;
 import org.churuata.digital.ui.image.ChuruataImages;
 import org.churuata.digital.ui.map.OrganisationMapBrowser;
 import org.condast.commons.authentication.http.IDomainProvider;
-import org.condast.commons.config.Config;
+import org.condast.commons.preferences.config.Config;
 import org.condast.commons.data.latlng.LatLng;
 import org.condast.commons.strings.StringUtils;
 import org.condast.commons.ui.controller.EditEvent;
-import org.condast.commons.ui.entry.AbstractRestEntryPoint;
 import org.condast.commons.ui.utils.RWTUtils;
+import org.condast.commons.ui.widgets.entry.AbstractRestEntryPoint;
 import org.eclipse.rap.rwt.RWT;
 import org.eclipse.rap.rwt.client.service.StartupParameters;
 import org.eclipse.swt.SWT;
@@ -45,7 +45,7 @@ public class ActiveEntryPoint extends AbstractRestEntryPoint<SessionStore>{
 	 * @param rate
 	 */
 	public ActiveEntryPoint() {
-		super( 3*DEFAULT_SCHEDULE, DEFAULT_SCHEDULE);
+		super(S_CHURUATA, 3*DEFAULT_SCHEDULE, DEFAULT_SCHEDULE);
 	}
 
 	@Override

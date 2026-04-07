@@ -32,7 +32,7 @@ public class EntityManagerService extends EntityManagerFactoryService{
 	@Reference( cardinality = ReferenceCardinality.AT_LEAST_ONE,
 	policy=ReferencePolicy.DYNAMIC)
 	@Override
-	public synchronized void bindEMF( EntityManagerFactory emf) {
+	public synchronized void bindFactory( EntityManagerFactory emf) {
 		Map<String,Object> props = emf.getProperties();
 		String attr = (String) props.get(BUNDLE_NAME_KEY);
 		logger.info("Attempting to bind factory: " + attr);
@@ -40,16 +40,16 @@ public class EntityManagerService extends EntityManagerFactoryService{
 		if( !compare( emf, BUNDLE_NAME_KEY, Activator.BUNDLE_ID))
 			return;
 		logger.info("FACTORY FOUND: " + BUNDLE_NAME_KEY);
-		service.setEMF(emf);
-		super.bindEMF(emf);
+		service.setEntityManager(emf.createEntityManager());
+		super.bindFactory(emf);
 		logger.info("FACTORY BOUND succesfully ");
 	}
 
 	@Override
-	public synchronized void unbindEMF( EntityManagerFactory emf) {
+	public synchronized void unbindFactory( EntityManagerFactory emf) {
 		if( !compare( emf, BUNDLE_NAME_KEY, Activator.BUNDLE_ID))
 			return;
 		service.disconnect();
-		super.unbindEMF(emf);
+		super.unbindFactory(emf);
 	}
 }

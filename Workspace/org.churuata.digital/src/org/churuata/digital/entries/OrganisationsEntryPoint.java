@@ -19,7 +19,7 @@ import org.churuata.digital.ui.organisation.OrganisationsTableViewer;
 import org.condast.commons.Utils;
 import org.condast.commons.authentication.http.IDomainProvider;
 import org.condast.commons.authentication.user.ILoginUser;
-import org.condast.commons.config.Config;
+import org.condast.commons.preferences.config.Config;
 import org.condast.commons.messaging.http.AbstractHttpRequest;
 import org.condast.commons.messaging.http.ResponseEvent;
 import org.condast.commons.na.data.OrganisationData;

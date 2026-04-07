@@ -28,18 +28,18 @@ public class EntityManagerService extends EntityManagerFactoryService{
 	@Reference( cardinality = ReferenceCardinality.AT_LEAST_ONE,
 			policy=ReferencePolicy.DYNAMIC)
 	@Override
-	public synchronized void bindEMF(EntityManagerFactory emf) {
+	public synchronized void bindFactory(EntityManagerFactory emf) {
 		if( !compare( emf, BUNDLE_NAME_KEY, Activator.BUNDLE_ID))
 			return;
-		service.setEMF(emf);
-		super.bindEMF(emf);
+		service.setEntityManager(emf.createEntityManager());
+		super.bindFactory(emf);
 	}
 
 	@Override
-	public synchronized void unbindEMF(EntityManagerFactory emf) {
+	public synchronized void unbindFactory(EntityManagerFactory emf) {
 		if( !compare( emf, BUNDLE_NAME_KEY, Activator.BUNDLE_ID))
 			return;
 		service.disconnect();
-		super.unbindEMF(emf);
+		super.unbindFactory(emf);
 	}
 }

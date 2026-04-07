@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpSession;
 
 import org.churuata.digital.session.SessionStore;
 import org.condast.commons.authentication.core.AuthenticationEvent;

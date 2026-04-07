@@ -1,7 +1,7 @@
 package org.churuata.digital.organisation;
 
-import javax.servlet.Servlet;
-import javax.ws.rs.ApplicationPath;
+import jakarta.servlet.Servlet;
+import jakarta.ws.rs.ApplicationPath;
 
 import org.churuata.digital.organisation.rest.ChatResource;
 import org.churuata.digital.organisation.rest.ContactPersonResource;
@@ -23,7 +23,7 @@ public class RestServlet extends AbstractServletWrapper {
 	@Override
 	protected Servlet onCreateServlet(String contextPath) {
 		RestApplication resourceConfig = new RestApplication();
-		return new ServletContainer(resourceConfig);
+		return (Servlet) new ServletContainer(resourceConfig);
 	}
 
 	@ApplicationPath(S_CONTEXT_PATH)

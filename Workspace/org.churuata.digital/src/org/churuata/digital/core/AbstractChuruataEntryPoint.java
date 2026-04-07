@@ -6,12 +6,11 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpSession;
 
 import org.churuata.digital.session.SessionStore;
 import org.condast.commons.authentication.http.IDomainProvider;
 import org.condast.commons.authentication.user.ILoginUser;
-import org.condast.commons.ui.entry.IDataEntryPoint;
 import org.condast.commons.ui.messaging.jump.JumpEvent;
 import org.condast.commons.ui.session.AbstractSessionHandler;
 import org.condast.commons.ui.session.SessionEvent;
@@ -23,7 +22,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 
-public abstract class AbstractChuruataEntryPoint<D extends Object> extends AbstractEntryPoint implements IDataEntryPoint<SessionStore>, AutoCloseable{
+public abstract class AbstractChuruataEntryPoint<D extends Object> extends AbstractEntryPoint implements org.condast.commons.ui.widgets.entry.IDataEntryPoint<SessionStore>, AutoCloseable{
 	private static final long serialVersionUID = 1L;
 
 	public static final String S_INVALID_PREPARATION = "Login first";
@@ -218,7 +217,7 @@ public abstract class AbstractChuruataEntryPoint<D extends Object> extends Abstr
 		}
 	}
 	
-	private class RWTUiSessionHandler extends org.condast.commons.ui.rwt.AbstractRWTSessionSupport{
+	private class RWTUiSessionHandler extends org.condast.commons.ui.widgets.rwt.AbstractRWTSessionSupport{
 
 		public RWTUiSessionHandler(Display display) {
 			super(display, Integer.MAX_VALUE);

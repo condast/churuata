@@ -7,11 +7,11 @@ import org.churuata.digital.core.data.ChuruataOrganisationData;
 import org.churuata.digital.session.SessionStore;
 import org.churuata.digital.ui.views.EditChuruataComposite;
 import org.condast.commons.authentication.user.ILoginUser;
-import org.condast.commons.config.Config;
+import org.condast.commons.preferences.config.Config;
 import org.condast.commons.data.latlng.LatLng;
 import org.condast.commons.ui.controller.EditEvent;
-import org.condast.commons.ui.entry.AbstractRestEntryPoint;
 import org.condast.commons.ui.utils.RWTUtils;
+import org.condast.commons.ui.widgets.entry.AbstractRestEntryPoint;
 import org.eclipse.rap.rwt.RWT;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
@@ -34,7 +34,7 @@ public class EditEntryPoint extends AbstractRestEntryPoint<SessionStore>{
 	 * @param rate
 	 */
 	public EditEntryPoint() {
-		super( 3*DEFAULT_SCHEDULE, DEFAULT_SCHEDULE);
+		super(S_CHURUATA, 3*DEFAULT_SCHEDULE, DEFAULT_SCHEDULE);
 	}
 
 	@Override

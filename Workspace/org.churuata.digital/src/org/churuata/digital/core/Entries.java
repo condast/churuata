@@ -3,7 +3,7 @@ package org.churuata.digital.core;
 import org.churuata.digital.BasicApplication;
 import org.condast.commons.strings.StringStyler;
 import org.condast.commons.strings.StringUtils;
-import org.condast.commons.ui.entry.AbstractEntries;
+import org.condast.commons.ui.widgets.entry.AbstractEntries;
 
 public class Entries extends AbstractEntries<Entries.Pages>{
 

@@ -3,11 +3,11 @@ package org.churuata.digital.http;
 import java.io.IOException;
 import java.util.Random;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import org.churuata.digital.core.Entries;
 import org.condast.commons.authentication.http.IDomainProvider;
@@ -162,6 +162,18 @@ public class RegisterServiceServlet extends HttpServlet {
 			}
 			builder.append("?token='" + token);
 			return builder.toString();
+		}
+
+		@Override
+		protected String onHandleApplication() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		protected String onHandleBody(String body, Attributes attr) {
+			// TODO Auto-generated method stub
+			return null;
 		}
 	}
 }

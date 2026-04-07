@@ -1,8 +1,7 @@
 package org.churuata.digital.authentication;
 
-import javax.servlet.Servlet;
-import javax.ws.rs.ApplicationPath;
-
+import jakarta.servlet.Servlet;
+import jakarta.ws.rs.ApplicationPath;
 import org.churuata.digital.authentication.rest.AdminResource;
 import org.churuata.digital.authentication.rest.AuthenticationResource;
 import org.condast.commons.messaging.http.AbstractServletWrapper;
@@ -21,7 +20,7 @@ public class RestServlet extends AbstractServletWrapper {
 	@Override
 	protected Servlet onCreateServlet(String contextPath) {
 		RestApplication resourceConfig = new RestApplication();
-		return new ServletContainer(resourceConfig);
+		return (Servlet) new ServletContainer(resourceConfig);
 	}
 
 	@ApplicationPath(S_CONTEXT_PATH)

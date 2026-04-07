@@ -19,7 +19,7 @@ import org.condast.commons.authentication.http.IDomainProvider;
 import org.condast.commons.authentication.ui.views.AuthenticationGroup;
 import org.condast.commons.authentication.user.ILoginUser;
 import org.condast.commons.authentication.utils.AuthenticationUtils;
-import org.condast.commons.config.Config;
+import org.condast.commons.preferences.config.Config;
 import org.condast.commons.legal.LegalUtils;
 import org.condast.commons.messaging.http.AbstractHttpRequest;
 import org.condast.commons.messaging.http.ResponseEvent;

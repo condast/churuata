@@ -18,7 +18,7 @@ import org.condast.commons.ui.controller.AbstractEntityComposite;
 import org.condast.commons.ui.controller.EditEvent;
 import org.condast.commons.ui.controller.EditEvent.EditTypes;
 import org.condast.commons.ui.swt.InputField;
-import org.condast.commons.ui.table.TableEvent;
+import org.condast.commons.ui.widgets.table.TableEvent;
 import org.eclipse.rap.rwt.RWT;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.events.VerifyListener;
