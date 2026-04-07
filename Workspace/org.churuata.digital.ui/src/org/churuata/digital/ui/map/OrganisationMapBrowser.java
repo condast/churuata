@@ -16,7 +16,7 @@ import org.condast.commons.strings.StringStyler;
 import org.condast.commons.strings.StringUtils;
 import org.condast.commons.ui.controller.EditEvent;
 import org.condast.commons.ui.controller.IEditListener;
-import org.condast.commons.ui.session.AbstractSessionHandler;
+import org.condast.commons.ui.widgets.session.AbstractSessionHandler;
 import org.condast.commons.ui.session.SessionEvent;
 import org.condast.commons.ui.controller.EditEvent.EditTypes;
 import org.condast.js.commons.eval.EvaluationEvent;

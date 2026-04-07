@@ -3,7 +3,7 @@ package org.churuata.digital.core;
 import java.util.concurrent.TimeUnit;
 
 import org.churuata.digital.session.SessionStore;
-import org.condast.commons.config.Config;
+import org.condast.commons.preferences.config.Config;
 import org.condast.commons.ui.player.PlayerImages;
 import org.eclipse.rap.rwt.RWT;
 import org.eclipse.swt.SWT;

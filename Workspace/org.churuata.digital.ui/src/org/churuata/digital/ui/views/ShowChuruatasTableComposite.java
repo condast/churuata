@@ -2,9 +2,9 @@ package org.churuata.digital.ui.views;
 
 import org.churuata.digital.core.location.IChuruata;
 import org.condast.commons.strings.StringStyler;
-import org.condast.commons.ui.table.AbstractTableComposite;
-import org.condast.commons.ui.table.ITableEventListener.TableEvents;
-import org.condast.commons.ui.table.TableEvent;
+import org.condast.commons.ui.widgets.table.AbstractTableComposite;
+import org.condast.commons.ui.widgets.table.ITableEventListener.TableEvents;
+import org.condast.commons.ui.widgets.table.TableEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;

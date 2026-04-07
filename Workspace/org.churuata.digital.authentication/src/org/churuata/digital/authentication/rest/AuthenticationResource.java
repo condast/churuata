@@ -2,7 +2,6 @@ package org.churuata.digital.authentication.rest;
 
 import java.io.InputStream;
 import java.util.Collection;
-import java.util.Properties;
 import java.util.logging.Logger;
 
 import javax.ws.rs.Consumes;
@@ -16,6 +15,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.churuata.digital.authentication.core.Dispatcher;
+import org.churuata.digital.authentication.mail.MailUtils;
 import org.churuata.digital.authentication.model.Login;
 import org.churuata.digital.authentication.services.LoginService;
 import org.condast.commons.Utils;
@@ -27,7 +27,6 @@ import org.condast.commons.persistence.service.TransactionManager;
 import org.condast.commons.strings.StringUtils;
 import org.condast.commons.verification.IVerification;
 import org.condast.commons.verification.IVerification.VerificationTypes;
-import org.javax.mail.utils.MailUtils;
 import com.google.gson.Gson;
 
 
@@ -94,12 +93,14 @@ public class AuthenticationResource{
 
 			LoginData loginData = new LoginData( name, password, email );
 			long confirmation = dispatcher.addConfirmRegistration(loginData);	
+			/**
 			try {
 				Properties props = MailUtils.createProperties(getClass().getResourceAsStream(MailUtils.S_DEFAULT_MAIL_RESOURCE));
 				MailUtils.sendConfirmationdMail(getClass().getResourceAsStream(MailUtils.S_RESOURCE_CONFIRM), props, loginData, email, Dispatcher.S_CHURUATA, confirmation );
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
+			**/
 			return Response.ok( str ).build();
 		}
 		catch( Exception ex ){
@@ -169,7 +170,7 @@ public class AuthenticationResource{
 			dispatcher.addUser(user);
 
 			try {
-				Properties props = MailUtils.createProperties(getClass().getResourceAsStream(MailUtils.S_DEFAULT_MAIL_RESOURCE));
+				//Properties props = MailUtils.createProperties(getClass().getResourceAsStream(MailUtils.S_DEFAULT_MAIL_RESOURCE));
 				InputStream in = this.getClass().getResourceAsStream(MailUtils.S_RESOURCE_CONFIRM_CODE);
 				//MailUtils.sendConfirmCodeMail( in, props, user, Dispatcher.S_CHURUATA );
 			} catch (Exception e) {
@@ -209,7 +210,7 @@ public class AuthenticationResource{
 				return Response.status( Status.NOT_FOUND).build();
 			user.setSecurity(AuthenticationUtils.generateSecurityCode(user));
 			dispatcher.addUser(user);
-
+/**
 			try{
 				Properties props = MailUtils.createProperties(getClass().getResourceAsStream(MailUtils.S_DEFAULT_MAIL_RESOURCE));
 				InputStream in = this.getClass().getResourceAsStream(MailUtils.S_RESOURCE_CONFIRM_CODE);
@@ -219,7 +220,7 @@ public class AuthenticationResource{
 				ex.printStackTrace();
 				//return Response.serverError().build();
 			}
-
+**/
 			String str = AuthenticationUtils.createDictionaryString(user);
 			return Response.ok( str ).build();
 		}
@@ -303,10 +304,11 @@ public class AuthenticationResource{
 			ILoginUser user = users[0];
 			user.setSecurity(AuthenticationUtils.generateSecurityCode(user));
 			dispatcher.addForgotPassword(user);
-			
+	/**		
 			Properties props = MailUtils.createProperties(getClass().getResourceAsStream(MailUtils.S_DEFAULT_MAIL_RESOURCE));
 			InputStream in = this.getClass().getResourceAsStream(MailUtils.S_RESOURCE_FORGOT_PASSWORD_CODE);
 			MailUtils.sendForgotPasswordMail( in, props, users[0], Dispatcher.S_CHURUATA );	
+			**/
 			return Response.ok().build();
 		}
 		catch( Exception ex ){

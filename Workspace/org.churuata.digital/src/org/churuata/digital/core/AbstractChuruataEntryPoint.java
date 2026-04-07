@@ -11,10 +11,10 @@ import javax.servlet.http.HttpSession;
 import org.churuata.digital.session.SessionStore;
 import org.condast.commons.authentication.http.IDomainProvider;
 import org.condast.commons.authentication.user.ILoginUser;
-import org.condast.commons.ui.entry.IDataEntryPoint;
+import org.condast.commons.ui.widgets.entry.IDataEntryPoint;
 import org.condast.commons.ui.messaging.jump.JumpEvent;
-import org.condast.commons.ui.session.AbstractSessionHandler;
 import org.condast.commons.ui.session.SessionEvent;
+import org.condast.commons.ui.widgets.session.AbstractSessionHandler;
 import org.eclipse.rap.rwt.RWT;
 import org.eclipse.rap.rwt.application.AbstractEntryPoint;
 import org.eclipse.swt.SWT;
@@ -218,7 +218,7 @@ public abstract class AbstractChuruataEntryPoint<D extends Object> extends Abstr
 		}
 	}
 	
-	private class RWTUiSessionHandler extends org.condast.commons.ui.rwt.AbstractRWTSessionSupport{
+	private class RWTUiSessionHandler extends org.condast.commons.ui.widgets.rwt.AbstractRWTSessionSupport{
 
 		public RWTUiSessionHandler(Display display) {
 			super(display, Integer.MAX_VALUE);

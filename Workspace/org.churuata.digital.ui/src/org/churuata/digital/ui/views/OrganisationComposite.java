@@ -14,7 +14,7 @@ import org.condast.commons.ui.controller.EditEvent;
 import org.condast.commons.ui.controller.EditEvent.EditTypes;
 import org.condast.commons.ui.controller.IEditListener;
 import org.condast.commons.ui.swt.InputField;
-import org.condast.commons.ui.table.AbstractTableViewerWithDelete.Buttons;
+import org.condast.commons.ui.widgets.table.AbstractTableViewerWithDelete.Buttons;
 import org.condast.commons.ui.verification.VerificationUtils;
 import org.condast.commons.verification.IVerification.VerificationTypes;
 import org.eclipse.rap.rwt.RWT;

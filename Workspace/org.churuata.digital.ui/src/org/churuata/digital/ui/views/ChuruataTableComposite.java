@@ -11,7 +11,7 @@ import org.condast.commons.strings.StringStyler;
 import org.condast.commons.ui.controller.EditEvent;
 import org.condast.commons.ui.controller.EditEvent.EditTypes;
 import org.condast.commons.ui.controller.IEditListener;
-import org.condast.commons.ui.table.AbstractTableViewerWithDelete;
+import org.condast.commons.ui.widgets.table.AbstractTableViewerWithDelete;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;

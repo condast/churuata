@@ -3,8 +3,8 @@ package org.churuata.digital.entries;
 import org.churuata.digital.core.AuthenticationDispatcher;
 import org.churuata.digital.session.SessionStore;
 import org.condast.commons.authentication.user.ILoginUser;
-import org.condast.commons.ui.entry.IDataEntryPoint;
-import org.condast.commons.ui.utils.RWTUtils;
+import org.condast.commons.ui.widgets.entry.IDataEntryPoint;
+import org.condast.commons.ui.widgets.utils.RWTUtils;
 import org.eclipse.rap.rwt.application.AbstractEntryPoint;
 import org.eclipse.swt.widgets.Composite;
 
