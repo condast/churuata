@@ -6,7 +6,6 @@ import org.churuata.digital.authentication.rest.AdminResource;
 import org.churuata.digital.authentication.rest.AuthenticationResource;
 import org.condast.commons.messaging.http.AbstractServletWrapper;
 import org.glassfish.jersey.server.ResourceConfig;
-import org.glassfish.jersey.servlet.ServletContainer;
 
 public class RestServlet extends AbstractServletWrapper {
 
@@ -20,7 +19,7 @@ public class RestServlet extends AbstractServletWrapper {
 	@Override
 	protected Servlet onCreateServlet(String contextPath) {
 		RestApplication resourceConfig = new RestApplication();
-		return (Servlet) new ServletContainer(resourceConfig);
+		return null;//new Servlet(resourceConfig);
 	}
 
 	@ApplicationPath(S_CONTEXT_PATH)
