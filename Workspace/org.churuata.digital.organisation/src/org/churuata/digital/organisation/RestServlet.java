@@ -9,7 +9,6 @@ import org.churuata.digital.organisation.rest.OrganisationResource;
 import org.condast.commons.messaging.http.AbstractServletWrapper;
 import org.condast.commons.messaging.rest.CorsFilter;
 import org.glassfish.jersey.server.ResourceConfig;
-import org.glassfish.jersey.servlet.ServletContainer;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.ServiceScope;
 
@@ -28,7 +27,7 @@ public class RestServlet extends AbstractServletWrapper {
 	@Override
 	protected Servlet onCreateServlet(String contextPath) {
 		RestApplication resourceConfig = new RestApplication();
-		return new ServletContainer(resourceConfig);
+		return null;//new ServletContainer(resourceConfig);
 	}
 
 	@ApplicationPath(S_CONTEXT_PATH)

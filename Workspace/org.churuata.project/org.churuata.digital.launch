@@ -18,7 +18,7 @@
     <booleanAttribute key="org.eclipse.debug.core.appendEnvironmentVariables" value="true"/>
     <booleanAttribute key="org.eclipse.jdt.launching.ATTR_ATTR_USE_ARGFILE" value="false"/>
     <booleanAttribute key="org.eclipse.jdt.launching.ATTR_SHOW_CODEDETAILS_IN_EXCEPTION_MESSAGES" value="true"/>
-    <stringAttribute key="org.eclipse.jdt.launching.JRE_CONTAINER" value="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/java-1.8.0-openjdk"/>
+    <stringAttribute key="org.eclipse.jdt.launching.JRE_CONTAINER" value="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk-26"/>
     <stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="-os ${target.os} -ws ${target.ws} -arch ${target.arch} -nl ${target.nl} -console -consolelog"/>
     <stringAttribute key="org.eclipse.jdt.launching.SOURCE_PATH_PROVIDER" value="org.eclipse.pde.ui.workbenchClasspathProvider"/>
     <stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Declipse.ignoreApp=true -Dosgi.noShutdown=true&#13;&#10;-Dorg.eclipse.equinox.http.jetty.log.stderr.threshold=info&#13;&#10;-Djava.util.logging.config.file=&quot;logging.properties&quot;"/>
@@ -75,6 +75,12 @@
         <setEntry value="org.eclipse.jetty.util@default:default"/>
         <setEntry value="org.eclipse.osgi.util@default:default"/>
         <setEntry value="org.eclipse.osgi@1:true"/>
+        <setEntry value="org.eclipse.persistence.antlr@default:default"/>
+        <setEntry value="org.eclipse.persistence.asm@default:default"/>
+        <setEntry value="org.eclipse.persistence.core@default:default"/>
+        <setEntry value="org.eclipse.persistence.jpa.jpql@default:default"/>
+        <setEntry value="org.eclipse.persistence.jpa@default:default"/>
+        <setEntry value="org.eclipse.persistence.nosql@default:false"/>
         <setEntry value="org.eclipse.rap.http.jetty@default:default"/>
         <setEntry value="org.eclipse.rap.http.registry@default:default"/>
         <setEntry value="org.eclipse.rap.http.servlet@default:default"/>
@@ -88,7 +94,7 @@
         <setEntry value="org.glassfish.hk2.locator@default:default"/>
         <setEntry value="org.glassfish.hk2.osgi-resource-locator@default:default"/>
         <setEntry value="org.glassfish.hk2.utils@default:default"/>
-        <setEntry value="org.glassfish.jersey.bundles.repackaged.jersey-guava@default:default"/>
+        <setEntry value="org.glassfish.jersey.containers.jersey-container-servlet-core@default:default"/>
         <setEntry value="org.glassfish.jersey.containers.jersey-container-servlet@default:default"/>
         <setEntry value="org.glassfish.jersey.core.jersey-client@default:default"/>
         <setEntry value="org.glassfish.jersey.core.jersey-common@default:default"/>

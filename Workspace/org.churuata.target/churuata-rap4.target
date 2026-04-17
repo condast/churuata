@@ -39,7 +39,7 @@
 			<dependency>
 				<groupId>jakarta.annotation</groupId>
 				<artifactId>jakarta.annotation-api</artifactId>
-				<version>3.0.0</version>
+				<version>2.1.1</version>
 				<type>jar</type>
 			</dependency>
 			<dependency>
@@ -51,24 +51,19 @@
 			<dependency>
 				<groupId>jakarta.validation</groupId>
 				<artifactId>jakarta.validation-api</artifactId>
-				<version>2.0.2</version>
+				<version>4.0.0-M1</version>
 				<type>jar</type>
 			</dependency>
 			<dependency>
 				<groupId>jakarta.ws.rs</groupId>
 				<artifactId>jakarta.ws.rs-api</artifactId>
-				<version>4.0.0</version>
+				<version>3.1.0</version>
 				<type>jar</type>
 			</dependency>
-			 <dependency>
-		        <groupId>org.osgi</groupId>
-		        <artifactId>org.osgi.service.jakartars</artifactId>
-		        <version>2.0.0</version>
-		    </dependency>
 			<dependency>
 				<groupId>jakarta.xml.bind</groupId>
 				<artifactId>jakarta.xml.bind-api</artifactId>
-				<version>2.3.3</version>
+				<version>4.0.5</version>
 				<type>jar</type>
 			</dependency>
 			<dependency>
@@ -93,6 +88,12 @@
 				<groupId>mysql</groupId>
 				<artifactId>mysql-connector-java</artifactId>
 				<version>5.1.49</version>
+				<type>jar</type>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>org.apache.felix.http.servlet-api</artifactId>
+				<version>3.0.0</version>
 				<type>jar</type>
 			</dependency>
 			<dependency>
@@ -152,69 +153,69 @@
 			<dependency>
 				<groupId>org.glassfish.hk2.external</groupId>
 				<artifactId>aopalliance-repackaged</artifactId>
-				<version>4.0.0</version>
+				<version>3.1.1</version>
 				<type>jar</type>
 			</dependency>
 			<dependency>
 				<groupId>org.glassfish.hk2</groupId>
 				<artifactId>hk2-api</artifactId>
-				<version>4.0.0</version>
+				<version>3.1.1</version>
 				<type>jar</type>
 			</dependency>
 			<dependency>
 				<groupId>org.glassfish.hk2</groupId>
 				<artifactId>hk2-locator</artifactId>
-				<version>4.0.0</version>
+				<version>3.1.1</version>
 				<type>jar</type>
 			</dependency>
 			<dependency>
 				<groupId>org.glassfish.hk2</groupId>
 				<artifactId>hk2-utils</artifactId>
-				<version>4.0.0</version>
+				<version>3.1.1</version>
 				<type>jar</type>
 			</dependency>
 			<dependency>
 				<groupId>org.glassfish.hk2</groupId>
 				<artifactId>osgi-resource-locator</artifactId>
-				<version>3.0.0</version>
-				<type>jar</type>
-			</dependency>
-			<dependency>
-				<groupId>org.glassfish.jersey.bundles.repackaged</groupId>
-				<artifactId>jersey-guava</artifactId>
-				<version>2.26-b03</version>
-				<type>jar</type>
-			</dependency>
-			<dependency>
-				<groupId>org.glassfish.jersey.core</groupId>
-				<artifactId>jersey-client</artifactId>
-				<version>4.0.2</version>
+				<version>1.0.4</version>
 				<type>jar</type>
 			</dependency>
 			<dependency>
 				<groupId>org.glassfish.jersey.core</groupId>
 				<artifactId>jersey-common</artifactId>
-				<version>4.0.2</version>
+				<version>3.1.11</version>
+				<type>jar</type>
+			</dependency>
+			<!-- Source: https://mvnrepository.com/artifact/org.glassfish.jersey.containers/jersey-container-servlet-core -->
+			<dependency>
+			    <groupId>org.glassfish.jersey.containers</groupId>
+			    <artifactId>jersey-container-servlet-core</artifactId>
+			    <version>3.1.11</version>
+			    <scope>compile</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.glassfish.jersey.containers</groupId>
+				<artifactId>jersey-container-servlet</artifactId>
+				<version>3.1.11</version>
+				<type>jar</type>
+			</dependency>
+			<dependency>
+				<groupId>org.glassfish.jersey.core</groupId>
+				<artifactId>jersey-client</artifactId>
+				<version>3.1.11</version>
 				<type>jar</type>
 			</dependency>
 			<dependency>
 				<groupId>org.glassfish.jersey.core</groupId>
 				<artifactId>jersey-server</artifactId>
-				<version>4.0.2</version>
+				<version>3.1.11</version>
 				<type>jar</type>
 			</dependency>
 			<dependency>
 				<groupId>org.glassfish.jersey.inject</groupId>
 				<artifactId>jersey-hk2</artifactId>
-				<version>4.0.2</version>
+				<version>3.1.11</version>
 				<type>jar</type>
-			</dependency>
-			<!-- Source: https://mvnrepository.com/artifact/org.glassfish.jersey.containers/jersey-container-servlet -->
-			<dependency>
-			    <groupId>org.glassfish.jersey.containers</groupId>
-			    <artifactId>jersey-container-servlet</artifactId>
-			    <version>4.0.2</version>
-			    <scope>compile</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.javassist</groupId>
@@ -230,8 +231,20 @@
 			</dependency>
 			<dependency>
 				<groupId>org.osgi</groupId>
+				<artifactId>org.osgi.service.http.whiteboard</artifactId>
+				<version>1.1.1</version>
+				<type>jar</type>
+			</dependency>
+			<dependency>
+				<groupId>org.osgi</groupId>
 				<artifactId>org.osgi.service.http</artifactId>
 				<version>1.2.2</version>
+				<type>jar</type>
+			</dependency>
+			<dependency>
+				<groupId>org.osgi</groupId>
+				<artifactId>org.osgi.service.jakartars</artifactId>
+				<version>2.0.0</version>
 				<type>jar</type>
 			</dependency>
 			<dependency>
@@ -264,18 +277,6 @@
 				<version>9.9.1</version>
 				<type>jar</type>
 			</dependency>
-			<dependency>
-			    <groupId>org.osgi</groupId>
-			    <artifactId>org.osgi.service.http.whiteboard</artifactId>
-			    <version>1.1.1</version>
-			    <type>jar</type>
-			</dependency>
-			<dependency>
-			    <groupId>org.apache.felix</groupId>
-			    <artifactId>org.apache.felix.http.servlet-api</artifactId>
-			    <version>3.0.0</version>
-			    <type>jar</type>
-			</dependency>
 		</dependencies>
 	</location>
 </locations>
@@ -292,14 +293,12 @@
 		<plugin id="org.eclipse.persistence.jpa"/>
 		<plugin id="org.eclipse.persistence.jpa.jpql"/>
 		<plugin id="org.eclipse.persistence.nosql"/>
-		<plugin id="org.glassfish.jersey.bundles.repackaged.jersey-guava"/>
 		<plugin id="org.objectweb.asm.commons" version="9.9.1"/>
 		<plugin id="org.objectweb.asm.util"/>
 		<plugin id="com.ibm.icu"/>
 		<plugin id="com.ibm.icu.source"/>
 		<plugin id="jakarta.servlet-api"/>
 		<plugin id="jakarta.servlet-api.source"/>
-		<plugin id="org.apache.aries.spifly.dynamic.bundle"/>
 		<plugin id="org.apache.commons.commons-io"/>
 		<plugin id="org.apache.felix.gogo.command"/>
 		<plugin id="org.apache.felix.gogo.command.source"/>
@@ -477,7 +476,6 @@
 		<plugin id="com.mysql.jdbc.source"/>
 		<plugin id="jakarta.annotation-api"/>
 		<plugin id="jakarta.annotation-api.source"/>
-		<plugin id="org.glassfish.jersey.bundles.repackaged.jersey-guava.source"/>
 		<plugin id="org.glassfish.jersey.core.jersey-client"/>
 		<plugin id="org.glassfish.jersey.core.jersey-client.source"/>
 		<plugin id="org.glassfish.jersey.core.jersey-common"/>
@@ -538,5 +536,8 @@
 		<plugin id="org.osgi.service.jakartars.source"/>
 		<plugin id="org.glassfish.jersey.containers.jersey-container-servlet"/>
 		<plugin id="org.glassfish.jersey.containers.jersey-container-servlet.source"/>
+		<plugin id="org.glassfish.jersey.containers.jersey-container-servlet-core"/>
+		<plugin id="org.glassfish.jersey.containers.jersey-container-servlet-core.source"/>
+		<plugin id="org.apache.aries.spifly.dynamic.bundle"/>
 	</includeBundles>
 </target>
