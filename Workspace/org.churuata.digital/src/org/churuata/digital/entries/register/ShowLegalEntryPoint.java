@@ -6,9 +6,8 @@ import org.churuata.digital.core.AbstractWizardEntryPoint;
 import org.churuata.digital.core.Dispatcher;
 import org.churuata.digital.core.Entries;
 import org.churuata.digital.core.data.ChuruataOrganisationData;
+import org.churuata.digital.core.data.ProfileData;
 import org.churuata.digital.session.SessionStore;
-import org.churuata.digital.ui.image.ChuruataImages;
-import org.churuata.digital.ui.image.ChuruataImages.Images;
 import org.condast.commons.authentication.http.IDomainProvider;
 import org.condast.commons.preferences.config.Config;
 import org.condast.commons.legal.LegalUtils;
@@ -16,6 +15,7 @@ import org.condast.commons.legal.LegalUtils.Version;
 import org.condast.commons.na.model.IContactPerson;
 import org.condast.commons.parser.AbstractResourceParser;
 import org.condast.commons.strings.StringStyler;
+import org.condast.commons.ui.image.DashboardImages;
 import org.condast.commons.ui.utils.RWTUtils;
 import org.eclipse.rap.rwt.RWT;
 import org.eclipse.rap.rwt.client.service.StartupParameters;
@@ -193,10 +193,9 @@ public class ShowLegalEntryPoint extends AbstractWizardEntryPoint<Browser, Churu
 	}
 
 	@Override
-	protected boolean onPostProcess(String context, ChuruataOrganisationData data, SessionStore store) {
+	protected boolean onPostProcess(String context, SessionStore store) {
 		Button button = getBtnNext();
-		ChuruataImages images = ChuruataImages.getInstance();
-		button.setImage(images.getImage(Images.ADD));
+		button.setImage(DashboardImages.getImage( DashboardImages.Images.ADD, 32));
 		
 		String root = context + S_CHURUATA_LEGAL;
 		Locale locale = Locale.getDefault();
@@ -206,7 +205,10 @@ public class ShowLegalEntryPoint extends AbstractWizardEntryPoint<Browser, Churu
 
 		if( store.getData() == null )
 			return false;
-		FileParser parser = new FileParser( store.getOrganisation(), 0 );
+		ProfileData profile= store.getData();
+		ChuruataOrganisationData organisation = (ChuruataOrganisationData) profile.getOrganisation()[0];
+	
+		FileParser parser = new FileParser( organisation, 0 );
 		String str =null;
 		try{
 			str = parser.parse( this.getClass().getResourceAsStream(S_RESOURCE_FILE) );

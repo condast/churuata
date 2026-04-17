@@ -45,10 +45,9 @@ public class AdminEntryPoint extends AbstractWizardEntryPoint<AdminTableViewer, 
 	private WebController controller;
 	
 	private Logger logger = Logger.getLogger(this.getClass().getName());
-
 	
 	public AdminEntryPoint() {
-		super(S_ADMIN);
+		super(S_ADMIN, false);
 	}
 
 	@Override
@@ -73,7 +72,7 @@ public class AdminEntryPoint extends AbstractWizardEntryPoint<AdminTableViewer, 
 	}
 
 	@Override
-	protected boolean onPostProcess(String context, LoginData data, SessionStore store) {
+	protected boolean onPostProcess(String context, SessionStore store) {
 		controller = new WebController( store.getLoginUser());
 		controller.setInput(context, IRestPages.Pages.ADMIN.toPath());
 		controller.getAll( IAdmin.Roles.UNKNOWN);

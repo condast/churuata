@@ -69,7 +69,7 @@ public class AuthenticationResource{
 		logger.info( "ATTEMPT Register " + name );
 		if( StringUtils.isEmpty(name) || StringUtils.isEmpty( email )) 
 			return Response.notModified( ErrorMessages.NO_USERNAME_OR_EMAIL.name()).build();
-		else if( !IVerification.VerificationTypes.verify(VerificationTypes.EMAIL, email))
+		else if( !IVerification.VerificationTypes.verify(VerificationTypes.EMAIL, email.trim()))
 			return Response.notModified( ErrorMessages.NO_USERNAME_OR_EMAIL.name()).build();
 		else if( StringUtils.isEmpty( name ))
 			name = email.split("[@]")[0];
@@ -79,13 +79,14 @@ public class AuthenticationResource{
 		Dispatcher dispatcher=  Dispatcher.getInstance();
 
 		TransactionManager t = new TransactionManager( dispatcher );
-		LoginService service = new LoginService( dispatcher );
 		try{
+			t.open();
+
+			LoginService service = new LoginService( dispatcher );
 			ILoginUser user = service.login(name, password);
 			if( user != null )
 				return Response.notModified( ErrorMessages.USERNAME_ALREADY_EXISTS.name() ).build();
 			
-			t.open();
 			user = (ILoginUser) service.create(name, password, email);
 			user.setSecurity(AuthenticationUtils.generateSecurityCode(user));
 			dispatcher.addUser(user);

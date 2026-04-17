@@ -68,7 +68,7 @@ public class AcceptanceEntryPoint extends AbstractWizardEntryPoint<Organisations
 	}
 
 	@Override
-	protected boolean onPostProcess(String context, ChuruataOrganisationData data, SessionStore store) {
+	protected boolean onPostProcess(String context, SessionStore store) {
 		controller = new WebController( store.getLoginUser());
 		controller.setInput(context, IRestPages.Pages.ORGANISATION.toPath());
 		controller.getAll( IOrganisation.Verification.ALL);

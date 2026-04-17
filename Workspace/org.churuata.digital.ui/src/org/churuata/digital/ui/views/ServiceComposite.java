@@ -38,7 +38,6 @@ public class ServiceComposite extends AbstractEntityComposite<IChuruataService>
 	public static final String REGEXP = ("[\\ ;:,]");
 
 	private static final String S_SERVICES = "Service: ";
-	private static final String S_CONTRIBUTION = "Contribution: ";
 	private static final String S_CHURUATA_INFORMATION_TIP = "The type of churuata";
 	private static final String S_NAME_INFORMATION_TIP = "The Churuata name";
 	private static final String S_FROM = "From: ";
@@ -48,9 +47,6 @@ public class ServiceComposite extends AbstractEntityComposite<IChuruataService>
 	private Combo serviceTypes;
 
 	private InputField churuataField;
-
-	private AttributeFieldComposite contributionField;
-	private Combo contributionTypes;
 
 	private DateTime fromField;
 	private DateTime toField;
@@ -63,8 +59,6 @@ public class ServiceComposite extends AbstractEntityComposite<IChuruataService>
 		super(parent, style );
 		this.serviceTypes.setItems(IChuruataService.Services.getItems());
 		this.serviceTypes.select(1);
-		this.contributionTypes.setItems(IChuruataService.Contribution.getItems());
-		this.contributionTypes.select(0);
 		Calendar calendar = Calendar.getInstance();
 		DateUtils.setDate(fromField, calendar.getTime());
 		calendar.add(Calendar.YEAR, 1);
@@ -93,19 +87,13 @@ public class ServiceComposite extends AbstractEntityComposite<IChuruataService>
 
 		this.serviceField = new AttributeFieldComposite( grpFillIn, SWT.NONE );
 		this.serviceField.setLabel( S_SERVICES + ": ");
-		this.serviceField.setLabelWidth(115);
+		this.serviceField.setLabelWidth(95);
 		this.serviceField.setIconSize(17);
-		this.serviceField.setInformationMessage( S_CHURUATA_INFORMATION_TIP);
-		
-		GridData gd_scope = new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1);
-		gd_scope.widthHint = 295;
-		gd_scope.heightHint = 40;
-		this.serviceField.setLayoutData(gd_scope);
+		this.serviceField.setInformationMessage( S_CHURUATA_INFORMATION_TIP);		
+		this.serviceField.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1));
 
 		serviceTypes = new Combo(this.serviceField, SWT.BORDER);
-		GridData gd_comboScope = new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1);
-		gd_comboScope.widthHint = 149;
-		serviceTypes.setLayoutData(gd_comboScope);
+		serviceTypes.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
 		serviceTypes.addSelectionListener(new SelectionAdapter() {
 			private static final long serialVersionUID = 1L;
 	
@@ -125,7 +113,7 @@ public class ServiceComposite extends AbstractEntityComposite<IChuruataService>
 		churuataField = new InputField( grpFillIn, SWT.NONE );
 		churuataField.setBackgroundControl(1);
 		churuataField.setLabel( S_NAME + ": ");
-		churuataField.setLabelWidth(85);
+		churuataField.setLabelWidth(65);
 		churuataField.setInformationMessage( S_NAME_INFORMATION_TIP );
 		churuataField.setBackgroundControl(0);
 		this.churuataField.addVerifyListener( new VerifyListener()
@@ -147,48 +135,18 @@ public class ServiceComposite extends AbstractEntityComposite<IChuruataService>
 				}
 			}
 		});
-		GridData gridData_2 = new GridData();
-		gridData_2.horizontalSpan = 2;
-		gridData_2.heightHint = 33;
-		gridData_2.widthHint = 182;
-		gridData_2.horizontalAlignment = GridData.FILL;
-		gridData_2.grabExcessHorizontalSpace = true;
+		GridData gridData_2 = new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1);
+		gridData_2.widthHint = 295;
+		gridData_2.heightHint = 40;
 		churuataField.setLayoutData(gridData_2);	
-								
-		this.contributionField = new AttributeFieldComposite( grpFillIn, SWT.NONE );
-		this.contributionField.setLabel( S_CONTRIBUTION + ": ");
-		this.contributionField.setLabelWidth(115);
-		this.contributionField.setIconSize(17);
-		this.contributionField.setInformationMessage( S_CHURUATA_INFORMATION_TIP);
-		
-		GridData gd_contribution = new GridData(SWT.LEFT, SWT.CENTER, true, false, 2, 1);
-		gd_contribution.widthHint = 295;
-		gd_contribution.heightHint = 40;
-		this.contributionField.setLayoutData(gd_scope);
-
-		contributionTypes = new Combo(this.contributionField, SWT.BORDER);
-		GridData gd_contributionScope = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
-		gd_contributionScope.widthHint = 149;
-		contributionTypes.setLayoutData(gd_comboScope);
-		contributionTypes.addSelectionListener(new SelectionAdapter() {
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				try {
-					EditEvent.EditTypes type = isFilled()? EditEvent.EditTypes.COMPLETE: EditEvent.EditTypes.CHANGED;
-					notifyInputEdited( new EditEvent<IChuruataService>( this, type, getInput()));
-				} catch (Exception ex) {
-					ex.printStackTrace();
-				}
-			}
-		});		
-		
+				
+		GridData labelWidth = new GridData( SWT.FILL, SWT.FILL, false, true);
+		labelWidth.widthHint = 95;
 		Label fromLabel = new Label( grpFillIn, SWT.NONE);
-		fromLabel.setLayoutData( new GridData( SWT.FILL, SWT.FILL, false, true));
+		fromLabel.setLayoutData( labelWidth);
 		fromLabel.setText( S_FROM);
 		
-		this.fromField = new DateTime( grpFillIn, SWT.BORDER);
+		this.fromField = new DateTime( grpFillIn,  SWT.DROP_DOWN | SWT.BORDER);
 		this.fromField.setLayoutData( new GridData( SWT.FILL, SWT.FILL, false, true));
 		this.fromField.addSelectionListener( new SelectionAdapter() {
 			private static final long serialVersionUID = 1L;
@@ -205,10 +163,10 @@ public class ServiceComposite extends AbstractEntityComposite<IChuruataService>
 		});
 
 		Label toLabel = new Label( grpFillIn, SWT.NONE);
-		toLabel.setLayoutData(new GridData( SWT.FILL, SWT.FILL, false, true));
+		toLabel.setLayoutData(labelWidth);
 		toLabel.setText( S_TO);
 		
-		this.toField = new DateTime( grpFillIn, SWT.BORDER);
+		this.toField = new DateTime( grpFillIn, SWT.BORDER | SWT.DROP_DOWN);
 		this.toField.setLayoutData( new GridData( SWT.FILL, SWT.FILL, false, true));
 		this.toField.addSelectionListener( new SelectionAdapter() {
 			private static final long serialVersionUID = 1L;
@@ -246,7 +204,6 @@ public class ServiceComposite extends AbstractEntityComposite<IChuruataService>
 		input.setFrom( DateUtils.getDate(fromField ));
 		input.setTo( DateUtils.getDate(toField));
 		input.setDescription( this.churuataField.getText() );
-		input.setContribution( IChuruataService.Contribution.values()[ contributionTypes.getSelectionIndex()] );
 		input.setService( IChuruataService.Services.values()[ this.serviceTypes.getSelectionIndex()]);
 		if( input instanceof ServiceData ) {
 			ServiceData sd = (ServiceData) input;
@@ -262,7 +219,6 @@ public class ServiceComposite extends AbstractEntityComposite<IChuruataService>
 		DateUtils.setDate(fromField, input.from());
 		DateUtils.setDate(toField, input.to());
 		this.churuataField.setText(input.getDescription( ) );
-		this.contributionTypes.select(input.getContribution().ordinal());
 		this.serviceTypes.select( input.getService().ordinal());
 		if( input instanceof ServiceData ) {
 			ServiceData sd = (ServiceData) input;

@@ -76,7 +76,7 @@ public class EditEntryPoint extends AbstractRestEntryPoint<SessionStore>{
 			RWTUtils.redirect(Entries.Pages.READY.toPath());
 			break;
 		case CHANGED:
-			store.setSelected( data);
+			//store.setSelected( data);
 			break;
 		default:
 			break;

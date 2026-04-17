@@ -12,10 +12,10 @@ REGISTER    | org.churuata.digital.entries.BasicEntryPoint       | Register a Se
 GET_EMAIL   | org.churuata.digital.entries.BasicEntryPoint       | Get Email;
 
 #Profile
-ACCOUNT     	| org.churuata.digital.entries.AccountEntryPoint     	| Edit Account;
-ADDRESS     	| org.churuata.digital.entries.AddressEntryPoint     	| Edit Address;
-SERVICES    	| org.churuata.digital.entries.ServicesEntryPoint    	| Edit Services;
-ORGANISATIONS	| org.churuata.digital.entries.OrganisationsEntryPoint	| Show Organisations;
+ACCOUNT     | org.churuata.digital.entries.AccountEntryPoint     	| Edit Account;
+ADDRESS     | org.churuata.digital.entries.AddressEntryPoint     	| Edit Address;
+SERVICES    | org.churuata.digital.entries.ServicesEntryPoint    	| Edit Services;
+SERVICE    	| org.churuata.digital.entries.ServiceEntryPoint    	| Edit Service;
 
 # Add a Service
 REGISTER         | org.churuata.digital.entries.register.RegisterEntryPoint       | Register a Service;

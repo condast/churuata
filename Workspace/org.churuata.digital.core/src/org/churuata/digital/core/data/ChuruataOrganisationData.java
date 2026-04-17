@@ -34,6 +34,8 @@ public class ChuruataOrganisationData extends OrganisationData implements IOrgan
 		VERIFY,
 		SET_ADDRESS,
 		SET_LOCATION,
+		SET_SERVICE_ADDRESS,
+		SET_SERVICE_LOCATION,
 		SET_VERIFIED, 
 		UPDATE_SERVICE, 
 		REMOVE_SERVICES, 
@@ -49,6 +51,7 @@ public class ChuruataOrganisationData extends OrganisationData implements IOrgan
 		LATITUDE,
 		LONGITUDE,
 		RANGE,
+		SERVICE_ID,
 		TYPE, 
 		VERIFIED,
 		WEBSITE;

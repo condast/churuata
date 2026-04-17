@@ -2,7 +2,6 @@ package org.churuata.digital.entries;
 
 import java.io.IOException;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 import org.churuata.digital.core.AbstractWizardEntryPoint;
@@ -29,6 +28,7 @@ import org.condast.commons.ui.controller.IEditListener;
 import org.condast.commons.ui.image.DashboardImages;
 import org.condast.commons.ui.image.IImageProvider.ImageSize;
 import org.condast.commons.ui.messaging.jump.JumpController;
+import org.condast.commons.ui.messaging.jump.JumpController.Operations;
 import org.condast.commons.ui.messaging.jump.JumpEvent;
 import org.condast.commons.ui.messaging.jump.NodeJumpEvent;
 import org.eclipse.rap.rwt.RWT;
@@ -58,7 +58,6 @@ public class OrganisationEntryPoint extends AbstractWizardEntryPoint<Organisatio
 	private WebController controller;
 
 	private IEditListener<ChuruataOrganisationData> listener = e->onOrganisationEvent(e);
-	private IEditListener<IChuruataService> serviceListener = e->onServiceEvent(e);
 
 	private Logger logger = Logger.getLogger(this.getClass().getName());
 
@@ -75,11 +74,6 @@ public class OrganisationEntryPoint extends AbstractWizardEntryPoint<Organisatio
 	}
 
 	@Override
-	protected boolean onPrepare(SessionStore store) {
-		return true;//always true, because this does not require login
-	}
-
-	@Override
 	protected OrganisationComposite onCreateComposite(Composite parent, int style) {
         parent.setLayout(new GridLayout( 1, false ));
         organisationComposite = new OrganisationComposite( parent, SWT.NONE);
@@ -91,6 +85,10 @@ public class OrganisationEntryPoint extends AbstractWizardEntryPoint<Organisatio
 	
 	@Override
 	protected void onSetupButtonBar(Group buttonBar) {
+		Button button = getBtnNext();
+		button.setEnabled(false);
+		button.setImage( DashboardImages.getImage( DashboardImages.Images.CHECK, ImageSize.NORMAL));
+		
 		btnLocate = new Button(buttonBar, SWT.NONE);
 		btnLocate.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true));
 		btnLocate.setImage( DashboardImages.getImage( DashboardImages.Images.LOCATE, ImageSize.NORMAL));
@@ -101,9 +99,11 @@ public class OrganisationEntryPoint extends AbstractWizardEntryPoint<Organisatio
 			public void widgetSelected(final SelectionEvent e) {
 				try{
 					SessionStore store = getSessionStore();
-					JumpController<NodeData<ChuruataOrganisationData, AddressData>> jc = new JumpController<>();
-					ChuruataOrganisationData org = store.getOrganisation();
-					jc.jump( new NodeJumpEvent<ChuruataOrganisationData, AddressData>( this, store.getToken(), Pages.LOCATION.toPath(), JumpController.Operations.CREATE, org, org.getAddress()));
+					ILoginUser user = store.getLoginUser();
+					JumpController.Operations operation = ( user==null)?Operations.CREATE: Operations.UPDATE;
+					JumpController<NodeData<ChuruataOrganisationData, IChuruataService>> jc = new JumpController<>();
+					ChuruataOrganisationData org = getCache();
+					jc.jump( new NodeJumpEvent<ChuruataOrganisationData, IChuruataService>( this, Pages.ORGANISATION.name(), store.getToken(), Pages.LOCATION.toPath(), operation, org));
 				}
 				catch( Exception ex ){
 					ex.printStackTrace();
@@ -114,16 +114,37 @@ public class OrganisationEntryPoint extends AbstractWizardEntryPoint<Organisatio
 		super.onSetupButtonBar(buttonBar);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	protected boolean onPostProcess(String context, ChuruataOrganisationData data, SessionStore store) {
+	protected boolean onPostProcess(String context, SessionStore store) {
 		controller = new WebController(context, IRestPages.Pages.ORGANISATION);
 		this.organisationComposite.addEditListener(listener);
-		this.organisationComposite.addServiceListener(serviceListener);
 		
+		ChuruataOrganisationData organisation = null;
 		if( store.getData() != null ) {
-			this.organisationComposite.setInput( store.getOrganisation(), true);
-			Button btnNext = super.getBtnNext();
-			btnNext.setEnabled(this.organisationComposite.checkRequiredFields());
+			ProfileData profile= store.getData();
+			organisation = (ChuruataOrganisationData) profile.getOrganisation()[0];
+			setCache(organisation);
+			this.organisationComposite.setInput( organisation, true);
+		}
+		
+		JumpController<?> jc = new JumpController<>();
+		JumpEvent<?> event = jc.getEvent( Pages.ORGANISATION.toPath());
+		ILoginUser user = store.getLoginUser();
+		if( event != null ) {
+			Pages source = Pages.valueOf(event.getIdentifier());
+			switch( source ) {
+			case ADDRESS:
+				controller.setAddress(user, organisation, (AddressData) event.getData());
+				break;
+			case LOCATION:
+				NodeData<ChuruataOrganisationData, IChuruataService> node = (NodeData<ChuruataOrganisationData, IChuruataService>) event.getData();
+				organisation = (ChuruataOrganisationData) node.getData();
+				controller.setLocation(organisation);
+				break;
+			default:
+				break;
+			}
 		}
 		return true;
 	}
@@ -131,18 +152,19 @@ public class OrganisationEntryPoint extends AbstractWizardEntryPoint<Organisatio
 	@Override
 	protected void onButtonPressed(ChuruataOrganisationData data, SessionStore store) {
 		try{
-			if( store.getOrganisation() == null )
+			if( store.getData() == null )
 				return;
-			JumpEvent<ChuruataOrganisationData> event = getEvent();
+			JumpEvent<ChuruataOrganisationData> event = null;
 			if(( event != null ) && ( JumpController.Operations.UPDATE.equals(event.getOperation()))) {
 				controller.update(store.getLoginUser(), data);
 			}else {
-				IProfileData person = store.getData();
+				ProfileData profile= store.getData();
+				ChuruataOrganisationData organisation = (ChuruataOrganisationData) profile.getOrganisation()[0];
 				if( store.getData().getId() <= 0 )
-					controller.register(person.getId(), store.getOrganisation());
+					controller.register(profile.getId(), organisation);
 				else {
 					ILoginUser user = store.getLoginUser();
-					controller.update(user, store.getOrganisation());
+					controller.update(user, organisation);
 				}
 			}
 		}
@@ -153,18 +175,18 @@ public class OrganisationEntryPoint extends AbstractWizardEntryPoint<Organisatio
 
 	protected void onOrganisationEvent( EditEvent<ChuruataOrganisationData> event ) {
 		SessionStore store = super.getSessionStore();
-		IProfileData person = store.getData();
+		IProfileData profile = store.getData();
 
 		ChuruataOrganisationData organisation = event.getData();
-		organisation.setContact((ContactPersonData) person); 
+		organisation.setContact((ContactPersonData) profile); 
 		switch( event.getType()) {
 		case ADDED:
-			store.setOrganisation(organisation);
+			profile.addOrganisation(organisation);
 			JumpController<NodeData<ChuruataOrganisationData, IChuruataService>> jc = new JumpController<>();
-			jc.jump( new NodeJumpEvent<ChuruataOrganisationData,IChuruataService>( this, store.getToken(), Pages.SERVICES.toPath(), JumpController.Operations.CREATE, organisation, null));
+			jc.jump( new NodeJumpEvent<ChuruataOrganisationData,IChuruataService>( this, Pages.ORGANISATION.name(), store.getToken(), Pages.SERVICES.toPath(), JumpController.Operations.CREATE, organisation, null));
 			break;
 		case COMPLETE:
-			store.setOrganisation(organisation);
+			profile.addOrganisation(organisation);
 			Button button = super.getBtnNext();
 			button.setEnabled(( event.getData() != null ));
 			break;
@@ -172,38 +194,9 @@ public class OrganisationEntryPoint extends AbstractWizardEntryPoint<Organisatio
 			break;
 		}
 	}
-
-	protected void onServiceEvent( EditEvent<IChuruataService> event ) {
-		try {
-			SessionStore store = super.getSessionStore();
-			IChuruataService service = event.getData();
-			ILoginUser user = store.getLoginUser();
-			switch( event.getType()) {
-			case SELECTED:
-				store.setSelectedService(service);
-				store.setOrganisation(null);
-				JumpController<NodeData<ChuruataOrganisationData, IChuruataService>> jc = new JumpController<>();
-				jc.jump( new NodeJumpEvent<ChuruataOrganisationData, IChuruataService>( this, store.getToken(), Pages.SERVICES.toPath(), JumpController.Operations.UPDATE, store.getOrganisation(), service));			
-				break;
-			case DELETE:
-				controller.remove( user, store.getOrganisation(), ServiceData.getIds( event.getBatch() ));
-				break;
-			default:
-				break;
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
 	
 	@Override
-	protected void createTimer(boolean create, int nrOfThreads, TimeUnit unit, int startTime, int rate) {
-		super.createTimer(true, nrOfThreads, unit, startTime, 10000);
-	}
-
-	@Override
 	public void close() {
-		this.organisationComposite.removeServiceListener(serviceListener);
 		this.organisationComposite.removeEditListener(listener);
 		super.close();
 	}
@@ -243,15 +236,28 @@ public class OrganisationEntryPoint extends AbstractWizardEntryPoint<Organisatio
 			}
 		}
 
-		public void remove(ILoginUser user, ChuruataOrganisationData organisation, long[] batch) {
+		public void setAddress(ILoginUser user, ChuruataOrganisationData organisation, AddressData address) {
 			Map<String, String> params = super.getParameters();
-			params.put( LoginData.Parameters.USER_ID.toString(), String.valueOf( user.getId()));
-			params.put( LoginData.Parameters.SECURITY.toString(), String.valueOf( user.getSecurity() ));
-			params.put( ChuruataOrganisationData.Parameters.ORGANISATION_ID.toString(), String.valueOf( organisation.getId() ));
-			Gson gson = new Gson();
-			String data = gson.toJson(batch, long[].class);
 			try {
-				sendDelete(ChuruataOrganisationData.Requests.REMOVE_SERVICES, params, data );
+				params.put(ChuruataOrganisationData.Parameters.USER_ID.toString(), String.valueOf( user.getId()));
+				params.put(ChuruataOrganisationData.Parameters.SECURITY.toString(), String.valueOf( user.getSecurity() ));
+				params.put(ChuruataOrganisationData.Parameters.ORGANISATION_ID.toString(), String.valueOf( organisation.getId()));
+				Gson gson = new Gson();
+				String data = gson.toJson(address, AddressData.class);
+				sendPut(ChuruataOrganisationData.Requests.SET_ADDRESS, params, data );
+			} catch (IOException e) {
+				logger.warning(e.getMessage());
+			}
+		}
+
+		public void setLocation( ChuruataOrganisationData data ) {
+			Map<String, String> params = super.getParameters();
+			params.put(ServiceData.Parameters.PERSON_ID.toString(), String.valueOf(data.getContact().getId()));
+			params.put(ServiceData.Parameters.ORGANISATION_ID.toString(), String.valueOf( data.getId()));
+			params.put(ServiceData.Parameters.LATITUDE.toString(), String.valueOf(data.getLocation().getLatitude()));
+			params.put(ServiceData.Parameters.LONGITUDE.toString(), String.valueOf( data.getLocation().getLongitude()));
+			try {
+				super.sendGet(ChuruataOrganisationData.Requests.SET_LOCATION, params);
 			} catch (IOException e) {
 				logger.warning(e.getMessage());
 			}
@@ -262,23 +268,24 @@ public class OrganisationEntryPoint extends AbstractWizardEntryPoint<Organisatio
 			try {
 				SessionStore store = getSessionStore();
 				Gson gson = new Gson();
-				ChuruataOrganisationData data = null;
+				ProfileData profile= store.getData();
+				ChuruataOrganisationData data = (ChuruataOrganisationData) profile.getOrganisation()[0];
 				JumpController<ChuruataOrganisationData> jc = new JumpController<>();
 				switch( event.getRequest()){
 				case REGISTER:
 					data = gson.fromJson(event.getResponse(), ChuruataOrganisationData.class);
-					store.setOrganisation(data);
-					jc.jump( new JumpEvent<ChuruataOrganisationData>( this, store.getToken(), Pages.ACTIVE.toPath(), JumpController.Operations.DONE, data));			
+					jc.jump( new JumpEvent<ChuruataOrganisationData>( this, Pages.ORGANISATION.name(), store.getToken(), Pages.ACTIVE.toPath(), JumpController.Operations.DONE, data));			
 					break;
 				case UPDATE:
 					data = gson.fromJson(event.getResponse(), ChuruataOrganisationData.class);
-					store.setOrganisation(data);
-					jc.jump( new JumpEvent<ChuruataOrganisationData>( this, store.getToken(), Pages.ORGANISATIONS.toPath(), JumpController.Operations.DONE, data));			
+					getBtnNext().setEnabled(false);
 					break;
 				case REMOVE_SERVICES:
 					data = gson.fromJson(event.getResponse(), ChuruataOrganisationData.class);
-					store.setOrganisation(data);
 					organisationComposite.setInput(data, true);
+					break;
+				case SET_ADDRESS:
+					data = gson.fromJson(event.getResponse(), ChuruataOrganisationData.class);
 					break;
 				default:
 					break;

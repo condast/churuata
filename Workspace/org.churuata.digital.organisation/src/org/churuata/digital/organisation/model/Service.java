@@ -9,10 +9,14 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 
 import org.churuata.digital.core.location.IChuruataService;
 import org.churuata.digital.core.model.IOrganisation;
+import org.condast.commons.data.latlng.LatLng;
+import org.condast.commons.na.model.IAddress;
 import org.condast.commons.strings.StringUtils;
 
 @Entity
@@ -30,6 +34,14 @@ public class Service implements IChuruataService {
 
 	@ManyToOne(cascade=CascadeType.PERSIST,fetch=FetchType.LAZY)
 	private Organisation organisation;
+
+	@JoinColumn( nullable=true)
+	@OneToOne
+	private Location location;
+	
+	@JoinColumn( nullable=true)
+	@OneToOne
+	private Address address;
 
 	private long fromDate;
 	
@@ -81,8 +93,31 @@ public class Service implements IChuruataService {
 		this.serviceType = service.name();
 	}
 
+	@Override
+	public LatLng getLocation() {
+		return ( location == null )?null: location.getLocation();
+	}
+
+	public void setLocation(Location location) {
+		this.location = location;
+	}
+
+	@Override
+	public void setLocation(LatLng location) {
+		//this.location = null;//(Location) location;
+	}
+
 	public void setContribution( Contribution contribution) {
 		this.contributor = contribution.name();
+	}
+
+	@Override
+	public IAddress getAddress() {
+		return address;
+	}
+
+	public void setAddress( IAddress address) {
+		this.address = (Address) address;
 	}
 
 	@Override

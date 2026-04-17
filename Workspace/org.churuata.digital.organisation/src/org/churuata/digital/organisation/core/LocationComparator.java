@@ -17,8 +17,8 @@ public class LocationComparator<C extends IOrganisation> extends AbstractReferen
 
 	@Override
 	public int compare(IOrganisation o1, IOrganisation o2) {
-		double distance1 = LatLngUtils.distance(super.getReference(), o1.getLocation());
-		double distance2 = LatLngUtils.distance(super.getReference(), o2.getLocation());
+		double distance1 = (o1 == null ) || ( o1.getLocation()==null)? 0: LatLngUtils.distance(super.getReference(), o1.getLocation());
+		double distance2 = (o2 == null ) || ( o2.getLocation()==null)? 0: LatLngUtils.distance(super.getReference(), o2.getLocation());
 		return ( distance1 < ( distance2 - Double.MIN_VALUE))?1:( distance1 > ( distance2 + Double.MIN_VALUE))?1:0;
 	}
 }

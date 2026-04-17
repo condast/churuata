@@ -6,8 +6,13 @@ import java.util.Collection;
 import org.churuata.digital.core.location.IChuruataService;
 import org.churuata.digital.ui.ChuruataLanguage;
 import org.condast.commons.Utils;
+import org.condast.commons.ui.controller.EditEvent;
 import org.condast.commons.ui.controller.EditEvent.EditTypes;
+import org.condast.commons.ui.image.DashboardImages;
+import org.condast.commons.ui.image.DashboardImages.Images;
+import org.condast.commons.ui.image.IImageProvider.ImageSize;
 import org.condast.commons.ui.na.NALanguage;
+import org.condast.commons.ui.na.images.NAImages;
 import org.condast.commons.ui.widgets.table.AbstractTableViewerWithDelete;
 import org.condast.commons.ui.wtk.IStoreWithDelete;
 import org.eclipse.jface.viewers.ITableLabelProvider;
@@ -15,6 +20,7 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -23,8 +29,12 @@ public class ServicesTableViewer extends AbstractTableViewerWithDelete<IChuruata
 	private static final long serialVersionUID = 1L;
 
 	private enum Columns{
-		SERVICE,
-		CONTRIBUTOR, DESCRIPTION;
+		SERVICE, 
+		DESCRIPTION,
+		FROM,
+		TO,
+		ADDRESS,
+		LOCATION;
 
 		@Override
 		public String toString() {
@@ -33,9 +43,10 @@ public class ServicesTableViewer extends AbstractTableViewerWithDelete<IChuruata
 
 		public static int getWeight( Columns column ){
 			switch( column ){
-			case CONTRIBUTOR:
 			case SERVICE:
 				return 30;
+			case DESCRIPTION:
+				return 50;
 			default:
 				return 10;
 			}
@@ -81,12 +92,19 @@ public class ServicesTableViewer extends AbstractTableViewerWithDelete<IChuruata
 	}
 
 	@Override
-	protected boolean onButtonSelected(Buttons buttontype, SelectionEvent e) {
+	protected boolean onButtonSelected(Buttons buttonType, SelectionEvent e) {
 		boolean result = false;
 		try {
-			e.data = EditTypes.ADDED;
-			notifyWidgetSelected( e );
-			result = true;
+			switch( buttonType) {
+			case ADD:
+				e.data = EditTypes.ADDED;
+				notifyWidgetSelected( e );
+				notifyEditEvent( new EditEvent<IChuruataService>( this, EditTypes.ADDED));
+				result = true;
+				break;
+			default:
+				break;
+			}
 		} catch (Exception e1) {
 			e1.printStackTrace();
 		}
@@ -124,11 +142,14 @@ public class ServicesTableViewer extends AbstractTableViewerWithDelete<IChuruata
 			case SERVICE:
 				retval = ChuruataLanguage.getInstance().getString( service.getService());
 				break;
-			case CONTRIBUTOR:
-				retval = service.getContribution().name();
-				break;
 			case DESCRIPTION:
 				retval = service.getDescription();
+				break;
+			case FROM:
+				retval = org.condast.commons.date.DateUtils.getFormatted( service.from());
+				break;
+			case TO:
+				retval = org.condast.commons.date.DateUtils.getFormatted( service.to());
 				break;
 			default:
 				break;				
@@ -136,5 +157,33 @@ public class ServicesTableViewer extends AbstractTableViewerWithDelete<IChuruata
 			swd.addText(retval);
 			return retval;
 		}
+
+		@SuppressWarnings("unchecked")
+		@Override
+		public Image getColumnImage(Object arg0, int columnIndex) {
+			Image image = super.getColumnImage(arg0, columnIndex);
+			
+			if( image != null )
+				return image;
+			Columns column = Columns.values()[ columnIndex ];
+			IStoreWithDelete<IChuruataService> swd = (IStoreWithDelete<IChuruataService>) arg0;
+			IChuruataService service = swd.getStore();
+			switch( column){
+			case ADDRESS:
+				if( service.getAddress() != null )
+					image = NAImages.getImage( NAImages.Images.ADDRESS, ImageSize.SMALL);
+				break;
+			case LOCATION:
+				if( service.getLocation() != null )
+					image = DashboardImages.getImage( Images.LOCATE, ImageSize.SMALL);
+				break;
+			default:
+				break;				
+			}
+			
+			return image;
+		}
+		
+		
 	}
 }

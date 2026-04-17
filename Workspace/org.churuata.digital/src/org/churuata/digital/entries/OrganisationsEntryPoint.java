@@ -105,14 +105,13 @@ public class OrganisationsEntryPoint extends AbstractChuruataEntryPoint<Churuata
 		JumpController<ChuruataOrganisationData> jc = new JumpController<>();
 		switch( event.getType()) {
 		case ADDED:
-			jc.jump( new JumpEvent<ChuruataOrganisationData>( this, store.getToken(), Pages.ORGANISATION.toPath(), JumpController.Operations.UPDATE, organisation));			
+			jc.jump( new JumpEvent<ChuruataOrganisationData>( this, Pages.ORGANISATIONS.name(), store.getToken(), Pages.ORGANISATION.toPath(), JumpController.Operations.UPDATE, organisation));			
 			break;
 		case SELECTED:
-			store.setOrganisation(organisation);
 			if( organisation.getId() <= 0 ) 
 				controller.register(person.getId(), organisation);
 			else {
-				jc.jump( new JumpEvent<ChuruataOrganisationData>( this, store.getToken(), Pages.ORGANISATION.toPath(), JumpController.Operations.UPDATE, organisation));			
+				jc.jump( new JumpEvent<ChuruataOrganisationData>( this, Pages.ORGANISATIONS.name(), store.getToken(), Pages.ORGANISATION.toPath(), JumpController.Operations.UPDATE, organisation));			
 			}
 			break;
 		default:
@@ -157,9 +156,8 @@ public class OrganisationsEntryPoint extends AbstractChuruataEntryPoint<Churuata
 				switch( event.getRequest()){
 				case REGISTER:
 					ChuruataOrganisationData data = gson.fromJson(event.getResponse(), ChuruataOrganisationData.class);
-					store.setOrganisation(data);
 					JumpController<ChuruataOrganisationData> jc = new JumpController<>();
-					jc.jump( new JumpEvent<ChuruataOrganisationData>( this, store.getToken(), Pages.SERVICES.toPath(), JumpController.Operations.UPDATE, data));			
+					jc.jump( new JumpEvent<ChuruataOrganisationData>( this, Pages.ORGANISATIONS.name(), store.getToken(), Pages.SERVICES.toPath(), JumpController.Operations.UPDATE, data));			
 					break;
 				default:
 					break;

@@ -11,7 +11,6 @@ import jakarta.servlet.http.HttpSession;
 import org.churuata.digital.session.SessionStore;
 import org.condast.commons.authentication.http.IDomainProvider;
 import org.condast.commons.authentication.user.ILoginUser;
-import org.condast.commons.ui.messaging.jump.JumpEvent;
 import org.condast.commons.ui.session.AbstractSessionHandler;
 import org.condast.commons.ui.session.SessionEvent;
 import org.eclipse.rap.rwt.RWT;
@@ -41,9 +40,6 @@ public abstract class AbstractChuruataEntryPoint<D extends Object> extends Abstr
 
 	private SessionHandler session;
 	
-	//Used to pass data
-	private JumpEvent<D> event;
-
 	protected AbstractChuruataEntryPoint() {
 		this( DEFAULT_SCHEDULE, DEFAULT_SCHEDULE);
 	}
@@ -53,14 +49,6 @@ public abstract class AbstractChuruataEntryPoint<D extends Object> extends Abstr
 		this.startTime = startTime;
 		this.rate = rate;
 		this.message = S_INVALID_PREPARATION;
-	}
-
-	protected JumpEvent<D> getEvent() {
-		return event;
-	}
-
-	protected void setEvent(JumpEvent<D> event) {
-		this.event = event;
 	}
 
 	protected SessionStore getSessionStore() {
@@ -92,7 +80,7 @@ public abstract class AbstractChuruataEntryPoint<D extends Object> extends Abstr
 	}
 	
 	protected Locale onSetLocale() {
-		return new Locale( "nl", "NL" );
+		return Locale.getDefault();
 	}
 
 	protected boolean prepare(Composite parent) {

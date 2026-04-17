@@ -11,9 +11,9 @@ import org.churuata.digital.core.Dispatcher;
 import org.churuata.digital.core.Entries;
 import org.churuata.digital.core.data.ChuruataOrganisationData;
 import org.churuata.digital.core.data.ChuruataOrganisationData.Requests;
+import org.churuata.digital.core.data.ProfileData;
 import org.churuata.digital.core.rest.IRestPages;
 import org.churuata.digital.session.SessionStore;
-import org.churuata.digital.ui.image.ChuruataImages;
 import org.churuata.digital.ui.views.EditChuruataComposite;
 import org.condast.commons.authentication.http.IDomainProvider;
 import org.condast.commons.authentication.user.ILoginUser;
@@ -23,6 +23,7 @@ import org.condast.commons.messaging.http.AbstractHttpRequest;
 import org.condast.commons.messaging.http.ResponseEvent;
 import org.condast.commons.ui.controller.EditEvent;
 import org.condast.commons.ui.controller.IEditListener;
+import org.condast.commons.ui.image.DashboardImages;
 import org.eclipse.rap.rwt.RWT;
 import org.eclipse.rap.rwt.client.service.StartupParameters;
 import org.eclipse.swt.SWT;
@@ -73,12 +74,10 @@ public class CreateEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrganis
 		group.setLayout( new GridLayout(5, false ));
 		group.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 
-		ChuruataImages images = ChuruataImages.getInstance();
-
 		btnAdd = new Button(group, SWT.NONE);
 		btnAdd.setEnabled(false);
 		btnAdd.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true));
-		btnAdd.setImage( images.getImage( ChuruataImages.Images.ADD));
+		btnAdd.setImage( DashboardImages.getImage( DashboardImages.Images.ADD, 32));
 		btnAdd.addSelectionListener( new SelectionAdapter(){
 			private static final long serialVersionUID = 1L;
 
@@ -88,7 +87,8 @@ public class CreateEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrganis
 					SessionStore store = getSessionStore();
 					if( store.getData() == null )
 						return;
-					controller.create( store.getOrganisation());
+					ProfileData profile = store.getData();
+					controller.create( (ChuruataOrganisationData) profile.getOrganisation()[0]);
 				}
 				catch( Exception ex ){
 					ex.printStackTrace();
@@ -110,11 +110,12 @@ public class CreateEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrganis
 		SessionStore store = getSessionStore();
 		ILoginUser user = store.getLoginUser();
 		editComposite.setInput(context, user);
-		LatLng selected = store.getSelected();
-		ChuruataOrganisationData organisation = store.getOrganisation();
+		LatLng selected = null;//TODO
+		ProfileData profile= store.getData();
+		ChuruataOrganisationData organisation = (ChuruataOrganisationData) profile.getOrganisation()[0];
 		if( organisation == null ) {
 			organisation = new ChuruataOrganisationData( selected );
-			store.setOrganisation(organisation); 
+			profile.addOrganisation(organisation); 
 		}
 		editComposite.setInput( organisation );
 
@@ -132,11 +133,11 @@ public class CreateEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrganis
 			break;
 		case CHANGED:
 			data = event.getData().getLocation();
-			store.setSelected( data);
+			//store.setSelected( data);
 			break;
 		case SELECTED:
 			data = event.getData().getLocation();
-			store.setSelected( data);
+			//store.setSelected( data);
 			Dispatcher.jump(Entries.Pages.CREATE, store.getToken());
 			break;
 		case ADDED:
@@ -145,7 +146,7 @@ public class CreateEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrganis
 			break;
 		case COMPLETE:
 			data = event.getData().getLocation();
-			store.setSelected( data);
+			//store.setSelected( data);
 			btnAdd.setEnabled(true);
 			break;
 		default:

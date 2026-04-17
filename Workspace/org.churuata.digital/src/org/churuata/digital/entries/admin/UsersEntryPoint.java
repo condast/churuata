@@ -92,7 +92,7 @@ public class UsersEntryPoint extends AbstractWizardEntryPoint<ContactPersonCompo
 	}
 
 	@Override
-	protected boolean onPostProcess(String context, ChuruataOrganisationData data, SessionStore store) {
+	protected boolean onPostProcess(String context, SessionStore store) {
 		controller = new WebController();
 		controller.setInput(context, IRestPages.Pages.CONTACT.toPath());
 		ProfileData person = store.getData();
