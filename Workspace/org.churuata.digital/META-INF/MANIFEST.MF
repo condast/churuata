@@ -3,12 +3,12 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Churuata Digital RAP Application
 Bundle-SymbolicName: org.churuata.digital;singleton:=true
 Bundle-Version: 1.0.0.qualifier
-Bundle-Vendor: condast
+Bundle-Vendor: Condast
 Automatic-Module-Name: org.churuata.digital
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Require-Bundle: org.eclipse.rap.rwt;bundle-version="[4.0.0,5.0.0)"
 Service-Component: OSGI-INF/contribution.xml,
  OSGI-INF/org.churuata.digital.http.ActiveServlet.xml,
+ OSGI-INF/org.churuata.digital.http.ChuruataServlet.xml,
  OSGI-INF/org.churuata.digital.http.LegalResources.xml,
  OSGI-INF/org.churuata.digital.http.MapFilter.xml,
  OSGI-INF/org.churuata.digital.http.ProfileServlet.xml,
@@ -65,6 +65,16 @@ Import-Package: com.google.gson;version="2.8.2",
  org.condast.commons.ui.widgets.table,
  org.condast.commons.ui.widgets.utils,
  org.condast.js.commons.session,
+ org.eclipse.rap.rwt;version="[4.6.0,5.0.0)",
+ org.eclipse.rap.rwt.application;version="[4.6.0,5.0.0)",
+ org.eclipse.rap.rwt.client;version="[4.6.0,5.0.0)",
+ org.eclipse.rap.rwt.client.service;version="[4.6.0,5.0.0)",
+ org.eclipse.rap.rwt.service;version="[4.6.0,5.0.0)",
+ org.eclipse.swt,
+ org.eclipse.swt.browser,
+ org.eclipse.swt.events,
+ org.eclipse.swt.layout,
  org.osgi.framework;version="1.3.0",
  org.osgi.service.component.annotations;version="1.1.0",
  org.osgi.service.http.whiteboard.propertytypes;version="[1.1.0,2.0.0)"
+Require-Bundle: org.eclipse.rap.rwt;bundle-version="4.6.0"

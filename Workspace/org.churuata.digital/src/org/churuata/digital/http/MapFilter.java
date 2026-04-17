@@ -22,14 +22,17 @@ import org.osgi.service.component.annotations.ServiceScope;
 import org.osgi.service.http.whiteboard.propertytypes.HttpWhiteboardFilterPattern;
 
 @Component(scope=ServiceScope.PROTOTYPE,
-property= "osgi.http.whiteboard.filter.regex=/churuata/*")
-@HttpWhiteboardFilterPattern( "/*")
+property= MapFilter.S_OSGI_FILTER_PATTERN)
+@HttpWhiteboardFilterPattern( MapFilter.S_CONTEXT_PATH)
 public class MapFilter implements Filter {
+
+	public static final String S_CONTEXT_PATH = "/churuata/*";
+	public static final String S_OSGI_FILTER_PATTERN = "osgi.http.whiteboard.filter.pattern=" + S_CONTEXT_PATH;
 
 	private static final String S_LOCAL_HOST = "127.0.0.1";
 	protected static final String S_CHURUATA = "/churuata";
 	private static final String S_REST_SERVICE = S_CHURUATA + "/rest/";
-
+	
 	private static final String S_REFUGEE_MAP = S_CHURUATA + "/map";
 	private static final String S_REFUGEE_BANNER = S_CHURUATA + "/banner";
 

@@ -21,7 +21,7 @@ import org.osgi.service.component.annotations.ServiceScope;
 import org.osgi.service.http.whiteboard.propertytypes.HttpWhiteboardFilterPattern;
 
 @Component(scope=ServiceScope.PROTOTYPE,
-property= MapFilter.S_OSGI_FILTER_REGEX)
+property= MapFilter.S_OSGI_FILTER_PATTERN)
 @HttpWhiteboardFilterPattern( "/*")
 public class MapFilter implements Filter {
 
@@ -29,8 +29,7 @@ public class MapFilter implements Filter {
 	private static final String S_CAMINANTES = "/caminantes";
 
 	private static final String S_CONTEXT_PATH = S_CAMINANTES + "/*";
-
-	public static final String S_OSGI_FILTER_REGEX = "osgi.http.whiteboard.filter.regex=" + S_CONTEXT_PATH;
+	public static final String S_OSGI_FILTER_PATTERN = "osgi.http.whiteboard.filter.pattern=" + S_CONTEXT_PATH;
 
 	private static final String S_REFUGEE_MAP = S_CAMINANTES + "/map";
 	private static final String S_REFUGEE_BANNER = S_CAMINANTES + "/banner";
@@ -51,8 +50,10 @@ public class MapFilter implements Filter {
 			throws IOException, ServletException {
 		HttpServletRequest req = (HttpServletRequest) arg0;
 		String path = req.getRequestURI();
-		if( StringUtils.isEmpty(path))
+		if( StringUtils.isEmpty(path)) {
+			arg2.doFilter(arg0, arg1);
 			return;
+		}
 		
 		//Pass calls that are not for this application
 		if(!path.contains(S_CAMINANTES)) {

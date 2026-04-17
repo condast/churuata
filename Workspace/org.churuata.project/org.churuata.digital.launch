@@ -45,7 +45,6 @@
         <setEntry value="javassist@default:default"/>
         <setEntry value="javax.annotation-api@default:default"/>
         <setEntry value="javax.persistence@default:default"/>
-        <setEntry value="javax.servlet@default:default"/>
         <setEntry value="org.apache.aries.spifly.dynamic.bundle@default:default"/>
         <setEntry value="org.apache.commons.commons-codec@default:default"/>
         <setEntry value="org.apache.commons.commons-logging@default:default"/>
@@ -112,6 +111,7 @@
         <setEntry value="org.osgi.service.event@default:default"/>
         <setEntry value="org.osgi.service.http.whiteboard@default:default"/>
         <setEntry value="org.osgi.service.http@default:default"/>
+        <setEntry value="org.osgi.service.jakartars@default:default"/>
         <setEntry value="org.osgi.service.metatype@default:default"/>
         <setEntry value="org.osgi.service.prefs@default:default"/>
         <setEntry value="org.osgi.service.provisioning@default:default"/>

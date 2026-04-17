@@ -1,34 +1,36 @@
 package org.churuata.rest;
 
-import jakarta.servlet.Servlet;
+import jakarta.servlet.Filter;
 import jakarta.ws.rs.ApplicationPath;
 
 import org.churuata.rest.resources.CaminantesResource;
 import org.churuata.rest.resources.ChuruataResource;
 import org.churuata.rest.resources.PushResource;
-import org.condast.commons.messaging.http.AbstractServletWrapper;
+import org.condast.commons.messaging.http.AbstractFilterWrapper;
 import org.condast.commons.messaging.rest.CorsFilter;
 import org.glassfish.jersey.server.ResourceConfig;
+import org.glassfish.jersey.servlet.ServletContainer;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.ServiceScope;
+import org.osgi.service.http.whiteboard.propertytypes.HttpWhiteboardFilterPattern;
 
-@Component(service = Servlet.class, 
-scope=ServiceScope.PROTOTYPE,
-property= RestServlet.S_OSGI_SERVLET_PATTERN)
-public class RestServlet extends AbstractServletWrapper {
+@Component(scope=ServiceScope.PROTOTYPE,
+property= RestFilter.S_OSGI_FILTER_PATTERN)
+@HttpWhiteboardFilterPattern( RestFilter.S_CONTEXT_PATH)
+public class RestFilter extends AbstractFilterWrapper implements Filter{
 
 	//Same as alias in plugin.xml
-	public static final String S_CONTEXT_PATH = "churuatas/rest";
-	public static final String S_OSGI_SERVLET_PATTERN = "osgi.http.whiteboard.servlet.pattern=" + S_CONTEXT_PATH;
+	public static final String S_CONTEXT_PATH = "/churuatas/rest/*";
+	public static final String S_OSGI_FILTER_PATTERN = "osgi.http.whiteboard.filter.pattern=" + S_CONTEXT_PATH;
 
-	public RestServlet() {
+	public RestFilter() {
 		super( S_CONTEXT_PATH );
 	}
 	
 	@Override
-	protected Servlet onCreateServlet(String contextPath) {
+	protected Filter onCreateFilter(String contextPath) {
 		RestApplication resourceConfig = new RestApplication();
-		return null;// new ServletContainer(resourceConfig);
+		return new ServletContainer(resourceConfig);
 	}
 
 	@ApplicationPath(S_CONTEXT_PATH)

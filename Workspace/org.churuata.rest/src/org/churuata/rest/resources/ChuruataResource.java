@@ -36,7 +36,14 @@ import org.condast.commons.data.plane.FieldData;
 import org.condast.commons.persistence.service.TransactionManager;
 import org.condast.commons.strings.StringStyler;
 import org.condast.commons.strings.StringUtils;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.ServiceScope;
+import org.osgi.service.jakartars.whiteboard.propertytypes.JakartarsName;
+import org.osgi.service.jakartars.whiteboard.propertytypes.JakartarsResource;
 
+@JakartarsResource
+@JakartarsName("churuata")
+@Component(service=ChuruataResource.class, scope = ServiceScope.PROTOTYPE)
 @Path("/support")
 public class ChuruataResource {
 

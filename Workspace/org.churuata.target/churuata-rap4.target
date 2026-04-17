@@ -451,8 +451,6 @@
 		<plugin id="slf4j.api"/>
 		<plugin id="com.google.gson"/>
 		<plugin id="com.google.gson.source"/>
-		<plugin id="javax.servlet"/>
-		<plugin id="javax.servlet.source"/>
 		<plugin id="org.apache.commons.commons-codec"/>
 		<plugin id="org.apache.commons.commons-codec.source"/>
 		<plugin id="org.apache.commons.commons-logging"/>
