@@ -60,6 +60,11 @@
 				<version>4.0.0</version>
 				<type>jar</type>
 			</dependency>
+			 <dependency>
+		        <groupId>org.osgi</groupId>
+		        <artifactId>org.osgi.service.jakartars</artifactId>
+		        <version>2.0.0</version>
+		    </dependency>
 			<dependency>
 				<groupId>jakarta.xml.bind</groupId>
 				<artifactId>jakarta.xml.bind-api</artifactId>
@@ -134,12 +139,6 @@
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.platform</groupId>
-				<artifactId>org.eclipse.equinox.http.registry</artifactId>
-				<version>1.4.400</version>
-				<type>jar</type>
-			</dependency>
-			<dependency>
-				<groupId>org.eclipse.platform</groupId>
 				<artifactId>org.eclipse.equinox.security</artifactId>
 				<version>1.4.700</version>
 				<type>jar</type>
@@ -153,31 +152,25 @@
 			<dependency>
 				<groupId>org.glassfish.hk2.external</groupId>
 				<artifactId>aopalliance-repackaged</artifactId>
-				<version>2.6.1</version>
-				<type>jar</type>
-			</dependency>
-			<dependency>
-				<groupId>org.glassfish.hk2.external</groupId>
-				<artifactId>javax.inject</artifactId>
-				<version>2.5.0-b62</version>
+				<version>4.0.0</version>
 				<type>jar</type>
 			</dependency>
 			<dependency>
 				<groupId>org.glassfish.hk2</groupId>
 				<artifactId>hk2-api</artifactId>
-				<version>2.6.1</version>
+				<version>4.0.0</version>
 				<type>jar</type>
 			</dependency>
 			<dependency>
 				<groupId>org.glassfish.hk2</groupId>
 				<artifactId>hk2-locator</artifactId>
-				<version>2.6.1</version>
+				<version>4.0.0</version>
 				<type>jar</type>
 			</dependency>
 			<dependency>
 				<groupId>org.glassfish.hk2</groupId>
 				<artifactId>hk2-utils</artifactId>
-				<version>2.6.1</version>
+				<version>4.0.0</version>
 				<type>jar</type>
 			</dependency>
 			<dependency>
@@ -215,6 +208,13 @@
 				<artifactId>jersey-hk2</artifactId>
 				<version>4.0.2</version>
 				<type>jar</type>
+			</dependency>
+			<!-- Source: https://mvnrepository.com/artifact/org.glassfish.jersey.containers/jersey-container-servlet -->
+			<dependency>
+			    <groupId>org.glassfish.jersey.containers</groupId>
+			    <artifactId>jersey-container-servlet</artifactId>
+			    <version>4.0.2</version>
+			    <scope>compile</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.javassist</groupId>
@@ -263,6 +263,18 @@
 				<artifactId>asm</artifactId>
 				<version>9.9.1</version>
 				<type>jar</type>
+			</dependency>
+			<dependency>
+			    <groupId>org.osgi</groupId>
+			    <artifactId>org.osgi.service.http.whiteboard</artifactId>
+			    <version>1.1.1</version>
+			    <type>jar</type>
+			</dependency>
+			<dependency>
+			    <groupId>org.apache.felix</groupId>
+			    <artifactId>org.apache.felix.http.servlet-api</artifactId>
+			    <version>3.0.0</version>
+			    <type>jar</type>
 			</dependency>
 		</dependencies>
 	</location>
@@ -472,12 +484,10 @@
 		<plugin id="org.glassfish.jersey.core.jersey-common.source"/>
 		<plugin id="org.glassfish.jersey.core.jersey-server"/>
 		<plugin id="org.glassfish.jersey.core.jersey-server.source"/>
-		<plugin id="org.glassfish.hk2.external.javax.inject"/>
 		<plugin id="org.glassfish.hk2.api"/>
 		<plugin id="org.glassfish.hk2.api.source"/>
 		<plugin id="org.glassfish.hk2.external.aopalliance-repackaged"/>
 		<plugin id="org.glassfish.hk2.external.aopalliance-repackaged.source"/>
-		<plugin id="org.glassfish.hk2.external.javax.inject.source"/>
 		<plugin id="org.glassfish.hk2.locator"/>
 		<plugin id="org.glassfish.hk2.locator.source"/>
 		<plugin id="org.glassfish.hk2.osgi-resource-locator"/>
@@ -513,8 +523,6 @@
 		<plugin id="org.eclipse.rap.http.servletbridge"/>
 		<plugin id="org.eclipse.rap.servletbridge"/>
 		<plugin id="org.eclipse.rap.servletbridge.source"/>
-		<plugin id="org.eclipse.equinox.http.registry"/>
-		<plugin id="org.eclipse.equinox.http.registry.source"/>
 		<plugin id="org.osgi.service.component.annotations"/>
 		<plugin id="org.osgi.service.component.annotations.source"/>
 		<plugin id="jakarta.ws.rs-api.source"/>
@@ -522,5 +530,13 @@
 		<plugin id="jakarta.inject.jakarta.inject-api"/>
 		<plugin id="jakarta.inject.jakarta.inject-api.source"/>
 		<plugin id="org.eclipse.jetty.ee10.servlet"/>
+		<plugin id="org.osgi.service.http.whiteboard"/>
+		<plugin id="org.osgi.service.http.whiteboard.source"/>
+		<plugin id="org.apache.felix.http.servlet-api"/>
+		<plugin id="org.apache.felix.http.servlet-api.source"/>
+		<plugin id="org.osgi.service.jakartars"/>
+		<plugin id="org.osgi.service.jakartars.source"/>
+		<plugin id="org.glassfish.jersey.containers.jersey-container-servlet"/>
+		<plugin id="org.glassfish.jersey.containers.jersey-container-servlet.source"/>
 	</includeBundles>
 </target>

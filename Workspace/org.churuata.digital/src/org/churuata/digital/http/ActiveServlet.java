@@ -3,6 +3,7 @@ package org.churuata.digital.http;
 import java.io.IOException;
 import java.util.Random;
 
+import jakarta.servlet.Servlet;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -17,8 +18,13 @@ import org.condast.commons.authentication.user.ILoginUser;
 import org.condast.commons.messaging.http.IHttpRequest.HttpStatus;
 import org.condast.commons.strings.StringStyler;
 import org.condast.commons.strings.StringUtils;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.ServiceScope;
 import org.condast.commons.parser.AbstractResourceParser;
 
+@Component(service = Servlet.class, 
+scope=ServiceScope.PROTOTYPE,
+property= "osgi.http.whiteboard.servlet.pattern=/churuata/active")
 public class ActiveServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 

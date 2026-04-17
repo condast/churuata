@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.3.0" name="org.churuata.caminantes.http.WebResources">
+   <property name="osgi.http.whiteboard.resource.pattern" value="/caminantes/web/*"/>
+   <property name="osgi.http.whiteboard.resource.prefix" value="/WEB-INF"/>
+   <service scope="prototype">
+      <provide interface="org.churuata.caminantes.http.WebResources"/>
+   </service>
+   <implementation class="org.churuata.caminantes.http.WebResources"/>
+</scr:component>

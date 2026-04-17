@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.3.0" name="org.churuata.digital.http.RegisterServiceServlet">
+   <property name="osgi.http.whiteboard.servlet.pattern" value="/churuata/register-service"/>
+   <service scope="prototype">
+      <provide interface="jakarta.servlet.Servlet"/>
+   </service>
+   <implementation class="org.churuata.digital.http.RegisterServiceServlet"/>
+</scr:component>

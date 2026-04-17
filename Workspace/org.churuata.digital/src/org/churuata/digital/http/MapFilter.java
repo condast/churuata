@@ -17,11 +17,17 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.churuata.digital.core.rest.IRestPages;
 import org.condast.commons.strings.StringUtils;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.ServiceScope;
+import org.osgi.service.http.whiteboard.propertytypes.HttpWhiteboardFilterPattern;
 
+@Component(scope=ServiceScope.PROTOTYPE,
+property= "osgi.http.whiteboard.filter.regex=/churuata/*")
+@HttpWhiteboardFilterPattern( "/*")
 public class MapFilter implements Filter {
 
 	private static final String S_LOCAL_HOST = "127.0.0.1";
-	private static final String S_CHURUATA = "/churuata";
+	protected static final String S_CHURUATA = "/churuata";
 	private static final String S_REST_SERVICE = S_CHURUATA + "/rest/";
 
 	private static final String S_REFUGEE_MAP = S_CHURUATA + "/map";

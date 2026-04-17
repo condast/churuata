@@ -26,7 +26,6 @@ Import-Package: com.google.gson;version="2.8.2",
  org.condast.commons.strings,
  org.condast.commons.ui.controller,
  org.condast.commons.ui.widgets.entry,
- org.eclipse.equinox.http.registry;version="1.0.0",
  org.eclipse.rap.rwt;version="[4.6.0,5.0.0)",
  org.eclipse.rap.rwt.application;version="[4.6.0,5.0.0)",
  org.eclipse.rap.rwt.client;version="[4.6.0,5.0.0)",
@@ -34,5 +33,10 @@ Import-Package: com.google.gson;version="2.8.2",
  org.eclipse.swt,
  org.eclipse.swt.layout,
  org.eclipse.swt.widgets,
- org.osgi.framework
-Service-Component: OSGI-INF/contribution.xml
+ org.osgi.framework,
+ org.osgi.service.http.whiteboard.propertytypes;version="[1.1.0,2.0.0)"
+Service-Component: OSGI-INF/contribution.xml,
+ OSGI-INF/org.churuata.caminantes.http.CaminantesServlet.xml,
+ OSGI-INF/org.churuata.caminantes.http.HomeServlet.xml,
+ OSGI-INF/org.churuata.caminantes.http.MapFilter.xml,
+ OSGI-INF/org.churuata.caminantes.http.WebResources.xml

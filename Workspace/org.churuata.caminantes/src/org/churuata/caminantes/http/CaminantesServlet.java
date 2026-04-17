@@ -2,6 +2,7 @@ package org.churuata.caminantes.http;
 
 import java.io.IOException;
 
+import jakarta.servlet.Servlet;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -9,7 +10,12 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import org.condast.commons.parser.AbstractResourceParser;
 import org.condast.commons.strings.StringStyler;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.ServiceScope;
 
+@Component(service = Servlet.class, 
+scope=ServiceScope.PROTOTYPE,
+property= "osgi.http.whiteboard.servlet.pattern=/map")
 public class CaminantesServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 

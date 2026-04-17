@@ -16,11 +16,21 @@ import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.condast.commons.strings.StringUtils;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.ServiceScope;
+import org.osgi.service.http.whiteboard.propertytypes.HttpWhiteboardFilterPattern;
 
+@Component(scope=ServiceScope.PROTOTYPE,
+property= MapFilter.S_OSGI_FILTER_REGEX)
+@HttpWhiteboardFilterPattern( "/*")
 public class MapFilter implements Filter {
 
 	private static final String S_LOCAL_HOST = "127.0.0.1";
 	private static final String S_CAMINANTES = "/caminantes";
+
+	private static final String S_CONTEXT_PATH = S_CAMINANTES + "/*";
+
+	public static final String S_OSGI_FILTER_REGEX = "osgi.http.whiteboard.filter.regex=" + S_CONTEXT_PATH;
 
 	private static final String S_REFUGEE_MAP = S_CAMINANTES + "/map";
 	private static final String S_REFUGEE_BANNER = S_CAMINANTES + "/banner";
