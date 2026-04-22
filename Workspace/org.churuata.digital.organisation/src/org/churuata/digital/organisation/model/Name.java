@@ -3,8 +3,8 @@
  */
 package org.churuata.digital.organisation.model;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
 
 import org.condast.commons.na.model.IName;
 import org.condast.commons.strings.StringUtils;

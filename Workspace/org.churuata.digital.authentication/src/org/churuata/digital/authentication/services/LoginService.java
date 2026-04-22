@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.persistence.TypedQuery;
+import jakarta.persistence.TypedQuery;
 
 import org.churuata.digital.authentication.core.Dispatcher;
 import org.churuata.digital.authentication.model.Login;

@@ -2,7 +2,7 @@ package org.churuata.rest.service;
 
 import java.util.Collection;
 
-import javax.persistence.TypedQuery;
+import jakarta.persistence.TypedQuery;
 
 import org.churuata.digital.core.IPresentation.PresentationTypes;
 import org.churuata.digital.core.location.IChuruata;

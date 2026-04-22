@@ -36,6 +36,13 @@
 				<version>1.3.6</version>
 				<type>jar</type>
 			</dependency>
+			<!-- Source: https://mvnrepository.com/artifact/jakarta.activation/jakarta.activation-api -->
+			<dependency>
+			    <groupId>jakarta.activation</groupId>
+			    <artifactId>jakarta.activation-api</artifactId>
+			    <version>2.2.0-M2</version>
+			    <scope>compile</scope>
+			</dependency>
 			<dependency>
 				<groupId>jakarta.annotation</groupId>
 				<artifactId>jakarta.annotation-api</artifactId>
@@ -55,6 +62,12 @@
 				<type>jar</type>
 			</dependency>
 			<dependency>
+			    <groupId>jakarta.persistence</groupId>
+			    <artifactId>jakarta.persistence-api</artifactId>
+			    <version>3.2.0</version>
+			    <type>jar</type>
+			</dependency>			
+			<dependency>
 				<groupId>jakarta.ws.rs</groupId>
 				<artifactId>jakarta.ws.rs-api</artifactId>
 				<version>3.1.0</version>
@@ -66,6 +79,12 @@
 				<version>4.0.5</version>
 				<type>jar</type>
 			</dependency>
+			<dependency>
+			    <groupId>jakarta.mail</groupId>
+			    <artifactId>jakarta.mail-api</artifactId>
+			    <version>2.2.0-M1</version>
+			    <type>jar</type>
+			</dependency>			
 			<dependency>
 				<groupId>javax.activation</groupId>
 				<artifactId>activation</artifactId>
@@ -496,10 +515,6 @@
 		<plugin id="javax.annotation-api.source"/>
 		<plugin id="jakarta.validation.jakarta.validation-api"/>
 		<plugin id="jakarta.validation.jakarta.validation-api.source"/>
-		<plugin id="javax.persistence"/>
-		<plugin id="javax.persistence.source"/>
-		<plugin id="com.sun.mail.javax.mail.source"/>
-		<plugin id="com.sun.mail.javax.mail"/>
 		<plugin id="jakarta.xml.bind-api.source"/>
 		<plugin id="org.eclipse.persistence.asm.source"/>
 		<plugin id="org.eclipse.persistence.core.source"/>
@@ -537,5 +552,13 @@
 		<plugin id="org.glassfish.jersey.containers.jersey-container-servlet-core"/>
 		<plugin id="org.glassfish.jersey.containers.jersey-container-servlet-core.source"/>
 		<plugin id="org.apache.aries.spifly.dynamic.bundle"/>
+		<plugin id="jakarta.persistence-api.source"/>
+		<plugin id="jakarta.persistence-api"/>
+		<plugin id="jakarta.activation-api"/>
+		<plugin id="jakarta.activation-api.source"/>
+		<plugin id="jakarta.mail-api.source"/>
+		<plugin id="jakarta.mail-api"/>
+		<plugin id="javax.persistence"/>
+		<plugin id="javax.persistence.source"/>
 	</includeBundles>
 </target>

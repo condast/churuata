@@ -1,6 +1,6 @@
 package org.churuata.digital.organisation.ds;
 
-import javax.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityManagerFactory;
 
 import org.churuata.digital.organisation.Activator;
 import org.churuata.digital.organisation.core.Dispatcher;

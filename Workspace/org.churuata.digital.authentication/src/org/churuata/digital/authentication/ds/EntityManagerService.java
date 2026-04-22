@@ -1,6 +1,6 @@
 package org.churuata.digital.authentication.ds;
 
-import javax.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityManagerFactory;
 
 import org.churuata.digital.authentication.Activator;
 import org.churuata.digital.authentication.core.Dispatcher;

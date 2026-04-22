@@ -2,7 +2,7 @@ package org.churuata.rest.service;
 
 import java.util.Collection;
 
-import javax.persistence.TypedQuery;
+import jakarta.persistence.TypedQuery;
 
 import org.churuata.rest.model.Location;
 import org.condast.commons.authentication.user.ILoginUser;

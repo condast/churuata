@@ -3,7 +3,7 @@ package org.churuata.rest.service;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import javax.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityManagerFactory;
 
 import org.churuata.rest.Activator;
 import org.churuata.rest.core.Dispatcher;

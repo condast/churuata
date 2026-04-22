@@ -2,7 +2,7 @@ package org.churuata.digital.organisation.services;
 
 import java.util.Collection;
 
-import javax.persistence.TypedQuery;
+import jakarta.persistence.TypedQuery;
 
 import org.churuata.digital.organisation.core.Dispatcher;
 import org.churuata.digital.organisation.model.Location;
