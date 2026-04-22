@@ -1,7 +1,13 @@
 package org.churuata.rest;
 
 import jakarta.servlet.Filter;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
 import jakarta.ws.rs.ApplicationPath;
+
+import java.io.IOException;
 
 import org.churuata.rest.resources.CaminantesResource;
 import org.churuata.rest.resources.ChuruataResource;
@@ -15,18 +21,26 @@ import org.osgi.service.component.annotations.ServiceScope;
 import org.osgi.service.http.whiteboard.propertytypes.HttpWhiteboardFilterPattern;
 
 @Component(scope=ServiceScope.PROTOTYPE,
-property= RestFilter.S_OSGI_FILTER_PATTERN)
+property= RestFilter.S_OSGI_FILTER_REGEX)
 @HttpWhiteboardFilterPattern( RestFilter.S_CONTEXT_PATH)
 public class RestFilter extends AbstractFilterWrapper implements Filter{
 
 	//Same as alias in plugin.xml
 	public static final String S_CONTEXT_PATH = "/churuatas/rest/*";
-	public static final String S_OSGI_FILTER_PATTERN = "osgi.http.whiteboard.filter.pattern=" + S_CONTEXT_PATH;
+	public static final String S_OSGI_FILTER_REGEX = "osgi.http.whiteboard.filter.regex=" + S_CONTEXT_PATH;
 
 	public RestFilter() {
 		super( S_CONTEXT_PATH );
 	}
+
 	
+	@Override
+	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+			throws IOException, ServletException {
+		super.doFilter(request, response, chain);
+	}
+
+
 	@Override
 	protected Filter onCreateFilter(String contextPath) {
 		RestApplication resourceConfig = new RestApplication();
