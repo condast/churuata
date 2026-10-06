@@ -2,7 +2,7 @@ package org.churuata.digital.organisation.services;
 
 import org.churuata.digital.organisation.core.Dispatcher;
 import org.churuata.digital.organisation.model.Address;
-import org.condast.commons.na.data.AddressData;
+import org.condast.commons.jpa.na.data.AddressData;
 import org.condast.commons.persistence.service.AbstractEntityService;
 
 public class AddressService extends AbstractEntityService<Address>{

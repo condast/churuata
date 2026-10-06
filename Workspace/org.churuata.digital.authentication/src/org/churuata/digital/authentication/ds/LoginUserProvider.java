@@ -5,10 +5,10 @@ import java.util.Map;
 
 import org.churuata.digital.authentication.core.Dispatcher;
 import org.churuata.digital.authentication.services.LoginService;
-import org.condast.commons.authentication.core.IAuthenticationListener;
-import org.condast.commons.authentication.core.ILoginProvider;
-import org.condast.commons.authentication.user.IAdmin;
-import org.condast.commons.authentication.user.ILoginUser;
+import org.condast.commons.data.user.IAdmin;
+import org.condast.commons.data.user.ILoginUser;
+import org.condast.commons.jpa.authentication.core.IAuthenticationListener;
+import org.condast.commons.jpa.authentication.core.ILoginProvider;
 import org.osgi.service.component.annotations.Component;
 
 @Component( name="org.churuata.digital.authentication.login.factory",

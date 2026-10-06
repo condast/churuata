@@ -2,8 +2,8 @@ package org.churuata.digital.core.model;
 
 import org.churuata.digital.core.location.IChuruataService;
 import org.condast.commons.data.latlng.LatLng;
-import org.condast.commons.na.model.IAddress;
-import org.condast.commons.na.model.IContactPerson;
+import org.condast.commons.jpa.na.model.IAddress;
+import org.condast.commons.jpa.na.model.IContactPerson;
 import org.condast.commons.strings.StringStyler;
 import org.condast.commons.strings.StringUtils;
 

@@ -9,14 +9,14 @@ import java.util.Random;
 import javax.servlet.http.HttpSession;
 
 import org.churuata.digital.session.SessionStore;
-import org.condast.commons.authentication.core.AuthenticationEvent;
-import org.condast.commons.authentication.core.IAuthenticationListener;
-import org.condast.commons.authentication.http.AbstractDomainProvider;
-import org.condast.commons.authentication.http.IDomainProvider;
-import org.condast.commons.authentication.user.ILoginUser;
+import org.condast.commons.data.user.ILoginUser;
+import org.condast.commons.jpa.authentication.core.AuthenticationEvent;
+import org.condast.commons.jpa.authentication.core.IAuthenticationListener;
+import org.condast.commons.jpa.authentication.http.AbstractDomainProvider;
+import org.condast.commons.jpa.authentication.http.IDomainProvider;
 import org.condast.commons.strings.StringStyler;
 import org.condast.commons.strings.StringUtils;
-import org.condast.commons.ui.widgets.utils.RWTUtils;
+import org.condast.js.commons.ui.utils.RWTUtils;
 import org.eclipse.rap.rwt.RWT;
 import org.eclipse.rap.rwt.client.service.StartupParameters;
 

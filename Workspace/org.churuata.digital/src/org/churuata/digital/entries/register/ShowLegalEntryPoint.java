@@ -9,14 +9,14 @@ import org.churuata.digital.core.data.ChuruataOrganisationData;
 import org.churuata.digital.session.SessionStore;
 import org.churuata.digital.ui.image.ChuruataImages;
 import org.churuata.digital.ui.image.ChuruataImages.Images;
-import org.condast.commons.authentication.http.IDomainProvider;
+import org.condast.commons.jpa.authentication.http.IDomainProvider;
+import org.condast.commons.jpa.na.model.IContactPerson;
 import org.condast.commons.legal.LegalUtils;
 import org.condast.commons.legal.LegalUtils.Version;
-import org.condast.commons.na.model.IContactPerson;
 import org.condast.commons.parser.AbstractResourceParser;
 import org.condast.commons.preferences.config.Config;
 import org.condast.commons.strings.StringStyler;
-import org.condast.commons.ui.widgets.utils.RWTUtils;
+import org.condast.js.commons.ui.utils.RWTUtils;
 import org.eclipse.rap.rwt.RWT;
 import org.eclipse.rap.rwt.client.service.StartupParameters;
 import org.eclipse.swt.SWT;
@@ -285,6 +285,18 @@ public class ShowLegalEntryPoint extends AbstractWizardEntryPoint<Browser, Churu
 		protected String onCreateLink(String link, String page, String arguments) {
 			String result = "";
 			return result;
+		}
+
+		@Override
+		protected String onHandleApplication() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		protected String onHandleBody(String body, Attributes attr) {
+			// TODO Auto-generated method stub
+			return null;
 		}
 	}
 

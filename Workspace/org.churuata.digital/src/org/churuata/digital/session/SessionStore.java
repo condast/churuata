@@ -3,8 +3,8 @@ package org.churuata.digital.session;
 import org.churuata.digital.core.data.ChuruataOrganisationData;
 import org.churuata.digital.core.data.ProfileData;
 import org.churuata.digital.core.location.IChuruataService;
-import org.condast.commons.authentication.session.DefaultSessionStore;
 import org.condast.commons.data.latlng.LatLng;
+import org.condast.commons.jpa.authentication.session.DefaultSessionStore;
 
 public class SessionStore extends DefaultSessionStore<ProfileData>{
 

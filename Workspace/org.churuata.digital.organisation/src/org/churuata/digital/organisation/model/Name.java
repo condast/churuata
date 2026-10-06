@@ -6,7 +6,7 @@ package org.churuata.digital.organisation.model;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
-import org.condast.commons.na.model.IName;
+import org.condast.commons.jpa.na.model.IName;
 import org.condast.commons.strings.StringUtils;
 
 /**

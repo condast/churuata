@@ -5,8 +5,8 @@ import java.util.TreeSet;
 
 import org.churuata.digital.core.IPresentation;
 import org.churuata.digital.core.location.IChuruataService.Services;
-import org.condast.commons.authentication.user.ILoginUser;
 import org.condast.commons.data.latlng.LatLng;
+import org.condast.commons.data.user.ILoginUser;
 
 public class Churuata implements Comparable<Churuata>, IChuruata{
 	

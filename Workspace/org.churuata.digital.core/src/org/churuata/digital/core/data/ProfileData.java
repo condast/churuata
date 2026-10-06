@@ -3,14 +3,13 @@ package org.churuata.digital.core.data;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
-
-import org.condast.commons.authentication.core.LoginData;
-import org.condast.commons.authentication.user.ILoginUser;
-import org.condast.commons.na.data.AddressData;
-import org.condast.commons.na.data.ContactPersonData;
-import org.condast.commons.na.data.OrganisationData;
-import org.condast.commons.na.model.IContactPerson;
-import org.condast.commons.na.profile.IProfileData;
+import org.condast.commons.data.user.ILoginUser;
+import org.condast.commons.data.util.LoginData;
+import org.condast.commons.jpa.na.data.AddressData;
+import org.condast.commons.jpa.na.data.ContactPersonData;
+import org.condast.commons.jpa.na.data.OrganisationData;
+import org.condast.commons.jpa.na.model.IContactPerson;
+import org.condast.commons.jpa.na.profile.IProfileData;
 import org.condast.commons.strings.StringStyler;
 
 /**

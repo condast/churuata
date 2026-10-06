@@ -7,7 +7,7 @@ import org.churuata.digital.core.Entries;
 import org.churuata.digital.entries.BasicEntryPoint;
 import org.churuata.digital.session.SessionStore;
 import org.condast.commons.ui.widgets.entry.IDataEntryPoint;
-import org.condast.commons.ui.widgets.entry.IPageEntry;
+import org.condast.js.commons.ui.widgets.entry.IPageEntry;
 import org.eclipse.rap.rwt.application.Application;
 import org.eclipse.rap.rwt.application.Application.OperationMode;
 import org.eclipse.rap.rwt.application.ApplicationConfiguration;

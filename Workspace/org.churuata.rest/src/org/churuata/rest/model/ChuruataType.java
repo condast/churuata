@@ -16,7 +16,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.churuata.digital.core.location.IChuruataService;
-import org.condast.commons.authentication.user.ILoginUser;
+import org.condast.commons.data.user.ILoginUser;
 
 @Entity
 public class ChuruataType implements Comparable<ChuruataType>, IChuruataService{

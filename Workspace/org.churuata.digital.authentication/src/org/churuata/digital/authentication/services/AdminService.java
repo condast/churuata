@@ -4,14 +4,15 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
 import org.churuata.digital.authentication.model.Admin;
 import org.condast.commons.Utils;
-import org.condast.commons.authentication.core.AdminData;
-import org.condast.commons.authentication.user.IAdmin;
-import org.condast.commons.authentication.user.IAdmin.Roles;
-import org.condast.commons.authentication.user.ILoginUser;
+import org.condast.commons.data.user.AdminData;
+import org.condast.commons.data.user.IAdmin;
+import org.condast.commons.data.user.IAdmin.Roles;
+import org.condast.commons.data.user.ILoginUser;
 import org.condast.commons.persistence.service.AbstractEntityService;
 import org.condast.commons.persistence.service.IPersistenceService;
 
@@ -21,7 +22,7 @@ public class AdminService extends AbstractEntityService<Admin>{
 	private static final String S_QUERY_SELECT_ADMIN = S_QUERY_SELECT + "WHERE a.loginId=:loginId";
 	private static final String S_QUERY_SELECT_ROLE = S_QUERY_SELECT + "WHERE a.role=:role";
 
-	public AdminService( IPersistenceService service) {
+	public AdminService( IPersistenceService<EntityManager> service) {
 		super( Admin.class, service);
 	}
 

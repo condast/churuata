@@ -4,13 +4,14 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
 import org.churuata.digital.authentication.core.Dispatcher;
 import org.churuata.digital.authentication.model.Login;
 import org.condast.commons.Utils;
-import org.condast.commons.authentication.core.LoginData;
-import org.condast.commons.authentication.user.ILoginUser;
+import org.condast.commons.data.user.ILoginUser;
+import org.condast.commons.data.util.LoginData;
 import org.condast.commons.persistence.service.AbstractEntityService;
 import org.condast.commons.persistence.service.IPersistenceService;
 import org.condast.commons.strings.StringUtils;
@@ -24,7 +25,7 @@ public class LoginService extends AbstractEntityService<Login>{
 	private static final String S_IDS = "ids"; 
 	private static final String SQL_LOGIN_ID_QUERY = SELECT + "WHERE l.id in :" + S_IDS;
 
-	public LoginService( IPersistenceService service) {
+	public LoginService( IPersistenceService<EntityManager> service) {
 		super( Login.class, service);
 	}
 

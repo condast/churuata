@@ -1,7 +1,7 @@
 package org.churuata.digital.core.utils;
 
 import org.churuata.digital.core.model.IOrganisation;
-import org.condast.commons.na.model.IContactPerson;
+import org.condast.commons.jpa.na.model.IContactPerson;
 
 public class ChatUtils {
 

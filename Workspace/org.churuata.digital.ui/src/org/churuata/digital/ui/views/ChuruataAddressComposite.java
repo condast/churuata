@@ -2,10 +2,8 @@ package org.churuata.digital.ui.views;
 
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-
-import org.condast.commons.na.data.AddressData;
-
-import org.condast.commons.ui.na.address.AddressComposite;
+import org.condast.commons.jpa.na.data.AddressData;
+import org.condast.commons.jpa.ui.na.address.AddressComposite;
 import org.eclipse.swt.SWT;
 
 import org.eclipse.swt.events.SelectionAdapter;

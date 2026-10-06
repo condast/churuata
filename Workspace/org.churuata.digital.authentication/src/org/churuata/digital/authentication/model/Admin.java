@@ -13,8 +13,8 @@ import javax.persistence.Id;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.condast.commons.authentication.user.IAdmin;
-import org.condast.commons.authentication.user.ILoginUser;
+import org.condast.commons.data.user.IAdmin;
+import org.condast.commons.data.user.ILoginUser;
 import org.condast.commons.strings.StringUtils;
 
 @Entity
@@ -54,7 +54,7 @@ public class Admin implements IAdmin, Serializable {
 		this();
 		this.role = role.name();
 		this.loginId = user.getId();
-		this.login = (Login) user;
+		this.login = user;
 	}
 
 	@Override

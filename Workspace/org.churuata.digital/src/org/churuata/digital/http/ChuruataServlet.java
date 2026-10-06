@@ -123,5 +123,17 @@ public class ChuruataServlet extends HttpServlet {
 			builder.append("'");
 			return builder.toString();
 		}
+
+		@Override
+		protected String onHandleApplication() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		protected String onHandleBody(String body, Attributes attr) {
+			// TODO Auto-generated method stub
+			return null;
+		}
 	}
 }

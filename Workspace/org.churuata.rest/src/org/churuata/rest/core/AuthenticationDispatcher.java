@@ -1,8 +1,8 @@
 package org.churuata.rest.core;
 
-import org.condast.commons.authentication.core.AbstractLoginClient;
-import org.condast.commons.authentication.user.IAdmin;
-import org.condast.commons.authentication.user.ILoginUser;
+import org.condast.commons.data.user.IAdmin;
+import org.condast.commons.data.user.ILoginUser;
+import org.condast.commons.jpa.authentication.core.AbstractLoginClient;
 
 public class AuthenticationDispatcher extends AbstractLoginClient{
 

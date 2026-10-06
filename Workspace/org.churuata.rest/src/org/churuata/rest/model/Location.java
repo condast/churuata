@@ -12,8 +12,8 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.condast.commons.IUpdateable;
-import org.condast.commons.authentication.user.ILoginUser;
 import org.condast.commons.data.latlng.LatLng;
+import org.condast.commons.data.user.ILoginUser;
 
 @Entity
 public class Location implements IUpdateable {

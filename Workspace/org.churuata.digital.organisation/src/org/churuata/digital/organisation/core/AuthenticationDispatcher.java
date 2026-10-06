@@ -2,12 +2,13 @@ package org.churuata.digital.organisation.core;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import org.condast.commons.authentication.core.AbstractLoginClient;
-import org.condast.commons.authentication.core.AuthenticationEvent;
-import org.condast.commons.authentication.core.IAuthenticationListener;
-import org.condast.commons.authentication.core.ILoginProvider;
-import org.condast.commons.authentication.user.IAdmin;
-import org.condast.commons.authentication.user.ILoginUser;
+
+import org.condast.commons.data.user.IAdmin;
+import org.condast.commons.data.user.ILoginUser;
+import org.condast.commons.jpa.authentication.core.AbstractLoginClient;
+import org.condast.commons.jpa.authentication.core.AuthenticationEvent;
+import org.condast.commons.jpa.authentication.core.IAuthenticationListener;
+import org.condast.commons.jpa.authentication.core.ILoginProvider;
 
 public class AuthenticationDispatcher extends AbstractLoginClient{
 

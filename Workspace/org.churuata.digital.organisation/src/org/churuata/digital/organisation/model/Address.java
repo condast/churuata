@@ -10,7 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 import org.condast.commons.data.latlng.LatLng;
-import org.condast.commons.na.model.IAddress;
+import org.condast.commons.jpa.na.model.IAddress;
 import org.condast.commons.strings.StringUtils;
 
 /**

@@ -10,10 +10,10 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.churuata.digital.core.Entries;
-import org.condast.commons.authentication.http.IDomainProvider;
-import org.condast.commons.messaging.http.IHttpRequest.HttpStatus;
 import org.condast.commons.strings.StringStyler;
 import org.condast.commons.strings.StringUtils;
+import org.condast.commons.jpa.authentication.http.IDomainProvider;
+import org.condast.commons.jpa.messaging.IHttpRequest.HttpStatus;
 import org.condast.commons.parser.AbstractResourceParser;
 import org.condast.commons.parser.AbstractResourceParser.Attributes;
 
@@ -162,6 +162,18 @@ public class RegisterServiceServlet extends HttpServlet {
 			}
 			builder.append("?token='" + token);
 			return builder.toString();
+		}
+
+		@Override
+		protected String onHandleApplication() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		protected String onHandleBody(String body, Attributes attr) {
+			// TODO Auto-generated method stub
+			return null;
 		}
 	}
 }

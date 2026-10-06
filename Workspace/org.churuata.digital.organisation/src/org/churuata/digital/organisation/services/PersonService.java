@@ -8,10 +8,10 @@ import org.churuata.digital.organisation.core.Dispatcher;
 import org.churuata.digital.organisation.model.Contact;
 import org.churuata.digital.organisation.model.Person;
 import org.condast.commons.Utils;
-import org.condast.commons.authentication.user.ILoginUser;
-import org.condast.commons.na.data.ContactPersonData;
-import org.condast.commons.na.model.IContact;
-import org.condast.commons.na.model.IContact.ContactTypes;
+import org.condast.commons.data.user.ILoginUser;
+import org.condast.commons.jpa.na.data.ContactPersonData;
+import org.condast.commons.jpa.na.model.IContact;
+import org.condast.commons.jpa.na.model.IContact.ContactTypes;
 import org.condast.commons.persistence.service.AbstractEntityService;
 
 public class PersonService extends AbstractEntityService<Person>{

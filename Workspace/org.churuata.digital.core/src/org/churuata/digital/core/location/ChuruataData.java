@@ -8,8 +8,8 @@ import org.churuata.digital.core.data.ChuruataOrganisationData;
 import org.churuata.digital.core.data.ServiceData;
 import org.churuata.digital.core.location.IChuruataService.Contribution;
 import org.churuata.digital.core.location.IChuruataService.Services;
-import org.condast.commons.authentication.user.ILoginUser;
 import org.condast.commons.data.latlng.LatLng;
+import org.condast.commons.data.user.ILoginUser;
 
 public class ChuruataData implements Comparable<ChuruataData>, IChuruata{
 	

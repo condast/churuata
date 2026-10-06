@@ -11,11 +11,11 @@ import javax.servlet.http.HttpServletResponse;
 import org.churuata.digital.core.AuthenticationDispatcher;
 import org.churuata.digital.core.Dispatcher;
 import org.churuata.digital.session.SessionStore;
-import org.condast.commons.authentication.http.IDomainProvider;
-import org.condast.commons.authentication.user.ILoginUser;
-import org.condast.commons.messaging.http.IHttpRequest.HttpStatus;
 import org.condast.commons.strings.StringStyler;
 import org.condast.commons.strings.StringUtils;
+import org.condast.commons.data.user.ILoginUser;
+import org.condast.commons.jpa.authentication.http.IDomainProvider;
+import org.condast.commons.jpa.messaging.IHttpRequest.HttpStatus;
 import org.condast.commons.parser.AbstractResourceParser;
 import org.condast.commons.parser.AbstractResourceParser.Attributes;
 
@@ -230,6 +230,18 @@ public class ProfileServlet extends HttpServlet {
 				break;
 			}
 			return result;
+		}
+
+		@Override
+		protected String onHandleApplication() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		protected String onHandleBody(String body, Attributes attr) {
+			// TODO Auto-generated method stub
+			return null;
 		}
 	}
 }

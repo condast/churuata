@@ -10,8 +10,8 @@ import org.churuata.digital.core.location.IChuruataService;
 import org.churuata.digital.core.model.IOrganisation;
 import org.churuata.digital.core.model.IOrganisation.OrganisationTypes;
 import org.condast.commons.data.latlng.LatLng;
-import org.condast.commons.na.data.ContactPersonData;
-import org.condast.commons.na.model.IContactPerson;
+import org.condast.commons.jpa.na.data.ContactPersonData;
+import org.condast.commons.jpa.na.model.IContactPerson;
 
 /**
  * The persistent class for the eet_tb_persoon database table.

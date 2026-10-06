@@ -118,5 +118,17 @@ public class CaminantesServlet extends HttpServlet {
 			}
 			return builder.toString();
 		}
+
+		@Override
+		protected String onHandleApplication() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		protected String onHandleBody(String body, Attributes attr) {
+			// TODO Auto-generated method stub
+			return null;
+		}
 	}
 }

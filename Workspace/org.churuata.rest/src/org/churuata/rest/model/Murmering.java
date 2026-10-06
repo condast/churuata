@@ -18,7 +18,7 @@ import javax.persistence.TemporalType;
 
 import org.churuata.digital.core.location.IChuruata;
 import org.churuata.digital.core.location.IMurmering;
-import org.condast.commons.authentication.user.ILoginUser;
+import org.condast.commons.data.user.ILoginUser;
 import org.condast.commons.strings.StringUtils;
 
 @Entity

@@ -3,7 +3,7 @@ package org.churuata.digital.service;
 import java.util.logging.Logger;
 
 import org.churuata.digital.core.AuthenticationDispatcher;
-import org.condast.commons.authentication.core.ILoginProvider;
+import org.condast.commons.jpa.authentication.core.ILoginProvider;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;

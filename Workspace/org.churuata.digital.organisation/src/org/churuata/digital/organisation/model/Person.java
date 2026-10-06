@@ -22,13 +22,13 @@ import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.condast.commons.na.model.IName;
-import org.condast.commons.na.model.IProfessional;
 import org.condast.commons.Utils;
-import org.condast.commons.na.model.IContact;
-import org.condast.commons.na.model.IContact.ContactTypes;
+import org.condast.commons.jpa.na.model.IContact;
+import org.condast.commons.jpa.na.model.IContact.ContactTypes;
+import org.condast.commons.jpa.na.model.IContactPerson;
+import org.condast.commons.jpa.na.model.IName;
+import org.condast.commons.jpa.na.model.IProfessional;
 import org.condast.commons.settings.ISettingsSupport;
-import org.condast.commons.na.model.IContactPerson;
 
 /**
  * The persistent class for the eet_tb_persoon database table.

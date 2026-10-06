@@ -25,8 +25,8 @@ import org.churuata.digital.core.location.IChuruataService;
 import org.churuata.digital.core.location.IChuruataService.Contribution;
 import org.churuata.digital.core.location.IMurmering;
 import org.condast.commons.Utils;
-import org.condast.commons.authentication.user.ILoginUser;
 import org.condast.commons.data.latlng.LatLng;
+import org.condast.commons.data.user.ILoginUser;
 
 @Entity
 public class Churuata implements Comparable<Churuata>, IChuruata{

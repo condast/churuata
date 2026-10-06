@@ -16,8 +16,8 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
-import org.condast.commons.authentication.core.LoginData;
-import org.condast.commons.authentication.user.ILoginUser;
+import org.condast.commons.data.user.ILoginUser;
+import org.condast.commons.data.util.LoginData;
 import org.condast.commons.parser.AbstractResourceParser;
 import org.condast.commons.preferences.config.Config;
 import org.condast.commons.strings.StringStyler;
@@ -184,6 +184,18 @@ public class MailUtils {
 		@Override
 		protected String getToken() {
 			return String.valueOf(-1);
+		}
+
+		@Override
+		protected String onHandleApplication() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		protected String onHandleBody(String body, Attributes attr) {
+			// TODO Auto-generated method stub
+			return null;
 		}		
 	}
 
