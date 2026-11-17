@@ -2,9 +2,9 @@ package org.churuata.digital.entries;
 
 import java.util.concurrent.TimeUnit;
 
-import org.churuata.digital.core.AbstractChuruataEntryPoint;
-import org.churuata.digital.core.Dispatcher;
-import org.churuata.digital.core.Entries;
+import org.churuata.digital.base.AbstractChuruataEntryPoint;
+import org.churuata.digital.base.Dispatcher;
+import org.churuata.digital.base.Entries;
 import org.churuata.digital.core.data.ChuruataOrganisationData;
 import org.churuata.digital.session.SessionStore;
 import org.churuata.digital.ui.image.ChuruataImages;

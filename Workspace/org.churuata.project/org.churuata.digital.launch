@@ -72,6 +72,9 @@
         <setEntry value="org.eclipse.equinox.registry@default:default"/>
         <setEntry value="org.eclipse.equinox.security@default:default"/>
         <setEntry value="org.eclipse.equinox.servletbridge@default:default"/>
+        <setEntry value="org.eclipse.gemini.dbaccess.mysql@default:default"/>
+        <setEntry value="org.eclipse.gemini.dbaccess.util@default:default"/>
+        <setEntry value="org.eclipse.gemini.jpa@default:default"/>
         <setEntry value="org.eclipse.jetty.ee8.security@default:default"/>
         <setEntry value="org.eclipse.jetty.ee8.server@default:default"/>
         <setEntry value="org.eclipse.jetty.ee8.servlet@default:default"/>
@@ -89,6 +92,7 @@
         <setEntry value="org.eclipse.persistence.antlr@default:default"/>
         <setEntry value="org.eclipse.persistence.asm@default:default"/>
         <setEntry value="org.eclipse.persistence.core@default:default"/>
+        <setEntry value="org.eclipse.persistence.jpa.jpql@default:default"/>
         <setEntry value="org.eclipse.persistence.jpa@default:true"/>
         <setEntry value="org.eclipse.rap.filedialog@default:default"/>
         <setEntry value="org.eclipse.rap.fileupload@default:default"/>

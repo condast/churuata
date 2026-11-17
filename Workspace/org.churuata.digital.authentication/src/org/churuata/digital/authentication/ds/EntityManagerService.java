@@ -4,7 +4,7 @@ import javax.persistence.EntityManagerFactory;
 
 import org.churuata.digital.authentication.Activator;
 import org.churuata.digital.authentication.core.Dispatcher;
-import org.condast.commons.persistence.service.EntityManagerFactoryService;
+import org.condast.commons.jpa.persistence.service.EntityManagerFactoryService;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;

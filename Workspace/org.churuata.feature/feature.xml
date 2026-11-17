@@ -16,90 +16,32 @@
       [Enter License Description here.]
    </license>
 
-   <requires>
-      <import plugin="org.eclipse.rap.rwt" version="3.0.0" match="compatible"/>
-      <import plugin="com.google.gson"/>
-      <import plugin="javax.servlet"/>
-      <import plugin="org.condast.commons.authentication"/>
-      <import plugin="org.condast.commons.authentication.ui"/>
-      <import plugin="org.condast.commons"/>
-      <import plugin="org.condast.commons.data"/>
-      <import plugin="org.condast.commons.messaging"/>
-      <import plugin="org.condast.commons.ui"/>
-      <import plugin="org.eclipse.osgi"/>
-      <import plugin="org.eclipse.osgi.services"/>
-      <import plugin="org.condast.js.commons"/>
-      <import plugin="org.eclipse.rap.jface"/>
-      <import plugin="org.eclipse.rap.filedialog"/>
-      <import plugin="org.openlayer.map"/>
-      <import plugin="javax.persistence"/>
-      <import plugin="javax.ws.rs-api"/>
-      <import plugin="org.condast.commons.persistence"/>
-      <import plugin="org.condast.js.push"/>
-      <import plugin="org.glassfish.jersey.core.jersey-common"/>
-      <import plugin="org.glassfish.jersey.core.jersey-server"/>
-      <import plugin="org.glassfish.jersey.containers.jersey-container-servlet-core"/>
-      <import plugin="org.apache.commons.commons-codec"/>
-      <import plugin="org.apache.commons.logging"/>
-      <import plugin="slf4j.api"/>
-      <import plugin="org.condast.commons.na"/>
-      <import plugin="org.eclipse.core.commands"/>
-      <import plugin="org.javax.mail"/>
-   </requires>
-
    <plugin
          id="org.churuata.digital"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+         version="0.0.0"/>
 
    <plugin
          id="org.churuata.digital.core"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+         version="0.0.0"/>
 
    <plugin
          id="org.churuata.digital.ui"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+         version="0.0.0"/>
 
    <plugin
          id="org.churuata.rest"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="nl.martijndwars.webpush"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+         version="0.0.0"/>
 
    <plugin
          id="org.churuata.digital.authentication"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+         version="0.0.0"/>
 
    <plugin
          id="org.churuata.digital.organisation"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+         version="0.0.0"/>
 
    <plugin
          id="org.churuata.caminantes"
-         download-size="0"
-         install-size="0"
          version="0.0.0"/>
 
 </feature>

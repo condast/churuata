@@ -13,8 +13,8 @@ import org.condast.commons.data.user.AdminData;
 import org.condast.commons.data.user.IAdmin;
 import org.condast.commons.data.user.IAdmin.Roles;
 import org.condast.commons.data.user.ILoginUser;
-import org.condast.commons.persistence.service.AbstractEntityService;
-import org.condast.commons.persistence.service.IPersistenceService;
+import org.condast.commons.jpa.persistence.service.AbstractEntityService;
+import org.condast.commons.jpa.persistence.service.IPersistenceService;
 
 public class AdminService extends AbstractEntityService<Admin>{
 
@@ -22,8 +22,11 @@ public class AdminService extends AbstractEntityService<Admin>{
 	private static final String S_QUERY_SELECT_ADMIN = S_QUERY_SELECT + "WHERE a.loginId=:loginId";
 	private static final String S_QUERY_SELECT_ROLE = S_QUERY_SELECT + "WHERE a.role=:role";
 
-	public AdminService( IPersistenceService<EntityManager> service) {
+	private String domain;
+	
+	public AdminService( String domain, IPersistenceService<EntityManager> service) {
 		super( Admin.class, service);
+		this.domain = domain;
 	}
 
 	public IAdmin create( ILoginUser user, Roles role ) {
@@ -41,7 +44,7 @@ public class AdminService extends AbstractEntityService<Admin>{
 		Admin admin = Utils.assertNull( users)? null: (Admin) users.iterator().next();
 		if( admin == null )
 			return admin;
-		admin.setLogin(user);
+		admin.setDomain(domain);
 		return admin;
 	}
 
@@ -53,7 +56,7 @@ public class AdminService extends AbstractEntityService<Admin>{
 		Collection<Admin> users = query.getResultList();
 		if( Utils.assertNull(users))
 			return null;
-		users.forEach(a->{ a.setLogin(user);});
+		users.forEach(a->{ a.setDomain(domain);});
 		return users.toArray( new IAdmin[ users.size()]);
 	}
 
@@ -61,8 +64,8 @@ public class AdminService extends AbstractEntityService<Admin>{
 		List<Admin> admins = super.findAll();
 		LoginService ls = new LoginService( super.getService());
 		admins.forEach( a -> { 
-			ILoginUser login = ls.find(a.getLoginId());
-			a.setLogin(login);
+			ILoginUser login = ls.find(a.getId());
+			a.setDomain(domain);
 		});
 		return admins;
 	}
@@ -83,8 +86,8 @@ public class AdminService extends AbstractEntityService<Admin>{
 		List<Admin> results = query.getResultList();
 		LoginService ls = new LoginService( super.getService());
 		results.forEach( a -> { 
-			ILoginUser login = ls.find(a.getLoginId());
-			a.setLogin(login);
+			ILoginUser login = ls.find(a.getId());
+			a.setDomain(domain);
 		});
 		return results;
 	}

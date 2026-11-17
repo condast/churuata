@@ -6,11 +6,11 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
-import org.churuata.digital.BasicApplication;
-import org.churuata.digital.core.AbstractChuruataEntryPoint;
-import org.churuata.digital.core.AuthenticationDispatcher;
-import org.churuata.digital.core.Dispatcher;
-import org.churuata.digital.core.Entries;
+import org.churuata.digital.base.AbstractChuruataEntryPoint;
+import org.churuata.digital.base.AuthenticationDispatcher;
+import org.churuata.digital.base.Dispatcher;
+import org.churuata.digital.base.Entries;
+import org.churuata.digital.core.IChuruataContext;
 import org.churuata.digital.core.data.ChuruataOrganisationData;
 import org.churuata.digital.core.rest.IRestPages;
 import org.churuata.digital.session.SessionStore;
@@ -50,7 +50,7 @@ public class LoginEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrganisa
 	protected Composite createComposite(Composite parent) {
 		Config config = Config.getInstance();
 		group = new AuthenticationGroup(parent, SWT.NONE);
-		group.setData( RWT.CUSTOM_VARIANT, BasicApplication.S_CHURUATA_VARIANT );
+		group.setData( RWT.CUSTOM_VARIANT, IChuruataContext.S_CHURUATA_CONTEXT );
 		String path = LegalUtils.createLegalPath(config.getServerContext(), Entries.S_CHURUATA, "privacy");
 		group.setPrivacyPath( path);
 		path = LegalUtils.createLegalPath(config.getServerContext(), Entries.S_CHURUATA, "tos");
@@ -114,7 +114,7 @@ public class LoginEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrganisa
 	protected boolean handleSessionTimeout(boolean reload) {
 		SessionStore store = getSessionStore();
 		store.clear();
-		Dispatcher.redirect( BasicApplication.S_CHURUATA, getToken());
+		Dispatcher.redirect( IChuruataContext.S_CHURUATA, getToken());
 		return true;
 	}
 	
@@ -138,16 +138,17 @@ public class LoginEntryPoint extends AbstractChuruataEntryPoint<ChuruataOrganisa
 			String str = event.getResponse();
 			Gson gson = new Gson();
 			AuthenticationUtils.Dictionary login = gson.fromJson(str, AuthenticationUtils.Dictionary.class);
+			String domain = IChuruataContext.S_CHURUATA_CONTEXT;
 			switch( event.getRequest()){
 			case REGISTER:
 			case LOGIN:
 				AuthenticationDispatcher authentication = AuthenticationDispatcher.getInstance();
-				ILoginUser user = authentication.getLoginUser(login.getKey(), login.getValue());
+				ILoginUser user = authentication.getLoginUser(domain, login.getKey(), login.getValue());
 				Dispatcher dispatcher = Dispatcher.getInstance();
-				IDomainProvider<SessionStore> domain = dispatcher.getDomain(user.getId(), user.getSecurity());
-				if( domain == null )
+				IDomainProvider<SessionStore> dp = dispatcher.getDomain(user.getId(), user.getSecurity());
+				if( dp == null )
 					break;
-				long token = domain.getToken();
+				long token = dp.getToken();
 				String next = ( user == null )?S_CHURUATA_HOME: S_CHURUATA_ACTIVE_HOME;
 				next += S_TOKEN_ARG + token;
 				logger.info("Redirecting; " + next );

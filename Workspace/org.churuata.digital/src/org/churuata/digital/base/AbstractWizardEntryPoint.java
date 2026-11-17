@@ -1,4 +1,4 @@
-package org.churuata.digital.core;
+package org.churuata.digital.base;
 
 import java.util.concurrent.TimeUnit;
 

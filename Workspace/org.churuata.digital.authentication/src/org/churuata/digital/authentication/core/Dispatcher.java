@@ -12,15 +12,15 @@ import javax.persistence.EntityManager;
 
 import org.churuata.digital.authentication.services.AdminService;
 import org.churuata.digital.authentication.services.LoginService;
+import org.churuata.digital.core.IChuruataContext;
 import org.condast.commons.data.user.IAdmin;
 import org.condast.commons.data.user.ILoginUser;
 import org.condast.commons.data.util.LoginData;
 import org.condast.commons.jpa.authentication.core.AuthenticationEvent;
 import org.condast.commons.jpa.authentication.core.IAuthenticationListener;
-import org.condast.commons.jpa.authentication.core.IAuthenticationListener.AuthenticationEvents;
-import org.condast.commons.persistence.service.AbstractPersistencyService;
-import org.condast.commons.persistence.service.IPersistenceService;
-import org.condast.commons.persistence.service.TransactionManager;
+import org.condast.commons.jpa.persistence.service.AbstractPersistencyService;
+import org.condast.commons.jpa.persistence.service.IPersistenceService;
+import org.condast.commons.jpa.persistence.service.TransactionManager;
 import org.condast.commons.strings.StringUtils;
 
 public class Dispatcher extends AbstractPersistencyService implements IPersistenceService<EntityManager>{
@@ -54,7 +54,8 @@ public class Dispatcher extends AbstractPersistencyService implements IPersisten
 		TransactionManager manager = new TransactionManager( this );
 		try {
 			manager.open();
-			AdminService service = new AdminService(this);
+			String domain = IChuruataContext.S_CHURUATA_CONTEXT;
+			AdminService service = new AdminService(domain, this);
 			IAdmin admin = service.find(user);
 			return admin;
 		}
@@ -87,17 +88,17 @@ public class Dispatcher extends AbstractPersistencyService implements IPersisten
 	public boolean addUser( ILoginUser user ){
 		boolean found = this.users.contains(user);
 		if( found ) {
-			notifyListeners( new AuthenticationEvent( this, AuthenticationEvents.LOGIN, user ));
+			notifyListeners( new AuthenticationEvent( this, LoginData.Requests.LOGIN, user, 0l ));
 			return false;
 		}
 		this.users.add( user );
-		notifyListeners( new AuthenticationEvent( this, AuthenticationEvents.LOGIN, user ));
+		notifyListeners( new AuthenticationEvent( this, LoginData.Requests.LOGIN, user, 0l ));
 		return true;
 	}
 	
 	public boolean removeUser( ILoginUser user ) {
 		boolean result = this.users.remove( user );
-		notifyListeners( new AuthenticationEvent( this, AuthenticationEvents.LOGOUT, user ));
+		notifyListeners( new AuthenticationEvent( this, LoginData.Requests.LOGOFF, user, 0l ));
 		return result;
 	}
 

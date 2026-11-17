@@ -18,6 +18,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.churuata.digital.core.IChuruataContext;
 import org.churuata.digital.core.data.ChuruataOrganisationData;
 import org.churuata.digital.core.data.ServiceData;
 import org.churuata.digital.core.data.simple.SimpleOrganisationData;
@@ -44,7 +45,7 @@ import org.condast.commons.jpa.na.data.AddressData;
 import org.condast.commons.jpa.na.data.ContactPersonData;
 import org.condast.commons.jpa.na.model.IContact;
 import org.condast.commons.jpa.na.model.IContactPerson;
-import org.condast.commons.persistence.service.TransactionManager;
+import org.condast.commons.jpa.persistence.service.TransactionManager;
 import org.condast.commons.strings.StringStyler;
 import org.condast.commons.strings.StringUtils;
 import com.google.gson.Gson;
@@ -89,7 +90,8 @@ public class OrganisationResource{
 		if( StringUtils.isEmpty(data)) 
 			return Response.noContent().build();
 	
-		ILoginUser user = dispatcher.getLoginUser(userId, security);
+		String domain = IChuruataContext.S_CHURUATA_CONTEXT;
+		ILoginUser user = dispatcher.getLoginUser(domain, userId, security);
 		Gson gson = new Gson();
 		ChuruataOrganisationData od = gson.fromJson(data, ChuruataOrganisationData.class);
 		TransactionManager t = new TransactionManager( Dispatcher.getInstance() );

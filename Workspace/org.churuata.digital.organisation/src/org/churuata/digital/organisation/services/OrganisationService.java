@@ -19,7 +19,7 @@ import org.condast.commons.data.latlng.LatLng;
 import org.condast.commons.data.plane.Field;
 import org.condast.commons.data.plane.IField;
 import org.condast.commons.jpa.na.model.IContactPerson;
-import org.condast.commons.persistence.service.AbstractEntityService;
+import org.condast.commons.jpa.persistence.service.AbstractEntityService;
 
 public class OrganisationService extends AbstractEntityService<Organisation>{
 

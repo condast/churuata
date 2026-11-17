@@ -2,9 +2,9 @@ package org.churuata.digital.entries.register;
 
 import java.util.Locale;
 
-import org.churuata.digital.core.AbstractWizardEntryPoint;
-import org.churuata.digital.core.Dispatcher;
-import org.churuata.digital.core.Entries;
+import org.churuata.digital.base.AbstractWizardEntryPoint;
+import org.churuata.digital.base.Dispatcher;
+import org.churuata.digital.base.Entries;
 import org.churuata.digital.core.data.ChuruataOrganisationData;
 import org.churuata.digital.session.SessionStore;
 import org.churuata.digital.ui.image.ChuruataImages;

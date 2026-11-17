@@ -5,9 +5,9 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
-import org.churuata.digital.core.AbstractWizardEntryPoint;
-import org.churuata.digital.core.Dispatcher;
-import org.churuata.digital.core.Entries.Pages;
+import org.churuata.digital.base.AbstractWizardEntryPoint;
+import org.churuata.digital.base.Dispatcher;
+import org.churuata.digital.base.Entries.Pages;
 import org.churuata.digital.core.data.ChuruataOrganisationData;
 import org.churuata.digital.core.data.ProfileData;
 import org.churuata.digital.core.data.ServiceData;
@@ -251,7 +251,7 @@ public class OrganisationEntryPoint extends AbstractWizardEntryPoint<Organisatio
 			Gson gson = new Gson();
 			String data = gson.toJson(batch, long[].class);
 			try {
-				sendDelete(ChuruataOrganisationData.Requests.REMOVE_SERVICES, params, data );
+				sendDelete(ChuruataOrganisationData.Requests.REMOVE_SERVICES, params );
 			} catch (IOException e) {
 				logger.warning(e.getMessage());
 			}

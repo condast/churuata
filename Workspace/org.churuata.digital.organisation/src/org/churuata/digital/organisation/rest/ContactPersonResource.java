@@ -16,6 +16,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.churuata.digital.core.IChuruataContext;
 import org.churuata.digital.core.data.ChuruataOrganisationData;
 import org.churuata.digital.core.data.ProfileData;
 import org.churuata.digital.organisation.core.AuthenticationDispatcher;
@@ -34,7 +35,7 @@ import org.condast.commons.jpa.na.data.ContactPersonData;
 import org.condast.commons.jpa.na.model.IContact;
 import org.condast.commons.jpa.na.model.IContact.ContactTypes;
 import org.condast.commons.jpa.na.model.IContactPerson;
-import org.condast.commons.persistence.service.TransactionManager;
+import org.condast.commons.jpa.persistence.service.TransactionManager;
 import org.condast.commons.strings.StringStyler;
 import org.condast.commons.strings.StringUtils;
 import org.condast.commons.verification.IVerification;
@@ -203,7 +204,8 @@ public class ContactPersonResource{
 		if( !adispatcher.isLoggedIn(userId, security))
 			return Response.status( Status.UNAUTHORIZED).build();
 
-		ILoginUser user = adispatcher.getLoginUser(userId, security);
+		String domain = IChuruataContext.S_CHURUATA_CONTEXT;
+		ILoginUser user = adispatcher.getLoginUser(domain, userId, security);
 		TransactionManager t = new TransactionManager( dispatcher );
 		IContactPerson person = null;
 		try {
@@ -252,7 +254,8 @@ public class ContactPersonResource{
 			t.open();
 
 			AuthenticationDispatcher adispatcher=  AuthenticationDispatcher.getInstance();
-			ILoginUser user = adispatcher.getLoginUser(userId, security);
+			String domain = IChuruataContext.S_CHURUATA_CONTEXT;
+			ILoginUser user = adispatcher.getLoginUser(domain, userId, security);
 
 			Gson gson = new Gson();
 			ContactPersonData personData = gson.fromJson(data, ContactPersonData.class);

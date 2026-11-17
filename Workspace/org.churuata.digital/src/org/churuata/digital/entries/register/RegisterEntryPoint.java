@@ -4,10 +4,10 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import org.churuata.digital.core.AbstractWizardEntryPoint;
-import org.churuata.digital.core.Dispatcher;
-import org.churuata.digital.core.Entries;
-import org.churuata.digital.core.Entries.Pages;
+import org.churuata.digital.base.AbstractWizardEntryPoint;
+import org.churuata.digital.base.Dispatcher;
+import org.churuata.digital.base.Entries;
+import org.churuata.digital.base.Entries.Pages;
 import org.churuata.digital.core.data.ChuruataOrganisationData;
 import org.churuata.digital.core.data.ProfileData;
 import org.churuata.digital.core.rest.IRestPages;
@@ -212,7 +212,7 @@ public class RegisterEntryPoint extends AbstractWizardEntryPoint<ContactPersonCo
 			Gson gson = new Gson();
 			String data = gson.toJson(batch, long[].class);
 			try {
-				sendDelete(ProfileData.Requests.REMOVE_CONTACTS, params, data );
+				sendDelete(ProfileData.Requests.REMOVE_CONTACTS, params );
 			} catch (IOException e) {
 				logger.warning(e.getMessage());
 			}

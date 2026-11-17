@@ -12,7 +12,7 @@ import org.condast.commons.data.user.ILoginUser;
 import org.condast.commons.jpa.na.data.ContactPersonData;
 import org.condast.commons.jpa.na.model.IContact;
 import org.condast.commons.jpa.na.model.IContact.ContactTypes;
-import org.condast.commons.persistence.service.AbstractEntityService;
+import org.condast.commons.jpa.persistence.service.AbstractEntityService;
 
 public class PersonService extends AbstractEntityService<Person>{
 

@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Random;
+import java.util.Set;
 
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -15,6 +16,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.condast.commons.data.latlng.LatLng;
+import org.condast.commons.data.user.IAdmin;
 import org.condast.commons.data.user.ILoginUser;
 import org.condast.commons.date.DateUtils;
 
@@ -116,16 +118,6 @@ public class Login implements ILoginUser, Serializable {
 	}
 
 	@Override
-	public boolean isConfirmed() {
-		return confirmed;
-	}
-
-	@Override
-	public void setConfirmed(boolean confirmed) {
-		this.confirmed = confirmed;
-	}
-
-	@Override
 	public LatLng getLocation() {
 		return location;
 	}
@@ -133,6 +125,55 @@ public class Login implements ILoginUser, Serializable {
 	@Override
 	public void setLocation(double latitude, double longitude) {
 		this.location = new LatLng( this.userName, latitude, longitude);
+	}
+
+	@Override
+	public long getSecurity() {
+		return security;
+	}
+	
+	public void setSecurity(long security) {
+		this.security = security;
+	}
+	
+	@Override
+	public boolean checkSecurity(long security) {
+		return ( this.security == security);
+	}
+
+
+	@Override
+	public boolean isCorrect(long userId, long security) {
+		return (( this.id == userId ) && ( this.security == security));
+	}
+
+	/**
+	 * returns true if the user has administrative privileges
+	 * @param userName
+	 * @param security
+	 * @return
+	 */
+	@Override
+	public boolean isAdmin( String userName, long security ) {
+		return ( ILoginUser.S_ADMIN.equals(userName)) && ILoginUser.AdminToken == security;
+	}
+
+	@Override
+	public void addAdmin(IAdmin admin) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void removeAdmin(IAdmin admin) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public Set<IAdmin> getAdmins(String domain) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
@@ -161,31 +202,6 @@ public class Login implements ILoginUser, Serializable {
 		this.updateDate = update;
 	}
 	
-	@Override
-	public long getSecurity() {
-		return security;
-	}
-	
-	public void setSecurity(long security) {
-		this.security = security;
-	}
-
-	@Override
-	public boolean isCorrect(long userId, long security) {
-		return (( this.id == userId ) && ( this.security == security));
-	}
-
-	/**
-	 * returns true if the user has administrative privileges
-	 * @param userName
-	 * @param security
-	 * @return
-	 */
-	@Override
-	public boolean isAdmin( String userName, long security ) {
-		return ( ILoginUser.S_ADMIN.equals(userName)) && ILoginUser.AdminToken == security;
-	}
-
 	@Override
 	public String toString() {
 		String date = DateUtils.getFormatted(this.createDate );

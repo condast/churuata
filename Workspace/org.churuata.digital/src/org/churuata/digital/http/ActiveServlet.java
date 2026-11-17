@@ -8,8 +8,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.churuata.digital.core.AuthenticationDispatcher;
-import org.churuata.digital.core.Dispatcher;
+import org.churuata.digital.base.AuthenticationDispatcher;
+import org.churuata.digital.base.Dispatcher;
+import org.churuata.digital.core.IChuruataContext;
 import org.churuata.digital.session.SessionStore;
 import org.condast.commons.strings.StringStyler;
 import org.condast.commons.strings.StringUtils;
@@ -74,12 +75,13 @@ public class ActiveServlet extends HttpServlet {
 		if( user == null ) {
 			String userstr = req.getParameter( IDomainProvider.Attributes.USER_ID.toAttribute() );
 			String securitystr = req.getParameter( IDomainProvider.Attributes.SECURITY.toAttribute());
+			String domain = IChuruataContext.S_CHURUATA_CONTEXT;
 			if( !StringUtils.isEmpty(userstr) && !StringUtils.isEmpty( securitystr )) {
 				long userId = Long.parseLong(userstr);
 				long security = Long.parseLong( securitystr);
 				Random random = new Random();
 				token = Math.abs( random.nextLong() );
-				user = authentication.getLoginUser(userId, security);
+				user = authentication.getLoginUser(domain, userId, security);
 				if( user != null ) {
 					Dispatcher.createDomain(user);
 				}
@@ -139,7 +141,8 @@ public class ActiveServlet extends HttpServlet {
 
 		@Override
 		protected String onCreateList(String[] arguments) {
-			IAdmin admin = dispatcher.getAdmin(user);
+			String domain = IChuruataContext.S_CHURUATA_CONTEXT;
+			IAdmin admin = dispatcher.getAdmin(domain, user);
 			StringBuilder builder = new StringBuilder();
 			for( Pages page: Pages.values()) {
 				StringBuilder href = new StringBuilder();

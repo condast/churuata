@@ -28,7 +28,11 @@ public class Admin implements IAdmin, Serializable {
 	@Basic(optional = false)
 	@Column( nullable=false)
 	private long loginId;
-	
+
+	@Basic(optional = true)
+	@Column( nullable=false)
+	private String domain;
+
 	@Basic(optional = true)
 	@Column( nullable=false)
 	private String role;
@@ -62,12 +66,7 @@ public class Admin implements IAdmin, Serializable {
 		return id;
 	}
 
-	@Override
-	public long getLoginId() {
-		return this.loginId;
-	}
-	
-	/* (non-Javadoc)
+/* (non-Javadoc)
 	 * @see org.fgf.animal.count.authentication.model.ILoginUser#getUserName()
 	 */
 	@Override
@@ -75,8 +74,18 @@ public class Admin implements IAdmin, Serializable {
 		return login;
 	}
 
-	public void setLogin(ILoginUser login) {
+	@Override
+	public void setUser(ILoginUser login) {
 		this.login = login;
+	}
+
+	@Override
+	public String getDomain() {
+		return domain;
+	}
+
+	public void setDomain(String domain) {
+		this.domain = domain;
 	}
 
 	public Roles getRole() {
@@ -110,5 +119,11 @@ public class Admin implements IAdmin, Serializable {
 	@Override
 	public void setUpdateDate(Date update) {
 		this.updateDate = update;
+	}
+
+	@Override
+	public int compareTo(IAdmin arg0) {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 }

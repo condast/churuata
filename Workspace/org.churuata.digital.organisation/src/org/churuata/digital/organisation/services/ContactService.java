@@ -3,7 +3,7 @@ package org.churuata.digital.organisation.services;
 import org.churuata.digital.organisation.core.Dispatcher;
 import org.churuata.digital.organisation.model.Contact;
 import org.condast.commons.jpa.na.model.IContact.ContactTypes;
-import org.condast.commons.persistence.service.AbstractEntityService;
+import org.condast.commons.jpa.persistence.service.AbstractEntityService;
 
 public class ContactService extends AbstractEntityService<Contact>{
 

@@ -8,10 +8,10 @@ import java.util.logging.Logger;
 
 import javax.servlet.http.HttpSession;
 
-import org.churuata.digital.core.AbstractWizardEntryPoint;
-import org.churuata.digital.core.Dispatcher;
-import org.churuata.digital.core.Entries;
-import org.churuata.digital.core.Entries.Pages;
+import org.churuata.digital.base.AbstractWizardEntryPoint;
+import org.churuata.digital.base.Dispatcher;
+import org.churuata.digital.base.Entries;
+import org.churuata.digital.base.Entries.Pages;
 import org.churuata.digital.core.rest.IRestPages;
 import org.churuata.digital.session.SessionStore;
 import org.churuata.digital.ui.admin.AdminTableViewer;
@@ -136,7 +136,7 @@ public class AdminEntryPoint extends AbstractWizardEntryPoint<AdminTableViewer, 
 			Gson gson = new Gson();
 			String data = gson.toJson( AdminData.getIDsFromlogin(admins), long[].class );
 			try {
-				sendDelete(AdminData.Requests.REMOVE_ADMINS, params, data );
+				sendDelete(AdminData.Requests.REMOVE_ADMINS, params );
 			} catch (IOException e) {
 				logger.warning(e.getMessage());
 			}

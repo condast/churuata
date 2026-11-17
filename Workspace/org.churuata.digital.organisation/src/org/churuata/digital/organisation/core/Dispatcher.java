@@ -2,8 +2,8 @@ package org.churuata.digital.organisation.core;
 
 import javax.persistence.EntityManager;
 
-import org.condast.commons.persistence.service.AbstractPersistencyService;
-import org.condast.commons.persistence.service.IPersistenceService;
+import org.condast.commons.jpa.persistence.service.AbstractPersistencyService;
+import org.condast.commons.jpa.persistence.service.IPersistenceService;
 
 public class Dispatcher extends AbstractPersistencyService implements IPersistenceService<EntityManager>{
 

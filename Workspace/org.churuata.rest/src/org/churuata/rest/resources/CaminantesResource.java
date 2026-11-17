@@ -29,7 +29,7 @@ import org.churuata.rest.service.MurmeringService;
 import org.churuata.rest.service.PresentationService;
 import org.condast.commons.Utils;
 import org.condast.commons.data.latlng.LatLng;
-import org.condast.commons.persistence.service.TransactionManager;
+import org.condast.commons.jpa.persistence.service.TransactionManager;
 import org.condast.commons.strings.StringStyler;
 import org.condast.commons.strings.StringUtils;
 

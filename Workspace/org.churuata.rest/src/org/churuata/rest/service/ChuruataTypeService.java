@@ -2,13 +2,14 @@ package org.churuata.rest.service;
 
 import java.util.Collection;
 
+import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
 import org.churuata.digital.core.location.IChuruataService;
 import org.churuata.rest.model.ChuruataType;
 import org.condast.commons.data.latlng.LatLng;
-import org.condast.commons.persistence.service.AbstractEntityService;
-import org.condast.commons.persistence.service.IPersistenceService;
+import org.condast.commons.jpa.persistence.service.AbstractEntityService;
+import org.condast.commons.jpa.persistence.service.IPersistenceService;
 
 public class ChuruataTypeService extends AbstractEntityService<ChuruataType>{
 
@@ -18,7 +19,7 @@ public class ChuruataTypeService extends AbstractEntityService<ChuruataType>{
 			"SELECT l FROM Churuata l WHERE l.latitude >= :latmin AND l.latitude <= :latmax AND "
 			+ "l.longitude >= :lonmin AND l.longitude <= :lonmax ";
 
-	public ChuruataTypeService( IPersistenceService service ) {
+	public ChuruataTypeService( IPersistenceService<EntityManager> service ) {
 		super( ChuruataType.class, service );
 	}
 

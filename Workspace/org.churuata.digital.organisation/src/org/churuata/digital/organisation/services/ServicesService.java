@@ -4,7 +4,7 @@ import org.churuata.digital.core.data.ServiceData;
 import org.churuata.digital.core.location.IChuruataService;
 import org.churuata.digital.organisation.core.Dispatcher;
 import org.churuata.digital.organisation.model.Service;
-import org.condast.commons.persistence.service.AbstractEntityService;
+import org.condast.commons.jpa.persistence.service.AbstractEntityService;
 
 public class ServicesService extends AbstractEntityService<Service>{
 

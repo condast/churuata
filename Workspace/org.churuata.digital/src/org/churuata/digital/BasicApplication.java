@@ -3,7 +3,8 @@ package org.churuata.digital;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.churuata.digital.core.Entries;
+import org.churuata.digital.base.Entries;
+import org.churuata.digital.core.IChuruataContext;
 import org.churuata.digital.entries.BasicEntryPoint;
 import org.churuata.digital.session.SessionStore;
 import org.condast.commons.ui.widgets.entry.IDataEntryPoint;
@@ -16,13 +17,6 @@ import org.eclipse.rap.rwt.application.EntryPointFactory;
 import org.eclipse.rap.rwt.client.WebClient;
 
 public class BasicApplication implements ApplicationConfiguration {
-
-	public static final String S_CAMINANTES_TITLE = "Caminantes";
-	public static final String S_CAMINANTES_PATH = "/caminantes";
-
-	public static final String S_CHURUATA_TITLE = "Churuata Digital";
-	public static final String S_CHURUATA_VARIANT = "churuata";
-	public static final String S_CHURUATA = "/" + S_CHURUATA_VARIANT;
 
 	private static final String S_CHURUATA_THEME = "churuata.theme";
 	private static final String S_THEME_CSS = "themes/theme.css";
@@ -45,9 +39,9 @@ public class BasicApplication implements ApplicationConfiguration {
 		
 		//Add las caminantas
 		Map<String, String> properties = new HashMap<String, String>();
-		properties.put(WebClient.PAGE_TITLE, S_CAMINANTES_TITLE);
+		properties.put(WebClient.PAGE_TITLE, IChuruataContext.S_CAMINANTES_TITLE);
 		properties.put( WebClient.THEME_ID, S_CHURUATA_THEME );
-		application.addEntryPoint( S_CAMINANTES_PATH, BasicEntryPoint.class, properties);
+		application.addEntryPoint( IChuruataContext.S_CAMINANTES_PATH, BasicEntryPoint.class, properties);
 	}
 	
 	private class ChuruataEntryPointFactory  implements EntryPointFactory{

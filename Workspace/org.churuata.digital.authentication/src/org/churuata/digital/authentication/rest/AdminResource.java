@@ -19,12 +19,13 @@ import org.churuata.digital.authentication.model.Admin;
 import org.churuata.digital.authentication.model.Login;
 import org.churuata.digital.authentication.services.AdminService;
 import org.churuata.digital.authentication.services.LoginService;
+import org.churuata.digital.core.IChuruataContext;
 import org.condast.commons.data.user.AdminData;
 import org.condast.commons.data.user.IAdmin;
 import org.condast.commons.data.user.IAdmin.Roles;
 import org.condast.commons.data.user.ILoginUser;
 import org.condast.commons.data.util.LoginData;
-import org.condast.commons.persistence.service.TransactionManager;
+import org.condast.commons.jpa.persistence.service.TransactionManager;
 import org.condast.commons.strings.StringStyler;
 import org.condast.commons.strings.StringUtils;
 
@@ -71,7 +72,8 @@ public class AdminResource{
 		TransactionManager t = new TransactionManager( dispatcher );
 		try{
 			t.open();
-			AdminService as = new AdminService( dispatcher );
+			String domain = IChuruataContext.S_CHURUATA_CONTEXT;
+			AdminService as = new AdminService( domain, dispatcher );
 			IAdmin admin = as.find(user);
 			if(( admin == null ) || !admin.isAdmin() )
 				return Response.status( Status.UNAUTHORIZED).build();
@@ -117,7 +119,8 @@ public class AdminResource{
 		TransactionManager t = new TransactionManager( dispatcher );
 		try{
 			t.open();
-			AdminService as = new AdminService( dispatcher );
+			String domain = IChuruataContext.S_CHURUATA_CONTEXT;
+			AdminService as = new AdminService( domain, dispatcher );
 			Admin admin = (Admin) as.find(user);
 			if(( admin == null ) || !admin.isAdmin() )
 				return Response.status( Status.UNAUTHORIZED).build();
@@ -166,9 +169,10 @@ public class AdminResource{
 			return Response.status( Status.UNAUTHORIZED).build();
 		
 		TransactionManager t = new TransactionManager( Dispatcher.getInstance() );
+		String domain = IChuruataContext.S_CHURUATA_CONTEXT;
 		try {
 			t.open();
-			AdminService os = new AdminService( dispatcher ); 
+			AdminService os = new AdminService( domain, dispatcher ); 
 			boolean result = os.remove( adminId );
 			return Response.ok( result ).build();
 		}
@@ -196,9 +200,10 @@ public class AdminResource{
 		Gson gson = new Gson();
 		long[] ids = gson.fromJson(data, long[].class);
 		TransactionManager t = new TransactionManager( Dispatcher.getInstance() );
+		String domain = IChuruataContext.S_CHURUATA_CONTEXT;
 		try {
 			t.open();
-			AdminService os = new AdminService( dispatcher ); 
+			AdminService os = new AdminService( domain, dispatcher ); 
 			os.removeAll( ids );
 			return Response.ok().build();
 		}

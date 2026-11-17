@@ -6,10 +6,10 @@ import java.util.logging.Logger;
 
 import javax.servlet.http.HttpSession;
 
-import org.churuata.digital.core.AbstractWizardEntryPoint;
-import org.churuata.digital.core.Dispatcher;
-import org.churuata.digital.core.Entries;
-import org.churuata.digital.core.Entries.Pages;
+import org.churuata.digital.base.AbstractWizardEntryPoint;
+import org.churuata.digital.base.Dispatcher;
+import org.churuata.digital.base.Entries;
+import org.churuata.digital.base.Entries.Pages;
 import org.churuata.digital.core.rest.IRestPages;
 import org.churuata.digital.session.SessionStore;
 import org.condast.commons.data.user.AdminData;

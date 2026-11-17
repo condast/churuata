@@ -1,4 +1,4 @@
-package org.churuata.digital.core;
+package org.churuata.digital.base;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -50,7 +50,7 @@ public class Dispatcher {
 				if( domain == null )
 					domain = createDomain( user);
 				break;
-			case LOGOUT:
+			case LOGOFF:
 				removeDomain(user.getId());
 				break;
 			default:

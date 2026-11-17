@@ -23,7 +23,7 @@ import org.condast.commons.data.user.ILoginUser;
 import org.condast.commons.data.util.LoginData;
 import org.condast.commons.jpa.authentication.utils.AuthenticationUtils;
 import org.condast.commons.jpa.messaging.IHttpRequest.HttpStatus;
-import org.condast.commons.persistence.service.TransactionManager;
+import org.condast.commons.jpa.persistence.service.TransactionManager;
 import org.condast.commons.strings.StringUtils;
 import org.condast.commons.verification.IVerification;
 import org.condast.commons.verification.IVerification.VerificationTypes;
@@ -272,7 +272,7 @@ public class AuthenticationResource{
 			ILoginUser user = dispatcher.getUserFromSecurity(code);
 			if( user == null )
 				return Response.noContent().build();
-			user.setConfirmed(true);
+			//user.setConfirmed(true);
 			String str = AuthenticationUtils.createDictionaryString(user);
 			return Response.ok( str ).build();
 		}

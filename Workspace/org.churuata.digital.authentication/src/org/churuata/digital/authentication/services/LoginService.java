@@ -12,8 +12,8 @@ import org.churuata.digital.authentication.model.Login;
 import org.condast.commons.Utils;
 import org.condast.commons.data.user.ILoginUser;
 import org.condast.commons.data.util.LoginData;
-import org.condast.commons.persistence.service.AbstractEntityService;
-import org.condast.commons.persistence.service.IPersistenceService;
+import org.condast.commons.jpa.persistence.service.AbstractEntityService;
+import org.condast.commons.jpa.persistence.service.IPersistenceService;
 import org.condast.commons.strings.StringUtils;
 
 public class LoginService extends AbstractEntityService<Login>{

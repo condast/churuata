@@ -1,4 +1,4 @@
-package org.churuata.digital.core;
+package org.churuata.digital.base;
 
 import java.util.Locale;
 import java.util.concurrent.Executors;

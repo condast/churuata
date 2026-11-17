@@ -1,6 +1,6 @@
 package org.churuata.digital.entries;
 
-import org.churuata.digital.core.AuthenticationDispatcher;
+import org.churuata.digital.base.AuthenticationDispatcher;
 import org.churuata.digital.session.SessionStore;
 import org.condast.commons.data.user.ILoginUser;
 import org.condast.commons.ui.widgets.entry.IDataEntryPoint;

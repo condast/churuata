@@ -16,6 +16,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.churuata.digital.core.IChuruataContext;
 import org.churuata.digital.core.location.ChuruataData;
 import org.churuata.digital.core.location.IChuruata;
 import org.churuata.digital.core.location.IChuruataService;
@@ -33,7 +34,7 @@ import org.condast.commons.data.latlng.LatLngUtils;
 import org.condast.commons.data.plane.Field;
 import org.condast.commons.data.plane.FieldData;
 import org.condast.commons.data.user.ILoginUser;
-import org.condast.commons.persistence.service.TransactionManager;
+import org.condast.commons.jpa.persistence.service.TransactionManager;
 import org.condast.commons.strings.StringStyler;
 import org.condast.commons.strings.StringUtils;
 
@@ -66,7 +67,8 @@ public class ChuruataResource {
 		Response result = null;
 		try{
 			AuthenticationDispatcher ad = AuthenticationDispatcher.getInstance();
-			ILoginUser user = ad.getLoginUser(userId, token);
+			String domain = IChuruataContext.S_CHURUATA_CONTEXT;
+			ILoginUser user = ad.getLoginUser(domain, userId, token);
 			if(user == null)
 				return Response.status( Status.UNAUTHORIZED).build();
 			if( StringUtils.isEmpty(name) || StringUtils.isEmpty(type ))
@@ -172,9 +174,10 @@ public class ChuruataResource {
 		Response result = null;
 		TransactionManager t = new TransactionManager( dispatcher );
 		ChuruataService service = new ChuruataService( dispatcher );
+		String domain = IChuruataContext.S_CHURUATA_CONTEXT;
 		try{
 			AuthenticationDispatcher ad = AuthenticationDispatcher.getInstance();
-			ILoginUser user = ad.getLoginUser(userId, token);
+			ILoginUser user = ad.getLoginUser(domain, userId, token);
 			if(user == null)
 				return Response.status( Status.UNAUTHORIZED).build();
 
@@ -297,7 +300,7 @@ public class ChuruataResource {
 		Response result = null;
 		try{
 			AuthenticationDispatcher ad = AuthenticationDispatcher.getInstance();
-			if( !ad.isRegistered( userId, token))
+			if( !ad.isRegistered(userId))
 				return Response.status( Status.UNAUTHORIZED).build();
 			ChuruataService service = new ChuruataService( dispatcher );
 			Churuata churuata = service.find(id);
@@ -334,7 +337,7 @@ public class ChuruataResource {
 		Response result = null;
 		try{
 			AuthenticationDispatcher ad = AuthenticationDispatcher.getInstance();
-			if( !ad.isRegistered( userId, token))
+			if( !ad.isRegistered( userId))
 				return Response.status( Status.UNAUTHORIZED).build();
 			ChuruataService service = new ChuruataService( dispatcher );
 			Churuata churuata = service.find(id);

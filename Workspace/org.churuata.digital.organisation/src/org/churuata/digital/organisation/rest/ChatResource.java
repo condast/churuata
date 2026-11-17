@@ -13,7 +13,7 @@ import org.churuata.digital.core.utils.ChatUtils;
 import org.churuata.digital.organisation.core.Dispatcher;
 import org.churuata.digital.organisation.model.Organisation;
 import org.churuata.digital.organisation.services.OrganisationService;
-import org.condast.commons.persistence.service.TransactionManager;
+import org.condast.commons.jpa.persistence.service.TransactionManager;
 import org.condast.commons.strings.StringUtils;
 
 

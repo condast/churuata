@@ -7,7 +7,7 @@ import javax.persistence.EntityManagerFactory;
 
 import org.churuata.rest.Activator;
 import org.churuata.rest.core.Dispatcher;
-import org.condast.commons.persistence.service.EntityManagerFactoryService;
+import org.condast.commons.jpa.persistence.service.EntityManagerFactoryService;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;

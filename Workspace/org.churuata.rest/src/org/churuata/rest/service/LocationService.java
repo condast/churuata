@@ -8,8 +8,8 @@ import javax.persistence.TypedQuery;
 import org.churuata.rest.model.Location;
 import org.condast.commons.data.latlng.LatLng;
 import org.condast.commons.data.user.ILoginUser;
-import org.condast.commons.persistence.service.AbstractEntityService;
-import org.condast.commons.persistence.service.IPersistenceService;
+import org.condast.commons.jpa.persistence.service.AbstractEntityService;
+import org.condast.commons.jpa.persistence.service.IPersistenceService;
 
 public class LocationService extends AbstractEntityService<Location>{
 

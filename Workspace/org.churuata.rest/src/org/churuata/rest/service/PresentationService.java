@@ -2,14 +2,15 @@ package org.churuata.rest.service;
 
 import java.util.Collection;
 
+import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
 import org.churuata.digital.core.IPresentation.PresentationTypes;
 import org.churuata.digital.core.location.IChuruata;
 import org.churuata.rest.model.Presentation;
 import org.condast.commons.data.latlng.LatLng;
-import org.condast.commons.persistence.service.AbstractEntityService;
-import org.condast.commons.persistence.service.IPersistenceService;
+import org.condast.commons.jpa.persistence.service.AbstractEntityService;
+import org.condast.commons.jpa.persistence.service.IPersistenceService;
 
 public class PresentationService extends AbstractEntityService<Presentation>{
 
@@ -19,7 +20,7 @@ public class PresentationService extends AbstractEntityService<Presentation>{
 			"SELECT p FROM Presentation p WHERE p.latitude >= :latmin AND p.latitude <= :latmax AND "
 			+ "p.longitude >= :lonmin AND p.longitude <= :lonmax ";
 
-	public PresentationService( IPersistenceService service ) {
+	public PresentationService( IPersistenceService<EntityManager> service ) {
 		super( Presentation.class, service );
 	}
 

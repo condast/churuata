@@ -8,8 +8,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.churuata.digital.core.AuthenticationDispatcher;
-import org.churuata.digital.core.Dispatcher;
+import org.churuata.digital.base.AuthenticationDispatcher;
+import org.churuata.digital.base.Dispatcher;
+import org.churuata.digital.core.IChuruataContext;
 import org.churuata.digital.session.SessionStore;
 import org.condast.commons.strings.StringStyler;
 import org.condast.commons.strings.StringUtils;
@@ -17,7 +18,7 @@ import org.condast.commons.data.user.ILoginUser;
 import org.condast.commons.jpa.authentication.http.IDomainProvider;
 import org.condast.commons.jpa.messaging.IHttpRequest.HttpStatus;
 import org.condast.commons.parser.AbstractResourceParser;
-import org.condast.commons.parser.AbstractResourceParser.Attributes;
+import org.condast.commons.parser.IResourceParser.Attributes;
 
 public class ProfileServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -83,12 +84,13 @@ public class ProfileServlet extends HttpServlet {
 		if( user == null ) {
 			String userstr = req.getParameter( IDomainProvider.Attributes.USER_ID.toAttribute() );
 			String securitystr = req.getParameter( IDomainProvider.Attributes.SECURITY.toAttribute());
+			String domain = IChuruataContext.S_CHURUATA_CONTEXT;
 			if( !StringUtils.isEmpty(userstr) && !StringUtils.isEmpty( securitystr )) {
 				long userId = Long.parseLong(userstr);
 				long security = Long.parseLong( securitystr);
 				Random random = new Random();
 				token = Math.abs( random.nextLong() );
-				user = authentication.getLoginUser(userId, security);
+				user = authentication.getLoginUser(domain, userId, security);
 				if( user != null ) {
 					Dispatcher.createDomain(user);
 				}

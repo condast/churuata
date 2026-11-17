@@ -2,13 +2,14 @@ package org.churuata.rest.service;
 
 import java.util.Collection;
 
+import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
 import org.churuata.digital.core.location.IChuruata;
 import org.churuata.rest.model.Murmering;
 import org.condast.commons.data.latlng.LatLng;
-import org.condast.commons.persistence.service.AbstractEntityService;
-import org.condast.commons.persistence.service.IPersistenceService;
+import org.condast.commons.jpa.persistence.service.AbstractEntityService;
+import org.condast.commons.jpa.persistence.service.IPersistenceService;
 
 public class MurmeringService extends AbstractEntityService<Murmering>{
 
@@ -18,7 +19,7 @@ public class MurmeringService extends AbstractEntityService<Murmering>{
 			"SELECT l FROM Murmering l WHERE l.latitude >= :latmin AND l.latitude <= :latmax AND "
 			+ "l.longitude >= :lonmin AND l.longitude <= :lonmax ";
 
-	public MurmeringService( IPersistenceService service ) {
+	public MurmeringService( IPersistenceService<EntityManager> service ) {
 		super( Murmering.class, service );
 	}
 	

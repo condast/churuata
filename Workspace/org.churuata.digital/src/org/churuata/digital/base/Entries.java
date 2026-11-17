@@ -1,6 +1,6 @@
-package org.churuata.digital.core;
+package org.churuata.digital.base;
 
-import org.churuata.digital.BasicApplication;
+import org.churuata.digital.core.IChuruataContext;
 import org.condast.commons.strings.StringStyler;
 import org.condast.commons.strings.StringUtils;
 import org.condast.js.commons.ui.widgets.entry.AbstractEntries;
@@ -56,7 +56,7 @@ public class Entries extends AbstractEntries<Entries.Pages>{
 		}
 
 		public String toPath() {
-			return BasicApplication.S_CHURUATA + "/" + StringStyler.xmlStyleString( name());
+			return IChuruataContext.S_CHURUATA + "/" + StringStyler.xmlStyleString( name());
 		}
 			
 		public static boolean isValid( String str ) {

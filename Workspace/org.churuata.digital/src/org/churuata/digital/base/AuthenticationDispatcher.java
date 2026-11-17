@@ -1,4 +1,4 @@
-package org.churuata.digital.core;
+package org.churuata.digital.base;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -31,7 +31,7 @@ public class AuthenticationDispatcher extends AbstractLoginClient{
 			case LOGIN:
 				login(event.getUser());
 				break;
-			case LOGOUT:
+			case LOGOFF:
 				logout(event.getUser());
 				break;
 			default:
@@ -42,20 +42,16 @@ public class AuthenticationDispatcher extends AbstractLoginClient{
 		}
 	}
 	
-	@Override
 	public void setLoginProvider(ILoginProvider provider) {
 		provider.addAuthenticationListener(listener);
-		super.setLoginProvider(provider);
 	}
 
-	@Override
 	public void unsetLoginProvider(ILoginProvider provider) {
 		provider.removeAuthenticationListener(listener);
-		super.unsetLoginProvider(provider);
 	}
 
-	private void addUser( ILoginUser user) {
-		this.users.add(user);
+	public boolean addUser( ILoginUser user) {
+		return this.users.add(user);
 	}
 
 	private boolean hasLoginUser( ILoginUser user) {
@@ -70,10 +66,8 @@ public class AuthenticationDispatcher extends AbstractLoginClient{
 		return null;
 	}
 
-	@Override
 	public void logout(ILoginUser user) {
 		this.users.remove(user);
-		super.logout(user);
 	}
 	
 	public static void login( ILoginUser user ) {

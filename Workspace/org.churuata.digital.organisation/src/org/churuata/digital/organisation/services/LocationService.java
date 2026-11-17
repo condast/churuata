@@ -7,7 +7,7 @@ import javax.persistence.TypedQuery;
 import org.churuata.digital.organisation.core.Dispatcher;
 import org.churuata.digital.organisation.model.Location;
 import org.condast.commons.data.latlng.LatLng;
-import org.condast.commons.persistence.service.AbstractEntityService;
+import org.condast.commons.jpa.persistence.service.AbstractEntityService;
 
 public class LocationService extends AbstractEntityService<Location>{
 

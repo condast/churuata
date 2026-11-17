@@ -5,7 +5,7 @@ import java.util.Collection;
 
 import org.churuata.digital.core.location.ChuruataData;
 import org.condast.commons.data.plane.FieldData;
-import org.condast.commons.persistence.service.AbstractPersistencyService;
+import org.condast.commons.jpa.persistence.service.AbstractPersistencyService;
 
 public class Dispatcher extends AbstractPersistencyService {
 
