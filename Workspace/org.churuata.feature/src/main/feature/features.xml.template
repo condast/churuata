@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?><features name="org.churuata-1.0.0" xmlns="http://karaf.apache.org/xmlns/features/v1.4.0">
+    <feature name="org.churuata" version="${project.version}">
+        <bundle>mvn:org.churuata/org.churuata.digital/1.0.0-SNAPSHOT</bundle>
+        <bundle>mvn:org.churuata/org.churuata.digital.core/1.0.0-SNAPSHOT</bundle>
+        <bundle>mvn:org.churuata/org.churuata.digital.ui/1.0.0-SNAPSHOT</bundle>
+        <bundle>mvn:org.churuata/org.churuata.rest/1.0.0-SNAPSHOT</bundle>
+        <bundle>mvn:org.churuata/org.churuata.digital.authentication/1.0.0-SNAPSHOT</bundle>
+        <bundle>mvn:org.churuata/org.churuata.digital.organisation/1.0.0-SNAPSHOT</bundle>
+        <bundle>mvn:org.churuata/org.churuata.caminantes/1.0.0-SNAPSHOT</bundle>
+    </feature>
+</features>
